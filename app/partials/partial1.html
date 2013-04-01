@@ -1,0 +1,27 @@
+<h1 ng-click="openFiles()">Open files</h1>
+<div class="row">
+    <div class="span4">
+        <div class="padded">
+            <h2>Selected tags:</h2>
+
+            <span ng-repeat="tag in tags | filter:isTagSelected | orderBy:'name'" ng-click="toggleSelection(tag)"><strong>{{ tag.name }}</strong>, </span>
+
+            <h2>Available tags:</h2>
+
+            <p><input ng-model="availableTagQuery" /></p>
+
+            <span ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="toggleSelection(tag)">{{ tag.name }}, </span>
+        </div>
+    </div>
+
+    <div class="span8">
+        <div class="padded">
+            <h2>Selected {{ selectedFiles.length }} files:</h2>
+
+            <div class="row-fluid" ng-repeat="selectedFile in selectedFiles">
+                <div class="span11">{{ selectedFile.path }}</div>
+                <div class="span1"><a href="#/view2/{{ selectedFile.hash }}">Edit</a></div>
+            </div>
+        </div>
+    </div>
+</div>

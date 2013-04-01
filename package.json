@@ -1,0 +1,21 @@
+{
+    "name": "laputin",
+    "version": "0.0.1",
+    "author": "Ville Salonen <ville.salonen@iki.fi>",
+    "description": "REST API for file library with tag support",
+    "dependencies" : {
+        "underscore" :  ">= 1.4.4",
+        "walk" :  ">= 2.2.1",
+        "express" : ">= 3.1.0",
+        "path" : ">= 0.4.9",
+        "sqlite3" : ">= 2.1.5",
+        "should" : ">= 1.2.2",
+        "sandboxed-module": ">= 0.2.0",
+        "sinon" : ">= 1.6.0",
+        "async" : ">= 0.2.6"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">=0.10.1"
+    }
+}

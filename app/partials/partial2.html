@@ -1,0 +1,20 @@
+<h1>{{ file.path }}</h1>
+<div class="row">
+    <div class="span4">
+        <div class="padded">
+            <h2>Selected tags:</h2>
+
+            <span ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)"><strong>{{ tag.name }}</strong>, </span>
+        </div>
+    </div>
+
+    <div class="span8">
+        <div class="padded">
+            <h2>Available tags:</h2>
+
+            <p><input ng-model="availableTagQuery" /></p>
+
+            <span ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="addTag(tag)">{{ tag.name }}, </span>
+        </div>
+    </div>
+</div>
