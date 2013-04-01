@@ -21,6 +21,10 @@
         this.linkTagToFile = function (tag, file) {
             http.post("files/" + file.hash + "/tags", { selectedTags: [tag] });
         };
+
+        this.createNewTag = function (tagName, callbackSuccess) {
+            http.post("/tags", { tagName: tagName }).success(callbackSuccess);
+        };
     }
 
     angular.module('laputin.services', [], function ($provide) {

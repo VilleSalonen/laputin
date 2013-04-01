@@ -73,6 +73,22 @@ Library.prototype.getFiles = function () {
     return this._files;
 };
 
+Library.prototype.createNewTag = function (tagName, callback) {
+    var self = this;
+    var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
+    stmt.run(tagName, function (err) {
+        if (err) throw err;
+
+        var tag = { id: stmt.lastID, name: tagName };
+        self.addTag(tag);
+
+        stmt.finalize();
+
+        if (typeof callback !== 'undefined')
+            callback(tag);
+    });
+};
+
 Library.prototype._linkTagToFile = function (inputTag, inputFile) {
     var tag = this._tags[inputTag.id];
     var file = this._files[inputFile.hash];

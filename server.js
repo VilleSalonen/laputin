@@ -52,6 +52,13 @@ function startServer() {
         res.send(library.getTags());
     });
 
+    app.post('/tags', function (req, res) {
+        var tagName = req.body.tagName;
+        library.createNewTag(tagName, function (tag) {
+            res.send(200);
+        });
+    });
+
     app.get('/files', function (req, res) {
         res.send(library.getFiles());
     });
@@ -67,6 +74,7 @@ function startServer() {
         _.each(selectedTags, function (tag) {
             library.createNewLinkBetweenTagAndFile(tag, file);
         });
+        res.send(200);
     });
 
     app.get('/files/:hash/open', function (req, res) {
@@ -76,6 +84,7 @@ function startServer() {
         });
 
         quickLook.open([file]);
+        res.send(200);
     });
 
     app.post('/open/tags/', function (req, res) {

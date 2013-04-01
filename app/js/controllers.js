@@ -104,29 +104,34 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.file = undefined;
     $scope.tags = [];
+    $scope.newTagName = "";
 
     var allTags = [];
 
-    LaputinAPI.getTags(function (data) {
-        var tagsFromAPI = [];
-        _.each(data, function (tag) {
-            tag.selected = false;
-            tagsFromAPI.push(tag);
-        });
-        allTags = tagsFromAPI;
-
-        LaputinAPI.getFiles(function (data) {
-            var file = _.find(data, function (file) {
-                return file.hash == $routeParams.fileId
+    function refresh() {
+        LaputinAPI.getTags(function (data) {
+            var tagsFromAPI = [];
+            _.each(data, function (tag) {
+                tag.selected = false;
+                tagsFromAPI.push(tag);
             });
-            if (typeof file !== 'undefined') {
-                $scope.file = file;
-                updateTagList();
-            } else {
-                $scope.file = undefined;
-            }
+            allTags = tagsFromAPI;
+
+            LaputinAPI.getFiles(function (data) {
+                var file = _.find(data, function (file) {
+                    return file.hash == $routeParams.fileId
+                });
+                if (typeof file !== 'undefined') {
+                    $scope.file = file;
+                    updateTagList();
+                } else {
+                    $scope.file = undefined;
+                }
+            });
         });
-    });
+    }
+
+    refresh();
 
     $scope.addTag = function (tag) {
         $scope.file.tags.push(tag);
@@ -140,6 +145,13 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
             $scope.file.tags.splice(idx, 1);
             updateTagList();
         }
+    };
+
+    $scope.createNewTag = function () {
+        LaputinAPI.createNewTag($scope.newTagName, function () {
+            $scope.newTagName = "";
+            refresh();
+        });
     };
 
     function updateTagList() {

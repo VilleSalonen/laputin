@@ -12,11 +12,19 @@
 
     <div class="span8">
         <div class="padded">
-            <h2>Available tags:</h2>
+            <h2>Available tags</h2>
 
             <p><input ng-model="availableTagQuery" /></p>
 
             <span ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="addTag(tag)">{{ tag.name }}, </span>
+
+            <h2>Create new tag</h2>
+
+            <form>
+                <label for="tagName">Name:</label>
+                <input id="tagName" ng-model="newTagName" />
+                <button ng-click="createNewTag()">Create</button>
+            </form>
         </div>
     </div>
 </div>
