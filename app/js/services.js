@@ -27,10 +27,6 @@
         $provide.factory('LaputinAPI', ['$http', function ($http) {
             return new LaputinAPI($http);
         }]);
-
-        $provide.factory('LaputinAPI', ['$http', function ($http) {
-            return new LaputinAPI($http);
-        }]);
     });
 })(angular);
 
