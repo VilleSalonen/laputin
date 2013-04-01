@@ -110,6 +110,7 @@ function startServer() {
         }
 
         quickLook.open(selectedFiles);
+        res.send(200);
 
         //res.send('Started ' + child.pid);
     });
