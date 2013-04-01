@@ -10,6 +10,10 @@
             http.get("/files").success(callbackSuccess);
         };
 
+        this.openFile = function (file, callbackSuccess) {
+            http.get("/files/" + file.hash + "/open").success(callbackSuccess);
+        };
+
         this.openFiles = function (selectedTags) {
             http.post("/open/tags/", { selectedTags: selectedTags });
         };

@@ -154,5 +154,11 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
         if (typeof tag !== 'undefined')
             return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
     };
+
+    $scope.openFile = function (file) {
+        LaputinAPI.openFile(file, function () {
+            console.log("Opened file " + file);
+        });
+    };
 }
 MyCtrl2.$inject = ['$scope', '$routeParams', 'LaputinAPI'];

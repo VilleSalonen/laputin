@@ -2,6 +2,8 @@
 <div class="row">
     <div class="span4">
         <div class="padded">
+            <h2 ng-click="openFile(file)">Open</h2>
+
             <h2>Selected tags:</h2>
 
             <span ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)"><strong>{{ tag.name }}</strong>, </span>
