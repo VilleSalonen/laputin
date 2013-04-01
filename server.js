@@ -62,8 +62,11 @@ function startServer() {
 
     app.post('/tags', function (req, res) {
         var tagName = req.body.tagName;
-        library.createNewTag(tagName, function (tag) {
-            res.send(200, tag);
+        library.createNewTag(tagName, function (err, tag) {
+            if (err)
+                res.send(500, err);
+            else
+                res.send(200, tag);
         });
     });
 
@@ -127,12 +130,6 @@ function startServer() {
 
         quickLook.open(selectedFiles);
         res.send(200);
-
-        //res.send('Started ' + child.pid);
-    });
-
-    app.get('/close', function (req, res) {
-        //res.send('Closed ' + child.pid);
     });
 
     app.listen(4242);
