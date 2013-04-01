@@ -7,8 +7,11 @@ var FileLibrary = require('./file_library.js').FileLibrary;
 
 
 function Library(libraryPath) {
+    libraryPath = path.normalize(libraryPath + "/");
+
     this._tags = {};
     this._files = {};
+    this._libraryPath = libraryPath;
     this._fileLibrary = new FileLibrary(libraryPath);
     this._db = new sqlite3.Database(path.join(libraryPath, '.laputin.db'));
 }
@@ -66,6 +69,7 @@ Library.prototype.getTags = function () {
 
 Library.prototype.addFile = function (file) {
     file.tags = file.tags || [];
+    file.name = file.path.replace(this._libraryPath, "");
     this._files[file.hash] = file;
 };
 

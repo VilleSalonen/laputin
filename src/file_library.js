@@ -1,5 +1,6 @@
 var walk    = require('walk');
 var hasher = require('./hasher.js');
+var path = require("path");
 
 function FileLibrary(libraryPath) {
     this._libraryPath = libraryPath;
@@ -10,10 +11,10 @@ FileLibrary.prototype.load = function (callback) {
 
     var files = [];
     walker.on('file', function(root, stat, next) {
-        var path = root + '/' + stat.name;
+        var filePath = path.normalize(path.join(root, stat.name));
 
-        if (path.indexOf(".git") === -1 && stat.name.charAt(0) != '.') {
-            hasher.hash(path, function (result) {
+        if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != '.') {
+            hasher.hash(filePath, function (result) {
                 files.push({ hash: result.hash, path: result.path });
             });
         }

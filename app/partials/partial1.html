@@ -19,7 +19,7 @@
             <h2>Selected {{ selectedFiles.length }} files:</h2>
 
             <div class="row-fluid" ng-repeat="selectedFile in selectedFiles">
-                <div class="span11">{{ selectedFile.path }}</div>
+                <div class="span11">{{ selectedFile.name }}</div>
                 <div class="span1"><a href="#/view2/{{ selectedFile.hash }}">Edit</a></div>
             </div>
         </div>
