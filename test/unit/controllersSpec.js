@@ -1,10 +1,10 @@
 'use strict';
 
-describe('MyCtrl1', function(){
+describe('FilesCtrl', function(){
   var myCtrl1;
 
   beforeEach(function(){
-    myCtrl1 = new MyCtrl1({}, {});
+    myCtrl1 = new FilesCtrl({}, {});
   });
 
 
@@ -14,12 +14,12 @@ describe('MyCtrl1', function(){
 });
 
 
-describe('MyCtrl2', function(){
+describe('SingleFileCtrl', function(){
   var myCtrl2;
 
 
   beforeEach(function(){
-    myCtrl2 = new MyCtrl2();
+    myCtrl2 = new SingleFileCtrl();
   });
 
 

@@ -1,0 +1,5 @@
+<h1>{{ tag.name }}</h1>
+
+<ul>
+    <li ng-repeat="file in tag.files">{{ file.path }} [<a ng-click="removeFile(file)">Remove</a>]</li>
+</ul>

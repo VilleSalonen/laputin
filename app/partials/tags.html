@@ -1,0 +1,5 @@
+<h1>Tags</h1>
+
+<ul>
+    <li ng-repeat="tag in tags | orderBy:'name'"><a href="/#/tags/{{ tag.id }}">{{ tag.name }}</a></li>
+</ul>

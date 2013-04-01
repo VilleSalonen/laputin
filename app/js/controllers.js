@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-function MyCtrl1($scope, LaputinAPI) {
+function FilesCtrl($scope, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.selectedFiles = [];
 
@@ -97,10 +97,10 @@ function MyCtrl1($scope, LaputinAPI) {
     };
 }
 
-MyCtrl1.$inject = ['$scope', 'LaputinAPI'];
+FilesCtrl.$inject = ['$scope', 'LaputinAPI'];
 
 
-function MyCtrl2($scope, $routeParams, LaputinAPI) {
+function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.file = undefined;
     $scope.tags = [];
@@ -175,4 +175,38 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
         });
     };
 }
-MyCtrl2.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
+SingleFileCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
+
+
+function TagsCtrl($scope, LaputinAPI) {
+    var allTags = [];
+
+    LaputinAPI.getTags(function (data) {
+        var tagsFromAPI = [];
+        _.each(data, function (tag) {
+            tag.selected = false;
+            tagsFromAPI.push(tag);
+        });
+        allTags = tagsFromAPI;
+        $scope.tags = allTags;
+    });
+}
+TagsCtrl.$inject = ['$scope', 'LaputinAPI'];
+
+function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
+    var tagId = parseInt($routeParams.tagId, 10);
+    LaputinAPI.getTags(function (data) {
+        $scope.tag = _.find(data, function (tag) {
+            return tag.id === tagId;
+        });
+    });
+
+    $scope.removeFile = function (file) {
+        var idx = $scope.tag.files.indexOf(file);
+        if (idx !== -1) {
+            $scope.tag.files.splice(idx, 1);
+            LaputinAPI.unlinkTagFromFile($scope.tag, file);
+        }
+    };
+}
+SingleTagCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
