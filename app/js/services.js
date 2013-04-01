@@ -17,6 +17,10 @@
         this.openFiles = function (selectedTags) {
             http.post("/open/tags/", { selectedTags: selectedTags });
         };
+
+        this.linkTagToFile = function (tag, file) {
+            http.post("files/" + file.hash + "/tags", { selectedTags: [tag] });
+        };
     }
 
     angular.module('laputin.services', [], function ($provide) {

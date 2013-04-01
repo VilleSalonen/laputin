@@ -39,12 +39,20 @@ Library.prototype.load = function (callback) {
             var tag = { id: row.id };
             var file = { hash: row.hash };
 
-            self.linkTagToFile(tag, file);
+            self._linkTagToFile(tag, file);
         }, function () {
             if (typeof callback !== 'undefined')
                 callback();
         });
     });
+};
+
+Library.prototype.createNewLinkBetweenTagAndFile = function (inputTag, inputFile) {
+    var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
+    stmt.run(inputTag.id, inputFile.hash);
+    stmt.finalize();
+
+    this._linkTagToFile(inputTag, inputFile);
 };
 
 Library.prototype.addTag = function (tag) {
@@ -65,7 +73,7 @@ Library.prototype.getFiles = function () {
     return this._files;
 };
 
-Library.prototype.linkTagToFile = function (inputTag, inputFile) {
+Library.prototype._linkTagToFile = function (inputTag, inputFile) {
     var tag = this._tags[inputTag.id];
     var file = this._files[inputFile.hash];
 

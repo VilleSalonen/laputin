@@ -131,6 +131,7 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
     $scope.addTag = function (tag) {
         $scope.file.tags.push(tag);
         updateTagList();
+        LaputinAPI.linkTagToFile(tag, $scope.file);
     };
 
     $scope.removeTag = function (tag) {

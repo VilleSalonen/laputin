@@ -27,7 +27,7 @@ describe('Library', function() {
         library.addTag(tag);
         library.addFile(file);
 
-        library.linkTagToFile(tag, file);
+        library._linkTagToFile(tag, file);
 
         tag.files.length.should.equal(1);
         tag.files[0].hash.should.equal(file.hash);

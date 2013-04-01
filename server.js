@@ -56,6 +56,19 @@ function startServer() {
         res.send(library.getFiles());
     });
 
+    app.post('/files/:hash/tags', function (req, res) {
+        var hash = req.params.hash;
+        var file = _.find(library.getFiles(), function (file) {
+            return file.hash === hash;
+        });
+
+        var selectedTags = req.body.selectedTags;
+
+        _.each(selectedTags, function (tag) {
+            library.createNewLinkBetweenTagAndFile(tag, file);
+        });
+    });
+
     app.get('/files/:hash/open', function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
