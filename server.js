@@ -59,12 +59,16 @@ function startServer() {
     app.post('/open/tags/', function (req, res) {
         var selectedTags = req.body.selectedTags;
 
-        var selectedFiles = _.filter(library.getFiles(), function (file) {
-            return _.every(selectedTags, function (value) {
-                var tagNames = _.pluck(file.tags, "name");
-                return _.contains(tagNames, value);
+        if (_.size(selectedTags) > 0) {
+            var selectedFiles = _.filter(library.getFiles(), function (file) {
+                return _.every(selectedTags, function (value) {
+                    var tagNames = _.pluck(file.tags, "name");
+                    return _.contains(tagNames, value);
+                });
             });
-        });
+        } else {
+            var selectedFiles = library.getFiles();
+        }
 
         quickLook.open(selectedFiles);
 
