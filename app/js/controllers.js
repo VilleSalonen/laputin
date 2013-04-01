@@ -148,9 +148,9 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
     };
 
     $scope.createNewTag = function () {
-        LaputinAPI.createNewTag($scope.newTagName, function () {
+        LaputinAPI.createNewTag($scope.newTagName, function (tag) {
             $scope.newTagName = "";
-            refresh();
+            $scope.addTag(tag);
         });
     };
 

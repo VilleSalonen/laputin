@@ -52,10 +52,18 @@ function startServer() {
         res.send(library.getTags());
     });
 
+    app.get('/tags/:tagId', function (req, res) {
+        var tagId = req.params.tagId;
+        var tag = _.filter(library.getTags(), function (tag) {
+            return tag.id == tagId
+        });
+        res.send(tag);
+    });
+
     app.post('/tags', function (req, res) {
         var tagName = req.body.tagName;
         library.createNewTag(tagName, function (tag) {
-            res.send(200);
+            res.send(200, tag);
         });
     });
 
