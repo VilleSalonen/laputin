@@ -58,6 +58,18 @@ Library.prototype.createNewLinkBetweenTagAndFile = function (inputTag, inputFile
     this._linkTagToFile(inputTag, inputFile);
 };
 
+Library.prototype.deleteLinkBetweenTagAndFile = function (inputTag, inputFile) {
+    var self = this;
+    var stmt = this._db.prepare("DELETE FROM tags_files WHERE id = ? AND hash = ?");
+    stmt.run(inputTag.id, inputFile.hash, function (err) {
+        if (err) throw err;
+
+        stmt.finalize();
+        self._unlinkTagFromFile(inputTag, inputFile);
+    });
+};
+
+
 Library.prototype.addTag = function (tag) {
     tag.files = tag.files || [];
     this._tags[tag.id] = tag;
@@ -108,6 +120,27 @@ Library.prototype._linkTagToFile = function (inputTag, inputFile) {
 
     tag.files.push({ hash: file.hash, path: file.path });
     file.tags.push({ id: tag.id, name: tag.name });
+};
+
+Library.prototype._unlinkTagFromFile = function (inputTag, inputFile) {
+    var tag = this._tags[inputTag.id];
+    var file = this._files[inputFile.hash];
+
+    if (typeof tag === 'undefined') {
+        console.log("Could not find tag with ID " + inputTag.id + " and name " + inputTag.name + ". Refusing to link it to file.");
+        return;
+    }
+    if (typeof file === 'undefined') {
+        console.log("Could not find file with hash " + inputFile.hash + ".");
+        return;
+    }
+
+    tag.files = _.filter(tag.files, function (currentFile) {
+        return currentFile.hash != file.hash;
+    });
+    file.tags = _.filter(file.tags, function (currentTag) {
+        return currentTag.id != tag.id;
+    });
 };
 
 exports.Library = Library;

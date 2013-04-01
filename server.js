@@ -85,6 +85,22 @@ function startServer() {
         res.send(200);
     });
 
+    app.delete('/files/:hash/tags/:tagId', function (req, res) {
+        var hash = req.params.hash;
+        var file = _.find(library.getFiles(), function (file) {
+            return file.hash === hash;
+        });
+
+        var tagId = req.params.tagId;
+        var tag = _.find(library.getTags(), function (tag) {
+            return tag.id == tagId;
+        });
+
+        library.deleteLinkBetweenTagAndFile(tag, file, function () {
+            res.send(200);
+        });
+    });
+
     app.get('/files/:hash/open', function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {

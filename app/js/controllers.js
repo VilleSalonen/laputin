@@ -143,6 +143,7 @@ function MyCtrl2($scope, $routeParams, LaputinAPI) {
         var idx = $scope.file.tags.indexOf(tag);
         if (idx !== -1) {
             $scope.file.tags.splice(idx, 1);
+            LaputinAPI.unlinkTagFromFile(tag, $scope.file);
             updateTagList();
         }
     };

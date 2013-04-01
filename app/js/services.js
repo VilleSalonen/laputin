@@ -22,6 +22,10 @@
             http.post("files/" + file.hash + "/tags", { selectedTags: [tag] });
         };
 
+        this.unlinkTagFromFile = function (tag, file) {
+            http.delete("files/" + file.hash + "/tags/" + tag.id);
+        };
+
         this.createNewTag = function (tagName, callbackSuccess) {
             http.post("/tags", { tagName: tagName }).success(callbackSuccess);
         };
