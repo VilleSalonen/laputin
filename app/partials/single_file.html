@@ -4,19 +4,23 @@
         <div class="padded">
             <h2 ng-click="openFile(file)">Open</h2>
 
-            <h2>Selected tags:</h2>
-
-            <span ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)"><strong>{{ tag.name }}</strong>, </span>
-        </div>
-    </div>
-
-    <div class="span8">
-        <div class="padded">
             <h2>Available tags</h2>
 
             <p><input ng-model="availableTagQuery" /></p>
 
             <span ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="addTag(tag)">{{ tag.name }}, </span>
+        </div>
+    </div>
+
+    <div class="span8">
+        <div class="padded">
+            <h2>Information</h2>
+
+            <p><strong>Path:</strong> {{ file.path }}</p>
+
+            <h2>Current tags</h2>
+
+            <span ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)"><strong>{{ tag.name }}</strong>, </span>
 
             <h2>Create new tag</h2>
 
