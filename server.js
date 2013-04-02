@@ -2,6 +2,7 @@ var _ = require('underscore');
 var express = require("express");
 var fs = require("fs");
 var path = require("path");
+var YAML = require('libyaml');
 
 var application_root = __dirname;
 var app = express();
@@ -23,17 +24,24 @@ if (!fs.existsSync(libraryPath) || !fs.statSync(libraryPath).isDirectory()) {
     process.exit(code = -2);
 }
 
-
-
 var Library = require('./src/library.js').Library;
 var library = new Library(libraryPath);
 
-//var VLC = require('./src/vlc.js').VLC;
-//var vlc = new VLC(libraryPath);
 
-var QuickLook = require('./src/quick_look.js').QuickLook;
-var quickLook = new QuickLook(libraryPath);
+var configuration = YAML.readFileSync(path.join(libraryPath, ".laputin.yml"))[0];
 
+switch (configuration.fileOpener) {
+    case "QuickLook":
+        var QuickLook = require('./src/quick_look.js').QuickLook;
+        var fileOpener = new QuickLook(libraryPath);
+        break;
+    case "VLC":
+        var VLC = require('./src/vlc.js').VLC;
+        var fileOpener = new VLC(libraryPath);
+        break;
+    default:
+        throw new Error("File opener is not specified in configuration!");
+}
 
 library.load(startServer);
 
@@ -110,7 +118,7 @@ function startServer() {
             return file.hash === hash;
         });
 
-        quickLook.open([file]);
+        fileOpener.open([file]);
         res.send(200);
     });
 
@@ -128,7 +136,7 @@ function startServer() {
             var selectedFiles = library.getFiles();
         }
 
-        quickLook.open(selectedFiles);
+        fileOpener.open(selectedFiles);
         res.send(200);
     });
 
