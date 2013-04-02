@@ -1,5 +1,17 @@
-<h1>{{ tag.name }}</h1>
+<div class="padded">
+    <h1>{{ tag.name }}</h1>
+</div>
 
-<ul>
-    <li ng-repeat="file in tag.files">{{ file.path }} [<a ng-click="removeFile(file)">Remove</a>]</li>
-</ul>
+<div class="span4">
+    <div class="padded">
+        <h2 ng-click="open()">Open</h2>
+    </div>
+</div>
+
+<div class="span8">
+    <div class="padded">
+        <ul>
+            <li ng-repeat="file in tag.files">{{ file.path }} [<a ng-click="removeFile(file)">Remove</a>]</li>
+        </ul>
+    </div>
+</div>

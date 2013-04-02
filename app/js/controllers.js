@@ -208,5 +208,9 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
             LaputinAPI.unlinkTagFromFile($scope.tag, file);
         }
     };
+
+    $scope.open = function () {
+        LaputinAPI.openFiles([$scope.tag.name]);
+    };
 }
 SingleTagCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
