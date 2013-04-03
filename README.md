@@ -9,6 +9,10 @@ So if you have a lot of podcasts, scanned documents, photographs or videos,
 Laputin can be used to organize them into easily searchable and taggable
 collections. More info and better described use cases coming soon!
 
+(Laputin as a name comes from a Finnish word lappu which means tag in English.
+Also this name is close to Action Man type of a president who is very efficient
+in organizing things.)
+
 Technical Details
 -----------------
 Technically Laputin is implemented in two parts:
@@ -57,6 +61,14 @@ also pass a path as an argument.
 Then just point your browser to http://localhost:4242 and get on tagging!
 
 
-(Laputin as a name comes from a Finnish word lappu which means tag in English.
-Also this name is close to Action Man type of a president who is very efficient
-in organizing things.)
+Tips & Tricks
+-------------
+If you want to have a versioning history of your organizational changes,
+initialize Git repository in your library path, add .laputin.db under Git and
+add following to .laputin.yml:
+
+    gitVersioning: true
+
+Of course make sure that your library path doesn't contain any previous Git
+repositories because Laputin will audomatically commit all changed files in that
+directory! You have been warned.

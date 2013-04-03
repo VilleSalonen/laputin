@@ -3,6 +3,7 @@ var express = require("express");
 var fs = require("fs");
 var path = require("path");
 var YAML = require("libyaml");
+var exec = require('child_process').exec;
 
 var application_root = __dirname;
 var app = express();
@@ -42,6 +43,21 @@ switch (configuration.fileOpener) {
     default:
         throw new Error("File opener is not specified in configuration!");
 }
+
+
+process.on('SIGINT', function() {
+    process.chdir(libraryPath);
+
+    if (typeof configuration.gitVersioning !== "undefined" && configuration.gitVersioning === true) {
+        var message = "Saving Laputin metadata on " + (new Date());
+        exec("git commit .laputin.db -m \"" + message + "\".", function () {
+            console.log("EXITING!");
+            process.exit(0);
+        });
+    } else {
+        process.exit(0);
+    }
+});
 
 library.load(startServer);
 
