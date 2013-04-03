@@ -19,6 +19,7 @@ function Library(libraryPath) {
 Library.prototype.load = function (callback) {
     var self = this;
 
+
     async.parallel([
         function (callback) {
             self._fileLibrary.load(function (files) {
@@ -29,10 +30,12 @@ Library.prototype.load = function (callback) {
             });
         },
         function (callback) {
-            self._db.each("SELECT * FROM tags", function (err, tag) {
-                self.addTag(tag);
-            }, function () {
-                callback(null);
+            self._db.run("DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT id FROM tags_files)", function () {
+                self._db.each("SELECT * FROM tags", function (err, tag) {
+                    self.addTag(tag);
+                }, function () {
+                    callback(null);
+                });
             });
         }
     ],
