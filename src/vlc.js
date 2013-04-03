@@ -1,6 +1,6 @@
 var _ = require("underscore");
-var fs = require('fs');
-var child_process = require('child_process');
+var fs = require("fs");
+var child_process = require("child_process");
 var path = require("path");
 
 function VLC(libraryPath) {
@@ -18,7 +18,7 @@ VLC.prototype.open = function (selectedVideos) {
 };
 
 VLC.prototype.close = function () {
-    if (typeof this._child !== 'undefined') {
+    if (typeof this._child !== "undefined") {
         try {
             process.kill(this._child.pid, "SIGKILL");
         }
@@ -37,7 +37,7 @@ VLC.prototype._writeVideosToPlaylist = function (selectedVideos, callback) {
 
     fs.writeFile(this._playlistPath, playlist, function (err) {
         if (err) throw err;
-        if (typeof callback !== 'undefined')
+        if (typeof callback !== "undefined")
             callback();
     });
 };

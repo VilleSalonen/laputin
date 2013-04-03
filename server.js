@@ -1,15 +1,15 @@
-var _ = require('underscore');
+var _ = require("underscore");
 var express = require("express");
 var fs = require("fs");
 var path = require("path");
-var YAML = require('libyaml');
+var YAML = require("libyaml");
 
 var application_root = __dirname;
 var app = express();
 
 if (process.argv.length === 2) {
     console.log("Defaulting to current directory...");
-    var libraryPath = process.cwd() + '';
+    var libraryPath = process.cwd() + "";
 } else if (process.argv.length !== 3) {
     console.log("You have to pass library path as an argument.");
     process.exit(code = -1);
@@ -24,7 +24,7 @@ if (!fs.existsSync(libraryPath) || !fs.statSync(libraryPath).isDirectory()) {
     process.exit(code = -2);
 }
 
-var Library = require('./src/library.js').Library;
+var Library = require("./src/library.js").Library;
 var library = new Library(libraryPath);
 
 
@@ -32,11 +32,11 @@ var configuration = YAML.readFileSync(path.join(libraryPath, ".laputin.yml"))[0]
 
 switch (configuration.fileOpener) {
     case "QuickLook":
-        var QuickLook = require('./src/quick_look.js').QuickLook;
+        var QuickLook = require("./src/quick_look.js").QuickLook;
         var fileOpener = new QuickLook(libraryPath);
         break;
     case "VLC":
-        var VLC = require('./src/vlc.js').VLC;
+        var VLC = require("./src/vlc.js").VLC;
         var fileOpener = new VLC(libraryPath);
         break;
     default:
@@ -56,11 +56,11 @@ function startServer() {
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
 
-    app.get('/tags', function (req, res) {
+    app.get("/tags", function (req, res) {
         res.send(library.getTags());
     });
 
-    app.get('/tags/:tagId', function (req, res) {
+    app.get("/tags/:tagId", function (req, res) {
         var tagId = req.params.tagId;
         var tag = _.filter(library.getTags(), function (tag) {
             return tag.id == tagId
@@ -68,7 +68,7 @@ function startServer() {
         res.send(tag);
     });
 
-    app.post('/tags', function (req, res) {
+    app.post("/tags", function (req, res) {
         var tagName = req.body.tagName;
         library.createNewTag(tagName, function (err, tag) {
             if (err)
@@ -78,11 +78,11 @@ function startServer() {
         });
     });
 
-    app.get('/files', function (req, res) {
+    app.get("/files", function (req, res) {
         res.send(library.getFiles());
     });
 
-    app.post('/files/:hash/tags', function (req, res) {
+    app.post("/files/:hash/tags", function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
             return file.hash === hash;
@@ -96,7 +96,7 @@ function startServer() {
         res.send(200);
     });
 
-    app.delete('/files/:hash/tags/:tagId', function (req, res) {
+    app.delete("/files/:hash/tags/:tagId", function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
             return file.hash === hash;
@@ -112,7 +112,7 @@ function startServer() {
         });
     });
 
-    app.get('/files/:hash/open', function (req, res) {
+    app.get("/files/:hash/open", function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
             return file.hash === hash;
@@ -122,7 +122,7 @@ function startServer() {
         res.send(200);
     });
 
-    app.post('/open/tags/', function (req, res) {
+    app.post("/open/tags/", function (req, res) {
         var selectedTags = req.body.selectedTags;
 
         if (_.size(selectedTags) > 0) {

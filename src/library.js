@@ -1,9 +1,9 @@
-var _ = require('underscore');
-var sqlite3 = require('sqlite3').verbose();
-var async = require('async');
+var _ = require("underscore");
+var sqlite3 = require("sqlite3").verbose();
+var async = require("async");
 var path = require("path");
 
-var FileLibrary = require('./file_library.js').FileLibrary;
+var FileLibrary = require("./file_library.js").FileLibrary;
 
 
 function Library(libraryPath) {
@@ -13,7 +13,7 @@ function Library(libraryPath) {
     this._files = {};
     this._libraryPath = libraryPath;
     this._fileLibrary = new FileLibrary(libraryPath);
-    this._db = new sqlite3.Database(path.join(libraryPath, '.laputin.db'));
+    this._db = new sqlite3.Database(path.join(libraryPath, ".laputin.db"));
 }
 
 Library.prototype.load = function (callback) {
@@ -44,7 +44,7 @@ Library.prototype.load = function (callback) {
 
             self._linkTagToFile(tag, file);
         }, function () {
-            if (typeof callback !== 'undefined')
+            if (typeof callback !== "undefined")
                 callback();
         });
     });
@@ -94,7 +94,7 @@ Library.prototype.createNewTag = function (tagName, callback) {
     var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
     stmt.run(tagName, function (err) {
         if (err) {
-            if (err.code === 'SQLITE_CONSTRAINT')
+            if (err.code === "SQLITE_CONSTRAINT")
                 console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
             callback(err, null);
         }
@@ -104,7 +104,7 @@ Library.prototype.createNewTag = function (tagName, callback) {
 
         stmt.finalize();
 
-        if (typeof callback !== 'undefined')
+        if (typeof callback !== "undefined")
             callback(null, tag);
     });
 };
@@ -113,11 +113,11 @@ Library.prototype._linkTagToFile = function (inputTag, inputFile) {
     var tag = this._tags[inputTag.id];
     var file = this._files[inputFile.hash];
 
-    if (typeof tag === 'undefined') {
+    if (typeof tag === "undefined") {
         console.log("Could not find tag with ID " + inputTag.id + " and name " + inputTag.name + ". Refusing to link it to file.");
         return;
     }
-    if (typeof file === 'undefined') {
+    if (typeof file === "undefined") {
         console.log("Could not find file with hash " + inputFile.hash + ".");
         return;
     }
@@ -130,11 +130,11 @@ Library.prototype._unlinkTagFromFile = function (inputTag, inputFile) {
     var tag = this._tags[inputTag.id];
     var file = this._files[inputFile.hash];
 
-    if (typeof tag === 'undefined') {
+    if (typeof tag === "undefined") {
         console.log("Could not find tag with ID " + inputTag.id + " and name " + inputTag.name + ". Refusing to link it to file.");
         return;
     }
-    if (typeof file === 'undefined') {
+    if (typeof file === "undefined") {
         console.log("Could not find file with hash " + inputFile.hash + ".");
         return;
     }

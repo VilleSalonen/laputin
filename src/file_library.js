@@ -1,5 +1,5 @@
-var walk    = require('walk');
-var hasher = require('./hasher.js');
+var walk    = require("walk");
+var hasher = require("./hasher.js");
 var path = require("path");
 
 function FileLibrary(libraryPath) {
@@ -10,10 +10,10 @@ FileLibrary.prototype.load = function (callback) {
     var walker  = walk.walk(this._libraryPath, { followLinks: false });
 
     var files = [];
-    walker.on('file', function(root, stat, next) {
+    walker.on("file", function(root, stat, next) {
         var filePath = path.normalize(path.join(root, stat.name));
 
-        if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != '.') {
+        if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != ".") {
             hasher.hash(filePath, function (result) {
                 files.push({ hash: result.hash, path: result.path });
             });
@@ -22,8 +22,8 @@ FileLibrary.prototype.load = function (callback) {
         next();
     });
 
-    walker.on('end', function () {
-        if (typeof callback !== 'undefined') {
+    walker.on("end", function () {
+        if (typeof callback !== "undefined") {
             callback(files);
         }
     });
