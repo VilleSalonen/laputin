@@ -147,4 +147,30 @@ Library.prototype._unlinkTagFromFile = function (inputTag, inputFile) {
     });
 };
 
+Library.prototype.updateTag = function (tagId, updatedTag, callback) {
+    var tag = this._tags[tagId];
+
+    if (typeof tag === "undefined") {
+        console.log("Could not find tag with ID " + tagId + ". Refusing to update it.");
+        return;
+    }
+
+    this._tags[tagId].name = updatedTag.name;
+
+    var stmt = this._db.prepare("UPDATE tags SET name = ? WHERE id = ?");
+    stmt.run(updatedTag.name, tagId, function (err) {
+        if (err) {
+            if (err.code === "SQLITE_CONSTRAINT")
+                console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
+            callback(err, null);
+        }
+
+        stmt.finalize();
+
+        if (typeof callback !== "undefined")
+            callback(null, updatedTag);
+    });
+
+};
+
 exports.Library = Library;

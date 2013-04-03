@@ -29,6 +29,10 @@
         this.createNewTag = function (tagName, callbackSuccess) {
             http.post("/tags", { tagName: tagName }).success(callbackSuccess);
         };
+
+        this.renameTag = function (tagId, tag) {
+            http.put("/tags/" + tagId, { tag: tag }).success(callbackSuccess);
+        };
     }
 
     angular.module('laputin.services', [], function ($provide) {

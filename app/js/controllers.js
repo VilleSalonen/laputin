@@ -194,6 +194,8 @@ function TagsCtrl($scope, LaputinAPI) {
 TagsCtrl.$inject = ['$scope', 'LaputinAPI'];
 
 function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
+    $scope.editing = false;
+
     var tagId = parseInt($routeParams.tagId, 10);
     LaputinAPI.getTags(function (data) {
         $scope.tag = _.find(data, function (tag) {
@@ -211,6 +213,15 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
 
     $scope.open = function () {
         LaputinAPI.openFiles([$scope.tag.name]);
+    };
+
+    $scope.edit = function () {
+        $scope.editing = true;
+    };
+
+    $scope.save = function () {
+        $scope.editing = false;
+        LaputinAPI.renameTag($scope.tag.id, $scope.tag);
     };
 }
 SingleTagCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];

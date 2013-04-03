@@ -84,6 +84,18 @@ function startServer() {
         res.send(tag);
     });
 
+    app.put("/tags/:tagId", function (req, res) {
+        var tagId = req.params.tagId;
+        var tag = req.body.tag;
+        library.updateTag(tagId, tag, function (err) {
+            if (err) {
+                res.send(500);
+            } else {
+                res.send(200);
+            }
+        })
+    });
+
     app.post("/tags", function (req, res) {
         var tagName = req.body.tagName;
         library.createNewTag(tagName, function (err, tag) {
