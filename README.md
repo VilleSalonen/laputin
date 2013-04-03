@@ -69,6 +69,17 @@ add following to .laputin.yml:
 
     gitVersioning: true
 
+If you don't want your data files to appear in git status listings etc., write
+a following .gitignore file:
+
+    # Ignore everything...
+    *
+
+    # ...except Laputin metadata and .gitignore
+    !.gitignore
+    !.laputin.db
+    !.laputin.yml
+
 Of course make sure that your library path doesn't contain any previous Git
 repositories because Laputin will audomatically commit all changed files in that
 directory! You have been warned.
