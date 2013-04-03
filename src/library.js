@@ -121,7 +121,8 @@ Library.prototype._linkTagToFile = function (inputTag, inputFile) {
         return;
     }
     if (typeof file === "undefined") {
-        console.log("Could not find file with hash " + inputFile.hash + ".");
+        console.log("Could not find file with hash " + inputFile.hash + ". Deleting tag associations of this missing file.");
+        this._db.run("DELETE FROM tags_files WHERE hash = ?", inputFile.hash);
         return;
     }
 
