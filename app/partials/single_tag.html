@@ -14,8 +14,27 @@
 
 <div class="span8">
     <div class="padded">
-        <ul>
-            <li ng-repeat="file in tag.files">{{ file.path }} [<a ng-click="removeFile(file)">Remove</a>]</li>
+        <p>
+            <label class="checkbox">
+                <input type="checkbox" ng-click="checkFiles($event)" />
+                <strong>All</strong>
+            </label>
+        </p>
+
+        <ul class="unstyled">
+            <li ng-repeat="file in tag.files">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="file.checked" />
+                    {{ file.path }}
+                    [<a ng-click="removeFile(file)">Remove</a>]
+                </label>
+            </li>
         </ul>
+
+        <h2>Available tags:</h2>
+
+        <p><input ng-model="availableTagQuery" /></p>
+
+        <span ng-repeat="tag in tags | filter:tagNameMatches" ng-click="linkSelectedToTag(tag)">{{ tag.name }}, </span>
     </div>
 </div>
