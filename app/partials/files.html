@@ -18,10 +18,9 @@
         <div class="padded">
             <h2>Selected {{ selectedFiles.length }} files:</h2>
 
-            <div class="row-fluid" ng-repeat="selectedFile in selectedFiles">
-                <div class="span11">{{ selectedFile.name }}</div>
-                <div class="span1"><a href="#/files/{{ selectedFile.hash }}">Edit</a></div>
-            </div>
+            <ul>
+                <li ng-repeat="file in selectedFiles | orderBy:'path'"><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></li>
+            </ul>
         </div>
     </div>
 </div>

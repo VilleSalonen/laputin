@@ -21,7 +21,7 @@ function FilesCtrl($scope, LaputinAPI) {
     });
 
     LaputinAPI.getFiles(function (data) {
-        allFiles = data;
+        allFiles = _.sortBy(data, function (file) { return file.path });
         $scope.selectedFiles = allFiles;
     });
 
@@ -179,6 +179,8 @@ SingleFileCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
 
 
 function TagsCtrl($scope, LaputinAPI) {
+    $scope.availableTagQuery = "";
+
     var allTags = [];
 
     LaputinAPI.getTags(function (data) {
@@ -190,6 +192,10 @@ function TagsCtrl($scope, LaputinAPI) {
         allTags = tagsFromAPI;
         $scope.tags = allTags;
     });
+
+    $scope.tagNameMatches = function (tag) {
+        return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
+    };
 }
 TagsCtrl.$inject = ['$scope', 'LaputinAPI'];
 

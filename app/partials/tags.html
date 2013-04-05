@@ -1,5 +1,7 @@
 <h1>Tags</h1>
 
+<p><input ng-model="availableTagQuery" /></p>
+
 <ul>
-    <li ng-repeat="tag in tags | orderBy:'name'"><a href="/#/tags/{{ tag.id }}">{{ tag.name }}</a></li>
+    <li ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'"><a href="/#/tags/{{ tag.id }}">{{ tag.name }}</a></li>
 </ul>
