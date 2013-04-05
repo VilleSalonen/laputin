@@ -262,6 +262,14 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
     $scope.tagNameMatches = function (tag) {
         return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
     };
+
+    $scope.removeTagFromSelectedFiles = function () {
+        _.each($scope.tag.files, function (file) {
+            if (file.checked) {
+                LaputinAPI.unlinkTagFromFile($scope.tag, file);
+            }
+        });
+    };
 }
 SingleTagCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
 
