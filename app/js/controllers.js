@@ -112,6 +112,7 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
         LaputinAPI.getTags(function (data) {
             var tagsFromAPI = [];
             _.each(data, function (tag) {
+                tag.focused = false;
                 tag.selected = false;
                 tagsFromAPI.push(tag);
             });
@@ -173,6 +174,17 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
         LaputinAPI.openFile(file, function () {
             console.log("Opened file " + file);
         });
+    };
+
+    $scope.addTagIfOnlyOneLeft = function () {
+        var tagsLeft = _.filter($scope.tags, $scope.tagNameMatches);
+        if (_.size(tagsLeft) === 1) {
+            var tag = tagsLeft[0];
+            $scope.file.tags.push(tag);
+            updateTagList();
+            LaputinAPI.linkTagToFile(tag, $scope.file);
+            $scope.availableTagQuery = "";
+        }
     };
 }
 SingleFileCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];

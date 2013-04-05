@@ -6,7 +6,7 @@
 
             <h2>Available tags</h2>
 
-            <p><input ng-model="availableTagQuery" /></p>
+            <p><input ng-model="availableTagQuery" on-enter="addTagIfOnlyOneLeft()" /></p>
 
             <span ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="addTag(tag)">{{ tag.name }}, </span>
         </div>
