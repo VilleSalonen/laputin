@@ -138,6 +138,7 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
         $scope.file.tags.push(tag);
         updateTagList();
         LaputinAPI.linkTagToFile(tag, $scope.file);
+        $scope.availableTagQuery = "";
     };
 
     $scope.removeTag = function (tag) {
