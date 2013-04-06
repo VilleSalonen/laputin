@@ -1,3 +1,5 @@
+/*global _ */
+
 function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.editing = false;

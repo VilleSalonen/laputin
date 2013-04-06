@@ -1,3 +1,5 @@
+/*global _ */
+
 function UntaggedFilesCtrl($scope, LaputinAPI) {
     $scope.untaggedFiles = [];
 

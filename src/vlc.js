@@ -1,3 +1,5 @@
+/*global require, process */
+
 var _ = require("underscore");
 var fs = require("fs");
 var child_process = require("child_process");

@@ -1,9 +1,11 @@
+/*global require, process */
+
 var _ = require("underscore");
 var fs = require("fs");
 var child_process = require("child_process");
 var path = require("path");
 
-function QuickLook(libraryPath) {
+function QuickLook() {
     this._child = undefined;
     this._binaryPath = "/usr/bin/qlmanage";
 }

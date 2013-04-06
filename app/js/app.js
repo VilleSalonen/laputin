@@ -1,3 +1,5 @@
+/*global require */
+
 'use strict';
 
 require("./controllers.js");

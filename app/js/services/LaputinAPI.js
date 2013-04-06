@@ -27,7 +27,7 @@ function LaputinAPI(http) {
         http.post("/tags", { tagName: tagName }).success(callbackSuccess);
     };
 
-    this.renameTag = function (tagId, tag) {
+    this.renameTag = function (tagId, tag, callbackSuccess) {
         http.put("/tags/" + tagId, { tag: tag }).success(callbackSuccess);
     };
 }

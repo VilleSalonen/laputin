@@ -1,10 +1,12 @@
+/*global require */
+
 var walk    = require("walk");
 var hasher = require("./hasher.js");
 var path = require("path");
 
 function FileLibrary(libraryPath) {
     this._libraryPath = libraryPath;
-};
+}
 
 FileLibrary.prototype.load = function (callback) {
     var walker  = walk.walk(this._libraryPath, { followLinks: false });
@@ -27,6 +29,6 @@ FileLibrary.prototype.load = function (callback) {
             callback(files);
         }
     });
-}
+};
 
 exports.FileLibrary = FileLibrary;

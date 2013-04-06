@@ -1,3 +1,5 @@
+/*global _ */
+
 function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.file = undefined;
@@ -57,16 +59,15 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
 
     function updateTagList() {
         var tagNames = _.pluck($scope.file.tags, 'name');
-        var unusedTags = _.filter(allTags, function (tag) {
+        $scope.tags = _.filter(allTags, function (tag) {
             return !_.contains(tagNames, tag.name);
         });
-
-        $scope.tags = unusedTags;
     }
 
     $scope.tagNameMatches = function (tag) {
         if (typeof tag !== 'undefined')
             return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
+        return false;
     };
 
     $scope.openFile = function (file) {

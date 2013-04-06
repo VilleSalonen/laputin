@@ -1,3 +1,5 @@
+/*global _ */
+
 function FilesCtrl($scope, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.selectedFiles = [];
@@ -20,7 +22,7 @@ function FilesCtrl($scope, LaputinAPI) {
         $scope.selectedFiles = allFiles;
     });
 
-    $scope.openFiles = function (tag) {
+    $scope.openFiles = function () {
         var selectedTags = [];
         _.each(allTags, function (tag) {
             if (tag.selected) {
@@ -49,9 +51,7 @@ function FilesCtrl($scope, LaputinAPI) {
                 return _.contains(intersection, file.hash);
             });
 
-            if ($scope.selectedFiles.length === 0) {
-                $scope.tags = allTags;
-            } else {
+            if ($scope.selectedFiles.length !== 0) {
                 var selectedFilesHashes = _.map($scope.selectedFiles, function (file) {
                     return file.hash;
                 });
@@ -67,11 +67,11 @@ function FilesCtrl($scope, LaputinAPI) {
                 });
                 var uniqueTagNames = _.uniq(tagNames);
 
-                var fullTagInformations = _.filter(allTags, function (tag) {
+                $scope.tags = _.filter(allTags, function (tag) {
                     return _.contains(uniqueTagNames, tag.name);
                 });
-
-                $scope.tags = fullTagInformations;
+            } else {
+                $scope.tags = allTags;
             }
         } else {
             $scope.selectedFiles = allFiles;

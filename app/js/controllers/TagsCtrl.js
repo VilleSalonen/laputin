@@ -1,3 +1,5 @@
+/*global _ */
+
 function TagsCtrl($scope, LaputinAPI) {
     $scope.availableTagQuery = "";
 

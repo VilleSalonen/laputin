@@ -1,3 +1,5 @@
+/*global require */
+
 var crypto = require("crypto");
 var fs = require("fs");
 
