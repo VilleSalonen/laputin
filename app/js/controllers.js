@@ -274,13 +274,16 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
 }
 SingleTagCtrl.$inject = ['$scope', '$routeParams', 'LaputinAPI'];
 
-function UntaggedFilesCtrl($scope, LaputinAPI) {
-    $scope.untaggedFiles = [];
+(function () {
+    function UntaggedFilesCtrl($scope, LaputinAPI) {
+        $scope.untaggedFiles = [];
 
-    LaputinAPI.getFiles(function (data) {
-        $scope.untaggedFiles = _.filter(data, function (file) {
-            return file.tags.length === 0;
+        LaputinAPI.getFiles(function (data) {
+            $scope.untaggedFiles = _.filter(data, function (file) {
+                return file.tags.length === 0;
+            });
         });
-    });
-}
-UntaggedFilesCtrl.$inject = ['$scope', 'LaputinAPI'];
+    }
+
+    angular.module("laputin.controllers", []).controller("UntaggedFilesCtrl", ["$scope", "LaputinAPI", UntaggedFilesCtrl]);
+})();
