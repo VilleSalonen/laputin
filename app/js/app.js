@@ -1,5 +1,9 @@
 'use strict';
 
+require("./controllers.js");
+require("./services.js");
+require("./filters.js");
+require("./directives.js");
 
 // Declare app level module which depends on filters, and services
 angular.module('laputin', ['laputin.filters', 'laputin.services', 'laputin.directives', 'laputin.controllers']).

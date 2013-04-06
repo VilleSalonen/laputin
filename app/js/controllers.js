@@ -1,4 +1,6 @@
 (function () {
+    var angular = require('./../lib/angular.shim.js')
+
     function FilesCtrl($scope, LaputinAPI) {
         $scope.availableTagQuery = "";
         $scope.selectedFiles = [];
