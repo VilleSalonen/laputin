@@ -11,7 +11,7 @@
 
             <p><input ng-model="availableTagQuery" tabindex="10" /></p>
 
-            <span ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="toggleSelection(tag)">{{ tag.name }}, </span>
+            <a ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="toggleSelection(tag)" class="btn">{{ tag.name }}</a>
         </div>
     </div>
 
