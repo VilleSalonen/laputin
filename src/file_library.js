@@ -18,10 +18,11 @@ FileLibrary.prototype.load = function (callback) {
         if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != ".") {
             hasher.hash(filePath, function (result) {
                 files.push({ hash: result.hash, path: result.path });
+                next();
             });
+        } else {
+            next();
         }
-
-        next();
     });
 
     walker.on("end", function () {
