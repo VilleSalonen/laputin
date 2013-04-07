@@ -16,4 +16,18 @@ angular.module('laputin.directives', []).
                 }
             });
         };
-    }]);
+    }]).
+    directive('wKeydown', function() {
+    return function(scope, elm, attr) {
+        elm.bind('keydown', function(e) {
+            switch (e.keyCode) {
+                case 70:
+                    return scope.$apply(attr.wFKey);
+                case 84:
+                    return scope.$apply(attr.wTKey);
+                case 85:
+                    return scope.$apply(attr.wUKey);
+            }
+        });
+    };
+});
