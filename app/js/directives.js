@@ -25,6 +25,7 @@ angular.module('laputin.directives', []).
                 if (e.target !== $("body")[0])
                     return;
 
+                e.preventDefault();
                 switch (e.keyCode) {
                     case 70:
                         return scope.$apply(attr.wFKey);
@@ -32,6 +33,8 @@ angular.module('laputin.directives', []).
                         return scope.$apply(attr.wTKey);
                     case 85:
                         return scope.$apply(attr.wUKey);
+                    case 191:
+                        return scope.$apply(attr.wSlash);
                 }
             });
         };

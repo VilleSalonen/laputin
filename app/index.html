@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/app.css"/>
 </head>
-<body ng-controller="AppCtrl" w-keydown w-f-key="goToFiles()" w-t-key="goToTags()" w-u-key="goToUntagged()">
+<body ng-controller="AppCtrl" w-keydown w-f-key="goToFiles()" w-t-key="goToTags()" w-u-key="goToUntagged()" w-slash="focusSearch()">
     <div class="navbar navbar-inverse" bs-navbar>
         <div class="navbar-inner">
             <a class="brand" href="/">Laputin</a>
@@ -15,6 +15,10 @@
                 <li data-match-route="/tags/.*"><a href="/#/tags"><strong>T</strong>ags</a></li>
                 <li data-match-route="/untagged/"><a href="/#/untagged"><strong>U</strong>ntagged</a></li>
             </ul>
+
+            <form class="navbar-search pull-right">
+                <input type="text" class="search-query" placeholder="Search">
+            </form>
         </div>
     </div>
 

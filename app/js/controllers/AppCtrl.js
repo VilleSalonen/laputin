@@ -10,6 +10,10 @@ function AppCtrl($scope, $location) {
     $scope.goToUntagged = function () {
         $location.path("/untagged");
     };
+
+    $scope.focusSearch = function () {
+        $(".search-query").focus();
+    }
 }
 
 module.exports = AppCtrl;
