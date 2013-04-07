@@ -36,3 +36,15 @@
 .main-search {
     width: 600px;
 }
+
+.open-button {
+    margin-right: 20px;
+}
+
+.tag {
+    margin: 3px;
+}
+
+.full-width {
+    width: 100%;
+}

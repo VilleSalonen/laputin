@@ -3,6 +3,7 @@
 function FilesCtrl($scope, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.selectedFiles = [];
+    $scope.someTagsSelected = false;
 
     var allTags = [];
     var allFiles = [];
@@ -70,10 +71,12 @@ function FilesCtrl($scope, LaputinAPI) {
                 $scope.tags = _.filter(allTags, function (tag) {
                     return _.contains(uniqueTagNames, tag.name);
                 });
+                $scope.someTagsSelected = true;
             } else {
                 $scope.tags = allTags;
             }
         } else {
+            $scope.someTagsSelected = false;
             $scope.selectedFiles = allFiles;
             $scope.tags = allTags;
         }
