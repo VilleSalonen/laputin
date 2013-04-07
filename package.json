@@ -13,7 +13,8 @@
         "sandboxed-module": ">= 0.2.0",
         "sinon" : ">= 1.6.0",
         "async" : ">= 0.2.6",
-        "libyaml" : ">= 0.2.2"
+        "libyaml" : ">= 0.2.2",
+        "watch" : ">= 0.7.0"
     },
     "license": "MIT",
     "engines": {

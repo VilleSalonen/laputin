@@ -3,9 +3,29 @@
 var walk    = require("walk");
 var hasher = require("./hasher.js");
 var path = require("path");
+var watch = require("watch");
 
 function FileLibrary(libraryPath) {
+    var self = this;
+
     this._libraryPath = libraryPath;
+
+    this.newFileCallback = undefined;
+    this.deletedFileCallback = undefined;
+
+    watch.watchTree(this._libraryPath, function (f, curr, prev) {
+        if (typeof f == "object" && prev === null && curr === null) {
+            // Finished walking the tree
+        } else if (prev === null) {
+            if (typeof self.newFileCallback === "function")
+                hasher.hash(f, function (result) {
+                    self.newFileCallback({ hash: result.hash, path: result.path });
+                });
+        } else if (curr.nlink === 0) {
+            if (typeof self.deletedFileCallback === "function")
+                self.deletedFileCallback({ path: f });
+        }
+    });
 }
 
 FileLibrary.prototype.load = function (callback) {

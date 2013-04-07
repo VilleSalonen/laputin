@@ -9,12 +9,28 @@ var FileLibrary = require("./file_library.js").FileLibrary;
 
 
 function Library(libraryPath) {
+    var self = this;
+
     libraryPath = path.normalize(libraryPath + "/");
 
     this._tags = {};
     this._files = {};
     this._libraryPath = libraryPath;
+
     this._fileLibrary = new FileLibrary(libraryPath);
+    this._fileLibrary.newFileCallback = function (file) {
+        self.addFile(file);
+    };
+    this._fileLibrary.deletedFileCallback = function (deletedFile) {
+        var deletedFileInLibrary = _.find(self._files, function (file) {
+            return file.path === deletedFile.path;
+        });
+
+        if (deletedFileInLibrary) {
+            self.deleteFile(deletedFileInLibrary);
+        }
+    };
+
     this._db = new sqlite3.Database(path.join(libraryPath, ".laputin.db"));
 }
 
@@ -88,6 +104,23 @@ Library.prototype.addFile = function (file) {
     file.tags = file.tags || [];
     file.name = file.path.replace(this._libraryPath, "");
     this._files[file.hash] = file;
+};
+
+Library.prototype.deleteFile = function (file) {
+    var self = this;
+
+    var tagsOfFile = file.tags;
+
+    _.each(file.tags, function (tag) {
+        self._unlinkTagFromFile(tag, file);
+    });
+    delete this._files[file.hash];
+
+    _.each(tagsOfFile, function (tag) {
+        if (_.size(tag.files) === 0) {
+            delete self._tags[tag.id];
+        }
+    });
 };
 
 Library.prototype.getFiles = function () {
