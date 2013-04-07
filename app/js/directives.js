@@ -20,6 +20,11 @@ angular.module('laputin.directives', []).
     directive('wKeydown', function() {
         return function(scope, elm, attr) {
             elm.bind('keydown', function(e) {
+                // We don't want to trigger keyboard shortcut when user types
+                // in inputs.
+                if (e.target !== $("body")[0])
+                    return;
+
                 switch (e.keyCode) {
                     case 70:
                         return scope.$apply(attr.wFKey);
