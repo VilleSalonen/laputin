@@ -7,11 +7,11 @@ utility which can be used to organize any file collection by adding tags.
 
 So if you have a lot of podcasts, scanned documents, photographs or videos,
 Laputin can be used to organize them into easily searchable and taggable
-collections. More info and better described use cases coming soon!
+collections.
 
-(Laputin as a name comes from a Finnish word lappu which means tag in English.
-Also this name is close to Action Man type of a president who is very efficient
-in organizing things.)
+**Please** note that because Laputin identified files by their contents, it is not suitable for file collections where the files are routinely modified. Laputin is best when it's used with collections of static files.
+
+*(Laputin as a name comes from a Finnish word lappu which means tag in English. Also this name is close to Action Man type of a president who is very efficient in organizing things.)*
 
 Technical Details
 -----------------
