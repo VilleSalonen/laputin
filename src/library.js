@@ -65,6 +65,12 @@ Library.prototype.load = function (callback) {
 
             self._linkTagToFile(tag, file);
         }, function () {
+            _.each(self._tags, function (tag) {
+                if (tag && _.size(tag.files) === 0) {
+                    delete self._tags[tag.id];
+                }
+            });
+
             if (typeof callback !== "undefined")
                 callback();
         });
