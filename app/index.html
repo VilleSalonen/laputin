@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="css/app.css"/>
 </head>
 <body ng-controller="AppCtrl" w-keydown w-f-key="goToFiles()" w-t-key="goToTags()" w-u-key="goToUntagged()">
-    <div class="navbar navbar-inverse">
+    <div class="navbar navbar-inverse" bs-navbar>
         <div class="navbar-inner">
             <a class="brand" href="/">Laputin</a>
             <ul class="nav">
-                <li><a href="/"><strong>F</strong>iles</a></li>
-                <li><a href="/#/tags"><strong>T</strong>ags</a></li>
-                <li><a href="/#/untagged"><strong>U</strong>ntagged</a></li>
+                <li data-match-route="/"><a href="/"><strong>F</strong>iles</a></li>
+                <li data-match-route="/tags/"><a href="/#/tags"><strong>T</strong>ags</a></li>
+                <li data-match-route="/untagged/"><a href="/#/untagged"><strong>U</strong>ntagged</a></li>
             </ul>
         </div>
     </div>
@@ -21,6 +21,7 @@
     <div ng-view></div>
 
     <script src="components/underscore/underscore-min.js"></script>
+    <script src="components/jquery/jquery.min.js"></script>
     <script src="js/bundle.js"></script>
 </body>
 </html>
