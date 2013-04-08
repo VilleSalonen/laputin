@@ -1,5 +1,9 @@
 /* app css stylesheet */
 
+body {
+    font-size: 16px;
+}
+
 .menu {
   list-style: none;
   border-bottom: 0.1em solid black;

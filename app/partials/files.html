@@ -1,4 +1,4 @@
-<button class="btn btn-large btn-primary open-button pull-right" type="button" ng-click="openFiles()">Open files</button>
+<button class="btn btn-large btn-primary open-button pull-right" type="button" ng-click="openFiles()" tabindex="12">Open files</button>
 
 <div class="row">
     <div class="span4">
@@ -13,9 +13,10 @@
         <div class="padded">
             <div ng-show="someTagsSelected">
                 <p>
-                    <strong style="font-size: 200%;">Tags:</strong>
+                    <strong>Tags:</strong>
                     <a ng-repeat="tag in tags | filter:isTagSelected | orderBy:'name'" ng-click="toggleSelection(tag)" class="btn btn-success tag">{{ tag.name }}</a>
                 </p>
+                <p></p><a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
                 <p>{{ selectedFiles.length }} matching files found.</p>
             </div>
             <div ng-hide="someTagsSelected">

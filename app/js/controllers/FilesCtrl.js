@@ -82,6 +82,15 @@ function FilesCtrl($scope, LaputinAPI) {
         }
     };
 
+    $scope.removeTagSelections = function () {
+        _.each(allTags, function (tag) {
+            tag.selected = false;
+        });
+        $scope.someTagsSelected = false;
+        $scope.selectedFiles = allFiles;
+        $scope.tags = allTags;
+    };
+
     $scope.isTagSelected = function (tag) {
         return tag.selected;
     };
