@@ -128,5 +128,12 @@ angular.module('laputin.directives', []).
 
             }
         };
-
-    }]);
+    }])
+    // Source: http://stackoverflow.com/a/14691170/27736
+    .directive('blur', function () {
+        return function (scope, element, attrs) {
+            scope.$watch(attrs.blur, function () {
+                element[0].blur();
+            });
+        };
+    });

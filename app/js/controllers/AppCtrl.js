@@ -1,4 +1,6 @@
 function AppCtrl($scope, $location, LaputinAPI) {
+    $scope.lastSubmit = undefined;
+
     $scope.goToFiles = function () {
         $location.path("/");
     };
@@ -46,7 +48,7 @@ function AppCtrl($scope, $location, LaputinAPI) {
         });
     };
 
-    $scope.goToSearchResult = function () {
+    $scope.goToSearchResult = function (e) {
         if ($scope.typeaheadValue.indexOf("File: ") === 0) {
             var name = $scope.typeaheadValue.replace("File: ", "");
             var matchingFile = _.find(allFiles, function (file) {
@@ -55,7 +57,7 @@ function AppCtrl($scope, $location, LaputinAPI) {
 
             if (matchingFile) {
                 $scope.typeaheadValue = "";
-                $(".search-query").blur();
+                $scope.lastSubmit = new Date();
                 $location.path("/files/" + matchingFile.hash);
             }
         } else {
@@ -66,7 +68,7 @@ function AppCtrl($scope, $location, LaputinAPI) {
 
             if (matchingTag) {
                 $scope.typeaheadValue = "";
-                $(".search-query").blur();
+                $scope.lastSubmit = new Date();
                 $location.path("/tags/" + matchingTag.id);
             }
         }
