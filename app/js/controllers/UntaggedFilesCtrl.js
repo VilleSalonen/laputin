@@ -8,6 +8,10 @@ function UntaggedFilesCtrl($scope, LaputinAPI) {
             return file.tags.length === 0;
         });
     });
+
+    $scope.openUntagged = function () {
+        LaputinAPI.openFiles($scope.untaggedFiles);
+    };
 }
 
 module.exports = UntaggedFilesCtrl;

@@ -11,7 +11,12 @@ function LaputinAPI(http) {
         http.get("/files/" + file.hash + "/open").success(callbackSuccess);
     };
 
-    this.openFiles = function (selectedTags) {
+    this.openFiles = function (selectedFiles) {
+        var selectedHashes = _.pluck(selectedFiles, "hash");
+        http.post("/open/files/", { selectedHashes: selectedHashes });
+    };
+
+    this.openTags = function (selectedTags) {
         http.post("/open/tags/", { selectedTags: selectedTags });
     };
 

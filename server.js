@@ -168,6 +168,20 @@ function startServer() {
         res.send(200);
     });
 
+    app.post("/open/files/", function (req, res) {
+        var selectedHashes = req.body.selectedHashes;
+
+        if (_.size(selectedHashes) > 0) {
+            var selectedFiles = _.filter(library.getFiles(), function (file) {
+                return _.contains(selectedHashes, file.hash);
+            });
+            fileOpener.open(selectedFiles);
+            res.send(200);
+        } else {
+            res.send(400, "No files selected");
+        }
+    });
+
     app.listen(4242);
 
     console.log("Started at http://localhost:4242");

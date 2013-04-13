@@ -22,7 +22,7 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
     };
 
     $scope.open = function () {
-        LaputinAPI.openFiles([$scope.tag.name]);
+        LaputinAPI.openTags([$scope.tag.name]);
     };
 
     $scope.edit = function () {

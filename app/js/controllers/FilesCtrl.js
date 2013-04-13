@@ -31,7 +31,7 @@ function FilesCtrl($scope, LaputinAPI) {
             }
         });
 
-        LaputinAPI.openFiles(selectedTags);
+        LaputinAPI.openTags(selectedTags);
     };
 
     $scope.toggleSelection = function (tag) {
