@@ -5,29 +5,29 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
     $scope.file = undefined;
     $scope.tags = [];
     $scope.newTagName = "";
+    $scope.fileNotFound = false;
 
     var allTags = [];
 
     function refresh() {
-        LaputinAPI.getTags(function (data) {
-            var tagsFromAPI = [];
-            _.each(data, function (tag) {
-                tag.focused = false;
-                tag.selected = false;
-                tagsFromAPI.push(tag);
-            });
-            allTags = tagsFromAPI;
+        LaputinAPI.getFile($routeParams.fileId, function (err, file) {
+            if (err.message === "404") {
+                $scope.fileNotFound = true;
+                return;
+            }
 
-            LaputinAPI.getFiles(function (data) {
-                var file = _.find(data, function (file) {
-                    return file.hash == $routeParams.fileId
+            $scope.file = file;
+
+            LaputinAPI.getTags(function (data) {
+                var tagsFromAPI = [];
+                _.each(data, function (tag) {
+                    tag.focused = false;
+                    tag.selected = false;
+                    tagsFromAPI.push(tag);
                 });
-                if (typeof file !== 'undefined') {
-                    $scope.file = file;
-                    updateTagList();
-                } else {
-                    $scope.file = undefined;
-                }
+
+                allTags = tagsFromAPI;
+                updateTagList();
             });
         });
     }

@@ -1,35 +1,41 @@
-<button class="btn btn-large btn-primary open-button pull-right" type="button" ng-click="openFile(file)" tabindex="12">Open file</button>
+<div ng-show="!fileNotFound">
+    <button class="btn btn-large btn-primary open-button pull-right" type="button" ng-click="openFile(file)" tabindex="12">Open file</button>
 
-<div class="row">
-    <div class="span4">
-        <div class="padded">
-            <h2>Available tags</h2>
+    <div class="row">
+        <div class="span4">
+            <div class="padded">
+                <h2>Available tags</h2>
 
-            <p><input ng-model="availableTagQuery" on-enter="addTagIfOnlyOneLeft()" tabindex="10" /></p>
+                <p><input ng-model="availableTagQuery" on-enter="addTagIfOnlyOneLeft()" tabindex="10" /></p>
 
-            <a ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="addTag(tag)" class="btn tag">{{ tag.name }}</a>
+                <a ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="addTag(tag)" class="btn tag">{{ tag.name }}</a>
+            </div>
+        </div>
+
+        <div class="span8">
+            <div class="padded">
+                <h1>{{ file.name }}</h1>
+
+                <h2>Information</h2>
+
+                <p><strong>Path:</strong> {{ file.path }}</p>
+
+                <h2>Current tags</h2>
+
+                <a ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)" class="btn btn-success tag">{{ tag.name }}</a>
+
+                <h2>Create new tag</h2>
+
+                <form>
+                    <label for="tagName">Name:</label>
+                    <input id="tagName" ng-model="newTagName" tabindex="11" />
+                    <button ng-click="createNewTag()">Create</button>
+                </form>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="span8">
-        <div class="padded">
-            <h1>{{ file.name }}</h1>
-
-            <h2>Information</h2>
-
-            <p><strong>Path:</strong> {{ file.path }}</p>
-
-            <h2>Current tags</h2>
-
-            <a ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)" class="btn btn-success tag">{{ tag.name }}</a>
-
-            <h2>Create new tag</h2>
-
-            <form>
-                <label for="tagName">Name:</label>
-                <input id="tagName" ng-model="newTagName" tabindex="11" />
-                <button ng-click="createNewTag()">Create</button>
-            </form>
-        </div>
-    </div>
+<div ng-show="fileNotFound">
+    <h1>File not found :(</h1>
 </div>

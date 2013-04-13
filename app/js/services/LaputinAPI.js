@@ -3,6 +3,12 @@ function LaputinAPI(http) {
         http.get("/tags").success(callbackSuccess);
     };
 
+    this.getFile = function (hash, callback) {
+        http.get("/files/" + hash).
+            success(function (data) { callback(null, data); }).
+            error(function (data, status) { callback(new Error(status), null); });
+    };
+
     this.getFiles = function (callbackSuccess) {
         http.get("/files").success(callbackSuccess);
     };

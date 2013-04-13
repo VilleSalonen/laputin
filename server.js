@@ -110,6 +110,19 @@ function startServer() {
         res.send(library.getFiles());
     });
 
+    app.get("/files/:hash", function (req, res) {
+        var hash = req.params.hash;
+        var file = _.find(library.getFiles(), function (candidate) {
+            return candidate.hash === hash;
+        })
+
+        if (file) {
+            res.send(200, file);
+        } else {
+            res.send(404, "Could not find file.");
+        }
+    });
+
     app.post("/files/:hash/tags", function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
