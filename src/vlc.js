@@ -45,7 +45,7 @@ VLC.prototype._writeVideosToPlaylist = function (selectedVideos, callback) {
 };
 
 VLC.prototype._openPlayer = function () {
-    this._child = child_process.spawn(this._binaryPath, [this._playlistPath]);
+    this._child = child_process.exec(this._binaryPath + " " + this._playlistPath);
 };
 
 exports.VLC = VLC;
