@@ -1,5 +1,6 @@
 .idea
 node_modules
+tmp
 
 # Mac files
 .DS_Store
