@@ -11,7 +11,7 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
 
     function refresh() {
         LaputinAPI.getFile($routeParams.fileId, function (err, file) {
-            if (err.message === "404") {
+            if (err && err.message === "404") {
                 $scope.fileNotFound = true;
                 return;
             }
