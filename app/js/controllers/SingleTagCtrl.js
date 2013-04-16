@@ -11,6 +11,10 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
         $scope.tag = _.find(data, function (tag) {
             return tag.id === tagId;
         });
+
+        _.each($scope.tag.files, function (file) {
+            file.checked = false;
+        });
     });
 
     $scope.removeFile = function (file) {
@@ -36,7 +40,7 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
 
     $scope.checkFiles = function (event) {
         _.each($scope.tag.files, function (file) {
-            file.checked = event.srcElement.checked;
+            file.checked = event.originalEvent.srcElement.checked;
         });
     };
 
