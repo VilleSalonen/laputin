@@ -1,20 +1,23 @@
 <button class="btn btn-large btn-primary open-button pull-right" type="button" ng-click="open()" tabindex="12">Open files</button>
 
-<div class="padded">
-    <h1 ng-show="!editing" ng-click="edit()">{{ tag.name }}</h1>
-    <div ng-show="editing">
-        <input type="text" ng-model="tag.name" />
-        <button ng-click="save()">Save</button>
-    </div>
-</div>
-
 <div class="span4">
     <div class="padded">
+        <h2>Available tags:</h2>
+
+        <p><input ng-model="availableTagQuery" tabindex="10" /></p>
+
+        <a ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'" ng-click="linkSelectedToTag(tag)" class="btn tag">{{ tag.name }}</a>
     </div>
 </div>
 
 <div class="span8">
     <div class="padded">
+        <h1 ng-show="!editing" ng-click="edit()">{{ tag.name }}</h1>
+        <div ng-show="editing">
+            <input type="text" ng-model="tag.name" />
+            <button ng-click="save()">Save</button>
+        </div>
+
         <p>
             <label class="checkbox">
                 <input type="checkbox" ng-click="checkFiles($event)" />
@@ -27,17 +30,10 @@
                 <label class="checkbox">
                     <input type="checkbox" ng-model="file.checked" />
                     {{ file.path }}
-                    [<a ng-click="removeFile(file)">Remove</a>]
                 </label>
             </li>
         </ul>
 
         <button ng-click="removeTagFromSelectedFiles()">Remove {{ tag.name }} from selected files</button>
-
-        <h2>Available tags:</h2>
-
-        <p><input ng-model="availableTagQuery" tabindex="10" /></p>
-
-        <span ng-repeat="tag in tags | filter:tagNameMatches" ng-click="linkSelectedToTag(tag)">{{ tag.name }}, </span>
     </div>
 </div>

@@ -17,14 +17,6 @@ function SingleTagCtrl($scope, $routeParams, LaputinAPI) {
         });
     });
 
-    $scope.removeFile = function (file) {
-        var idx = $scope.tag.files.indexOf(file);
-        if (idx !== -1) {
-            $scope.tag.files.splice(idx, 1);
-            LaputinAPI.unlinkTagFromFile($scope.tag, file);
-        }
-    };
-
     $scope.open = function () {
         LaputinAPI.openTags([$scope.tag.name]);
     };
