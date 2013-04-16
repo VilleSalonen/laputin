@@ -26,8 +26,12 @@ function LaputinAPI(http) {
         http.post("/open/tags/", { selectedTags: selectedTags });
     };
 
-    this.linkTagToFile = function (tag, file) {
-        http.post("files/" + file.hash + "/tags", { selectedTags: [tag] });
+    this.linkTagToFile = function (tag, file, callback) {
+        http.post("files/" + file.hash + "/tags", { selectedTags: [tag] })
+            .success(function () { callback(null); })
+            .error(function (data, status) {
+                callback(new Error("Linking tag " + tag.name + " to file " + file.name + " failed. Status: " + status));
+            });
     };
 
     this.unlinkTagFromFile = function (tag, file) {

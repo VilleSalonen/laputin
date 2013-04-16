@@ -37,7 +37,15 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
     $scope.addTag = function (tag) {
         $scope.file.tags.push(tag);
         updateTagList();
-        LaputinAPI.linkTagToFile(tag, $scope.file);
+        LaputinAPI.linkTagToFile(tag, $scope.file, function (err) {
+            if (err) {
+                var idx = $scope.file.tags.indexOf(tag);
+                if (idx !== -1) {
+                    $scope.file.tags.splice(idx, 1);
+                }
+                alert(err);
+            }
+        });
         $scope.availableTagQuery = "";
     };
 
