@@ -43,6 +43,7 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
                 if (idx !== -1) {
                     $scope.file.tags.splice(idx, 1);
                 }
+                updateTagList();
                 alert(err);
             }
         });
