@@ -4,6 +4,7 @@ function FilesCtrl($scope, LaputinAPI) {
     $scope.availableTagQuery = "";
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
+    $scope.advancedTagFiltering = false;
 
     var allTags = [];
     var allFiles = [];
@@ -11,6 +12,9 @@ function FilesCtrl($scope, LaputinAPI) {
     LaputinAPI.getTags(function (data) {
         var tagsFromAPI = [];
         _.each(data, function (tag) {
+            tag.andOperator = false;
+            tag.orOperator = false;
+            tag.notOperator = false;
             tag.selected = false;
             tagsFromAPI.push(tag);
         });
@@ -36,6 +40,9 @@ function FilesCtrl($scope, LaputinAPI) {
 
     $scope.toggleSelection = function (tag) {
         tag.selected = !tag.selected;
+        if (tag.selected) {
+            tag.andOperator = true;
+        }
 
         var hashesOfSelectedVideos = [];
 
@@ -101,6 +108,24 @@ function FilesCtrl($scope, LaputinAPI) {
 
     $scope.tagNameMatches = function (tag) {
         return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
+    };
+
+    $scope.activateAnd = function (tag) {
+        tag.andOperator = true;
+        tag.orOperator = false;
+        tag.notOperator = false;
+    };
+
+    $scope.activateOr = function (tag) {
+        tag.andOperator = false;
+        tag.orOperator = true;
+        tag.notOperator = false;
+    };
+
+    $scope.activateNot = function (tag) {
+        tag.andOperator = false;
+        tag.orOperator = false;
+        tag.notOperator = true;
     };
 }
 

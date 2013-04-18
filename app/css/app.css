@@ -49,6 +49,10 @@ body {
     margin: 3px;
 }
 
+.btn-group > .tag {
+    margin: 0px;
+}
+
 .full-width {
     width: 100%;
 }
