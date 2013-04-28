@@ -95,6 +95,26 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
             $scope.availableTagQuery = "";
         }
     };
+
+
+    $scope.addTagFromSearch = function () {
+        var tag = _.find($scope.tags, function (tag) {
+            return tag.name === $scope.tagName;
+        });
+
+        if (tag) {
+            $scope.addTag(tag);
+            $scope.tagName = "";
+        }
+    };
+
+
+    $scope.tagName = "";
+    $scope.tagSearchFn = function() {
+        return $.map($scope.tags, function(candidate) {
+            return candidate.name;
+        });
+    };
 }
 
 module.exports = SingleFileCtrl;
