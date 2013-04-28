@@ -18,18 +18,18 @@ function AppCtrl($scope, $location, LaputinAPI) {
     };
 
     $scope.typeahead = [];
-    var allTags = [];
-    var allFiles = [];
+    $scope.allTags = [];
+    $scope.allFiles = [];
     LaputinAPI.getTags(function (tags) {
         $scope.typeahead = [];
-        allTags = tags;
+        $scope.allTags = tags;
         _.each(tags, function (tag) {
             tag.type = "Tag";
             $scope.typeahead.push(tag);
         });
 
         LaputinAPI.getFiles(function (files) {
-            allFiles = files;
+            $scope.allFiles = _.sortBy(files, function (file) { return file.path });;
             _.each(files, function (file) {
                 file.type = "File";
                 $scope.typeahead.push(file);
@@ -51,7 +51,7 @@ function AppCtrl($scope, $location, LaputinAPI) {
     $scope.goToSearchResult = function (e) {
         if ($scope.typeaheadValue.indexOf("File: ") === 0) {
             var name = $scope.typeaheadValue.replace("File: ", "");
-            var matchingFile = _.find(allFiles, function (file) {
+            var matchingFile = _.find($scope.allFiles, function (file) {
                 return file.name === name;
             });
 
@@ -62,7 +62,7 @@ function AppCtrl($scope, $location, LaputinAPI) {
             }
         } else {
             var name = $scope.typeaheadValue.replace("Tag: ", "");
-            var matchingTag = _.find(allTags, function (tag) {
+            var matchingTag = _.find($scope.allTags, function (tag) {
                 return tag.name === name;
             });
 

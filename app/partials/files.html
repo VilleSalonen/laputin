@@ -16,22 +16,25 @@
                     <strong>Tags:</strong>
 
                     <div ng-hide="advancedTagFiltering">
-                        <a ng-repeat="tag in tags | filter:isTagSelected | orderBy:'name'"
+                        <a ng-repeat="tag in selectedTags | orderBy:'name'"
                            ng-click="toggleSelection(tag)"
-                           class="btn tag btn-success">{{ tag.name }}</a>
+                           class="btn tag btn-success">
+                            {{ tag.name }}</a>
                     </div>
                     <div ng-show="advancedTagFiltering">
-                        <div class="btn-group" ng-repeat="tag in tags | filter:isTagSelected | orderBy:'name'">
-                            <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
-                            <a class="btn btn-success tag" ng-click="activateAnd(tag)">
-                                <span ng-show="tag.andOperator">{{ tag.name }}</span><span ng-hide="tag.andOperator">AND</span>
-                            </a>
-                            <a class="btn btn-info tag" ng-click="activateOr(tag)">
-                                <span ng-show="tag.orOperator">{{ tag.name }}</span><span ng-hide="tag.orOperator">OR</span>
-                            </a>
-                            <a class="btn btn-inverse tag" ng-click="activateNot(tag)">
-                                <span ng-show="tag.notOperator">{{ tag.name }}</span><span ng-hide="tag.notOperator">NOT</span>
-                            </a>
+                        <div ng-repeat="tag in tags | filter:isTagSelected | orderBy:'name'">
+                            <div ng-controller="FilterTagCtrl" class="btn-group">
+                                <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
+                                <a class="btn btn-success tag" ng-click="activateAnd(tag)">
+                                    <span ng-show="tag.andOperator">{{ tag.name }}</span><span ng-hide="tag.andOperator">AND</span>
+                                </a>
+                                <a class="btn btn-info tag" ng-click="activateOr(tag)">
+                                    <span ng-show="tag.orOperator">{{ tag.name }}</span><span ng-hide="tag.orOperator">OR</span>
+                                </a>
+                                <a class="btn btn-inverse tag" ng-click="activateNot(tag)">
+                                    <span ng-show="tag.notOperator">{{ tag.name }}</span><span ng-hide="tag.notOperator">NOT</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </p>
