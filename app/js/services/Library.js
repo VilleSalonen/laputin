@@ -14,6 +14,10 @@ Library.prototype.filter = function (allTags, allFiles) {
             someTagsSelected: false };
     }
 
+    var tagsWithAnd = _.filter(allTags, function (tag) { return tag.andOperator; });
+    var tagsWithOr = _.filter(allTags, function (tag) { return tag.orOperator; });
+    var tagsWithNot = _.filter(allTags, function (tag) { return tag.notOperator; });
+
     var hashesOfSelectedVideos = [];
     _.each(allTags, function (tag) {
         if (tag.selected) {
@@ -22,10 +26,26 @@ Library.prototype.filter = function (allTags, allFiles) {
             }));
         }
     });
-    var intersection = _.intersection.apply(_, hashesOfSelectedVideos);
+    var foo = _.union.apply(_, hashesOfSelectedVideos);
     var matchingFiles = _.filter(allFiles, function (file) {
-        return _.contains(intersection, file.hash);
+        return _.contains(foo, file.hash);
     });
+
+
+
+    var tagNamesWithAnd = _.pluck(tagsWithAnd, "name");
+    var tagNamesWithOr = _.pluck(tagsWithOr, "name");
+    var tagNamesWithNot = _.pluck(tagsWithNot, "name");
+
+    matchingFiles = _.filter(matchingFiles, function (file) {
+        var tagNames = _.pluck(file.tags, "name");
+        return _.intersection(tagNames, tagNamesWithAnd).length === tagNamesWithAnd.length
+            && (tagNamesWithOr.length === 0 || _.intersection(tagNames, tagNamesWithOr).length > 0)
+            && _.intersection(tagNames, tagNamesWithNot).length === 0;
+    });
+
+
+
 
     if (matchingFiles.length !== 0) {
         var selectedFilesHashes = _.map(matchingFiles, function (file) {

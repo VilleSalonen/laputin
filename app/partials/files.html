@@ -22,7 +22,7 @@
                             {{ tag.name }}</a>
                     </div>
                     <div ng-show="advancedTagFiltering">
-                        <div ng-repeat="tag in tags | filter:isTagSelected | orderBy:'name'">
+                        <div ng-repeat="tag in selectedTags | orderBy:'name'">
                             <div ng-controller="FilterTagCtrl" class="btn-group">
                                 <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
                                 <a class="btn btn-success tag" ng-click="activateAnd(tag)">
