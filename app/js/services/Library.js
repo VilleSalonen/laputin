@@ -6,7 +6,7 @@ function Library() {
 Library.prototype.filter = function (allTags, allFiles) {
     var self = this;
 
-    var selectedTags = _.filter(allTags, function (tag) { return tag.selected; });
+    var selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
     if (selectedTags.length == 0) {
         return { matchingFiles: allFiles,
             availableTags: allTags,
@@ -56,7 +56,7 @@ Library.prototype.getAvailableTagsOfMatchingFiles = function (matchingFiles, all
     var tagNames = _.pluck(unique, "name");
 
     return _.filter(allTags, function (tag) {
-        return tag.selected == false
+        return tag.operator === ""
             && _.contains(tagNames, tag.name);
     });
 };

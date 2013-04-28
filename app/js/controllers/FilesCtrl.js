@@ -13,7 +13,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         var tagsFromAPI = [];
         _.each(data, function (tag) {
             tag.operator = "";
-            tag.selected = false;
             tagsFromAPI.push(tag);
         });
         allTags = tagsFromAPI;
@@ -28,7 +27,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.openFiles = function () {
         var selectedTags = [];
         _.each(allTags, function (tag) {
-            if (tag.selected) {
+            if (tag.operator !== "") {
                 selectedTags.push(tag.name);
             }
         });
@@ -37,12 +36,10 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
     $scope.toggleSelection = function (tag) {
-        tag.operator = "";
-
-        tag.selected = !tag.selected;
-        if (tag.selected) {
+        if (tag.operator === "")
             tag.operator = "AND";
-        }
+        else
+            tag.operator = "";
 
         updateFilteredFiles();
     };
@@ -62,7 +59,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
     $scope.removeTagSelections = function () {
         _.each(allTags, function (tag) {
-            tag.selected = false;
+            tag.operator = "";
         });
         $scope.someTagsSelected = false;
         $scope.selectedFiles = allFiles;
@@ -70,11 +67,11 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
     $scope.isTagSelected = function (tag) {
-        return tag.selected;
+        return tag.operator !== "";
     };
 
     $scope.isTagUnselected = function (tag) {
-        return !tag.selected;
+        return tag.operator === "";
     };
 
     $scope.tagNameMatches = function (tag) {
