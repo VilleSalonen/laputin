@@ -9,6 +9,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     var allTags = [];
     var allFiles = [];
 
+    $scope.loadingTags = true;
     LaputinAPI.getTags(function (data) {
         var tagsFromAPI = [];
         _.each(data, function (tag) {
@@ -17,11 +18,14 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         });
         allTags = tagsFromAPI;
         $scope.tags = allTags;
+        $scope.loadingTags = false;
     });
 
+    $scope.loadingFiles = true;
     LaputinAPI.getFiles(function (data) {
         allFiles = _.sortBy(data, function (file) { return file.path });
         $scope.selectedFiles = allFiles;
+        $scope.loadingFiles = false;
     });
 
     $scope.openFiles = function () {

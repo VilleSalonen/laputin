@@ -5,15 +5,26 @@
         <div class="padded">
             <p><input ng-model="availableTagQuery" tabindex="10" placeholder="Filter tags" class="full-width" /></p>
 
-            <a ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="toggleSelection(tag)" class="btn tag">{{ tag.name }}</a>
+            <div ng-show="loadingTags">
+                <i class="icon-spinner icon-spin"></i>
+                <span>Loading tags...</span>
+            </div>
+            <div ng-hide="loadingTags">
+                <a ng-repeat="tag in tags | filter:tagNameMatches | filter:isTagUnselected | orderBy:'name'" ng-click="toggleSelection(tag)" class="btn tag">{{ tag.name }}</a>
+            </div>
         </div>
     </div>
 
     <div class="span8">
         <div class="padded">
-            <div ng-show="someTagsSelected">
-                <p>
-                    <strong>Tags:</strong>
+            <div ng-show="loadingFiles">
+                <i class="icon-spinner icon-spin"></i>
+                <span>Loading files...</span>
+            </div>
+            <div ng-hide="loadingFiles">
+                <div ng-show="someTagsSelected">
+                    <p>
+                        <strong>Tags:</strong>
 
                     <div ng-hide="advancedTagFiltering">
                         <a ng-repeat="tag in selectedTags | orderBy:'name'"
@@ -37,21 +48,22 @@
                             </div>
                         </div>
                     </div>
-                </p>
-                <label class="checkbox">
-                    <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
-                </label>
-                <p></p><a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
-                <p>{{ selectedFiles.length }} matching files found.</p>
-            </div>
-            <div ng-hide="someTagsSelected">
-                <p>You can filter your files by selecting tags from the left menu.</p>
-                <p>Altogether library contains {{ selectedFiles.length }} files.</p>
-            </div>
+                    </p>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
+                    </label>
+                    <p></p><a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
+                    <p>{{ selectedFiles.length }} matching files found.</p>
+                </div>
+                <div ng-hide="someTagsSelected">
+                    <p>You can filter your files by selecting tags from the left menu.</p>
+                    <p>Altogether library contains {{ selectedFiles.length }} files.</p>
+                </div>
 
-            <ul>
-                <li ng-repeat="file in selectedFiles | orderBy:'path'"><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></li>
-            </ul>
+                <ul>
+                    <li ng-repeat="file in selectedFiles | orderBy:'path'"><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
