@@ -36,8 +36,10 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
     $scope.toggleSelection = function (tag) {
-        if (tag.operator === "")
+        if (tag.operator === "") {
             tag.operator = "AND";
+            $scope.availableTagQuery = "";
+        }
         else
             tag.operator = "";
 
