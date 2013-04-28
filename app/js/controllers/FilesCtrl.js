@@ -48,22 +48,21 @@ function FilesCtrl($scope, LaputinAPI, Library) {
             tag.andOperator = true;
         }
 
-        var result = Library.filter(allTags, allFiles);
-
-        $scope.someTagsSelected = result.someTagsSelected;
-        $scope.selectedFiles = result.matchingFiles;
-        $scope.tags = result.availableTags;
-        $scope.selectedTags = result.selectedTags;
+        updateFilteredFiles();
     };
 
     $scope.$on("advancedFilterChange", function () {
+        updateFilteredFiles();
+    });
+
+    function updateFilteredFiles() {
         var result = Library.filter(allTags, allFiles);
 
         $scope.someTagsSelected = result.someTagsSelected;
         $scope.selectedFiles = result.matchingFiles;
         $scope.tags = result.availableTags;
         $scope.selectedTags = result.selectedTags;
-    });
+    }
 
     $scope.removeTagSelections = function () {
         _.each(allTags, function (tag) {
