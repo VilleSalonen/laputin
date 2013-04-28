@@ -26,7 +26,9 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
                     tagsFromAPI.push(tag);
                 });
 
-                allTags = tagsFromAPI;
+                allTags = _.sortBy(tagsFromAPI, function (tag) {
+                    return tag.name;
+                });
                 updateTagList();
             });
         });
