@@ -26,13 +26,13 @@
                             <div ng-controller="FilterTagCtrl" class="btn-group">
                                 <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
                                 <a class="btn btn-success tag" ng-click="activateAnd(tag)">
-                                    <span ng-show="tag.andOperator">{{ tag.name }}</span><span ng-hide="tag.andOperator">AND</span>
+                                    <span ng-show="andOperatorOn()">{{ tag.name }}</span><span ng-hide="andOperatorOff()">AND</span>
                                 </a>
                                 <a class="btn btn-info tag" ng-click="activateOr(tag)">
-                                    <span ng-show="tag.orOperator">{{ tag.name }}</span><span ng-hide="tag.orOperator">OR</span>
+                                    <span ng-show="orOperatorOn()">{{ tag.name }}</span><span ng-hide="orOperatorOff()">OR</span>
                                 </a>
                                 <a class="btn btn-inverse tag" ng-click="activateNot(tag)">
-                                    <span ng-show="tag.notOperator">{{ tag.name }}</span><span ng-hide="tag.notOperator">NOT</span>
+                                    <span ng-show="notOperatorOn()">{{ tag.name }}</span><span ng-hide="notOperatorOff()">NOT</span>
                                 </a>
                             </div>
                         </div>

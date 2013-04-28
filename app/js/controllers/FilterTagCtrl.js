@@ -1,22 +1,25 @@
 function FilterTagCtrl($scope) {
+    $scope.andOperatorOn = function () { return $scope.tag.operator === "AND"; };
+    $scope.andOperatorOff = function () { return $scope.tag.operator === "AND"; };
+
+    $scope.orOperatorOn = function () { return $scope.tag.operator === "OR"; };
+    $scope.orOperatorOff = function () { return $scope.tag.operator === "OR"; };
+
+    $scope.notOperatorOn = function () { return $scope.tag.operator === "NOT"; };
+    $scope.notOperatorOff = function () { return $scope.tag.operator === "NOT"; };
+
     $scope.activateAnd = function () {
-        $scope.tag.andOperator = true;
-        $scope.tag.orOperator = false;
-        $scope.tag.notOperator = false;
+        $scope.tag.operator = "AND";
         emitChange();
     };
 
     $scope.activateOr = function () {
-        $scope.tag.andOperator = false;
-        $scope.tag.orOperator = true;
-        $scope.tag.notOperator = false;
+        $scope.tag.operator = "OR";
         emitChange();
     };
 
     $scope.activateNot = function () {
-        $scope.tag.andOperator = false;
-        $scope.tag.orOperator = false;
-        $scope.tag.notOperator = true;
+        $scope.tag.operator = "NOT";
         emitChange();
     };
 

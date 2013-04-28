@@ -12,9 +12,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     LaputinAPI.getTags(function (data) {
         var tagsFromAPI = [];
         _.each(data, function (tag) {
-            tag.andOperator = false;
-            tag.orOperator = false;
-            tag.notOperator = false;
+            tag.operator = "";
             tag.selected = false;
             tagsFromAPI.push(tag);
         });
@@ -39,13 +37,11 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
     $scope.toggleSelection = function (tag) {
-        tag.andOperator = false;
-        tag.orOperator = false;
-        tag.notOperator = false;
+        tag.operator = "";
 
         tag.selected = !tag.selected;
         if (tag.selected) {
-            tag.andOperator = true;
+            tag.operator = "AND";
         }
 
         updateFilteredFiles();

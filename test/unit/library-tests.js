@@ -13,33 +13,36 @@ describe('Library', function() {
 
 
         it('no selected tags should return all tags', function() {
-            var tags = [{ selected: false, andOperator: false, orOperator: false, notOperator: false }];
+            var tags = [{ selected: false, operator: "" }];
             var files = [{ hash: "123" }];
 
             var result = library.filter(tags, files);
 
-            result.should.eql({ matchingFiles: files, availableTags: tags, selectedTags: [], someTagsSelected: false });
+            result.should.eql({ matchingFiles: files,
+                                availableTags: tags,
+                                selectedTags: [],
+                                someTagsSelected: false });
         });
 
 
         it('selected tag but no matching file should return no tags or files', function() {
-            var tags = [{ name: "Some tag", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [] }];
+            var tags = [{ name: "Some tag", selected: true, operator: "AND", files: [] }];
             var files = [{ hash: "123" }];
 
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [],
                                 availableTags: [],
-                                selectedTags: [{ name: "Some tag", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [] }],
+                                selectedTags: [{ name: "Some tag", selected: true, operator: "AND", files: [] }],
                                 someTagsSelected: true });
         });
 
 
         it('selected tag and matching file', function() {
             var tags = [
-                { name: "Some tag", selected: false, andOperator: false, orOperator: false, notOperator: false, files: [{ hash: "123" }] },
-                { name: "Matching tag", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [{ hash: "456" }] },
-                { name: "Available tag", selected: false, andOperator: false, orOperator: false, notOperator: false, files: [{ hash: "456" }]}];
+                { name: "Some tag", selected: false, operator: "", files: [{ hash: "123" }] },
+                { name: "Matching tag", selected: true, operator: "AND", files: [{ hash: "456" }] },
+                { name: "Available tag", selected: false, operator: "", files: [{ hash: "456" }]}];
             var files = [
                 { hash: "123", tags: [{ name: "Some tag" }] },
                 { hash: "456", tags: [{ name: "Matching tag" }, { name: "Available tag"}] }];
@@ -47,16 +50,15 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "456", tags: [{ name: "Matching tag" }, { name: "Available tag"}] }],
-                                availableTags: [{ name: "Available tag", selected: false, andOperator: false, orOperator: false, notOperator: false, files: [{ hash: "456" }]}],
-                                selectedTags: [{ name: "Matching tag", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [{ hash: "456" }] }],
+                                availableTags: [{ name: "Available tag", selected: false, operator: "", files: [{ hash: "456" }]}],
+                                selectedTags: [{ name: "Matching tag", selected: true, operator: "AND", files: [{ hash: "456" }] }],
                                 someTagsSelected: true });
         });
 
 
         it('selected AND tags should only match files with all tags', function() {
             var tags = [
-                { name: "Common", selected: true, andOperator: true, orOperator: false, notOperator: false,
-                    files: [{ hash: "123" }, { hash: "456" }] }];
+                { name: "Common", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] }];
             var files = [
                 { hash: "123", tags: [{ name: "Common" }] },
                 { hash: "456", tags: [{ name: "Common" }] },
@@ -66,15 +68,15 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Common" }] }, { hash: "456", tags: [{ name: "Common" }] }],
                 availableTags: [],
-                selectedTags: [{ name: "Common", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [{ hash: "123" }, { hash: "456" }] }],
+                selectedTags: [{ name: "Common", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] }],
                 someTagsSelected: true });
         });
 
 
         it('selected OR tags should only match files with any of the tags', function() {
             var tags = [
-                { name: "One", selected: true, andOperator: false, orOperator: true, notOperator: false, files: [{ hash: "123" }] },
-                { name: "Other", selected: true, andOperator: false, orOperator: true, notOperator: false, files: [{ hash: "456" }] }];
+                { name: "One", selected: true, operator: "OR", files: [{ hash: "123" }] },
+                { name: "Other", selected: true, operator: "OR", files: [{ hash: "456" }] }];
             var files = [
                 { hash: "123", tags: [{ name: "One" }] },
                 { hash: "456", tags: [{ name: "Other" }] },
@@ -84,16 +86,16 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "One" }] }, { hash: "456", tags: [{ name: "Other" }] }],
                 availableTags: [],
-                selectedTags: [{ name: "One", selected: true, andOperator: false, orOperator: true, notOperator: false, files: [{ hash: "123" }] },
-                    { name: "Other", selected: true, andOperator: false, orOperator: true, notOperator: false, files: [{ hash: "456" }] }],
+                selectedTags: [{ name: "One", selected: true, operator: "OR", files: [{ hash: "123" }] },
+                               { name: "Other", selected: true, operator: "OR", files: [{ hash: "456" }] }],
                 someTagsSelected: true });
         });
 
 
         it('files with specified NOT tags should not be matched', function() {
             var tags = [
-                { name: "Wanted", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [{ hash: "123" }, { hash: "456" }] },
-                { name: "Not wanted", selected: true, andOperator: false, orOperator: false, notOperator: true, files: [{ hash: "456" }] }];
+                { name: "Wanted", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] },
+                { name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }];
             var files = [
                 { hash: "123", tags: [{ name: "Wanted" }] },
                 { hash: "456", tags: [{ name: "Wanted" }, { name: "Not wanted" }] }];
@@ -102,16 +104,16 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Wanted" }] }],
                 availableTags: [],
-                selectedTags: [{ name: "Wanted", selected: true, andOperator: true, orOperator: false, notOperator: false, files: [{ hash: "123" }, { hash: "456" }] },
-                    { name: "Not wanted", selected: true, andOperator: false, orOperator: false, notOperator: true, files: [{ hash: "456" }] }],
+                selectedTags: [{ name: "Wanted", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] },
+                               { name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }],
                 someTagsSelected: true });
         });
 
 
         it('files with unselected tags should be included when searching with NOT operators', function() {
             var tags = [
-                { name: "Unselected", selected: false, andOperator: false, orOperator: false, notOperator: false, files: [{ hash: "123" }] },
-                { name: "Not wanted", selected: true, andOperator: false, orOperator: false, notOperator: true, files: [{ hash: "456" }] }];
+                { name: "Unselected", selected: false, operator: "", files: [{ hash: "123" }] },
+                { name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }];
             var files = [
                 { hash: "123", tags: [{ name: "Unselected" }] },
                 { hash: "456", tags: [{ name: "Wanted" }, { name: "Not wanted" }] }];
@@ -119,10 +121,9 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Unselected" }] }],
-                availableTags: [{ name: "Unselected", selected: false, andOperator: false, orOperator: false, notOperator: false, files: [{ hash: "123" }] }],
-                selectedTags: [{ name: "Not wanted", selected: true, andOperator: false, orOperator: false, notOperator: true, files: [{ hash: "456" }] }],
+                availableTags: [{ name: "Unselected", selected: false, operator: "", files: [{ hash: "123" }] }],
+                selectedTags: [{ name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }],
                 someTagsSelected: true });
         });
-
     });
 });

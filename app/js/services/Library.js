@@ -14,9 +14,9 @@ Library.prototype.filter = function (allTags, allFiles) {
             someTagsSelected: false };
     }
 
-    var tagNamesWithAnd = _.pluck(_.filter(allTags, function (tag) { return tag.andOperator; }), "name");
-    var tagNamesWithOr = _.pluck(_.filter(allTags, function (tag) { return tag.orOperator; }), "name");
-    var tagNamesWithNot = _.pluck(_.filter(allTags, function (tag) { return tag.notOperator; }), "name");
+    var tagNamesWithAnd = _.pluck(_.filter(allTags, function (tag) { return tag.operator === "AND"; }), "name");
+    var tagNamesWithOr = _.pluck(_.filter(allTags, function (tag) { return tag.operator === "OR"; }), "name");
+    var tagNamesWithNot = _.pluck(_.filter(allTags, function (tag) { return tag.operator === "NOT"; }), "name");
 
     var matchingFiles = _.filter(allFiles, function (file) {
         return self.fileMatchesOperators(file, tagNamesWithAnd, tagNamesWithOr, tagNamesWithNot);
