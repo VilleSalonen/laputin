@@ -54,7 +54,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     function updateFilteredFiles() {
         var result = Library.filter(allTags, allFiles);
 
-        $scope.someTagsSelected = result.someTagsSelected;
+        $scope.someTagsSelected = result.selectedTags.length > 0;
         $scope.selectedFiles = result.matchingFiles;
         $scope.tags = result.availableTags;
         $scope.selectedTags = result.selectedTags;

@@ -8,7 +8,9 @@ describe('Library', function() {
         it('empty tag list should not have matching files or available tags', function() {
             var result = library.filter([], []);
 
-            result.should.eql({ matchingFiles: [], availableTags: [], selectedTags: [], someTagsSelected: false });
+            result.should.eql({ matchingFiles: [],
+                                availableTags: [],
+                                selectedTags: [] });
         });
 
 
@@ -20,8 +22,7 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: files,
                                 availableTags: tags,
-                                selectedTags: [],
-                                someTagsSelected: false });
+                                selectedTags: [] });
         });
 
 
@@ -33,8 +34,7 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [],
                                 availableTags: [],
-                                selectedTags: [{ name: "Some tag", selected: true, operator: "AND", files: [] }],
-                                someTagsSelected: true });
+                                selectedTags: [{ name: "Some tag", selected: true, operator: "AND", files: [] }] });
         });
 
 
@@ -51,8 +51,7 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [{ hash: "456", tags: [{ name: "Matching tag" }, { name: "Available tag"}] }],
                                 availableTags: [{ name: "Available tag", selected: false, operator: "", files: [{ hash: "456" }]}],
-                                selectedTags: [{ name: "Matching tag", selected: true, operator: "AND", files: [{ hash: "456" }] }],
-                                someTagsSelected: true });
+                                selectedTags: [{ name: "Matching tag", selected: true, operator: "AND", files: [{ hash: "456" }] }] });
         });
 
 
@@ -68,8 +67,7 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Common" }] }, { hash: "456", tags: [{ name: "Common" }] }],
                 availableTags: [],
-                selectedTags: [{ name: "Common", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] }],
-                someTagsSelected: true });
+                selectedTags: [{ name: "Common", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] }] });
         });
 
 
@@ -87,8 +85,7 @@ describe('Library', function() {
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "One" }] }, { hash: "456", tags: [{ name: "Other" }] }],
                 availableTags: [],
                 selectedTags: [{ name: "One", selected: true, operator: "OR", files: [{ hash: "123" }] },
-                               { name: "Other", selected: true, operator: "OR", files: [{ hash: "456" }] }],
-                someTagsSelected: true });
+                               { name: "Other", selected: true, operator: "OR", files: [{ hash: "456" }] }] });
         });
 
 
@@ -105,8 +102,7 @@ describe('Library', function() {
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Wanted" }] }],
                 availableTags: [],
                 selectedTags: [{ name: "Wanted", selected: true, operator: "AND", files: [{ hash: "123" }, { hash: "456" }] },
-                               { name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }],
-                someTagsSelected: true });
+                               { name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }] });
         });
 
 
@@ -122,8 +118,7 @@ describe('Library', function() {
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Unselected" }] }],
                 availableTags: [{ name: "Unselected", selected: false, operator: "", files: [{ hash: "123" }] }],
-                selectedTags: [{ name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }],
-                someTagsSelected: true });
+                selectedTags: [{ name: "Not wanted", selected: true, operator: "NOT", files: [{ hash: "456" }] }] });
         });
     });
 });

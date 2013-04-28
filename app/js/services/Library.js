@@ -10,8 +10,7 @@ Library.prototype.filter = function (allTags, allFiles) {
     if (selectedTags.length == 0) {
         return { matchingFiles: allFiles,
             availableTags: allTags,
-            selectedTags: [],
-            someTagsSelected: false };
+            selectedTags: [] };
     }
 
     var tagNamesWithAnd = _.pluck(_.filter(allTags, function (tag) { return tag.operator === "AND"; }), "name");
@@ -24,8 +23,7 @@ Library.prototype.filter = function (allTags, allFiles) {
 
     return { matchingFiles: matchingFiles,
              availableTags: this.getAvailableTagsOfMatchingFiles(matchingFiles, allTags),
-             selectedTags: selectedTags,
-             someTagsSelected: true };
+             selectedTags: selectedTags };
 };
 
 Library.prototype.fileMatchesOperators = function (file, tagNamesWithAnd, tagNamesWithOr, tagNamesWithNot) {
