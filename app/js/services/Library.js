@@ -4,51 +4,63 @@ function Library() {
 }
 
 Library.prototype.filter = function (allTags, allFiles) {
-    var availableTags = [];
+    var self = this;
 
     var selectedTags = _.filter(allTags, function (tag) { return tag.selected; });
     if (selectedTags.length == 0) {
         return { matchingFiles: allFiles,
             availableTags: allTags,
-            selectedTags: selectedTags,
+            selectedTags: [],
             someTagsSelected: false };
     }
 
-    var tagsWithAnd = _.filter(allTags, function (tag) { return tag.andOperator; });
-    var tagsWithOr = _.filter(allTags, function (tag) { return tag.orOperator; });
-    var tagsWithNot = _.filter(allTags, function (tag) { return tag.notOperator; });
-
-    var tagNamesWithAnd = _.pluck(tagsWithAnd, "name");
-    var tagNamesWithOr = _.pluck(tagsWithOr, "name");
-    var tagNamesWithNot = _.pluck(tagsWithNot, "name");
+    var tagNamesWithAnd = _.pluck(_.filter(allTags, function (tag) { return tag.andOperator; }), "name");
+    var tagNamesWithOr = _.pluck(_.filter(allTags, function (tag) { return tag.orOperator; }), "name");
+    var tagNamesWithNot = _.pluck(_.filter(allTags, function (tag) { return tag.notOperator; }), "name");
 
     var matchingFiles = _.filter(allFiles, function (file) {
-        var tagNames = _.pluck(file.tags, "name");
-        return _.intersection(tagNames, tagNamesWithAnd).length === tagNamesWithAnd.length
-            && (tagNamesWithOr.length === 0 || _.intersection(tagNames, tagNamesWithOr).length > 0)
-            && _.intersection(tagNames, tagNamesWithNot).length === 0;
+        return self.fileMatchesOperators(file, tagNamesWithAnd, tagNamesWithOr, tagNamesWithNot);
     });
 
-    if (matchingFiles.length !== 0) {
-        var allTagsOfMatchingFiles = _.pluck(matchingFiles, "tags");
-        var union = _.union.apply(_, allTagsOfMatchingFiles);
-        var tagNames = _.map(union, function (tag) {
-            return tag.name;
-        });
-        var uniqueTagNames = _.uniq(tagNames);
-
-        availableTags = _.filter(allTags, function (tag) {
-            return _.contains(uniqueTagNames, tag.name)
-                && !_.contains(selectedTags, tag);
-        });
-    } else {
-        availableTags = [];
-    }
-
     return { matchingFiles: matchingFiles,
-             availableTags: availableTags,
+             availableTags: this.getAvailableTagsOfMatchingFiles(matchingFiles, allTags),
              selectedTags: selectedTags,
              someTagsSelected: true };
+};
+
+Library.prototype.fileMatchesOperators = function (file, tagNamesWithAnd, tagNamesWithOr, tagNamesWithNot) {
+    var tagNames = _.pluck(file.tags, "name");
+    return this.fileContainsAllAndOperators(tagNames, tagNamesWithAnd)
+        && this.fileContainsAtLeastOneOrOperator(tagNames, tagNamesWithOr)
+        && this.fileContainsNoNotOperators(tagNames, tagNamesWithNot);
+};
+
+Library.prototype.fileContainsAllAndOperators = function (tagNames, tagNamesWithAnd) {
+    return _.intersection(tagNames, tagNamesWithAnd).length === tagNamesWithAnd.length;
+};
+
+Library.prototype.fileContainsAtLeastOneOrOperator = function (tagNames, tagNamesWithOr) {
+    return tagNamesWithOr.length === 0
+        || _.intersection(tagNames, tagNamesWithOr).length > 0;
+};
+
+Library.prototype.fileContainsNoNotOperators = function (tagNames, tagNamesWithNot) {
+    return _.intersection(tagNames, tagNamesWithNot).length === 0
+};
+
+Library.prototype.getAvailableTagsOfMatchingFiles = function (matchingFiles, allTags) {
+    if (matchingFiles.length === 0)
+        return [];
+
+    var allTagsOfMatchingFiles = _.pluck(matchingFiles, "tags");
+    var union = _.union.apply(_, allTagsOfMatchingFiles);
+    var unique = _.uniq(union);
+    var tagNames = _.pluck(unique, "name");
+
+    return _.filter(allTags, function (tag) {
+        return tag.selected == false
+            && _.contains(tagNames, tag.name);
+    });
 };
 
 module.exports = Library;
