@@ -4,6 +4,6 @@
     <p><input ng-model="availableTagQuery" tabindex="10" /></p>
 
     <ul class="inline">
-        <li ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'"><a href="/#/tags/{{ tag.id }}" class="btn">{{ tag.name }}</a></li>
+        <li ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'"><a href="/#/tags/{{ tag.id }}" class="btn tag">{{ tag.name }} ({{ tag.files.length }})</a></li>
     </ul>
 </div>

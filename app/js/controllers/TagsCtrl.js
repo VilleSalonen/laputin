@@ -10,6 +10,7 @@ function TagsCtrl($scope, LaputinAPI) {
         _.each(data, function (tag) {
             tag.selected = false;
             tagsFromAPI.push(tag);
+            console.log(tag.name + " " + tag.files.length);
         });
         allTags = tagsFromAPI;
         $scope.tags = allTags;
