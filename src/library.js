@@ -123,8 +123,11 @@ Library.prototype.deleteFile = function (file) {
     delete this._files[file.hash];
 
     _.each(tagsOfFile, function (tag) {
-        if (_.size(tag.files) === 0) {
-            delete self._tags[tag.id];
+        // Tags in file do not contain full tag information so we have to load
+        // tag from the library.
+        var tagFromLibrary = self._tags[tag.id];
+        if (_.size(tagFromLibrary.files) === 0) {
+            delete self._tags[tagFromLibrary.id];
         }
     });
 };
