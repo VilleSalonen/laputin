@@ -28,7 +28,7 @@
 
                 <form>
                     <label for="tagName">Name:</label>
-                    <input id="tagName" ng-model="newTagName" tabindex="12" />
+                    <input id="tagName" ng-model="newTagName" tabindex="12" on-enter="createNewTag()" />
                     <a class="btn btn-primary" ng-click="createNewTag()">Create</a>
                 </form>
             </div>
