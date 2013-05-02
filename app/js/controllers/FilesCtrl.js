@@ -5,6 +5,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
     $scope.advancedTagFiltering = false;
+    $scope.showAllTags = true;
 
     var allTags = [];
     var allFiles = [];
@@ -59,9 +60,18 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
         $scope.someTagsSelected = result.selectedTags.length > 0;
         $scope.selectedFiles = result.matchingFiles;
-        $scope.tags = result.availableTags;
         $scope.selectedTags = result.selectedTags;
+
+        if ($scope.showAllTags) {
+            $scope.tags = result.availableTags;
+        } else {
+            $scope.tags = allTags;
+        }
     }
+
+    $scope.$watch("showAllTags", function () {
+        updateFilteredFiles();
+    });
 
     $scope.removeTagSelections = function () {
         _.each(allTags, function (tag) {
