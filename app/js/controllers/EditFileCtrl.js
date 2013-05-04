@@ -1,16 +1,7 @@
 /*global _ */
 
-function SingleFileCtrl($scope, LaputinAPI) {
+function EditFileCtrl($scope, LaputinAPI) {
     $scope.tagName = "";
-    $scope.editing = false;
-
-    $scope.edit = function () {
-        $scope.editing = true;
-    };
-
-    $scope.closeEditing = function () {
-        $scope.editing = false;
-    };
 
     $scope.open = function () {
         LaputinAPI.openFile($scope.file);
@@ -63,4 +54,4 @@ function SingleFileCtrl($scope, LaputinAPI) {
     };
 };
 
-module.exports = SingleFileCtrl;
+module.exports = EditFileCtrl;
