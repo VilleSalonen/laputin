@@ -77,12 +77,18 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     });
 
     $scope.$watch("onlyUntagged", function () {
-        $scope.onlyTagged = false;
+        if ($scope.onlyUntagged) {
+            $scope.onlyTagged = false;
+        }
+
         updateFilteredFiles();
     });
 
     $scope.$watch("onlyTagged", function () {
-        $scope.onlyUntagged = false;
+        if ($scope.onlyTagged) {
+            $scope.onlyUntagged = false;
+        }
+
         updateFilteredFiles();
     });
 
