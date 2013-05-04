@@ -1,51 +1,28 @@
 /*global _ */
 
-function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
-    $scope.availableTagQuery = "";
-    $scope.file = undefined;
-    $scope.tags = [];
-    $scope.newTagName = "";
-    $scope.fileNotFound = false;
+function SingleFileCtrl($scope, LaputinAPI) {
+    $scope.editing = false;
 
-    var allTags = [];
+    $scope.edit = function () {
+        $scope.editing = true;
+    };
 
-    function refresh() {
-        LaputinAPI.getFile($routeParams.fileId, function (err, file) {
-            if (err && err.message === "404") {
-                $scope.fileNotFound = true;
-                return;
-            }
+    $scope.closeEditing = function () {
+        $scope.editing = false;
+    };
 
-            $scope.file = file;
-
-            LaputinAPI.getTags(function (data) {
-                var tagsFromAPI = [];
-                _.each(data, function (tag) {
-                    tag.focused = false;
-                    tag.selected = false;
-                    tagsFromAPI.push(tag);
-                });
-
-                allTags = _.sortBy(tagsFromAPI, function (tag) {
-                    return tag.name;
-                });
-                updateTagList();
-            });
-        });
-    }
-
-    refresh();
+    $scope.open = function () {
+        LaputinAPI.openFile($scope.file);
+    };
 
     $scope.addTag = function (tag) {
         $scope.file.tags.push(tag);
-        updateTagList();
         LaputinAPI.linkTagToFile(tag, $scope.file, function (err) {
             if (err) {
                 var idx = $scope.file.tags.indexOf(tag);
                 if (idx !== -1) {
                     $scope.file.tags.splice(idx, 1);
                 }
-                updateTagList();
                 alert(err);
             }
         });
@@ -57,7 +34,6 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
         if (idx !== -1) {
             $scope.file.tags.splice(idx, 1);
             LaputinAPI.unlinkTagFromFile(tag, $scope.file);
-            updateTagList();
         }
     };
 
@@ -117,6 +93,6 @@ function SingleFileCtrl($scope, $routeParams, LaputinAPI) {
             return candidate.name;
         });
     };
-}
+};
 
 module.exports = SingleFileCtrl;
