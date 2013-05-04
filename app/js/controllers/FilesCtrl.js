@@ -7,9 +7,22 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
     $scope.advancedTagFiltering = false;
-    $scope.showAllTags = true;
+    $scope.showAllTags = false;
     $scope.onlyUntagged = false;
     $scope.onlyTagged = false;
+
+
+
+
+    $scope.taggedStatuses = [
+        {TypeId: 1, TypeName: "Tagged or untagged"},
+        {TypeId: 2, TypeName: "Tagged"},
+        {TypeId: 3, TypeName: "Untagged"}
+    ];
+    $scope.selectedTaggedStatus = 1;
+
+
+
 
     var allTags = [];
     var allFiles = [];
@@ -96,13 +109,18 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         }
     });
 
-    $scope.removeTagSelections = function () {
+    $scope.clearSearchFilters = function () {
         _.each(allTags, function (tag) {
             tag.operator = "";
         });
-        $scope.someTagsSelected = false;
-        $scope.selectedFiles = allFiles;
-        $scope.tags = allTags;
+
+        $scope.advancedTagFiltering = false;
+        $scope.showAllTags = false;
+        $scope.onlyUntagged = false;
+        $scope.onlyTagged = false;
+        $scope.fileQuery = "";
+
+        $scope.updateFilteredFiles();
     };
 
     $scope.isTagSelected = function (tag) {

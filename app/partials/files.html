@@ -3,16 +3,12 @@
         <div class="extra-padded">
             <div class="row-fluid">
                 <div class="span2">
-                    <form ng-submit="addTagFromSearch()">
-                        File name contain
-                        <input tabindex="11" type="text" class="search-query"
-                               ng-model="fileQuery" on-enter="updateFilteredFiles()" />
-                    </form>
+                    <h2>Basic</h2>
 
                     <form ng-submit="addTagFromSearch()">
-                        <input tabindex="12" type="text" class="search-query"
-                               placeholder="Find tags"
-                               ng-model="tagName" bs-typeahead="tagSearchFn" blur="lastSubmit" />
+                        <input tabindex="11" type="text" class="search-query"
+                               placeholder="File name contains"
+                               ng-model="fileQuery" on-enter="updateFilteredFiles()" />
                     </form>
 
                     <label class="checkbox">
@@ -21,18 +17,33 @@
                     <label class="checkbox">
                         <input type="checkbox" ng-model="onlyUntagged" ng-click="updateFilteredFiles()"> Show only untagged files
                     </label>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="showAllTags" ng-click="updateFilteredFiles()"> Show all tags
+                    </label>
                 </div>
                 <div class="span6 offset1">
-                    <div ng-show="someTagsSelected">
-                        <p>
-                            <strong>Tags:</strong>
+                    <h2>Tags</h2>
 
+                    <form ng-submit="addTagFromSearch()">
+                        <input tabindex="12" type="text" class="search-query"
+                               placeholder="Find tags"
+                               ng-model="tagName" bs-typeahead="tagSearchFn" blur="lastSubmit" />
+                    </form>
+
+                    <div ng-hide="someTagsSelected">
+                        <p>No tags selected.</p>
+                    </div>
+                    <div ng-show="someTagsSelected">
                         <div ng-hide="advancedTagFiltering">
                             <a ng-repeat="tag in selectedTags | orderBy:'name'"
                                ng-click="toggleSelection(tag)"
                                class="btn tag btn-success">
                                 {{ tag.name }}</a>
                         </div>
+
                         <div ng-show="advancedTagFiltering">
                             <div ng-repeat="tag in selectedTags | orderBy:'name'">
                                 <div ng-controller="FilterTagCtrl" class="btn-group">
@@ -48,21 +59,17 @@
                                     </a>
                                 </div>
                             </div>
-                            <label class="checkbox">
-                                <input type="checkbox" ng-model="showAllTags" ng-click="updateFilteredFiles()"> Show all tags
-                            </label>
                         </div>
-                        </p>
-                        <label class="checkbox">
-                            <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
-                        </label>
-                        <a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
                     </div>
                 </div>
 
                 <div class="span2 offset1">
                     <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">
                         Open files
+                    </button>
+
+                    <button class="btn btn-danger" ng-click="clearSearchFilters()">
+                        Clear search filters
                     </button>
                 </div>
             </div>
