@@ -5,23 +5,14 @@
                 <div class="span2">
                     <form ng-submit="addTagFromSearch()">
                         File name contain
-                        <input
-                                tabindex="11"
-                                type="text"
-                                class="search-query"
-                                ng-model="fileQuery"
-                                on-enter="updateFilteredFiles()" />
+                        <input tabindex="11" type="text" class="search-query"
+                               ng-model="fileQuery" on-enter="updateFilteredFiles()" />
                     </form>
 
                     <form ng-submit="addTagFromSearch()">
-                        <input
-                                tabindex="12"
-                                type="text"
-                                class="search-query"
-                                placeholder="Find tags"
-                                ng-model="tagName"
-                                bs-typeahead="tagSearchFn"
-                                blur="lastSubmit" />
+                        <input tabindex="12" type="text" class="search-query"
+                               placeholder="Find tags"
+                               ng-model="tagName" bs-typeahead="tagSearchFn" blur="lastSubmit" />
                     </form>
 
                     <label class="checkbox">
@@ -70,29 +61,31 @@
                 </div>
 
                 <div class="span2 offset1">
-                    <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">Open files</button>
+                    <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">
+                        Open files
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div ng-show="loadingFiles">
-            <p>Loading files...</p>
-        </div>
-        <div ng-hide="loadingFiles">
-            <table class="table table-striped">
-                <tr>
-                    <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
-                </tr>
-                <tr ng-repeat="file in selectedFiles | orderBy:'path'">
-                    <td>
-                        <p><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></p>
-                        <p ng-show="file.tags.length > 0">
-                            <strong>Tags:</strong>
-                            <file-tag-listing></file-tag-listing>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </div>
+    <div ng-show="loadingFiles">
+        <p>Loading files...</p>
+    </div>
+    <div ng-hide="loadingFiles">
+        <table class="table table-striped">
+            <tr>
+                <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
+            </tr>
+            <tr ng-repeat="file in selectedFiles | orderBy:'path'">
+                <td>
+                    <p><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></p>
+                    <p ng-show="file.tags.length > 0">
+                        <strong>Tags:</strong>
+                        <file-tag-listing></file-tag-listing>
+                    </p>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
