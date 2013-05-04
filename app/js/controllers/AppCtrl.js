@@ -18,7 +18,7 @@ function AppCtrl($scope, $location, LaputinAPI) {
     $scope.allFiles = [];
     LaputinAPI.getTags(function (tags) {
         $scope.typeahead = [];
-        $scope.allTags = tags;
+        $scope.allTags = _.sortBy(tags, function (tag) { return tag.name });
         _.each(tags, function (tag) {
             tag.type = "Tag";
             $scope.typeahead.push(tag);
