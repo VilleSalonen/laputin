@@ -112,6 +112,27 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.tagNameMatches = function (tag) {
         return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
     };
+
+
+
+    $scope.addTagFromSearch = function () {
+        var tag = _.find($scope.tags, function (tag) {
+            return tag.name === $scope.tagName;
+        });
+
+        if (tag) {
+            $scope.toggleSelection(tag);
+            $scope.tagName = "";
+        }
+    };
+
+
+    $scope.tagName = "";
+    $scope.tagSearchFn = function() {
+        return $.map($scope.tags, function(candidate) {
+            return candidate.name;
+        });
+    };
 }
 
 module.exports = FilesCtrl;

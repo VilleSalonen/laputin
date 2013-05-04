@@ -37,6 +37,10 @@ body {
     margin: 5px;
 }
 
+.extra-padded {
+    margin: 15px;
+}
+
 .main-search {
     width: 600px;
 }
@@ -55,4 +59,9 @@ body {
 
 .full-width {
     width: 100%;
+}
+
+.filter-controls {
+    background-color: #eee;
+    margin-bottom: 15px;
 }
