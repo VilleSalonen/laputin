@@ -52,13 +52,14 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.updateFilteredFiles = function () {
         var options = { fileNameMatches: $scope.fileQuery };
 
+        var result = undefined;
         if ($scope.onlyUntagged) {
-            var result = Library.filterUntagged(allTags, allFiles, options);
+            result = Library.filterUntagged(allTags, allFiles, options);
         } else {
             if ($scope.onlyTagged) {
-                var result = Library.filterTagged(allTags, allFiles, options);
+                result = Library.filterTagged(allTags, allFiles, options);
             } else {
-                var result = Library.filter(allTags, allFiles, options);
+                result = Library.filter(allTags, allFiles, options);
             }
         }
 
@@ -71,7 +72,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
         $scope.selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
         $scope.someTagsSelected = $scope.selectedTags.length > 0;
-    }
+    };
 
     $scope.$watch("showAllTags", function () {
         $scope.updateFilteredFiles();
