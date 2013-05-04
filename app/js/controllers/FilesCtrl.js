@@ -7,6 +7,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.advancedTagFiltering = false;
     $scope.showAllTags = true;
     $scope.onlyUntagged = false;
+    $scope.onlyTagged = false;
 
     var allTags = [];
     var allFiles = [];
@@ -53,7 +54,11 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         if ($scope.onlyUntagged) {
             var result = Library.filterUntagged(allTags, allFiles);
         } else {
-            var result = Library.filter(allTags, allFiles);
+            if ($scope.onlyTagged) {
+                var result = Library.filterTagged(allTags, allFiles);
+            } else {
+                var result = Library.filter(allTags, allFiles);
+            }
         }
 
         $scope.selectedFiles = result.matchingFiles;
@@ -72,6 +77,12 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     });
 
     $scope.$watch("onlyUntagged", function () {
+        $scope.onlyTagged = false;
+        updateFilteredFiles();
+    });
+
+    $scope.$watch("onlyTagged", function () {
+        $scope.onlyUntagged = false;
         updateFilteredFiles();
     });
 
