@@ -42,21 +42,23 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         else
             tag.operator = "";
 
-        updateFilteredFiles();
+        $scope.updateFilteredFiles();
     };
 
     $scope.$on("advancedFilterChange", function () {
-        updateFilteredFiles();
+        $scope.updateFilteredFiles();
     });
 
-    function updateFilteredFiles() {
+    $scope.updateFilteredFiles = function () {
+        var options = { fileNameMatches: $scope.fileQuery };
+
         if ($scope.onlyUntagged) {
             var result = Library.filterUntagged(allTags, allFiles);
         } else {
             if ($scope.onlyTagged) {
                 var result = Library.filterTagged(allTags, allFiles);
             } else {
-                var result = Library.filter(allTags, allFiles);
+                var result = Library.filter(allTags, allFiles, options);
             }
         }
 
@@ -72,7 +74,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     }
 
     $scope.$watch("showAllTags", function () {
-        updateFilteredFiles();
+        $scope.updateFilteredFiles();
     });
 
     $scope.$watch("onlyUntagged", function () {
@@ -80,7 +82,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
             $scope.onlyTagged = false;
         }
 
-        updateFilteredFiles();
+        $scope.updateFilteredFiles();
     });
 
     $scope.$watch("onlyTagged", function () {
@@ -88,7 +90,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
             $scope.onlyUntagged = false;
         }
 
-        updateFilteredFiles();
+        $scope.updateFilteredFiles();
     });
 
     $scope.removeTagSelections = function () {
