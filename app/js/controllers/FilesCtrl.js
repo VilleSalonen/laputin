@@ -53,10 +53,10 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         var options = { fileNameMatches: $scope.fileQuery };
 
         if ($scope.onlyUntagged) {
-            var result = Library.filterUntagged(allTags, allFiles);
+            var result = Library.filterUntagged(allTags, allFiles, options);
         } else {
             if ($scope.onlyTagged) {
-                var result = Library.filterTagged(allTags, allFiles);
+                var result = Library.filterTagged(allTags, allFiles, options);
             } else {
                 var result = Library.filter(allTags, allFiles, options);
             }

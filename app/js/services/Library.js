@@ -9,17 +9,26 @@ function Library() {
 }
 
 Library.prototype.filter = function (filteredTags, filteredFiles, options) {
-    var result = filterFileName(filteredTags, filteredFiles, options);
-    return filterBasedOnTagSelection(result.availableTags, result.matchingFiles);
+    var filters = [filterFileName, filterBasedOnTagSelection];
+    return this._processFilters(filteredTags, filteredFiles, options, filters);
 };
 
-Library.prototype.filterTagged = function (filteredTags, filteredFiles) {
-    var result = filterTaggedFiles(filteredTags, filteredFiles);
-    return filterBasedOnTagSelection(result.availableTags, result.matchingFiles);
+Library.prototype.filterTagged = function (filteredTags, filteredFiles, options) {
+    var filters = [filterFileName, filterTaggedFiles, filterBasedOnTagSelection];
+    return this._processFilters(filteredTags, filteredFiles, options, filters);
 };
 
-Library.prototype.filterUntagged = function (filteredTags, filteredFiles) {
-    return filterUntaggedFiles(filteredTags, filteredFiles);
+Library.prototype.filterUntagged = function (filteredTags, filteredFiles, options) {
+    var filters = [filterFileName, filterUntaggedFiles];
+    return this._processFilters(filteredTags, filteredFiles, options, filters);
+};
+
+Library.prototype._processFilters = function (filteredTags, filteredFiles, options, filters) {
+    var result = { availableTags: filteredTags, matchingFiles: filteredFiles };
+    for (var i = 0; i < filters.length; i++) {
+        result = filters[i](result.availableTags, result.matchingFiles, options);
+    }
+    return result;
 };
 
 
