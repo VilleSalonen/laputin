@@ -31,14 +31,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     });
 
     $scope.openFiles = function () {
-        var selectedTags = [];
-        _.each(allTags, function (tag) {
-            if (tag.operator !== "") {
-                selectedTags.push(tag.name);
-            }
-        });
-
-        LaputinAPI.openTags(selectedTags);
+        LaputinAPI.openFiles($scope.selectedFiles);
     };
 
     $scope.toggleSelection = function (tag) {
