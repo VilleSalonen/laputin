@@ -1,98 +1,98 @@
 <div class="padded">
-    <div ng-show="loadingFiles">
-        <i class="icon-spinner icon-spin"></i>
-        <span>Loading files...</span>
-    </div>
-    <div ng-hide="loadingFiles">
-        <div class="filter-controls">
-            <div class="extra-padded">
-                <p style="margin-top: 10px; font-size: 115%;"><strong>Showing {{ selectedFiles.length }} matching files which:</strong></p>
+    <div class="filter-controls">
+        <div class="extra-padded">
+            <div class="row-fluid">
+                <div class="span2">
+                    <form ng-submit="addTagFromSearch()">
+                        File name contain
+                        <input
+                                tabindex="11"
+                                type="text"
+                                class="search-query"
+                                ng-model="fileQuery"
+                                on-enter="updateFilteredFiles()" />
+                    </form>
 
-                <div class="row-fluid">
-                    <div class="span2">
-                        <form ng-submit="addTagFromSearch()">
-                            File name contain
-                            <input
-                                    tabindex="11"
-                                    type="text"
-                                    class="search-query"
-                                    ng-model="fileQuery"
-                                    on-enter="updateFilteredFiles()" />
-                        </form>
+                    <form ng-submit="addTagFromSearch()">
+                        <input
+                                tabindex="12"
+                                type="text"
+                                class="search-query"
+                                placeholder="Find tags"
+                                ng-model="tagName"
+                                bs-typeahead="tagSearchFn"
+                                blur="lastSubmit" />
+                    </form>
 
-                        <form ng-submit="addTagFromSearch()">
-                            <input
-                                    tabindex="12"
-                                    type="text"
-                                    class="search-query"
-                                    placeholder="Find tags"
-                                    ng-model="tagName"
-                                    bs-typeahead="tagSearchFn"
-                                    blur="lastSubmit" />
-                        </form>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="onlyTagged"> Show only tagged files
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="onlyUntagged"> Show only untagged files
+                    </label>
+                </div>
+                <div class="span6 offset1">
+                    <div ng-show="someTagsSelected">
+                        <p>
+                            <strong>Tags:</strong>
 
-                        <label class="checkbox">
-                            <input type="checkbox" ng-model="onlyTagged"> Show only tagged files
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" ng-model="onlyUntagged"> Show only untagged files
-                        </label>
-                    </div>
-                    <div class="span6 offset1">
-                        <div ng-show="someTagsSelected">
-                            <p>
-                                <strong>Tags:</strong>
-
-                            <div ng-hide="advancedTagFiltering">
-                                <a ng-repeat="tag in selectedTags | orderBy:'name'"
-                                   ng-click="toggleSelection(tag)"
-                                   class="btn tag btn-success">
-                                    {{ tag.name }}</a>
-                            </div>
-                            <div ng-show="advancedTagFiltering">
-                                <div ng-repeat="tag in selectedTags | orderBy:'name'">
-                                    <div ng-controller="FilterTagCtrl" class="btn-group">
-                                        <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
-                                        <a class="btn btn-success tag" ng-click="activateAnd(tag)">
-                                            <span ng-show="andOperatorOn()">{{ tag.name }}</span><span ng-hide="andOperatorOff()">AND</span>
-                                        </a>
-                                        <a class="btn btn-info tag" ng-click="activateOr(tag)">
-                                            <span ng-show="orOperatorOn()">{{ tag.name }}</span><span ng-hide="orOperatorOff()">OR</span>
-                                        </a>
-                                        <a class="btn btn-inverse tag" ng-click="activateNot(tag)">
-                                            <span ng-show="notOperatorOn()">{{ tag.name }}</span><span ng-hide="notOperatorOff()">NOT</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <label class="checkbox">
-                                    <input type="checkbox" ng-model="showAllTags"> Show all tags
-                                </label>
-                            </div>
-                            </p>
-                            <label class="checkbox">
-                                <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
-                            </label>
-                            <p></p><a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
+                        <div ng-hide="advancedTagFiltering">
+                            <a ng-repeat="tag in selectedTags | orderBy:'name'"
+                               ng-click="toggleSelection(tag)"
+                               class="btn tag btn-success">
+                                {{ tag.name }}</a>
                         </div>
+                        <div ng-show="advancedTagFiltering">
+                            <div ng-repeat="tag in selectedTags | orderBy:'name'">
+                                <div ng-controller="FilterTagCtrl" class="btn-group">
+                                    <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
+                                    <a class="btn btn-success tag" ng-click="activateAnd(tag)">
+                                        <span ng-show="andOperatorOn()">{{ tag.name }}</span><span ng-hide="andOperatorOff()">AND</span>
+                                    </a>
+                                    <a class="btn btn-info tag" ng-click="activateOr(tag)">
+                                        <span ng-show="orOperatorOn()">{{ tag.name }}</span><span ng-hide="orOperatorOff()">OR</span>
+                                    </a>
+                                    <a class="btn btn-inverse tag" ng-click="activateNot(tag)">
+                                        <span ng-show="notOperatorOn()">{{ tag.name }}</span><span ng-hide="notOperatorOff()">NOT</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <label class="checkbox">
+                                <input type="checkbox" ng-model="showAllTags"> Show all tags
+                            </label>
+                        </div>
+                        </p>
+                        <label class="checkbox">
+                            <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
+                        </label>
+                        <p></p><a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
                     </div>
+                </div>
 
-                    <div class="span2 offset1">
-                        <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">Open files</button>
-                    </div>
+                <div class="span2 offset1">
+                    <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">Open files</button>
                 </div>
             </div>
         </div>
 
-        <table class="table table-striped">
-            <tr ng-repeat="file in selectedFiles | orderBy:'path'">
-                <td>
-                    <p><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></p>
-                    <p ng-show="file.tags.length > 0">
-                        <strong>Tags:</strong>
-                        <file-tag-listing></file-tag-listing>
-                    </p>
-                </td>
-            </tr>
-        </table>
+        <div ng-show="loadingFiles">
+            <p>Loading files...</p>
+        </div>
+        <div ng-hide="loadingFiles">
+            <table class="table table-striped">
+                <tr>
+                    <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
+                </tr>
+                <tr ng-repeat="file in selectedFiles | orderBy:'path'">
+                    <td>
+                        <p><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></p>
+                        <p ng-show="file.tags.length > 0">
+                            <strong>Tags:</strong>
+                            <file-tag-listing></file-tag-listing>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
