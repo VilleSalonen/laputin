@@ -1,7 +1,7 @@
 /*global _ */
 
 function FilesCtrl($scope, LaputinAPI, Library) {
-    $scope.availableTagQuery = "";
+    $scope.fileQuery = "";
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
     $scope.advancedTagFiltering = false;
@@ -38,7 +38,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.toggleSelection = function (tag) {
         if (tag.operator === "") {
             tag.operator = "AND";
-            $scope.availableTagQuery = "";
         }
         else
             tag.operator = "";
@@ -109,8 +108,8 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         return tag.operator === "";
     };
 
-    $scope.tagNameMatches = function (tag) {
-        return tag.name.toUpperCase().indexOf($scope.availableTagQuery.toUpperCase()) !== -1;
+    $scope.fileNameMatches = function (file) {
+        return file.path.toUpperCase().indexOf($scope.fileQuery.toUpperCase()) !== -1;
     };
 
 

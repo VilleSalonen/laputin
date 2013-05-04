@@ -8,6 +8,8 @@
             <div class="extra-padded">
                 <div class="row-fluid">
                     <div class="span2">
+                        <p>File name contains <input ng-model="fileQuery" /></p>
+
                         <form ng-submit="addTagFromSearch()">
                             <input
                                     tabindex="11"
@@ -74,7 +76,7 @@
         </div>
 
         <table class="table table-striped">
-            <tr ng-repeat="file in selectedFiles | orderBy:'path'">
+            <tr ng-repeat="file in selectedFiles | filter:fileNameMatches | orderBy:'path'">
                 <td>
                     <p><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></p>
                     <p ng-show="file.tags.length > 0">
