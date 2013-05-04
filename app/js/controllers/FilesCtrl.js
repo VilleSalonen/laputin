@@ -22,6 +22,9 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.selectedTaggedStatus = 1;
 
 
+    $scope.$on("advancedFilterChange", function () {
+        $scope.updateFilteredFiles();
+    });
 
 
     var allTags = [];

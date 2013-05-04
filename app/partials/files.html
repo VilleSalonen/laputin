@@ -45,18 +45,19 @@
                         </div>
 
                         <div ng-show="advancedTagFiltering">
-                            <div ng-repeat="tag in selectedTags | orderBy:'name'">
-                                <div ng-controller="FilterTagCtrl" class="btn-group">
-                                    <a ng-click="toggleSelection(tag)" class="btn tag btn-danger">x</a>
-                                    <a class="btn btn-success tag" ng-click="activateAnd(tag)">
-                                        <span ng-show="andOperatorOn()">{{ tag.name }}</span><span ng-hide="andOperatorOff()">AND</span>
+                            <div class="btn-toolbar" style="margin: 0;">
+                                <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
+                                    <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                        {{ tag.name }}
+                                        <span class="caret"></span>
                                     </a>
-                                    <a class="btn btn-info tag" ng-click="activateOr(tag)">
-                                        <span ng-show="orOperatorOn()">{{ tag.name }}</span><span ng-hide="orOperatorOff()">OR</span>
-                                    </a>
-                                    <a class="btn btn-inverse tag" ng-click="activateNot(tag)">
-                                        <span ng-show="notOperatorOn()">{{ tag.name }}</span><span ng-hide="notOperatorOff()">NOT</span>
-                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="activateAnd()">Must contain</li>
+                                        <li ng-click="activateOr()">Can contain</li>
+                                        <li ng-click="activateNot()">Does not contain</li>
+                                        <li class="divider"></li>
+                                        <li ng-click="toggleSelection(tag)">Remove</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
