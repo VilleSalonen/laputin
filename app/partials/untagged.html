@@ -1,9 +1,0 @@
-<button class="btn btn-large btn-primary open-button pull-right" type="button" ng-click="openUntagged()" tabindex="12">Open files</button>
-
-<div class="padded">
-    <h1>Untagged ({{ untaggedFiles.length }} files)</h1>
-
-    <ul>
-        <li ng-repeat="file in untaggedFiles | orderBy:'path'"><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></li>
-    </ul>
-</div>

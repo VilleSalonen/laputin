@@ -9,10 +9,6 @@ function AppCtrl($scope, $location, LaputinAPI) {
         $location.path("/tags");
     };
 
-    $scope.goToUntagged = function () {
-        $location.path("/untagged");
-    };
-
     $scope.focusSearch = function () {
         $(".search-query").focus();
     };
