@@ -37,27 +37,29 @@
                         <p>No tags selected.</p>
                     </div>
                     <div ng-show="someTagsSelected">
-                        <div ng-hide="advancedTagFiltering">
-                            <a ng-repeat="tag in selectedTags | orderBy:'name'"
-                               ng-click="toggleSelection(tag)"
-                               class="btn tag btn-success">
-                                {{ tag.name }}</a>
-                        </div>
+                        <div ng-switch on="advancedTagFiltering">
+                            <div ng-switch-default>
+                                <a ng-repeat="tag in selectedTags | orderBy:'name'"
+                                   ng-click="toggleSelection(tag)"
+                                   class="btn tag btn-success">
+                                    {{ tag.name }}</a>
+                            </div>
 
-                        <div ng-show="advancedTagFiltering">
-                            <div class="btn-toolbar" style="margin: 0;">
-                                <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
-                                    <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                        {{ tag.name }}
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li ng-click="activateAnd()">Must contain</li>
-                                        <li ng-click="activateOr()">Can contain</li>
-                                        <li ng-click="activateNot()">Does not contain</li>
-                                        <li class="divider"></li>
-                                        <li ng-click="toggleSelection(tag)">Remove</li>
-                                    </ul>
+                            <div ng-switch-when="true">
+                                <div class="btn-toolbar" style="margin: 0;">
+                                    <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
+                                        <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                            {{ tag.name }}
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li ng-click="activateAnd()">Must contain</li>
+                                            <li ng-click="activateOr()">Can contain</li>
+                                            <li ng-click="activateNot()">Does not contain</li>
+                                            <li class="divider"></li>
+                                            <li ng-click="toggleSelection(tag)">Remove</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -86,15 +88,15 @@
                 <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
             </tr>
             <tr ng-controller="SingleFileCtrl" ng-repeat="file in selectedFiles | orderBy:'path'">
-                <td>
-                    <div ng-hide="editing">
+                <td ng-switch on="editing">
+                    <div ng-switch-default>
                         <p><a ng-click="edit()">{{ file.name }}</a></p>
                         <p ng-show="file.tags.length > 0">
                             <strong>Tags:</strong>
                             <file-tag-listing></file-tag-listing>
                         </p>
                     </div>
-                    <div ng-show="editing">
+                    <div ng-switch-when="true">
                         <button class="btn pull-right" ng-click="open()">Open</button>
                         <p>{{ file.name }} <button class="btn" ng-click="closeEditing()">Close editing</button></p>
 
