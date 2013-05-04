@@ -9,20 +9,17 @@ describe('Library', function() {
             var result = library.filter([], []);
 
             result.should.eql({ matchingFiles: [],
-                                availableTags: [],
-                                selectedTags: [] });
+                                availableTags: [] });
         });
 
 
-        it('no selected tags should return all tags', function() {
-            var tags = [{ operator: "" }];
+        it('no tags should return input as is', function() {
             var files = [{ hash: "123" }];
 
-            var result = library.filter(tags, files);
+            var result = library.filter([], files);
 
             result.should.eql({ matchingFiles: files,
-                                availableTags: tags,
-                                selectedTags: [] });
+                                availableTags: [] });
         });
 
 
@@ -33,8 +30,7 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [],
-                                availableTags: [],
-                                selectedTags: [{ name: "Some tag", operator: "AND", files: [] }] });
+                                availableTags: [] });
         });
 
 
@@ -50,8 +46,7 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "456", tags: [{ name: "Matching tag" }, { name: "Available tag"}] }],
-                                availableTags: [{ name: "Available tag", operator: "", files: [{ hash: "456" }]}],
-                                selectedTags: [{ name: "Matching tag", operator: "AND", files: [{ hash: "456" }] }] });
+                                availableTags: [{ name: "Available tag", operator: "", files: [{ hash: "456" }]}] });
         });
 
 
@@ -66,8 +61,7 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Common" }] }, { hash: "456", tags: [{ name: "Common" }] }],
-                availableTags: [],
-                selectedTags: [{ name: "Common", operator: "AND", files: [{ hash: "123" }, { hash: "456" }] }] });
+                availableTags: [] });
         });
 
 
@@ -83,9 +77,7 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "One" }] }, { hash: "456", tags: [{ name: "Other" }] }],
-                availableTags: [],
-                selectedTags: [{ name: "One", operator: "OR", files: [{ hash: "123" }] },
-                               { name: "Other", operator: "OR", files: [{ hash: "456" }] }] });
+                availableTags: [] });
         });
 
 
@@ -100,9 +92,7 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Wanted" }] }],
-                availableTags: [],
-                selectedTags: [{ name: "Wanted", operator: "AND", files: [{ hash: "123" }, { hash: "456" }] },
-                               { name: "Not wanted", operator: "NOT", files: [{ hash: "456" }] }] });
+                availableTags: [] });
         });
 
 
@@ -117,8 +107,7 @@ describe('Library', function() {
             var result = library.filter(tags, files);
 
             result.should.eql({ matchingFiles: [{ hash: "123", tags: [{ name: "Unselected" }] }],
-                availableTags: [{ name: "Unselected", operator: "", files: [{ hash: "123" }] }],
-                selectedTags: [{ name: "Not wanted", operator: "NOT", files: [{ hash: "456" }] }] });
+                availableTags: [{ name: "Unselected", operator: "", files: [{ hash: "123" }] }] });
         });
     });
 });

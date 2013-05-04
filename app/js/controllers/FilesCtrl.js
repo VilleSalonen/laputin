@@ -58,15 +58,15 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     function updateFilteredFiles() {
         var result = Library.filter(allTags, allFiles);
 
-        $scope.someTagsSelected = result.selectedTags.length > 0;
         $scope.selectedFiles = result.matchingFiles;
-        $scope.selectedTags = result.selectedTags;
-
         if ($scope.showAllTags) {
             $scope.tags = result.availableTags;
         } else {
             $scope.tags = allTags;
         }
+
+        $scope.selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
+        $scope.someTagsSelected = $scope.selectedTags.length > 0;
     }
 
     $scope.$watch("showAllTags", function () {

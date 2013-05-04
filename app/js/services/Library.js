@@ -6,11 +6,9 @@ function Library() {
 Library.prototype.filter = function (allTags, allFiles) {
     var self = this;
 
-    var selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
-    if (selectedTags.length == 0) {
+    if (allTags.length === 0) {
         return { matchingFiles: allFiles,
-            availableTags: allTags,
-            selectedTags: [] };
+                 availableTags: allTags };
     }
 
     var tagNamesWithAnd = _.pluck(_.filter(allTags, function (tag) { return tag.operator === "AND"; }), "name");
@@ -22,8 +20,7 @@ Library.prototype.filter = function (allTags, allFiles) {
     });
 
     return { matchingFiles: matchingFiles,
-             availableTags: this.getAvailableTagsOfMatchingFiles(matchingFiles, allTags),
-             selectedTags: selectedTags };
+             availableTags: this.getAvailableTagsOfMatchingFiles(matchingFiles, allTags) };
 };
 
 Library.prototype.fileMatchesOperators = function (file, tagNamesWithAnd, tagNamesWithOr, tagNamesWithNot) {
