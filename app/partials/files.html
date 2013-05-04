@@ -16,10 +16,10 @@
                     </form>
 
                     <label class="checkbox">
-                        <input type="checkbox" ng-model="onlyTagged"> Show only tagged files
+                        <input type="checkbox" ng-model="onlyTagged" ng-click="updateFilteredFiles()"> Show only tagged files
                     </label>
                     <label class="checkbox">
-                        <input type="checkbox" ng-model="onlyUntagged"> Show only untagged files
+                        <input type="checkbox" ng-model="onlyUntagged" ng-click="updateFilteredFiles()"> Show only untagged files
                     </label>
                 </div>
                 <div class="span6 offset1">
@@ -49,14 +49,14 @@
                                 </div>
                             </div>
                             <label class="checkbox">
-                                <input type="checkbox" ng-model="showAllTags"> Show all tags
+                                <input type="checkbox" ng-model="showAllTags" ng-click="updateFilteredFiles()"> Show all tags
                             </label>
                         </div>
                         </p>
                         <label class="checkbox">
                             <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
                         </label>
-                        <p></p><a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
+                        <a ng-click="removeTagSelections()" class="btn btn-danger">Remove tag selections</a></p>
                     </div>
                 </div>
 

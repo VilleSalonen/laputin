@@ -1,7 +1,9 @@
 /*global _ */
 
 function FilesCtrl($scope, LaputinAPI, Library) {
-    $scope.fileQuery = "";
+    var previouslySelectedTagNames = JSON.parse(localStorage.getItem("selectedTagNames"));
+
+    $scope.fileQuery = localStorage.getItem("fileQuery");
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
     $scope.advancedTagFiltering = false;
@@ -16,7 +18,12 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     LaputinAPI.getTags(function (data) {
         var tagsFromAPI = [];
         _.each(data, function (tag) {
-            tag.operator = "";
+            if (_.contains(previouslySelectedTagNames, tag.name)) {
+                tag.operator = "AND";
+            } else {
+                tag.operator = "";
+            }
+
             tagsFromAPI.push(tag);
         });
         allTags = tagsFromAPI;
@@ -29,6 +36,8 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         allFiles = _.sortBy(data, function (file) { return file.path });
         $scope.selectedFiles = allFiles;
         $scope.loadingFiles = false;
+
+        $scope.updateFilteredFiles();
     });
 
     $scope.openFiles = function () {
@@ -44,10 +53,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
         $scope.updateFilteredFiles();
     };
-
-    $scope.$on("advancedFilterChange", function () {
-        $scope.updateFilteredFiles();
-    });
 
     $scope.updateFilteredFiles = function () {
         var options = { fileNameMatches: $scope.fileQuery };
@@ -72,26 +77,23 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
         $scope.selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
         $scope.someTagsSelected = $scope.selectedTags.length > 0;
-    };
 
-    $scope.$watch("showAllTags", function () {
-        $scope.updateFilteredFiles();
-    });
+        localStorage.setItem("fileQuery", $scope.fileQuery);
+
+        var selectedTagNames = _.pluck($scope.selectedTags, "name");
+        localStorage.setItem("selectedTagNames", JSON.stringify(selectedTagNames));
+    };
 
     $scope.$watch("onlyUntagged", function () {
         if ($scope.onlyUntagged) {
             $scope.onlyTagged = false;
         }
-
-        $scope.updateFilteredFiles();
     });
 
     $scope.$watch("onlyTagged", function () {
         if ($scope.onlyTagged) {
             $scope.onlyUntagged = false;
         }
-
-        $scope.updateFilteredFiles();
     });
 
     $scope.removeTagSelections = function () {
