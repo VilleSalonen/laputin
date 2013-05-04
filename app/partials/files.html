@@ -22,6 +22,10 @@
                 <span>Loading files...</span>
             </div>
             <div ng-hide="loadingFiles">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="onlyUntagged"> Show only untagged files
+                </label>
+
                 <div ng-show="someTagsSelected">
                     <p>
                         <strong>Tags:</strong>
