@@ -4,7 +4,21 @@
 
 
 angular.module('laputin.directives', []).
-    directive('onEnter', [function () {
+    directive('fileTagListing', function () {
+        return {
+            restrict: 'E',
+            scope: 'isolate',
+            template: '{{ tagListing }}',
+
+            compile: function (element, attr, transclusionFunc) {
+                return function (scope, iterStartElement, attr) {
+                    var tagNames = _.pluck(scope.file.tags, "name");
+                    scope.tagListing = tagNames.sort().join(", ");
+                };
+            }
+        };
+    })
+    .directive('onEnter', [function () {
         return function(scope, element, attrs) {
             element.bind("keydown keypress", function(event) {
                 if(event.which === 13) {

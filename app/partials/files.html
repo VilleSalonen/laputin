@@ -6,13 +6,23 @@
     <div ng-hide="loadingFiles">
         <div class="filter-controls">
             <div class="extra-padded">
+                <p style="margin-top: 10px; font-size: 115%;"><strong>Showing {{ selectedFiles.length }} matching files which:</strong></p>
+
                 <div class="row-fluid">
                     <div class="span2">
-                        <p>File name contains <input ng-model="fileQuery" on-enter="updateFilteredFiles()" /></p>
+                        <form ng-submit="addTagFromSearch()">
+                            File name contain
+                            <input
+                                    tabindex="11"
+                                    type="text"
+                                    class="search-query"
+                                    ng-model="fileQuery"
+                                    on-enter="updateFilteredFiles()" />
+                        </form>
 
                         <form ng-submit="addTagFromSearch()">
                             <input
-                                    tabindex="11"
+                                    tabindex="12"
                                     type="text"
                                     class="search-query"
                                     placeholder="Find tags"
@@ -29,8 +39,6 @@
                         </label>
                     </div>
                     <div class="span6 offset1">
-                        <p>{{ selectedFiles.length }} matching files found.</p>
-
                         <div ng-show="someTagsSelected">
                             <p>
                                 <strong>Tags:</strong>
@@ -69,7 +77,7 @@
                     </div>
 
                     <div class="span2 offset1">
-                        <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="12">Open files</button>
+                        <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">Open files</button>
                     </div>
                 </div>
             </div>
@@ -81,7 +89,7 @@
                     <p><a href="/#/files/{{ file.hash }}">{{ file.name }}</a></p>
                     <p ng-show="file.tags.length > 0">
                         <strong>Tags:</strong>
-                        <span class="tag" ng-repeat="tag in file.tags | orderBy:'name'">{{ tag.name }}, </span>
+                        <file-tag-listing></file-tag-listing>
                     </p>
                 </td>
             </tr>
