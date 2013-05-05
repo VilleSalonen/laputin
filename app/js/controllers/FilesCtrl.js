@@ -57,7 +57,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         });
 
         $scope.selectedFiles = allFiles;
-        $scope.visibleFiles = _.first($scope.selectedFiles, 25);
         $scope.loadingFiles = false;
 
         $scope.updateFilteredFiles();
@@ -92,6 +91,8 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         }
 
         $scope.selectedFiles = result.matchingFiles;
+        $scope.visibleFiles = _.first($scope.selectedFiles, 25);
+
         if ($scope.showAllTags) {
             $scope.tags = result.availableTags;
         } else {
