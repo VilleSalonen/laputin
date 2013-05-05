@@ -1,6 +1,6 @@
 /*global _ */
 
-function SingleFileCtrl($scope, LaputinAPI) {
+function SingleFileCtrl($scope) {
     $scope.tagName = "";
     $scope.editing = false;
 

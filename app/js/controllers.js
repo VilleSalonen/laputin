@@ -12,7 +12,7 @@ var angular = require('./shims/angular.shim.js');
 angular.module("laputin.controllers", []).controller("AppCtrl", ["$scope", "$location", "LaputinAPI", AppCtrl])
                                          .controller("FilesCtrl", ["$scope", "LaputinAPI", "Library", FilesCtrl])
                                          .controller("FilterTagCtrl", FilterTagCtrl)
-                                         .controller("SingleFileCtrl", ["$scope", "LaputinAPI", SingleFileCtrl])
+                                         .controller("SingleFileCtrl", ["$scope", SingleFileCtrl])
                                          .controller("EditFileCtrl", ["$scope", "LaputinAPI", EditFileCtrl])
                                          .controller("TagsCtrl", ["$scope", "LaputinAPI", TagsCtrl])
                                          .controller("SingleTagCtrl", ["$scope", "$routeParams", "LaputinAPI", SingleTagCtrl]);
