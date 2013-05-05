@@ -57,6 +57,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         });
 
         $scope.selectedFiles = allFiles;
+        $scope.visibleFiles = _.first($scope.selectedFiles, 25);
         $scope.loadingFiles = false;
 
         $scope.updateFilteredFiles();
@@ -234,6 +235,11 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         _.each($scope.selectedFiles, function (file) {
             file.batchSelection = $scope.allInBatch;
         });
+    };
+
+    $scope.showMore = function () {
+        var currentlyVisible = _.size($scope.visibleFiles);
+        $scope.visibleFiles = _.union($scope.visibleFiles, $scope.selectedFiles.slice(currentlyVisible, currentlyVisible + 25));
     };
 }
 

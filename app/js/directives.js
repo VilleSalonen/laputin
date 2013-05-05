@@ -12,8 +12,10 @@ angular.module('laputin.directives', []).
 
             link: function (scope, element, attrs) {
                 scope.$watch("file", function (newValue, oldValue) {
-                    var tagNames = _.pluck(scope.file.tags, "name");
-                    scope.tagListing = tagNames.sort().join(", ");
+                    if (typeof scope.file !== "undefined") {
+                        var tagNames = _.pluck(scope.file.tags, "name");
+                        scope.tagListing = tagNames.sort().join(", ");
+                    }
                 }, true);
             }
         };

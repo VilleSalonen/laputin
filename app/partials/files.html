@@ -107,11 +107,11 @@
         <p>Loading files...</p>
     </div>
     <div ng-hide="loadingFiles">
-        <table class="table table-striped">
+        <table class="table table-striped" infinite-scroll="showMore()" infinite-scroll-distance="0">
             <tr>
                 <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
             </tr>
-            <tr ng-controller="SingleFileCtrl" ng-repeat="file in selectedFiles | orderBy:'path'">
+            <tr ng-controller="SingleFileCtrl" ng-repeat="file in visibleFiles | orderBy:'path'">
                 <td>
                     <div>
                         <div ng-show="showBatchOperations">
