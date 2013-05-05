@@ -26,6 +26,9 @@
                     <label class="checkbox">
                         <input type="checkbox" ng-model="showTagInfoForFiles"> Show tag info for files
                     </label>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
+                    </label>
                 </div>
                 <div class="span6 offset1">
                     <h2>Tags</h2>
@@ -82,7 +85,8 @@
         </div>
     </div>
 
-    <form>
+    <form ng-show="showBatchOperations">
+        <strong class="pull-left" style="font-size: 115%;">Batch operations</strong>
         <label class="checkbox pull-left">
             <input type="checkbox" ng-model="allInBatch" ng-click="addSelectedToBatch()" /> Select all
         </label>
@@ -109,21 +113,25 @@
             <tr ng-controller="SingleFileCtrl" ng-repeat="file in selectedFiles | orderBy:'path'">
                 <td>
                     <div>
-                        <label class="checkbox">
-                            <input type="checkbox" ng-model="file.batchSelection" />
-                            <div ng-hide="editing">
-                                <a ng-click="edit()">{{ file.name }}</a>
+                        <div ng-show="showBatchOperations">
+                            <label class="checkbox pull-left">
+                                <input type="checkbox" ng-model="file.batchSelection" />
+                            </label>
+                        </div>
 
-                                <div ng-switch on="showTagInfoForFiles">
-                                    <div ng-switch-when="true">
-                                        <p ng-show="file.tags.length > 0">
-                                            <strong>Tags:</strong>
-                                            <file-tag-listing></file-tag-listing>
-                                        </p>
-                                    </div>
+                        <div ng-hide="editing">
+                            <a ng-click="edit()">{{ file.name }}</a>
+
+                            <div ng-switch on="showTagInfoForFiles">
+                                <div ng-switch-when="true">
+                                    <p ng-show="file.tags.length > 0">
+                                        <strong>Tags:</strong>
+                                        <file-tag-listing></file-tag-listing>
+                                    </p>
                                 </div>
                             </div>
-                        </label>
+                        </div>
+
                         <div ng-show="editing">
                             {{ file.name }}
                             <button class="btn" ng-click="closeEditing()">Close editing</button>

@@ -11,6 +11,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.onlyUntagged = false;
     $scope.onlyTagged = false;
     $scope.showTagInfoForFiles = true;
+    $scope.showBatchOperations = false;
 
 
 
