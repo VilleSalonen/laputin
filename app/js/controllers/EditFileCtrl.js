@@ -27,6 +27,8 @@ function EditFileCtrl($scope, LaputinAPI) {
             }
         });
         $scope.availableTagQuery = "";
+
+        $scope.$emit("fileTagAssociationsChanged");
     };
 
     $scope.removeTag = function (tag) {
@@ -39,6 +41,8 @@ function EditFileCtrl($scope, LaputinAPI) {
             $scope.file.tags.splice(idx, 1);
             LaputinAPI.unlinkTagFromFile(tag, $scope.file);
         }
+
+        $scope.$emit("fileTagAssociationsChanged");
     };
 
     $scope.createNewTag = function () {

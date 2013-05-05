@@ -27,7 +27,7 @@ function FilterTagCtrl($scope) {
     };
 
     function emitChange() {
-        $scope.$emit("advancedFilterChange");
+        $scope.$emit("fileTagAssociationsChanged");
     }
 }
 
