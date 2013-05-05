@@ -11,6 +11,6 @@ function SingleFileCtrl($scope) {
     $scope.closeEditing = function () {
         $scope.editing = false;
     };
-};
+}
 
 module.exports = SingleFileCtrl;
