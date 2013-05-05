@@ -50,9 +50,14 @@ process.on('SIGINT', function() {
 
     if (typeof configuration.gitVersioning !== "undefined" && configuration.gitVersioning === true) {
         var message = "Saving Laputin metadata on " + (new Date());
-        exec("git commit .laputin.db -m \"" + message + "\".", function () {
-            console.log("EXITING!");
-            process.exit(0);
+        exec("git commit .laputin.db -m \"" + message + "\".", function (err) {
+            if (err) {
+                console.log("Saving failed: " + err);
+                process.exit(1);
+            } else {
+                console.log("Saving library and exiting.");
+                process.exit(0);
+            }
         });
     } else {
         process.exit(0);
