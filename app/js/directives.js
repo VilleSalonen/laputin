@@ -33,57 +33,6 @@ angular.module('laputin.directives', []).
             });
         };
     }])
-    .directive('wKeydown', function() {
-        return function(scope, elm, attr) {
-            elm.bind('keydown', function(e) {
-                // We don't want to trigger keyboard shortcut when user types
-                // in inputs.
-                if (e.target !== $("body")[0])
-                    return;
-
-                switch (e.keyCode) {
-                    case 70:
-                        e.preventDefault();
-                        return scope.$apply(attr.wFKey);
-                    case 84:
-                        e.preventDefault();
-                        return scope.$apply(attr.wTKey);
-                    case 85:
-                        e.preventDefault();
-                        return scope.$apply(attr.wUKey);
-                    case 191:
-                        e.preventDefault();
-                        return scope.$apply(attr.wSlash);
-                }
-            });
-        };
-    })
-    // Source: https://github.com/mgcrea/angular-strap/blob/master/src/directives/navbar.js
-    .directive('bsNavbar', ['$location', function($location) {
-        'use strict';
-
-        return {
-            restrict: 'A',
-            link: function postLink($scope, element, attrs, controller) {
-                // Watch for the $location
-                $scope.$watch(function() {
-                    return $location.path();
-                }, function(newValue, oldValue) {
-                    $('li[data-match-route]', element).each(function(k, li) {
-                        var $li = angular.element(li),
-                            pattern = $li.attr('data-match-route'),
-                            regexp = new RegExp('^' + pattern + '$', ["i"]);
-
-                        if(regexp.test(newValue)) {
-                            $li.addClass('active');
-                        } else {
-                            $li.removeClass('active');
-                        }
-                    });
-                });
-            }
-        };
-    }])
     // Source: https://github.com/twitter/bootstrap/blob/master/js/bootstrap-typeahead.js
     .directive('bsTypeahead', ['$parse', function($parse) {
         'use strict';

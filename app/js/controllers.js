@@ -9,7 +9,7 @@ var SingleTagCtrl = require("./controllers/SingleTagCtrl.js");
 var EditFileCtrl = require("./controllers/EditFileCtrl.js");
 
 var angular = require('./shims/angular.shim.js');
-angular.module("laputin.controllers", []).controller("AppCtrl", ["$scope", "$location", "LaputinAPI", AppCtrl])
+angular.module("laputin.controllers", []).controller("AppCtrl", ["$scope", "LaputinAPI", AppCtrl])
                                          .controller("FilesCtrl", ["$scope", "LaputinAPI", "Library", FilesCtrl])
                                          .controller("FilterTagCtrl", FilterTagCtrl)
                                          .controller("SingleFileCtrl", ["$scope", SingleFileCtrl])
