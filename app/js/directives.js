@@ -10,11 +10,11 @@ angular.module('laputin.directives', []).
             scope: 'isolate',
             template: '{{ tagListing }}',
 
-            compile: function (element, attr, transclusionFunc) {
-                return function (scope, iterStartElement, attr) {
+            link: function (scope, element, attrs) {
+                scope.$watch("file", function (newValue, oldValue) {
                     var tagNames = _.pluck(scope.file.tags, "name");
                     scope.tagListing = tagNames.sort().join(", ");
-                };
+                }, true);
             }
         };
     })
