@@ -3,7 +3,10 @@
 var _ = require("underscore");
 
 function EditFileCtrl($scope, LaputinAPI) {
+    $scope.changed = false;
+
     $scope.tagName = "";
+
 
     $scope.localTagNames = _.difference(
         _.pluck($scope.tags, "name").sort(),
@@ -28,7 +31,7 @@ function EditFileCtrl($scope, LaputinAPI) {
         });
         $scope.availableTagQuery = "";
 
-        $scope.$emit("fileTagAssociationsChanged");
+        $scope.changed = true;
     };
 
     $scope.removeTag = function (tag) {
@@ -42,7 +45,7 @@ function EditFileCtrl($scope, LaputinAPI) {
             LaputinAPI.unlinkTagFromFile(tag, $scope.file);
         }
 
-        $scope.$emit("fileTagAssociationsChanged");
+        $scope.changed = true;
     };
 
     $scope.createNewTag = function () {
@@ -67,6 +70,12 @@ function EditFileCtrl($scope, LaputinAPI) {
     $scope.tagSearchFn = function() {
         return $scope.localTagNames;
     };
+
+    $scope.$on('$destroy', function() {
+        if ($scope.changed) {
+            $scope.$emit("fileTagAssociationsChanged");
+        }
+    });
 }
 
 module.exports = EditFileCtrl;
