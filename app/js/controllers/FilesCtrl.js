@@ -182,6 +182,20 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         });
     };
 
+    $scope.batchCreateAndAddTag = function () {
+        var tag = _.find($scope.tags, function (tag) {
+            return tag.name === $scope.batchTagName;
+        });
+
+        // Make sure there isn't one yet.
+        if (!tag) {
+            LaputinAPI.createNewTag($scope.batchTagName, function (tag) {
+                $scope.tags.push(tag);
+                $scope.batchAddTag();
+            });
+        }
+    };
+
     $scope.batchRemoveTag = function () {
         var tag = _.find($scope.tags, function (tag) {
             return tag.name === $scope.batchTagName;
