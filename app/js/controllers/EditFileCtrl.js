@@ -4,7 +4,11 @@ var _ = require("underscore");
 
 function EditFileCtrl($scope, LaputinAPI) {
     $scope.tagName = "";
-    $scope.localTagNames = _.pluck($scope.tags, "name").sort();
+
+    $scope.localTagNames = _.difference(
+        _.pluck($scope.tags, "name").sort(),
+        _.pluck($scope.file.tags, "name")
+    );
 
     $scope.open = function () {
         LaputinAPI.openFile($scope.file);
