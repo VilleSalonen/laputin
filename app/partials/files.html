@@ -141,7 +141,12 @@
                                     <div class="span8">
                                         <h2>Current tags</h2>
 
-                                        <a ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)" class="btn btn-success tag">{{ tag.name }}</a>
+                                        <div ng-show="file.tags.length > 0">
+                                            <a ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)" class="btn btn-success tag">{{ tag.name }}</a>
+                                        </div>
+                                        <div ng-hide="file.tags.length > 0">
+                                            <p>No tags.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
