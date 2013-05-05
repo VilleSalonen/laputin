@@ -153,9 +153,8 @@ function startServer() {
             return tag.id == tagId;
         });
 
-        library.deleteLinkBetweenTagAndFile(tag, file, function () {
-            res.send(200);
-        });
+        library.deleteLinkBetweenTagAndFile(tag, file);
+        res.send(200);
     });
 
     app.get("/files/:hash/open", function (req, res) {

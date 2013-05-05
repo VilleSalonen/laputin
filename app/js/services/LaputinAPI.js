@@ -37,8 +37,8 @@ function LaputinAPI(http) {
             });
     };
 
-    this.unlinkTagFromFile = function (tag, file) {
-        http.delete("files/" + file.hash + "/tags/" + tag.id);
+    this.unlinkTagFromFile = function (tag, file, callback) {
+        http.delete("files/" + file.hash + "/tags/" + tag.id).success(callback);
     };
 
     this.createNewTag = function (tagName, callbackSuccess) {

@@ -165,6 +165,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
 
+    $scope.batchTagName = "";
     $scope.batchAddTag = function () {
         var tag = _.find($scope.tags, function (tag) {
             return tag.name === $scope.batchTagName;
@@ -178,6 +179,39 @@ function FilesCtrl($scope, LaputinAPI, Library) {
                 }
             }
         });
+    };
+
+    $scope.batchRemoveTag = function () {
+        var tag = _.find($scope.tags, function (tag) {
+            return tag.name === $scope.batchTagName;
+        });
+
+        var callbacks = [];
+
+        var finalizing = function () {
+            $scope.updateFilteredFiles();
+        };
+        callbacks.push(finalizing);
+
+        _.each($scope.selectedFiles, function (file) {
+            if (file.batchSelection) {
+                if (_.size(_.findWhere(file.tags, { "name": tag.name })) > 0) {
+                    var cb = _.last(callbacks);
+
+                    callbacks.push(function () {
+                        LaputinAPI.unlinkTagFromFile(tag, file, function () {
+                            var idx = file.tags.indexOf(tag);
+                            file.tags.splice(idx, 1);
+                            if (typeof cb === "function")
+                                cb();
+                        });
+                    });
+                }
+            }
+        });
+
+        var lastCallback = _.last(callbacks);
+        lastCallback();
     };
 
     $scope.allInBatch = false;
