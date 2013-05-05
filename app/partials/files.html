@@ -23,6 +23,9 @@
                     <label class="checkbox">
                         <input type="checkbox" ng-model="showAllTags" ng-click="updateFilteredFiles()"> Show all tags
                     </label>
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="showTagInfoForFiles"> Show tag info for files
+                    </label>
                 </div>
                 <div class="span6 offset1">
                     <h2>Tags</h2>
@@ -93,10 +96,14 @@
                         <div ng-hide="editing">
                             <a ng-click="edit()">{{ file.name }}</a>
 
-                            <p ng-show="file.tags.length > 0">
-                                <strong>Tags:</strong>
-                                <file-tag-listing></file-tag-listing>
-                            </p>
+                            <div ng-switch on="showTagInfoForFiles">
+                                <div ng-switch-when="true">
+                                    <p ng-show="file.tags.length > 0">
+                                        <strong>Tags:</strong>
+                                        <file-tag-listing></file-tag-listing>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                         <div ng-show="editing">
                             {{ file.name }}
