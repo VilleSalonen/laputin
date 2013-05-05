@@ -82,7 +82,18 @@
         </div>
     </div>
 
-    <div ng-show="loadingFiles">
+    <form ng-submit="batchAddTag()">
+        <input tabindex="12" type="text" class="search-query"
+               placeholder="Find tags"
+               ng-model="tagName" bs-typeahead="tagSearchFn" />
+    </form>
+
+    <label class="checkbox">
+        <input type="checkbox" ng-model="allInBatch" ng-click="addSelectedToBatch()" /> Select all for batch
+    </label>
+
+
+        <div ng-show="loadingFiles">
         <p>Loading files...</p>
     </div>
     <div ng-hide="loadingFiles">
@@ -93,18 +104,21 @@
             <tr ng-controller="SingleFileCtrl" ng-repeat="file in selectedFiles | orderBy:'path'">
                 <td>
                     <div>
-                        <div ng-hide="editing">
-                            <a ng-click="edit()">{{ file.name }}</a>
+                        <label class="checkbox">
+                            <input type="checkbox" ng-model="file.batchSelection" />
+                            <div ng-hide="editing">
+                                <a ng-click="edit()">{{ file.name }}</a>
 
-                            <div ng-switch on="showTagInfoForFiles">
-                                <div ng-switch-when="true">
-                                    <p ng-show="file.tags.length > 0">
-                                        <strong>Tags:</strong>
-                                        <file-tag-listing></file-tag-listing>
-                                    </p>
+                                <div ng-switch on="showTagInfoForFiles">
+                                    <div ng-switch-when="true">
+                                        <p ng-show="file.tags.length > 0">
+                                            <strong>Tags:</strong>
+                                            <file-tag-listing></file-tag-listing>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </label>
                         <div ng-show="editing">
                             {{ file.name }}
                             <button class="btn" ng-click="closeEditing()">Close editing</button>

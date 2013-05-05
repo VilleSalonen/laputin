@@ -51,6 +51,10 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.loadingFiles = true;
     LaputinAPI.getFiles(function (data) {
         allFiles = _.sortBy(data, function (file) { return file.path });
+        _.each(allFiles, function (file) {
+            file.batchSelection = false;
+        });
+
         $scope.selectedFiles = allFiles;
         $scope.loadingFiles = false;
 
@@ -157,6 +161,28 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.tagSearchFn = function() {
         return $.map($scope.tags, function(candidate) {
             return candidate.name;
+        });
+    };
+
+
+    $scope.batchAddTag = function () {
+        var tag = _.find($scope.tags, function (tag) {
+            return tag.name === $scope.tagName;
+        });
+
+        _.each($scope.selectedFiles, function (file) {
+            if (file.batchSelection) {
+                if (_.isEmpty(_.findWhere(file.tags, { "name": tag.name }))) {
+                    LaputinAPI.linkTagToFile(tag, file);
+                }
+            }
+        });
+    };
+
+    $scope.allInBatch = false;
+    $scope.addSelectedToBatch = function () {
+        _.each($scope.selectedFiles, function (file) {
+            file.batchSelection = $scope.allInBatch;
         });
     };
 }
