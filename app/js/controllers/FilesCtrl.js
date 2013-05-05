@@ -167,12 +167,13 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
     $scope.batchAddTag = function () {
         var tag = _.find($scope.tags, function (tag) {
-            return tag.name === $scope.tagName;
+            return tag.name === $scope.batchTagName;
         });
 
         _.each($scope.selectedFiles, function (file) {
             if (file.batchSelection) {
                 if (_.isEmpty(_.findWhere(file.tags, { "name": tag.name }))) {
+                    file.tags.push(tag);
                     LaputinAPI.linkTagToFile(tag, file);
                 }
             }

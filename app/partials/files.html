@@ -82,15 +82,20 @@
         </div>
     </div>
 
-    <form ng-submit="batchAddTag()">
-        <input tabindex="12" type="text" class="search-query"
-               placeholder="Find tags"
-               ng-model="tagName" bs-typeahead="tagSearchFn" />
+    <form>
+        <label class="checkbox pull-left">
+            <input type="checkbox" ng-model="allInBatch" ng-click="addSelectedToBatch()" /> Select all
+        </label>
+
+        <input tabindex="12" type="text" class="pull-left"
+               placeholder="Tag for batch operation"
+               ng-model="batchTagName" bs-typeahead="tagSearchFn" />
+
+        <button class="btn btn-success pull-left" ng-click="batchAddTag()">Add tag to checked files</button>
+        <button class="btn btn-danger pull-left">Remove tag from checked files</button>
     </form>
 
-    <label class="checkbox">
-        <input type="checkbox" ng-model="allInBatch" ng-click="addSelectedToBatch()" /> Select all for batch
-    </label>
+
 
 
         <div ng-show="loadingFiles">
