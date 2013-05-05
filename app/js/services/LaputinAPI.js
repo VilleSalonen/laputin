@@ -28,7 +28,10 @@ function LaputinAPI(http) {
 
     this.linkTagToFile = function (tag, file, callback) {
         http.post("files/" + file.hash + "/tags", { selectedTags: [tag] })
-            .success(function () { callback(null); })
+            .success(function () {
+                if (typeof callback === "function")
+                    callback(null);
+            })
             .error(function (data, status) {
                 callback(new Error("Linking tag " + tag.name + " to file " + file.name + " failed. Status: " + status));
             });
