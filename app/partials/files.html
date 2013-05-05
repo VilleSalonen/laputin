@@ -33,7 +33,7 @@
                     <form ng-submit="addTagFromSearch()">
                         <input tabindex="12" type="text" class="search-query"
                                placeholder="Find tags"
-                               ng-model="tagName" bs-typeahead="tagSearchFn" blur="lastSubmit" />
+                               ng-model="tagName" bs-typeahead="tagSearchFn" />
                     </form>
 
                     <div ng-hide="someTagsSelected">
@@ -127,8 +127,7 @@
                                                     class="search-query"
                                                     placeholder="Find tags"
                                                     ng-model="tagName"
-                                                    bs-typeahead="tagSearchFn"
-                                                    blur="lastSubmit" />
+                                                    bs-typeahead="tagSearchFn" />
                                         </form>
 
                                         <h2>Create new tag</h2>

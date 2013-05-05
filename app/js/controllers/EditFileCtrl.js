@@ -1,7 +1,10 @@
 /*global _ */
 
+var _ = require("underscore");
+
 function EditFileCtrl($scope, LaputinAPI) {
     $scope.tagName = "";
+    $scope.localTagNames = _.pluck($scope.tags, "name").sort();
 
     $scope.open = function () {
         LaputinAPI.openFile($scope.file);
@@ -9,6 +12,7 @@ function EditFileCtrl($scope, LaputinAPI) {
 
     $scope.addTag = function (tag) {
         $scope.file.tags.push(tag);
+        $scope.localTagNames = _.without($scope.localTagNames, tag.name);
         LaputinAPI.linkTagToFile(tag, $scope.file, function (err) {
             if (err) {
                 var idx = $scope.file.tags.indexOf(tag);
@@ -23,6 +27,10 @@ function EditFileCtrl($scope, LaputinAPI) {
 
     $scope.removeTag = function (tag) {
         var idx = $scope.file.tags.indexOf(tag);
+
+        $scope.localTagNames.push(tag.name)
+        $scope.localTagNames.sort();
+
         if (idx !== -1) {
             $scope.file.tags.splice(idx, 1);
             LaputinAPI.unlinkTagFromFile(tag, $scope.file);
@@ -48,10 +56,8 @@ function EditFileCtrl($scope, LaputinAPI) {
     };
 
     $scope.tagSearchFn = function() {
-        return $.map($scope.tags, function(candidate) {
-            return candidate.name;
-        });
+        return $scope.localTagNames;
     };
-};
+}
 
 module.exports = EditFileCtrl;
