@@ -10,7 +10,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.showAllTags = false;
     $scope.onlyUntagged = false;
     $scope.onlyTagged = false;
-    $scope.showTagInfoForFiles = false;
+    $scope.showTagInfoForFiles = true;
 
 
 
