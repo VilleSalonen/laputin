@@ -240,7 +240,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
     $scope.showMore = function () {
         var currentlyVisible = _.size($scope.visibleFiles);
-        $scope.visibleFiles = _.union($scope.visibleFiles, $scope.selectedFiles.slice(currentlyVisible, currentlyVisible + 25));
+        $scope.visibleFiles = _.union($scope.visibleFiles, $scope.selectedFiles.slice(currentlyVisible, currentlyVisible + 50));
     };
 }
 
