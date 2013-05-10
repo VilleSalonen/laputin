@@ -107,7 +107,7 @@
         <p>Loading files...</p>
     </div>
     <div ng-hide="loadingFiles">
-        <table class="table table-striped" infinite-scroll="showMore()" infinite-scroll-distance="0">
+        <table class="table table-striped" infinite-scroll="showMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="true">
             <tr>
                 <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
             </tr>
