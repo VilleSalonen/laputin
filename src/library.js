@@ -79,8 +79,17 @@ Library.prototype.load = function (callback) {
 
 Library.prototype.createNewLinkBetweenTagAndFile = function (inputTag, inputFile) {
     var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
-    stmt.run(inputTag.id, inputFile.hash);
-    stmt.finalize();
+    stmt.run(inputTag.id, inputFile.hash, function (err) {
+        if (err) {
+            if (err.code !== "SQLITE_CONSTRAINT" && typeof callback === "function") {
+                callback(err, null);
+            } else {
+                console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + inputFile.hash + ". Refusing to add a duplicate association.");
+            }
+        }
+
+        stmt.finalize();
+    });
 
     this._linkTagToFile(inputTag, inputFile);
 };
