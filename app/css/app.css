@@ -65,3 +65,7 @@ body {
     background-color: #eee;
     margin-bottom: 15px;
 }
+
+.no-margin {
+    margin: 0px;
+}

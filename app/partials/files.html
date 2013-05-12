@@ -2,48 +2,26 @@
     <div class="filter-controls">
         <div class="extra-padded">
             <div class="row-fluid">
-                <div class="span2">
-                    <h2>Basic</h2>
+                <div class="span10">
+                    <div class="pull-left">
+                        <form ng-submit="addTagFromSearch()" class="no-margin">
+                            <input tabindex="12" type="text" class="search-query"
+                                   placeholder="Find tags"
+                                   ng-model="tagName" bs-typeahead="tagSearchFn" />
+                        </form>
 
-                    <form ng-submit="addTagFromSearch()">
-                        <input tabindex="11" type="text" class="search-query"
-                               placeholder="File name contains"
-                               ng-model="fileQuery" on-enter="updateFilteredFiles()" />
-                    </form>
-
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="onlyTagged" ng-click="updateFilteredFiles()"> Show only tagged files
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="onlyUntagged" ng-click="updateFilteredFiles()"> Show only untagged files
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="advancedTagFiltering"> Use advanced tag filtering
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="showAllTags" ng-click="updateFilteredFiles()"> Show all tags
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="showTagInfoForFiles"> Show tag info for files
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
-                    </label>
-                </div>
-                <div class="span6 offset1">
-                    <h2>Tags</h2>
-
-                    <form ng-submit="addTagFromSearch()">
-                        <input tabindex="12" type="text" class="search-query"
-                               placeholder="Find tags"
-                               ng-model="tagName" bs-typeahead="tagSearchFn" />
-                    </form>
+                        <p><small><a ng-click="clearSearchFilters()">Clear search filters</a></small></p>
+                        <p>
+                            <small ng-hide="searchOptions.showAdvancedSearch"><a ng-click="toggleAdvancedSearch()">Show advanced</a></small>
+                            <small ng-show="searchOptions.showAdvancedSearch"><a ng-click="toggleAdvancedSearch()">Hide advanced</a></small>
+                        </p>
+                    </div>
 
                     <div ng-hide="someTagsSelected">
                         <p>No tags selected.</p>
                     </div>
                     <div ng-show="someTagsSelected">
-                        <div ng-switch on="advancedTagFiltering">
+                        <div ng-switch on="searchOptions.showAdvancedSearch">
                             <div ng-switch-default>
                                 <a ng-repeat="tag in selectedTags | orderBy:'name'"
                                    ng-click="toggleSelection(tag)"
@@ -72,14 +50,49 @@
                     </div>
                 </div>
 
-                <div class="span2 offset1">
-                    <button class="btn btn-large btn-primary" type="button" ng-click="openFiles()" tabindex="13">
-                        Open files
-                    </button>
+                <div class="span2">
+                    <div class="span10">
+                        <button class="btn btn-primary pull-right" ng-click="openFiles()" tabindex="13">
+                            Open files
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                    <button class="btn btn-danger" ng-click="clearSearchFilters()">
-                        Clear search filters
-                    </button>
+            <div ng-show="searchOptions.showAdvancedSearch">
+                <div class="row-fluid">
+                    <div class="span4">
+                        <div class="btn-group">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                <span ng-show="onlyTagged">Only tagged</span>
+                                <span ng-show="onlyUntagged">Only untagged</span>
+                                <span ng-hide="onlyTagged || onlyUntagged">Both tagged and untagged</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li ng-click="showBothTaggedAndUntagged()">Show both</li>
+                                <li ng-click="showOnlyTagged()">Show only tagged</li>
+                                <li ng-click="showOnlyUntagged()">Show only untagged</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="span4">
+                        <form ng-submit="addTagFromSearch()">
+                            <input tabindex="11" type="text" class="search-query"
+                                   placeholder="File name contains"
+                                   ng-model="fileQuery" on-enter="updateFilteredFiles()" />
+                        </form>
+                    </div>
+
+                    <div class="span4">
+                        <label class="checkbox">
+                            <input type="checkbox" ng-model="showAllTags" ng-click="updateFilteredFiles()"> Show all tags
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,10 +113,7 @@
         <button class="btn btn-danger pull-left" ng-click="batchRemoveTag()">Remove tag from checked files</button>
     </form>
 
-
-
-
-        <div ng-show="loadingFiles">
+    <div ng-show="loadingFiles">
         <p>Loading files...</p>
     </div>
     <div ng-hide="loadingFiles">
@@ -123,14 +133,10 @@
                         <div ng-hide="editing">
                             <a ng-click="edit()">{{ file.name }}</a>
 
-                            <div ng-switch on="showTagInfoForFiles">
-                                <div ng-switch-when="true">
-                                    <p ng-show="file.tags.length > 0">
-                                        <strong>Tags:</strong>
-                                        <file-tag-listing></file-tag-listing>
-                                    </p>
-                                </div>
-                            </div>
+                            <p ng-show="file.tags.length > 0">
+                                <strong>Tags:</strong>
+                                <file-tag-listing></file-tag-listing>
+                            </p>
                         </div>
 
                         <div ng-show="editing">

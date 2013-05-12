@@ -3,17 +3,30 @@
 function FilesCtrl($scope, LaputinAPI, Library) {
     var previouslySelectedTagNames = JSON.parse(localStorage.getItem("selectedTagNames"));
 
+    $scope.searchOptions = {
+        showAdvancedSearch: false
+    };
+
+    var previousSearchOptions = localStorage.getItem("previousSearchOptions");
+    if (previousSearchOptions !== null) {
+        _.extend($scope.searchOptions, JSON.parse(previousSearchOptions));
+    }
+
+    $scope.$watch("searchOptions", function () {
+        localStorage.setItem("previousSearchOptions", JSON.stringify($scope.searchOptions));
+    }, true);
+
     $scope.fileQuery = localStorage.getItem("fileQuery");
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
-    $scope.advancedTagFiltering = false;
     $scope.showAllTags = false;
     $scope.onlyUntagged = false;
     $scope.onlyTagged = false;
-    $scope.showTagInfoForFiles = true;
     $scope.showBatchOperations = false;
 
-
+    $scope.toggleAdvancedSearch = function () {
+        $scope.searchOptions.showAdvancedSearch = !$scope.searchOptions.showAdvancedSearch;
+    };
 
 
     $scope.taggedStatuses = [
@@ -91,7 +104,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         }
 
         $scope.selectedFiles = result.matchingFiles;
-        $scope.visibleFiles = _.first($scope.selectedFiles, 25);
+        $scope.visibleFiles = _.first($scope.selectedFiles, 100);
 
         if ($scope.showAllTags) {
             $scope.tags = result.availableTags;
@@ -108,24 +121,30 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         localStorage.setItem("selectedTagNames", JSON.stringify(selectedTagNames));
     };
 
-    $scope.$watch("onlyUntagged", function () {
-        if ($scope.onlyUntagged) {
-            $scope.onlyTagged = false;
-        }
-    });
+    $scope.showOnlyTagged = function () {
+        $scope.onlyTagged = true;
+        $scope.onlyUntagged = false;
+        $scope.updateFilteredFiles();
+    };
 
-    $scope.$watch("onlyTagged", function () {
-        if ($scope.onlyTagged) {
-            $scope.onlyUntagged = false;
-        }
-    });
+    $scope.showOnlyUntagged = function () {
+        $scope.onlyUntagged = true;
+        $scope.onlyTagged = false;
+        $scope.updateFilteredFiles();
+    };
+
+    $scope.showBothTaggedAndUntagged = function () {
+        $scope.onlyUntagged = false;
+        $scope.onlyTagged = false;
+        $scope.updateFilteredFiles();
+    };
+
 
     $scope.clearSearchFilters = function () {
         _.each(allTags, function (tag) {
             tag.operator = "";
         });
 
-        $scope.advancedTagFiltering = false;
         $scope.showAllTags = false;
         $scope.onlyUntagged = false;
         $scope.onlyTagged = false;
