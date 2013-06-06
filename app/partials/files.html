@@ -98,20 +98,9 @@
         </div>
     </div>
 
-    <form ng-show="showBatchOperations">
-        <strong class="pull-left" style="font-size: 115%;">Batch operations</strong>
-        <label class="checkbox pull-left">
-            <input type="checkbox" ng-model="allInBatch" ng-click="addSelectedToBatch()" /> Select all
-        </label>
 
-        <input tabindex="12" type="text" class="pull-left"
-               placeholder="Tag for batch operation"
-               ng-model="batchTagName" bs-typeahead="tagSearchFn" />
-
-        <button class="btn btn-success pull-left" ng-click="batchAddTag()">Add tag to checked files</button>
-        <button class="btn btn-success pull-left" ng-click="batchCreateAndAddTag()">Create new tag and add it to checked files</button>
-        <button class="btn btn-danger pull-left" ng-click="batchRemoveTag()">Remove tag from checked files</button>
-    </form>
+    <div ng-show="showBatchOperations" ng-include="'/partials/batch_operations.html'">
+    </div>
 
     <div ng-show="loadingFiles">
         <p>Loading files...</p>
@@ -121,72 +110,7 @@
             <tr>
                 <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
             </tr>
-            <tr ng-controller="SingleFileCtrl" ng-repeat="file in visibleFiles | orderBy:'path'">
-                <td>
-                    <div>
-                        <div ng-show="showBatchOperations">
-                            <label class="checkbox pull-left">
-                                <input type="checkbox" ng-model="file.batchSelection" />
-                            </label>
-                        </div>
-
-                        <div ng-hide="editing">
-                            <a ng-click="edit()">{{ file.name }}</a>
-
-                            <p ng-show="file.tags.length > 0">
-                                <strong>Tags:</strong>
-                                <file-tag-listing></file-tag-listing>
-                            </p>
-                        </div>
-
-                        <div ng-show="editing">
-                            {{ file.name }}
-                            <button class="btn" ng-click="closeEditing()">Close editing</button>
-                        </div>
-                    </div>
-
-                    <div ng-switch on="editing">
-                        <div ng-switch-when="true">
-                            <div ng-controller="EditFileCtrl">
-                                <button class="btn pull-right" ng-click="open()">Open</button>
-
-                                <div class="row">
-                                    <div class="span4">
-                                        <h2>Add tags</h2>
-
-                                        <form ng-submit="addTagFromSearch()">
-                                            <input
-                                                    tabindex="11"
-                                                    type="text"
-                                                    class="search-query"
-                                                    placeholder="Find tags"
-                                                    ng-model="tagName"
-                                                    bs-typeahead="tagSearchFn" />
-                                        </form>
-
-                                        <h2>Create new tag</h2>
-
-                                        <form>
-                                            <label for="tagName">Name:</label>
-                                            <input id="tagName" ng-model="newTagName" tabindex="12" on-enter="createNewTag()" />
-                                            <a class="btn btn-primary" ng-click="createNewTag()">Create</a>
-                                        </form>
-                                    </div>
-                                    <div class="span8">
-                                        <h2>Current tags</h2>
-
-                                        <div ng-show="file.tags.length > 0">
-                                            <a ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)" class="btn btn-success tag">{{ tag.name }}</a>
-                                        </div>
-                                        <div ng-hide="file.tags.length > 0">
-                                            <p>No tags.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </td>
+            <tr ng-controller="SingleFileCtrl" ng-repeat="file in visibleFiles | orderBy:'path'" ng-include="'/partials/single_file.html'">
             </tr>
         </table>
     </div>

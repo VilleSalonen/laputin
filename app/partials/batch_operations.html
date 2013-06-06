@@ -1,0 +1,14 @@
+<form>
+    <strong class="pull-left" style="font-size: 115%;">Batch operations</strong>
+    <label class="checkbox pull-left">
+        <input type="checkbox" ng-model="allInBatch" ng-click="addSelectedToBatch()" /> Select all
+    </label>
+
+    <input tabindex="12" type="text" class="pull-left"
+           placeholder="Tag for batch operation"
+           ng-model="batchTagName" bs-typeahead="tagSearchFn" />
+
+    <button class="btn btn-success pull-left" ng-click="batchAddTag()">Add tag to checked files</button>
+    <button class="btn btn-success pull-left" ng-click="batchCreateAndAddTag()">Create new tag and add it to checked files</button>
+    <button class="btn btn-danger pull-left" ng-click="batchRemoveTag()">Remove tag from checked files</button>
+</form>

@@ -1,3 +1,5 @@
+'use strict';
+
 /*global _ */
 
 var _ = require("underscore");
@@ -5,7 +7,7 @@ var _ = require("underscore");
 function EditFileCtrl($scope, LaputinAPI) {
     $scope.changed = false;
 
-    $scope.tagName = "";
+    $scope.fileTagName = "";
 
 
     $scope.localTagNames = _.difference(
@@ -58,16 +60,16 @@ function EditFileCtrl($scope, LaputinAPI) {
 
     $scope.addTagFromSearch = function () {
         var tag = _.find($scope.tags, function (tag) {
-            return tag.name === $scope.tagName;
+            return tag.name === $scope.fileTagName;
         });
 
         if (tag) {
             $scope.addTag(tag);
-            $scope.tagName = "";
+            $$scope.fileTagName = "";
         }
     };
 
-    $scope.tagSearchFn = function() {
+    $scope.fileTagSearchFn = function() {
         return $scope.localTagNames;
     };
 

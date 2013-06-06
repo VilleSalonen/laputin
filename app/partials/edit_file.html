@@ -1,0 +1,37 @@
+<div ng-controller="EditFileCtrl" >
+    <button class="btn pull-right" ng-click="open()">Open</button>
+
+    <div class="row">
+        <div class="span4">
+            <h2>Add tags</h2>
+
+            <form ng-submit="addTagFromSearch()">
+                <input
+                        tabindex="11"
+                        type="text"
+                        class="search-query"
+                        placeholder="Find tags"
+                        ng-model="fileTagName"
+                        bs-typeahead="fileTagSearchFn" />
+            </form>
+
+            <h2>Create new tag</h2>
+
+            <form>
+                <label for="tagName">Name:</label>
+                <input id="tagName" ng-model="newTagName" tabindex="12" on-enter="createNewTag()" />
+                <a class="btn btn-primary" ng-click="createNewTag()">Create</a>
+            </form>
+        </div>
+        <div class="span8">
+            <h2>Current tags</h2>
+
+            <div ng-show="file.tags.length > 0">
+                <a ng-repeat="tag in file.tags | orderBy:'name'" ng-click="removeTag(tag)" class="btn btn-success tag">{{ tag.name }}</a>
+            </div>
+            <div ng-hide="file.tags.length > 0">
+                <p>No tags.</p>
+            </div>
+        </div>
+    </div>
+</div>
