@@ -112,12 +112,18 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         $scope.visibleFiles = _.first($scope.selectedFiles, 100);
 
         if ($scope.showAllTags) {
-            $scope.tags = result.availableTags;
-        } else {
             $scope.tags = allTags;
+        } else {
+            $scope.tags = result.availableTags;
         }
 
         $scope.selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
+        if (_.size($scope.selectedTags) === 0) {
+            $scope.availableTags = allTags;
+        } else {
+            $scope.availableTags = _.filter($scope.tags, function (tag) { return tag.operator === ""; });;
+        }
+
         $scope.someTagsSelected = $scope.selectedTags.length > 0;
 
         localStorage.setItem("fileQuery", $scope.fileQuery);
@@ -167,7 +173,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
     $scope.tagName = "";
     $scope.tagSearchFn = function() {
-        return $.map($scope.tags, function(candidate) {
+        return $.map($scope.availableTags, function(candidate) {
             return candidate.name;
         });
     };
