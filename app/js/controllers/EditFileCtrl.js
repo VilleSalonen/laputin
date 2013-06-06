@@ -11,7 +11,7 @@ function EditFileCtrl($scope, LaputinAPI) {
 
 
     $scope.localTagNames = _.difference(
-        _.pluck($scope.tags, "name").sort(),
+        _.pluck($scope.allTags, "name").sort(),
         _.pluck($scope.file.tags, "name")
     );
 
@@ -59,7 +59,7 @@ function EditFileCtrl($scope, LaputinAPI) {
     };
 
     $scope.addTagFromSearch = function () {
-        var tag = _.find($scope.tags, function (tag) {
+        var tag = _.find($scope.allTags, function (tag) {
             return tag.name === $scope.fileTagName;
         });
 

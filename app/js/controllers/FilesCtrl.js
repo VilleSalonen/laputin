@@ -45,7 +45,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     });
 
 
-    var allTags = [];
+    $scope.allTags = [];
     var allFiles = [];
 
     $scope.loadingTags = true;
@@ -60,8 +60,8 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
             tagsFromAPI.push(tag);
         });
-        allTags = tagsFromAPI;
-        $scope.tags = allTags;
+        $scope.allTags = tagsFromAPI;
+        $scope.tags = $scope.allTags;
         $scope.loadingTags = false;
     });
 
@@ -98,13 +98,13 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         var result = undefined;
         switch ($scope.searchOptions.selectedTaggedStatus) {
             case 1:
-                result = Library.filter(allTags, allFiles, options);
+                result = Library.filter($scope.allTags, allFiles, options);
                 break;
             case 2:
-                result = Library.filterUntagged(allTags, allFiles, options);
+                result = Library.filterUntagged($scope.allTags, allFiles, options);
                 break;
             case 3:
-                result = Library.filterTagged(allTags, allFiles, options);
+                result = Library.filterTagged($scope.allTags, allFiles, options);
                 break;
         }
 
@@ -112,14 +112,14 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         $scope.visibleFiles = _.first($scope.selectedFiles, 100);
 
         if ($scope.showAllTags) {
-            $scope.tags = allTags;
+            $scope.tags = $scope.allTags;
         } else {
             $scope.tags = result.availableTags;
         }
 
-        $scope.selectedTags = _.filter(allTags, function (tag) { return tag.operator !== ""; });
+        $scope.selectedTags = _.filter($scope.allTags, function (tag) { return tag.operator !== ""; });
         if (_.size($scope.selectedTags) === 0) {
-            $scope.availableTags = allTags;
+            $scope.availableTags = $scope.allTags;
         } else {
             $scope.availableTags = _.filter($scope.tags, function (tag) { return tag.operator === ""; });;
         }
@@ -133,7 +133,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
     $scope.clearSearchFilters = function () {
-        _.each(allTags, function (tag) {
+        _.each($scope.allTags, function (tag) {
             tag.operator = "";
         });
 
