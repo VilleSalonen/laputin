@@ -64,15 +64,15 @@
                     <div class="span4">
                         <div class="btn-group">
                             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span ng-show="onlyTagged">Only tagged</span>
-                                <span ng-show="onlyUntagged">Only untagged</span>
-                                <span ng-hide="onlyTagged || onlyUntagged">Both tagged and untagged</span>
+                                <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
+                                <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
+                                <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li ng-click="showBothTaggedAndUntagged()">Show both</li>
-                                <li ng-click="showOnlyTagged()">Show only tagged</li>
-                                <li ng-click="showOnlyUntagged()">Show only untagged</li>
+                                <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
+                                <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
+                                <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
                             </ul>
                         </div>
                     </div>
