@@ -26,14 +26,14 @@
                                 <a ng-repeat="tag in selectedTags | orderBy:'name'"
                                    ng-click="toggleSelection(tag)"
                                    class="btn tag btn-success">
-                                    {{ tag.name }}</a>
+                                    {{ tag.name }} <small>{{ tag.files.length}}</small></a>
                             </div>
 
                             <div ng-switch-when="true">
                                 <div class="btn-toolbar" style="margin: 0;">
                                     <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
                                         <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            {{ tag.name }}
+                                            {{ tag.name }} <small>{{ tag.files.length}}</small>
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">
