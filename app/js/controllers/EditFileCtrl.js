@@ -65,7 +65,7 @@ function EditFileCtrl($scope, LaputinAPI) {
 
         if (tag) {
             $scope.addTag(tag);
-            $$scope.fileTagName = "";
+            $scope.fileTagName = "";
         }
     };
 
