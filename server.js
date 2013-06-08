@@ -31,6 +31,15 @@ var library = new Library(libraryPath);
 
 var configuration = YAML.readFileSync(path.join(libraryPath, ".laputin.yml"))[0];
 
+var port = 4242;
+if (typeof configuration.port !== "undefined") {
+    var portCandidate = parseInt(configuration.port, 10);
+    if (portCandidate != NaN) {
+        port = portCandidate;
+    }
+}
+
+
 switch (configuration.fileOpener) {
     case "QuickLook":
         var QuickLook = require("./src/quick_look.js").QuickLook;
@@ -199,7 +208,7 @@ function startServer() {
         }
     });
 
-    app.listen(4242);
+    app.listen(port);
 
-    console.log("Started at http://localhost:4242");
+    console.log("Started at http://localhost:" + port);
 }
