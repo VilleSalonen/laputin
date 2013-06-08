@@ -121,7 +121,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         if (_.size($scope.selectedTags) === 0) {
             $scope.availableTags = $scope.allTags;
         } else {
-            $scope.availableTags = _.filter($scope.tags, function (tag) { return tag.operator === ""; });;
+            $scope.availableTags = _.filter($scope.tags, function (tag) { return tag.operator === ""; });
         }
 
         $scope.someTagsSelected = $scope.selectedTags.length > 0;
