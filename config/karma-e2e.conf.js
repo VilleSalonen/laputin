@@ -9,7 +9,7 @@ files = [
 
 autoWatch = false;
 
-browsers = ['PhantomJS'];
+browsers = ['Chrome'];
 
 singleRun = true;
 

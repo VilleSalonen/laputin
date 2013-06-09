@@ -1,7 +1,5 @@
 'use strict';
 
-/* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
-
 describe('my app', function () {
     beforeEach(function () {
         browser().navigateTo('index.html');
@@ -9,21 +7,19 @@ describe('my app', function () {
 
 
     it('should automatically redirect to /files when location hash/fragment is empty', function () {
-        //expect(browser().location().url()).toBe("/files");
+        expect(browser().location().url()).toBe("/files/");
     });
 
 
-    describe('files', function () {
+    describe('general', function () {
         beforeEach(function () {
             browser().navigateTo('#/files');
         });
 
-
-        it('should render files when user navigates to /files', function () {
-            expect(element('a.brand').text()).toMatch("Laputin");
+        it('file amount should match physical files', function () {
+            expect(element('.nav li:first').text()).toBe("Files (4)");
         });
     });
-
 
     describe('tags', function () {
         beforeEach(function () {
@@ -32,8 +28,8 @@ describe('my app', function () {
 
 
         it('should render tags when user navigates to /tags', function () {
-            /*expect(element('h1').text()).
-             toMatch(/partial for view 2/);*/
+            expect(element('h1').text()).toMatch("Tags");
+            expect(element("li.ng-scope", "Foo").count()).toBe(0);
         });
     });
 });
