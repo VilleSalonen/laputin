@@ -18,7 +18,8 @@
         "chai" : ">= 1.6.1",
 
         "grunt" : ">= 0.4.1",
-        "grunt-browserify" : ">= 0.2.1"
+        "grunt-browserify" : ">= 0.2.1",
+        "grunt-contrib-watch" : ">= 0.4.4"
     },
     "license": "MIT",
     "engines": {
