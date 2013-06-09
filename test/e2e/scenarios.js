@@ -2,44 +2,38 @@
 
 /* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
 
-describe('my app', function() {
-
-  beforeEach(function() {
-    browser().navigateTo('../../app/index.html');
-  });
-
-
-  it('should automatically redirect to /view1 when location hash/fragment is empty', function() {
-    expect(browser().location().url()).toBe("/view1");
-  });
-
-
-  describe('view1', function() {
-
-    beforeEach(function() {
-      browser().navigateTo('#/view1');
+describe('my app', function () {
+    beforeEach(function () {
+        browser().navigateTo('index.html');
     });
 
 
-    it('should render view1 when user navigates to /view1', function() {
-      expect(element('[ng-view] p:first').text()).
-        toMatch(/partial for view 1/);
-    });
-
-  });
-
-
-  describe('view2', function() {
-
-    beforeEach(function() {
-      browser().navigateTo('#/view2');
+    it('should automatically redirect to /files when location hash/fragment is empty', function () {
+        //expect(browser().location().url()).toBe("/files");
     });
 
 
-    it('should render view2 when user navigates to /view2', function() {
-      expect(element('[ng-view] p:first').text()).
-        toMatch(/partial for view 2/);
+    describe('files', function () {
+        beforeEach(function () {
+            browser().navigateTo('#/files');
+        });
+
+
+        it('should render files when user navigates to /files', function () {
+            expect(element('a.brand').text()).toMatch("Laputin");
+        });
     });
 
-  });
+
+    describe('tags', function () {
+        beforeEach(function () {
+            browser().navigateTo('#/tags');
+        });
+
+
+        it('should render tags when user navigates to /tags', function () {
+            /*expect(element('h1').text()).
+             toMatch(/partial for view 2/);*/
+        });
+    });
 });

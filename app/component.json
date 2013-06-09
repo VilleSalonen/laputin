@@ -4,6 +4,7 @@
     "dependencies": {
         "angular": ">= 1.0.6",
         "underscore": ">= 1.4.4",
-        "jquery": ">= 1.9.1"
+        "jquery": ">= 1.9.1",
+        "bootstrap": ">= 2.3.2"
     }
 }
