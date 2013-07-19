@@ -60,9 +60,14 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
             tagsFromAPI.push(tag);
         });
+
         $scope.allTags = tagsFromAPI;
         $scope.tags = $scope.allTags;
         $scope.loadingTags = false;
+
+        if (!$scope.loadingFiles && !$scope.loadingTags) {
+            $scope.updateFilteredFiles();
+        }
     });
 
     $scope.loadingFiles = true;
@@ -75,7 +80,9 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         $scope.selectedFiles = allFiles;
         $scope.loadingFiles = false;
 
-        $scope.updateFilteredFiles();
+        if (!$scope.loadingFiles && !$scope.loadingTags) {
+            $scope.updateFilteredFiles();
+        }
     });
 
     $scope.openFiles = function () {
