@@ -52,7 +52,7 @@ function EditFileCtrl($scope, LaputinAPI) {
 
     $scope.createNewTag = function () {
         LaputinAPI.createNewTag($scope.newTagName, function (tag) {
-            $scope.tags.push(tag);
+            $scope.allTags.push(tag);
             $scope.newTagName = "";
             $scope.addTag(tag);
         });

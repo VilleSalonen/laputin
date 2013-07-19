@@ -117,7 +117,9 @@ function FilesCtrl($scope, LaputinAPI, Library) {
             $scope.tags = result.availableTags;
         }
 
-        $scope.selectedTags = _.filter($scope.allTags, function (tag) { return tag.operator !== ""; });
+        $scope.selectedTags = _.filter($scope.allTags, function (tag) {
+            return typeof tag.operator !== "undefined" && tag.operator !== "";
+        });
         if (_.size($scope.selectedTags) === 0) {
             $scope.availableTags = $scope.allTags;
         } else {
