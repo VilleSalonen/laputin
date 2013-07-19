@@ -182,10 +182,19 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
 
     $scope.batchTagName = "";
+    $scope.batchTagSearchFn = function() {
+        return $.map($scope.allTags, function(candidate) {
+            return candidate.name;
+        });
+    };
+
     $scope.batchAddTag = function () {
-        var tag = _.find($scope.tags, function (tag) {
+        var tag = _.find($scope.allTags, function (tag) {
             return tag.name === $scope.batchTagName;
         });
+
+        if (!tag)
+            return;
 
         _.each($scope.selectedFiles, function (file) {
             if (file.batchSelection) {
@@ -198,23 +207,26 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     };
 
     $scope.batchCreateAndAddTag = function () {
-        var tag = _.find($scope.tags, function (tag) {
+        var tag = _.find($scope.allTags, function (tag) {
             return tag.name === $scope.batchTagName;
         });
 
         // Make sure there isn't one yet.
         if (!tag) {
             LaputinAPI.createNewTag($scope.batchTagName, function (tag) {
-                $scope.tags.push(tag);
+                $scope.allTags.push(tag);
                 $scope.batchAddTag();
             });
         }
     };
 
     $scope.batchRemoveTag = function () {
-        var tag = _.find($scope.tags, function (tag) {
+        var tag = _.find($scope.allTags, function (tag) {
             return tag.name === $scope.batchTagName;
         });
+
+        if (!tag)
+            return;
 
         var callbacks = [];
 
