@@ -9,8 +9,6 @@ var FileLibrary = require("./file_library.js").FileLibrary;
 
 
 function Library(libraryPath) {
-    var self = this;
-
     libraryPath = path.normalize(libraryPath + "/");
 
     this._tags = {};
@@ -18,18 +16,6 @@ function Library(libraryPath) {
     this._libraryPath = libraryPath;
 
     this._fileLibrary = new FileLibrary(libraryPath);
-    this._fileLibrary.newFileCallback = function (file) {
-        self.addFile(file);
-    };
-    this._fileLibrary.deletedFileCallback = function (deletedFile) {
-        var deletedFileInLibrary = _.find(self._files, function (file) {
-            return file.path === deletedFile.path;
-        });
-
-        if (deletedFileInLibrary) {
-            self.deleteFile(deletedFileInLibrary);
-        }
-    };
 
     this._db = new sqlite3.Database(path.join(libraryPath, ".laputin.db"));
 }
