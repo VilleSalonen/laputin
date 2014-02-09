@@ -79,7 +79,8 @@ function startServer() {
     console.log("Starting server...");
 
     app.configure(function () {
-        app.use(express.bodyParser());
+        app.use(express.json());
+        app.use(express.urlencoded());
         app.use(express.methodOverride());
         app.use(app.router);
         app.use(express.static(path.join(application_root, "app")));
