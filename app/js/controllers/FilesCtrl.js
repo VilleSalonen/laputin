@@ -21,7 +21,7 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         $scope.updateFilteredFiles();
     }, true);
 
-    $scope.fileQuery = (localStorage.getItem("fileQuery") != "null") ? localStorage.getItem("fileQuery") : "";
+    $scope.fileQuery = (localStorage.getItem("fileQuery") == null) ? "" : localStorage.getItem("fileQuery");
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
     $scope.onlyUntagged = false;
