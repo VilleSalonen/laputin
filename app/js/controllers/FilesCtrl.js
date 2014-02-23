@@ -24,7 +24,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     $scope.fileQuery = (localStorage.getItem("fileQuery") != "null") ? localStorage.getItem("fileQuery") : "";
     $scope.selectedFiles = [];
     $scope.someTagsSelected = false;
-    $scope.showAllTags = false;
     $scope.onlyUntagged = false;
     $scope.onlyTagged = false;
     $scope.showBatchOperations = false;
@@ -118,7 +117,16 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         $scope.selectedFiles = result.matchingFiles;
         $scope.visibleFiles = _.first($scope.selectedFiles, 100);
 
-        if ($scope.showAllTags) {
+        // All tags should only be shown if user has OR type of tag selections.
+        // Otherwise user couldn't add multiple OR selections from whole
+        // tag collection because only those tags that match the current
+        // selection are shown.
+        //
+        // With AND and NOT type of selections this is not necessary.
+        var allTagsShouldBeShown = _.some($scope.selectedTags, function (tag) {
+            return tag.operator === "OR";
+        });
+        if (allTagsShouldBeShown) {
             $scope.tags = $scope.allTags;
         } else {
             $scope.tags = result.availableTags;
@@ -146,7 +154,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
             tag.operator = "";
         });
 
-        $scope.showAllTags = false;
         $scope.onlyUntagged = false;
         $scope.onlyTagged = false;
         $scope.fileQuery = "";
