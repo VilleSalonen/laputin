@@ -3,7 +3,19 @@
 
     <p><input ng-model="availableTagQuery" tabindex="10" /></p>
 
-    <ul class="inline">
-        <li ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'"><a href="/#/tags/{{ tag.id }}" class="btn tag">{{ tag.name }} ({{ tag.files.length }})</a></li>
-    </ul>
+    <table class="table table-striped">
+        <tr>
+            <th style="font-size: 115%;">Showing {{ (tags|filter:tagNameMatches).length }} tags</th>
+        </tr>
+            
+        <tr ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'" ng-controller="SingleTagCtrl">
+            <td>
+                <p ng-show="!editing" ng-click="edit()">{{ tag.name }} ({{ tag.files.length }})</p>
+                <div ng-show="editing">
+                    <input type="text" ng-model="tag.name" />
+                    <button ng-click="save()">Save</button>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
