@@ -35,7 +35,7 @@ Library.prototype.load = function (callback) {
         },
         function (callback) {
             self._db.run("DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT id FROM tags_files)", function () {
-                self._db.each("SELECT * FROM tags", function (err, tag) {
+                self._db.each("select a.id, a.name, c.id as rel_id, (select name from tags as d where d.id = c.id) as rel_name, (select count(*) from tags_files where id = a.id) as total_count, count(c.id) as rel_count from tags as a join tags_files as b on a.id = b.id join tags_files as c on b.hash = c.hash where a.id != c.id group by a.id, c.id order by a.name, rel_count desc", function (err, tag) {
                     self.addTag(tag);
                 }, function () {
                     callback(null);
@@ -93,8 +93,25 @@ Library.prototype.deleteLinkBetweenTagAndFile = function (inputTag, inputFile) {
 
 
 Library.prototype.addTag = function (tag) {
-    tag.files = tag.files || [];
-    this._tags[tag.id] = tag;
+    if (!(tag.id in this._tags)) {
+        var tagObject = {
+            id: tag.id,
+            name: tag.name,
+            files: [],
+            related: []
+        };
+        
+        this._tags[tag.id] = tagObject;
+    }
+    
+    if ('rel_name' in tag) {
+        this._tags[tag.id].related.push({
+            id: tag.rel_id,
+            name: tag.rel_name,
+            rel_count: tag.rel_count,
+            total_count: tag.total_count
+        });
+    }
 };
 
 Library.prototype.getTags = function () {
