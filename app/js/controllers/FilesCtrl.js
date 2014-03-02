@@ -4,7 +4,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
     var previouslySelectedTagNames = JSON.parse(localStorage.getItem("selectedTagNames"));
 
     $scope.searchOptions = {
-        showAdvancedSearch: false,
         selectedTaggedStatus: 1
     };
 
@@ -23,14 +22,9 @@ function FilesCtrl($scope, LaputinAPI, Library) {
 
     $scope.fileQuery = (localStorage.getItem("fileQuery") == null) ? "" : localStorage.getItem("fileQuery");
     $scope.selectedFiles = [];
-    $scope.someTagsSelected = false;
     $scope.onlyUntagged = false;
     $scope.onlyTagged = false;
     $scope.showBatchOperations = false;
-
-    $scope.toggleAdvancedSearch = function () {
-        $scope.searchOptions.showAdvancedSearch = !$scope.searchOptions.showAdvancedSearch;
-    };
 
 
     $scope.taggedStatuses = [
@@ -140,8 +134,6 @@ function FilesCtrl($scope, LaputinAPI, Library) {
         } else {
             $scope.availableTags = _.filter($scope.tags, function (tag) { return tag.operator === ""; });
         }
-
-        $scope.someTagsSelected = $scope.selectedTags.length > 0;
 
         localStorage.setItem("fileQuery", $scope.fileQuery);
 

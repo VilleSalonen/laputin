@@ -2,93 +2,78 @@
     <div class="filter-controls">
         <div class="extra-padded">
             <div class="row-fluid">
-                <div class="span10">
-                    <div class="pull-left">
-                        <form ng-submit="addTagFromSearch()" class="no-margin">
-                            <input tabindex="12" type="text" class="search-query"
-                                   placeholder="Find tags"
-                                   ng-model="tagName" bs-typeahead="tagSearchFn" />
-                        </form>
-
-                        <p><small><a ng-click="clearSearchFilters()">Clear search filters</a></small></p>
-                        <p>
-                            <small ng-hide="searchOptions.showAdvancedSearch"><a ng-click="toggleAdvancedSearch()">Show advanced</a></small>
-                            <small ng-show="searchOptions.showAdvancedSearch"><a ng-click="toggleAdvancedSearch()">Hide advanced</a></small>
-                        </p>
-                    </div>
-
-                    <div ng-hide="someTagsSelected">
-                        <p>No tags selected.</p>
-                    </div>
-                    <div ng-show="someTagsSelected">
-                        <div ng-switch on="searchOptions.showAdvancedSearch">
-                            <div ng-switch-default>
-                                <a ng-repeat="tag in selectedTags | orderBy:'name'"
-                                   ng-click="toggleSelection(tag)"
-                                   class="btn tag btn-success">
-                                    {{ tag.name }} <small>{{ tag.files.length}}</small></a>
+                <div class="span4">
+                    <form ng-submit="addTagFromSearch()" class="form-horizontal">
+                        <div class="control-group">
+                            <label for="fileNameQuery" class="control-label">File name</label>
+                            <div class="controls">
+                                <input tabindex="11" type="text" class="search-query"
+                                       id="fileNameQuery"
+                                       ng-model="fileQuery" on-enter="updateFilteredFiles()" />
                             </div>
+                        </div>
+                    </form>
 
-                            <div ng-switch-when="true">
-                                <div class="btn-toolbar" style="margin: 0;">
-                                    <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
-                                        <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            {{ tag.name }} <small>{{ tag.files.length}}</small>
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li ng-click="activateAnd()">Must contain</li>
-                                            <li ng-click="activateOr()">Can contain</li>
-                                            <li ng-click="activateNot()">Does not contain</li>
-                                            <li class="divider"></li>
-                                            <li ng-click="toggleSelection(tag)">Remove</li>
-                                        </ul>
-                                    </div>
+                    <form ng-submit="addTagFromSearch()" class="form-horizontal">
+                        <div class="control-group">
+                            <label for="tagQuery" class="control-label">Tags</label>
+                            <div class="controls">
+                                <input tabindex="12" type="text" class="search-query"
+                                id="tagQuery"
+                                       placeholder="Find tags"
+                                       ng-model="tagName" bs-typeahead="tagSearchFn" />                           
+                           </div>
+                       </div>
+                    </form>
+
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label">Status</label>
+                            <div class="controls">
+                                <div class="btn-group">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" tabindex="13">
+                                        <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
+                                        <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
+                                        <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
+                                        <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
+                                        <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </form>
 
-                <div class="span2">
-                    <div class="span10">
-                        <button class="btn btn-primary pull-right" ng-click="openFiles()" tabindex="13">
-                            Open files
-                        </button>
-                    </div>
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <div class="controls">
+                                <p><small><a ng-click="clearSearchFilters()">Clear search filters</a></small></p>
+                                
+                                <label class="checkbox">
+                                    <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
+                                </label>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </div>
-
-            <div ng-show="searchOptions.showAdvancedSearch">
-                <div class="row-fluid">
-                    <div class="span4">
-                        <div class="btn-group">
-                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
-                                <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
-                                <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
+                <div class="span8">
+                    <div class="btn-toolbar" style="margin: 0;">
+                        <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
+                            <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                {{ tag.name }} <small>{{ tag.files.length}}</small>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
-                                <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
-                                <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
+                                <li ng-click="activateAnd()">Must contain</li>
+                                <li ng-click="activateOr()">Can contain</li>
+                                <li ng-click="activateNot()">Does not contain</li>
+                                <li class="divider"></li>
+                                <li ng-click="toggleSelection(tag)">Remove</li>
                             </ul>
                         </div>
-                    </div>
-
-                    <div class="span4">
-                        <form ng-submit="addTagFromSearch()">
-                            <input tabindex="11" type="text" class="search-query"
-                                   placeholder="File name contains"
-                                   ng-model="fileQuery" on-enter="updateFilteredFiles()" />
-                        </form>
-                    </div>
-
-                    <div class="span4">
-                        <label class="checkbox">
-                            <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
-                        </label>
                     </div>
                 </div>
             </div>
@@ -120,7 +105,13 @@
     <div ng-hide="loadingFiles">
         <table class="table table-striped" infinite-scroll="showMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="true">
             <tr>
-                <th style="font-size: 115%;">Showing {{ selectedFiles.length }} matching files</th>
+                <th style="font-size: 115%;">
+                    Showing {{ selectedFiles.length }} matching files
+                    
+                    <button class="btn btn-primary pull-right" ng-click="openFiles()" tabindex="14">
+                        Open files
+                    </button>
+                </th>
             </tr>
             <tr ng-controller="SingleFileCtrl" ng-repeat="file in visibleFiles | orderBy:'path'" ng-include="'/partials/single_file.html'">
             </tr>
