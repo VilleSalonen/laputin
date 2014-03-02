@@ -5,17 +5,6 @@
                 <div class="span4">
                     <form ng-submit="addTagFromSearch()" class="form-horizontal">
                         <div class="control-group">
-                            <label for="fileNameQuery" class="control-label">File name</label>
-                            <div class="controls">
-                                <input tabindex="11" type="text" class="search-query"
-                                       id="fileNameQuery"
-                                       ng-model="fileQuery" on-enter="updateFilteredFiles()" />
-                            </div>
-                        </div>
-                    </form>
-
-                    <form ng-submit="addTagFromSearch()" class="form-horizontal">
-                        <div class="control-group">
                             <label for="tagQuery" class="control-label">Tags</label>
                             <div class="controls">
                                 <input tabindex="12" type="text" class="search-query"
@@ -24,6 +13,17 @@
                                        ng-model="tagName" bs-typeahead="tagSearchFn" />                           
                            </div>
                        </div>
+                    </form>
+                    
+                    <form ng-submit="addTagFromSearch()" class="form-horizontal">
+                        <div class="control-group">
+                            <label for="fileNameQuery" class="control-label">File name</label>
+                            <div class="controls">
+                                <input tabindex="11" type="text" class="search-query"
+                                       id="fileNameQuery"
+                                       ng-model="fileQuery" on-enter="updateFilteredFiles()" />
+                            </div>
+                        </div>
                     </form>
 
                     <form class="form-horizontal">
@@ -59,7 +59,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="span8">
+                <div class="span7 offset1">
                     <div class="btn-toolbar" style="margin: 0;">
                         <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
                             <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">

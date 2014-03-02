@@ -25,14 +25,18 @@
             
         <tr ng-repeat="tag in tags | filter:tagNameMatches | orderBy:'name'" ng-controller="SingleTagCtrl">
             <td>
-                <div ng-show="!editing" ng-click="edit()">
-                    <p>{{ tag.name }} ({{ tag.files.length }})<p>
+                <div>
+                    <p>
+                        <span ng-show="!editing" ng-click="edit()">{{ tag.name }}</span>
+                        <span ng-show="editing">
+                            <input type="text" ng-model="tag.name" />
+                            <button ng-click="save()">Save</button>
+                        </span>
+                        
+                        ({{ tag.files.length }})
+                    </p>
                     
                     <p><small><strong>Related:</strong> </small> <small ng-repeat="rel in tag.related | limitTo:10 ">{{ rel.name }} ({{ 100 * rel.rel_count / rel.total_count | number: 0 }}%){{{true: '', false: ', '}[$last]}}</small></p>
-                </div>
-                <div ng-show="editing">
-                    <input type="text" ng-model="tag.name" />
-                    <button ng-click="save()">Save</button>
                 </div>
             </td>
         </tr>
