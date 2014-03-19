@@ -7,8 +7,8 @@
                         <div class="control-group">
                             <label for="tagQuery" class="control-label">Tags</label>
                             <div class="controls">
-                                <input tabindex="12" type="text" class="search-query"
-                                id="tagQuery"
+                                <input tabindex="11" type="text" class="search-query"
+                                       id="tagQuery" items="30"
                                        placeholder="Find tags"
                                        ng-model="tagName" bs-typeahead="tagSearchFn" />                           
                            </div>
@@ -19,7 +19,7 @@
                         <div class="control-group">
                             <label for="fileNameQuery" class="control-label">File name</label>
                             <div class="controls">
-                                <input tabindex="11" type="text" class="search-query"
+                                <input tabindex="12" type="text" class="search-query"
                                        id="fileNameQuery"
                                        ng-model="fileQuery" on-enter="updateFilteredFiles()" />
                             </div>
@@ -90,6 +90,7 @@
 
             <input tabindex="12" type="text" class="pull-left"
                    placeholder="Tag for batch operation"
+                   items="30"
                    ng-model="batchTagName" bs-typeahead="batchTagSearchFn" />
 
             <button class="btn btn-success pull-left" ng-click="batchAddTag()">Add tag to checked files</button>
