@@ -32,6 +32,9 @@ VLC.prototype.close = function () {
 
 VLC.prototype._writeVideosToPlaylist = function (selectedVideos, callback) {
     var playlist = "#EXTM3U\n";
+    
+    selectedVideos = _.sortBy(selectedVideos, function (video) { return video.path });
+    
     _.each(selectedVideos, function (video) {
         playlist += "#EXTINF:-1," + video.path + "\n";
         playlist += video.path + "\n";
