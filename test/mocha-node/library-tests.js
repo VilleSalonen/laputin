@@ -9,7 +9,7 @@ describe('Library', function() {
         library.addTag(tag);
 
         var tags = library.getTags();
-        tags[tag.id].should.equal(tag);
+        tags[tag.id].name.should.equal(tag.name);
     });
 
     it('adding a file should work', function () {
