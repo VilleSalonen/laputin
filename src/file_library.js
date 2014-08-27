@@ -16,6 +16,7 @@ FileLibrary.prototype.load = function (callback) {
         var filePath = path.normalize(path.join(root, stat.name));
 
         if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != ".") {
+            console.log(filePath);
             hasher.hash(filePath, function (result) {
                 files.push({ hash: result.hash, path: result.path });
                 next();
