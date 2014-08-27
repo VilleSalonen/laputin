@@ -1,5 +1,6 @@
 var _ = require("underscore");
 var express = require("express");
+var bodyParser = require('body-parser');
 var fs = require("fs");
 var path = require("path");
 var YAML = require("libyaml");
@@ -78,67 +79,62 @@ library.load(startServer);
 function startServer() {
     console.log("Starting server...");
 
-    app.configure(function () {
-        app.use(express.json());
-        app.use(express.urlencoded());
-        app.use(express.methodOverride());
-        app.use(app.router);
-        app.use(express.static(path.join(application_root, "app")));
-        app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-    });
+    app.use(bodyParser.json());
 
-    app.get("/tags", function (req, res) {
+    app.use(express.static(path.join(application_root, "app")));
+
+    app.route("/tags").get(function (req, res) {
         res.send(library.getTags());
     });
 
-    app.get("/tags/:tagId", function (req, res) {
-        var tagId = req.params.tagId;
-        var tag = _.filter(library.getTags(), function (tag) {
-            return tag.id == tagId
-        });
-        res.send(tag);
-    });
-
-    app.put("/tags/:tagId", function (req, res) {
-        var tagId = req.params.tagId;
-        var tag = req.body.tag;
-        library.updateTag(tagId, tag, function (err) {
-            if (err) {
-                res.send(500);
-            } else {
-                res.send(200);
-            }
+    app.route("/tags/:tagId")
+        .get(function (req, res) {
+            var tagId = req.params.tagId;
+            var tag = _.filter(library.getTags(), function (tag) {
+                return tag.id == tagId
+            });
+            res.status(200).send(tag);
         })
-    });
+        .put(function (req, res) {
+            var tagId = req.params.tagId;
+            var tag = req.body.tag;
+            library.updateTag(tagId, tag, function (err) {
+                if (err) {
+                    res.status(500).end();
+                } else {
+                    res.status(200).end();
+                }
+            })
+        });
 
-    app.post("/tags", function (req, res) {
+    app.route("/tags").post(function (req, res) {
         var tagName = req.body.tagName;
         library.createNewTag(tagName, function (err, tag) {
             if (err)
-                res.send(500, err);
+                res.status(500).send(err);
             else
-                res.send(200, tag);
+                res.status(200).send(tag);
         });
     });
 
-    app.get("/files", function (req, res) {
+    app.route("/files").get(function (req, res) {
         res.send(library.getFiles());
     });
 
-    app.get("/files/:hash", function (req, res) {
+    app.route("/files/:hash").get(function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (candidate) {
             return candidate.hash === hash;
         })
 
         if (file) {
-            res.send(200, file);
+            res.status(200).send(file);
         } else {
-            res.send(404, "Could not find file.");
+            res.status(404).send("Could not find file.");
         }
     });
 
-    app.post("/files/:hash/tags", function (req, res) {
+    app.route("/files/:hash/tags").post(function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
             return file.hash === hash;
@@ -149,10 +145,10 @@ function startServer() {
         _.each(selectedTags, function (tag) {
             library.createNewLinkBetweenTagAndFile(tag, file);
         });
-        res.send(200);
+        res.status(200).end();
     });
 
-    app.delete("/files/:hash/tags/:tagId", function (req, res) {
+    app.route("/files/:hash/tags/:tagId").delete(function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
             return file.hash === hash;
@@ -164,20 +160,20 @@ function startServer() {
         });
 
         library.deleteLinkBetweenTagAndFile(tag, file);
-        res.send(200);
+        res.status(200).end();
     });
 
-    app.get("/files/:hash/open", function (req, res) {
+    app.route("/files/:hash/open").get(function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (file) {
             return file.hash === hash;
         });
 
         fileOpener.open([file]);
-        res.send(200);
+        res.status(200).end();
     });
 
-    app.post("/open/tags/", function (req, res) {
+    app.route("/open/tags/").post(function (req, res) {
         var selectedTags = req.body.selectedTags;
 
         if (_.size(selectedTags) > 0) {
@@ -192,10 +188,10 @@ function startServer() {
         }
 
         fileOpener.open(selectedFiles);
-        res.send(200);
+        res.status(200).end();
     });
 
-    app.post("/open/files/", function (req, res) {
+    app.route("/open/files/").post(function (req, res) {
         var selectedHashes = req.body.selectedHashes;
 
         if (_.size(selectedHashes) > 0) {
@@ -203,9 +199,9 @@ function startServer() {
                 return _.contains(selectedHashes, file.hash);
             });
             fileOpener.open(selectedFiles);
-            res.send(200);
+            res.status(200).end();
         } else {
-            res.send(400, "No files selected");
+            res.status(400).send("No files selected");
         }
     });
 

@@ -22,7 +22,7 @@ function EditFileCtrl($scope, LaputinAPI) {
     $scope.addTag = function (tag) {
         $scope.file.tags.push(tag);
         $scope.localTagNames = _.without($scope.localTagNames, tag.name);
-        LaputinAPI.linkTagToFile(tag, $scope.file, function (err) {
+        LaputinAPI.linkTagToFile({ id: tag.id }, $scope.file, function (err) {
             if (err) {
                 var idx = $scope.file.tags.indexOf(tag);
                 if (idx !== -1) {
