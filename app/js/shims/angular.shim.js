@@ -1,5 +1,5 @@
 /*global require */
 
-require("./../../components/angular/angular.js");
+require("./../../bower_components/angular/angular.js");
 
 module.exports = angular;
