@@ -1,8 +1,8 @@
 <div class="padded">
     <div class="filter-controls">
         <div class="extra-padded">
-            <div class="row-fluid">
-                <div class="span4">
+            <div class="row">
+                <div class="col-md-4">
                     <form ng-submit="addTagFromSearch()" class="form-horizontal">
                         <div class="control-group">
                             <label for="tagQuery" class="control-label">Tags</label>
@@ -26,23 +26,23 @@
                         </div>
                     </form>
 
-                    <form class="form-horizontal">
-                        <div class="control-group">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
                             <label class="control-label">Status</label>
-                            <div class="controls">
-                                <div class="btn-group">
-                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" tabindex="13">
-                                        <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
-                                        <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
-                                        <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
-                                        <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
-                                        <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
-                                    </ul>
-                                </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
+                                    <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
+                                    <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
+
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
+                                    <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
+                                    <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
+                                </ul>
                             </div>
                         </div>
                     </form>
@@ -59,7 +59,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="span7 offset1">
+                <div class="col-md-7 col-md-offset-1">
                     <div class="btn-toolbar" style="margin: 0;">
                         <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
                             <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
