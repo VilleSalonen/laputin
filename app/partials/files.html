@@ -4,10 +4,10 @@
             <div class="row">
                 <div class="col-md-4">
                     <form ng-submit="addTagFromSearch()" class="form-horizontal">
-                        <div class="control-group">
-                            <label for="tagQuery" class="control-label">Tags</label>
-                            <div class="controls">
-                                <input tabindex="11" type="text" class="search-query"
+                        <div class="form-group">
+                            <label for="tagQuery" class="col-sm-4 control-label">Tags</label>
+                            <div class="col-sm-8">
+                                <input tabindex="11" type="text" class="search-query form-control"
                                        id="tagQuery" items="30"
                                        placeholder="Find tags"
                                        ng-model="tagName" bs-typeahead="tagSearchFn" />                           
@@ -16,10 +16,10 @@
                     </form>
                     
                     <form ng-submit="addTagFromSearch()" class="form-horizontal">
-                        <div class="control-group">
-                            <label for="fileNameQuery" class="control-label">File name</label>
-                            <div class="controls">
-                                <input tabindex="12" type="text" class="search-query"
+                        <div class="form-group">
+                            <label for="fileNameQuery" class="col-sm-4 control-label">Filename</label>
+                            <div class="col-sm-8">
+                                <input tabindex="12" type="text" class="search-query form-control"
                                        id="fileNameQuery"
                                        ng-model="fileQuery" on-enter="updateFilteredFiles()" />
                             </div>
@@ -28,33 +28,37 @@
 
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label class="control-label">Status</label>
+                            <label class="control-label col-sm-4">Status</label>
 
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                    <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
-                                    <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
-                                    <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
+                            <div class="col-sm-8">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span ng-show="searchOptions.selectedTaggedStatus == 1">Both tagged and untagged</span>
+                                        <span ng-show="searchOptions.selectedTaggedStatus == 2">Only untagged</span>
+                                        <span ng-show="searchOptions.selectedTaggedStatus == 3">Only tagged</span>
 
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
-                                    <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
-                                    <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
-                                </ul>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li ng-click="searchOptions.selectedTaggedStatus = 1">Show both</li>
+                                        <li ng-click="searchOptions.selectedTaggedStatus = 2">Show only untagged</li>
+                                        <li ng-click="searchOptions.selectedTaggedStatus = 3">Show only tagged</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </form>
 
                     <form class="form-horizontal">
-                        <div class="control-group">
-                            <div class="controls">
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-4">
                                 <p><small><a ng-click="clearSearchFilters()">Clear search filters</a></small></p>
-                                
-                                <label class="checkbox">
-                                    <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
-                                </label>
+
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" ng-model="showBatchOperations"> Show batch operations
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -62,11 +66,15 @@
                 <div class="col-md-7 col-md-offset-1">
                     <div class="btn-toolbar" style="margin: 0;">
                         <div ng-repeat="tag in selectedTags | orderBy:'name'" ng-controller="FilterTagCtrl" class="btn-group">
-                            <a ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-inverse': notOperatorOn()}" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                            <button type="button"
+                                    ng-class="{'btn-success': andOperatorOn(), 'btn-info': orOperatorOn(), 'btn-danger': notOperatorOn()}"
+                                    class="btn dropdown-toggle"
+                                    data-toggle="dropdown">
                                 {{ tag.name }} <small>{{ tag.files.length}}</small>
+
                                 <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
                                 <li ng-click="activateAnd()">Must contain</li>
                                 <li ng-click="activateOr()">Can contain</li>
                                 <li ng-click="activateNot()">Does not contain</li>
