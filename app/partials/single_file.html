@@ -1,28 +1,23 @@
 <td>
-    <div>
-        <div ng-show="showBatchOperations">
-            <label class="checkbox pull-left">
-                <input type="checkbox" ng-model="file.batchSelection" />
-            </label>
-        </div>
+    <div ng-show="showBatchOperations">
+        <label class="checkbox pull-left">
+            <input type="checkbox" ng-model="file.batchSelection" />
+        </label>
+    </div>
 
-        <div ng-hide="editing">
-            <a ng-click="edit()">{{ file.name }}</a>
+    <div ng-hide="editing">
+        <a ng-click="edit()">{{ file.name }}</a>
 
-            <p ng-show="file.tags.length > 0">
-                <strong>Tags:</strong>
-                <file-tag-listing></file-tag-listing>
-            </p>
-        </div>
-
-        <div ng-show="editing">
-            {{ file.name }}
-            <button class="btn" ng-click="closeEditing()">Close editing</button>
-        </div>
+        <p ng-show="file.tags.length > 0">
+            <strong>Tags:</strong>
+            <file-tag-listing></file-tag-listing>
+        </p>
     </div>
 
     <div ng-switch on="editing">
         <div ng-switch-when="true">
+            <p><strong><a ng-click="closeEditing()">{{ file.name }}</a></strong></p>
+
             <div ng-include="'/partials/edit_file.html'">
             </div>
         </div>
