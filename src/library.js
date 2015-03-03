@@ -153,8 +153,11 @@ Library.prototype.createNewTag = function (tagName, callback) {
     var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
     stmt.run(tagName, function (err) {
         if (err) {
-            if (err.code === "SQLITE_CONSTRAINT")
+            if (err.code === "SQLITE_CONSTRAINT") {
                 console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
+				return;
+			}
+			
             callback(err, null);
         }
 
