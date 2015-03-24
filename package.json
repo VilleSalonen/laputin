@@ -1,6 +1,6 @@
 {
     "name": "laputin",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "author": "Ville Salonen <ville.salonen@iki.fi>",
     "description": "REST API for file library with tag support",
     "dependencies" : {
@@ -13,7 +13,6 @@
         "sandboxed-module": ">= 0.2.0",
         "sinon" : ">= 1.6.0",
         "async" : ">= 0.2.6",
-        "libyaml" : ">= 0.2.2",
         "chai" : ">= 1.6.1",
 
         "grunt" : ">= 0.4.1",

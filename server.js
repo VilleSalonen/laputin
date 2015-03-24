@@ -3,7 +3,6 @@ var express = require("express");
 var bodyParser = require('body-parser');
 var fs = require("fs");
 var path = require("path");
-var YAML = require("libyaml");
 var exec = require('child_process').exec;
 
 var application_root = __dirname;
@@ -29,8 +28,7 @@ if (!fs.existsSync(libraryPath) || !fs.statSync(libraryPath).isDirectory()) {
 var Library = require("./src/library.js").Library;
 var library = new Library(libraryPath);
 
-
-var configuration = YAML.readFileSync(path.join(libraryPath, ".laputin.yml"))[0];
+var configuration = JSON.parse(fs.readFileSync(path.join(libraryPath, ".laputin.json"), 'utf8'));
 
 var port = 4242;
 if (typeof configuration.port !== "undefined") {
