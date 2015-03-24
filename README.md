@@ -37,13 +37,13 @@ destroying your files. So please, be safe!
 When you're creating a new Laputin collection, you have to some chores before
 getting on with the tagging.
 
-Create .laputin.yml configuration file in the collection directory. With this
+Create .laputin.json configuration file in the collection directory. With this
 you can specify what software is used to open your files. Currently there are
 VLC and Quick Look (Mac software) integrations available.
 
-An example of .laputin.yml:
+An example of .laputin.json:
 
-    fileOpener: QuickLook
+    { "fileOpener": "QuickLook" }
 
 To create a new Laputin database:
 
@@ -65,9 +65,9 @@ Tips & Tricks
 -------------
 If you want to have a versioning history of your organizational changes,
 initialize Git repository in your library path, add .laputin.db under Git and
-add following to .laputin.yml:
+add following to .laputin.json:
 
-    gitVersioning: true
+    { "gitVersioning": true }
 
 If you don't want your data files to appear in git status listings etc., write
 a following .gitignore file:
@@ -78,7 +78,7 @@ a following .gitignore file:
     # ...except Laputin metadata and .gitignore
     !.gitignore
     !.laputin.db
-    !.laputin.yml
+    !.laputin.json
 
 Of course make sure that your library path doesn't contain any previous Git
 repositories because Laputin will audomatically commit all changed files in that
