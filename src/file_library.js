@@ -8,32 +8,9 @@ var watch = require("watch");
 var events = require("events");
 
 function FileLibrary(libraryPath) {
-    var self = this;
     this._libraryPath = libraryPath;
 
     events.EventEmitter.call(this);
-
-    watch.createMonitor(libraryPath, { "ignoreDotFiles": true }, function (monitor) {
-        monitor.on("created", function (f, curr, prev) {
-            hasher.hash(f, function (result) {
-                console.log(result.path);
-                self.emit("found", {hash: result.hash, path: result.path});
-            });
-        });
-        monitor.on("changed", function (f, curr, prev) {
-            // At least on Windows with big files created event is emitted
-            // before copying has finished. Hashing is impossible during
-            // copying so it must be delayed until changed event will be emitted
-            // on completion of copying.
-            hasher.hash(f, function (result) {
-                console.log(result.path);
-                self.emit("found", {hash: result.hash, path: result.path});
-            });
-        });
-        monitor.on("removed", function (f, stat) {
-            self.emit("lost", {path: f});
-        });
-    });
 }
 
 FileLibrary.prototype.__proto__ = events.EventEmitter.prototype;
@@ -46,9 +23,7 @@ FileLibrary.prototype.load = function (callback) {
         var filePath = path.normalize(path.join(root, stat.name));
 
         if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
-            hasher.hash(filePath, function (result) {
-                console.log(filePath);
-                self.emit("found", { hash: result.hash, path: result.path });
+            self.hashAndEmit(filePath, function () {
                 next();
             });
         } else {
@@ -57,9 +32,40 @@ FileLibrary.prototype.load = function (callback) {
     });
 
     walker.on("end", function () {
+        // Start monitoring after library has been hashed. Otherwise changes
+        // done to database file cause changed events to be emitted and thus
+        // slow down the initial processing.
+        watch.createMonitor(self._libraryPath, { "ignoreDotFiles": true }, function (monitor) {
+            // If files are big or copying is otherwise slow, both created and
+            // changed events might be emitted for a new file. If this is the
+            // case, hashing is not possible during created event and must be
+            // done in changed event. However for small files or files that were
+            // otherwise copied fast, only created event is emitted.
+            //
+            // Because of this, hashing and emitting must be done on both
+            // events. Based on experiments, if both events are coming, hashing
+            // cannot be done on created events. Hasher will swallow the error.
+            // Thus each files is hashed and emitted just once even if both
+            // events will be emitted.
+            monitor.on("created", function (f) { self.hashAndEmit(f); });
+            monitor.on("changed", function (f) { self.hashAndEmit(f); });
+            monitor.on("removed", function (f) { self.emit("lost", {path: f}); });
+        });
+
         if (typeof callback !== "undefined") {
             callback();
         }
+    });
+};
+
+FileLibrary.prototype.hashAndEmit = function (path, callback) {
+    var self = this;
+    hasher.hash(path, function (result) {
+        console.log(result.path);
+        self.emit("found", {hash: result.hash, path: result.path});
+
+        if (typeof callback !== "undefined")
+            callback();
     });
 };
 
