@@ -28,7 +28,16 @@ if (!fs.existsSync(libraryPath) || !fs.statSync(libraryPath).isDirectory()) {
 var Library = require("./src/library.js").Library;
 var library = new Library(libraryPath);
 
-var configuration = JSON.parse(fs.readFileSync(path.join(libraryPath, ".laputin.json"), 'utf8'));
+if (fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
+    var configuration = JSON.parse(fs.readFileSync(path.join(libraryPath, ".laputin.json"), 'utf8'));
+} else {
+    console.log("No configuration file .laputin.json found. Reverting to default values.");
+    var configuration = {
+        "fileOpener": "VLC",
+        "gitVersioning": false,
+        "port": 12345
+    };
+}
 
 var port = 4242;
 if (typeof configuration.port !== "undefined") {
@@ -37,7 +46,6 @@ if (typeof configuration.port !== "undefined") {
         port = portCandidate;
     }
 }
-
 
 switch (configuration.fileOpener) {
     case "QuickLook":
@@ -82,7 +90,9 @@ function startServer() {
     app.use(express.static(path.join(application_root, "app")));
 
     app.route("/tags").get(function (req, res) {
-        res.send(library.getTags());
+        library.getTags(function (tags) {
+            res.send(tags);
+        });
     });
 
     app.route("/tags/:tagId")
@@ -116,7 +126,9 @@ function startServer() {
     });
 
     app.route("/files").get(function (req, res) {
-        res.send(library.getFiles());
+        library.getFiles(function (files) {
+            res.send(files);
+        });
     });
 
     app.route("/files/:hash").get(function (req, res) {
@@ -133,42 +145,29 @@ function startServer() {
     });
 
     app.route("/files/:hash/tags").post(function (req, res) {
-        var hash = req.params.hash;
-        var file = _.find(library.getFiles(), function (file) {
-            return file.hash === hash;
-        });
-
         var selectedTags = req.body.selectedTags;
 
         _.each(selectedTags, function (tag) {
-            library.createNewLinkBetweenTagAndFile(tag, file);
+            library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
         });
         res.status(200).end();
     });
 
     app.route("/files/:hash/tags/:tagId").delete(function (req, res) {
-        var hash = req.params.hash;
-        var file = _.find(library.getFiles(), function (file) {
-            return file.hash === hash;
-        });
-
-        var tagId = req.params.tagId;
-        var tag = _.find(library.getTags(), function (tag) {
-            return tag.id == tagId;
-        });
-
-        library.deleteLinkBetweenTagAndFile(tag, file);
+        library.deleteLinkBetweenTagAndFile(req.params.tagId, req.params.hash);
         res.status(200).end();
     });
 
     app.route("/files/:hash/open").get(function (req, res) {
         var hash = req.params.hash;
-        var file = _.find(library.getFiles(), function (file) {
-            return file.hash === hash;
+        library.getFiles(function (files) {
+            if (typeof files[hash] === "undefined") {
+                res.status(404).end();
+            } else {
+                fileOpener.open([files[hash]]);
+                res.status(200).end();
+            }
         });
-
-        fileOpener.open([file]);
-        res.status(200).end();
     });
 
     app.route("/open/tags/").post(function (req, res) {

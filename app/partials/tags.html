@@ -34,10 +34,8 @@
                             <button ng-click="cancel()">Cancel</button>
                         </span>
                         
-                        ({{ tag.files.length }})
+                        ({{ tag.associationCount }})
                     </p>
-                    
-                    <p><small><strong>Related:</strong> </small> <small ng-repeat="rel in tag.related | limitTo:10 ">{{ rel.name }} ({{ 100 * rel.rel_count / rel.total_count | number: 0 }}%){{{true: '', false: ', '}[$last]}}</small></p>
                 </div>
             </td>
         </tr>

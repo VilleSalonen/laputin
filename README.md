@@ -53,6 +53,7 @@ And execute following SQL statements:
 
     CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);
     CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));
+    CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);
 
 If you start Laputin without any arguments, it will default to the current
 working directory and assume it is the directory you want to organize. You can
