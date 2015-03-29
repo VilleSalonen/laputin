@@ -1,0 +1,12 @@
+<div class="padded">
+    <table class="table table-striped">
+        <tr ng-repeat="(hash, files) in duplicates">
+            <td>
+                <strong>{{ hash }}</strong>
+                <ul ng-repeat="file in files">
+                    <li>{{ file.name }}</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

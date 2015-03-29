@@ -7,6 +7,7 @@ var SingleFileCtrl = require("./controllers/SingleFileCtrl.js");
 var TagsCtrl = require("./controllers/TagsCtrl.js");
 var SingleTagCtrl = require("./controllers/SingleTagCtrl.js");
 var EditFileCtrl = require("./controllers/EditFileCtrl.js");
+var DuplicatesCtrl = require("./controllers/DuplicatesCtrl.js");
 
 var angular = require('./shims/angular.shim.js');
 angular.module("laputin.controllers", []).controller("AppCtrl", ["$scope", "LaputinAPI", AppCtrl])
@@ -15,4 +16,5 @@ angular.module("laputin.controllers", []).controller("AppCtrl", ["$scope", "Lapu
                                          .controller("SingleFileCtrl", ["$scope", SingleFileCtrl])
                                          .controller("EditFileCtrl", ["$scope", "LaputinAPI", EditFileCtrl])
                                          .controller("TagsCtrl", ["$scope", "LaputinAPI", TagsCtrl])
+                                         .controller("DuplicatesCtrl", ["$scope", "LaputinAPI", DuplicatesCtrl])
                                          .controller("SingleTagCtrl", ["$scope", "$routeParams", "LaputinAPI", SingleTagCtrl]);

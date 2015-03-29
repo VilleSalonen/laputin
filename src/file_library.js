@@ -9,6 +9,8 @@ var events = require("events");
 
 function FileLibrary(libraryPath) {
     this._libraryPath = libraryPath;
+    this._files = {};
+    this._hashesByPaths = {};
 
     events.EventEmitter.call(this);
 }
@@ -49,7 +51,15 @@ FileLibrary.prototype.load = function (callback) {
             // events will be emitted.
             monitor.on("created", function (f) { self.hashAndEmit(f); });
             monitor.on("changed", function (f) { self.hashAndEmit(f); });
-            monitor.on("removed", function (f) { self.emit("lost", {path: f}); });
+            monitor.on("removed", function (f) {
+                var hash = self._hashesByPaths[f];
+                var files = self._files[hash];
+                self._files[hash] = _.filter(files, function (file) {
+                    return file.path !== f;
+                });
+
+                self.emit("lost", {path: f});
+            });
         });
 
         if (typeof callback !== "undefined") {
@@ -64,8 +74,20 @@ FileLibrary.prototype.hashAndEmit = function (path, callback) {
         console.log(result.path);
         self.emit("found", {hash: result.hash, path: result.path});
 
+        if (typeof self._files[result.hash] === 'undefined') {
+            self._files[result.hash] = [];
+        }
+        self._files[result.hash].push({ hash: result.hash, path: result.path, name: result.path.replace(self._libraryPath, "") });
+        self._hashesByPaths[result.path] = result.hash;
+
         if (typeof callback !== "undefined")
             callback();
+    });
+};
+
+FileLibrary.prototype.getDuplicates = function () {
+    return _.pick(this._files, function (file) {
+        return file.length > 1;
     });
 };
 

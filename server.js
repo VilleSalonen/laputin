@@ -131,6 +131,10 @@ function startServer() {
         });
     });
 
+    app.route("/duplicates").get(function (req, res) {
+        res.send(library.getDuplicates());
+    });
+
     app.route("/files/:hash").get(function (req, res) {
         var hash = req.params.hash;
         var file = _.find(library.getFiles(), function (candidate) {

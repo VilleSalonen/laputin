@@ -12,5 +12,6 @@ angular.module('laputin', ['laputin.filters', 'laputin.services', 'laputin.direc
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/files/', {templateUrl: 'partials/files.html', controller: "FilesCtrl"});
     $routeProvider.when('/tags/', {templateUrl: 'partials/tags.html', controller: "TagsCtrl"});
+    $routeProvider.when('/duplicates/', {templateUrl: 'partials/duplicates.html', controller: "DuplicatesCtrl"});
     $routeProvider.otherwise({redirectTo: '/files/'});
   }]);

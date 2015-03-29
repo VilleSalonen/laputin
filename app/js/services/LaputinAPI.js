@@ -13,6 +13,10 @@ function LaputinAPI(http) {
         http.get("/files").success(callbackSuccess);
     };
 
+    this.getDuplicates = function (callbackSuccess) {
+        http.get("/duplicates").success(callbackSuccess);
+    };
+
     this.openFile = function (file, callbackSuccess) {
         http.get("/files/" + file.hash + "/open").success(callbackSuccess);
     };

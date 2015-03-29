@@ -1,7 +1,14 @@
 var Library = require("../../src/library.js").Library;
 var should = require("should");
+var os = require("os");
+var path = require("path");
+var fs = require("fs");
 
 describe('Library', function() {
+    var tmpDir = path.join(os.tmpDir(), "laputin");
+    fs.mkdirSync(tmpDir);
+
+
     var library = new Library('/some/path');
 
     it('adding tag should work', function() {

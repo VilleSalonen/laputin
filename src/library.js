@@ -88,6 +88,10 @@ Library.prototype.getFiles = function (callback) {
     });
 };
 
+Library.prototype.getDuplicates = function () {
+    return this._fileLibrary.getDuplicates();
+};
+
 Library.prototype.createNewTag = function (tagName, callback) {
     var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
     stmt.run(tagName, function (err) {
