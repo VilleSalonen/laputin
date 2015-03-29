@@ -4,10 +4,17 @@ var _ = require("underscore");
 var fs = require("fs");
 var child_process = require("child_process");
 var path = require("path");
+var os = require("os");
 
 function VLC(libraryPath) {
     this._child = undefined;
-    this._binaryPath = "/Applications/VLC.app/Contents/MacOS/VLC";
+
+    if (os.platform() === "win32") {
+        this._binaryPath = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
+    } else {
+        this._binaryPath = "/Applications/VLC.app/Contents/MacOS/VLC";
+    }
+
     this._playlistPath = path.join(libraryPath, ".playlist.m3u");
 }
 
@@ -48,7 +55,7 @@ VLC.prototype._writeVideosToPlaylist = function (selectedVideos, callback) {
 };
 
 VLC.prototype._openPlayer = function () {
-    this._child = child_process.exec(this._binaryPath + " " + this._playlistPath);
+    this._child = child_process.exec("\"" + this._binaryPath + "\" " + this._playlistPath);
 };
 
 exports.VLC = VLC;
