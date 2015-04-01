@@ -34,32 +34,13 @@ Firstly: Laputin is pre-alpha software so whatever you organize, please have
 backups! Laputin doesn't delete any of your files but I'd hate to be part of
 destroying your files. So please, be safe!
 
-When you're creating a new Laputin collection, you have to some chores before
-getting on with the tagging.
+When you're creating a new Laputin collection, just start laputin and give it a
+path to your library:
 
-Create .laputin.json configuration file in the collection directory. With this
-you can specify what software is used to open your files. Currently there are
-VLC and Quick Look (Mac software) integrations available.
-
-An example of .laputin.json:
-
-    { "fileOpener": "QuickLook" }
-
-To create a new Laputin database:
-
-    sqlite3 /some/path/.laputin.db
-
-And execute following SQL statements:
-
-    CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);
-    CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));
-    CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);
+    node server.js C:\Users\coolbro\Documents\Videos\
 
 If you start Laputin without any arguments, it will default to the current
-working directory and assume it is the directory you want to organize. You can
-also pass a path as an argument.
-
-Then just point your browser to http://localhost:4242 and get on tagging!
+working directory and assume it is the directory you want to organize.
 
 
 Tips & Tricks
@@ -82,5 +63,5 @@ a following .gitignore file:
     !.laputin.json
 
 Of course make sure that your library path doesn't contain any previous Git
-repositories because Laputin will audomatically commit all changed files in that
+repositories because Laputin will automatically commit all changed files in that
 directory! You have been warned.
