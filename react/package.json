@@ -1,0 +1,13 @@
+{
+  "name": "laputin",
+  "version": "0.1.0",
+  "author": "Ville Salonen <ville.salonen@iki.fi>",
+  "description": "Improve this",
+  "dependencies": {
+    "reactify": "^1.1.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.12"
+  }
+}
