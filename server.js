@@ -128,6 +128,12 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
             });
         });
 
+        app.route("/tags2").get(function (req, res) {
+            library.getTags(function (tags) {
+                res.send(_.values(tags));
+            });
+        });
+
         app.route("/tags/:tagId")
             .get(function (req, res) {
                 var tagId = req.params.tagId;
