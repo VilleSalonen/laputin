@@ -119,6 +119,7 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
 
         var application_root = __dirname;
         app.use(express.static(path.join(application_root, "app")));
+        app.use("/2/", express.static(path.join(application_root, "react")));
         app.use("/media", express.static(libraryPath));
 
         app.route("/tags").get(function (req, res) {
@@ -160,6 +161,12 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         app.route("/files").get(function (req, res) {
             library.getFiles(function (files) {
                 res.send(files);
+            });
+        });
+
+        app.route("/files2").get(function (req, res) {
+            library.getFiles(function (files) {
+                res.send(_.values(files));
             });
         });
 

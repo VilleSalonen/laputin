@@ -1,0 +1,21 @@
+{
+  "name": "laputin",
+  "version": "0.2.0",
+  "homepage": "https://github.com/VilleSalonen/laputin",
+  "authors": [
+    "Ville Salonen <ville.salonen@iki.fi>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "react": "~0.13.1",
+    "jquery": "~2.1.3"
+  }
+}
