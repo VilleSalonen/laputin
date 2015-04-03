@@ -20,15 +20,21 @@ var TagAutocompletion = React.createClass({
         }
 
         var matching = _.filter(this.state.tags, function (tag) {
-            return tag.name.startsWith(event.target.value);
+            return tag.name.toLowerCase().startsWith(event.target.value.toLowerCase());
         });
         this.setState({ matchingTags: matching });
     },
+    selectTag: function (tag) {
+        this.props.callback(tag);
+    },
     render: function() {
+        var self = this;
         return <div>
             <input type="text" onChange={this.handleChange} />
             <ul>
-                {this.state.matchingTags.map(function (tag) { return <li>{tag.name}</li>; })}
+                {this.state.matchingTags.map(function (tag) {
+                    return <li onClick={self.selectTag.bind(self, tag)}>{tag.name}</li>;
+                })}
             </ul>
             </div>;
     }

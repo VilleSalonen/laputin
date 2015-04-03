@@ -1,3 +1,5 @@
+var FileTagList = require("./FileTagList");
+
 var File = React.createClass({
     getInitialState: function () {
         return {
@@ -15,8 +17,13 @@ var File = React.createClass({
             return <p>Edit <a onClick={this.cancel}>Cancel</a></p>
         }
 
-        return <a onClick={this.edit}>{this.props.file.name}</a>;
+        return <div>
+            <a onClick={this.edit}>{this.props.file.name}</a>
+            <FileTagList tags={this.props.file.tags} />
+        </div>;
     }
 });
+
+
 
 module.exports = File;

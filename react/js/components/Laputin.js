@@ -1,5 +1,5 @@
 var Header = require("./Header.js");
-var TagAutocompletion = require("./TagAutocompletion.js");
+var Search = require("./Search.js");
 var Files = require("./Files.js");
 var LaputinAPI = require("../utils/LaputinAPI");
 
@@ -17,7 +17,7 @@ var Laputin = React.createClass({
     render: function() {
         return <div>
             <Header />
-            <TagAutocompletion />
+            <Search />
             <Files files={this.state.files} />
         </div>;
     }
