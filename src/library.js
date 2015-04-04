@@ -69,12 +69,30 @@ Library.prototype.deactivateFile = function (file) {
     });
 };
 
-Library.prototype.getFiles = function (callback) {
+Library.prototype.getFiles = function (query, callback) {
     var self = this;
     var files = {};
-    this._db.each("SELECT * FROM files WHERE active = 1", function (err, row) {
+
+    var params = [];
+
+    var sql = "SELECT * FROM files WHERE active = 1";
+    if (query.filename) {
+        sql += " AND path LIKE ? COLLATE NOCASE";
+        params.push("%" + query.filename + "%");
+    }
+    if (query.status) {
+        if (query.status === "tagged" || query.status === "untagged") {
+            var operator = (query.status === "tagged") ? ">" : "=";
+            sql += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) " + operator + " 0";
+        }
+    }
+
+    var stmt = this._db.prepare(sql);
+
+    var each = function (err, row) {
         files[row.hash] = { "hash": row.hash, "path": row.path, "tags": [], "name": row.path.replace(self._libraryPath, "") };
-    }, function () {
+    };
+    var complete = function () {
         self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id", function (err, row) {
             // Tag associations exist for inactive files but inactive files are
             // not in files list.
@@ -85,7 +103,12 @@ Library.prototype.getFiles = function (callback) {
             if (typeof callback !== "undefined")
                 callback(files);
         });
-    });
+    };
+
+    params.push(each);
+    params.push(complete);
+
+    sqlite3.Statement.prototype.each.apply(stmt, params);
 };
 
 Library.prototype.getDuplicates = function () {

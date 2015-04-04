@@ -5,19 +5,24 @@ var LaputinAPI = require("../utils/LaputinAPI");
 
 var Laputin = React.createClass({
     getInitialState: function () {
-        var self = this;
-        LaputinAPI.getFiles(function (files) {
-            self.setState({ files: files });
-        });
+        this.reload({});
 
         return {
             files: []
         }
     },
+
+    reload: function (query) {
+        var self = this;
+        LaputinAPI.getFiles(query, function (files) {
+            self.setState({ files: files });
+        });
+    },
+
     render: function() {
         return <div>
             <Header />
-            <Search />
+            <Search callback={this.reload} />
             <Files files={this.state.files} />
         </div>;
     }

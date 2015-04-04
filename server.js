@@ -165,13 +165,13 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         });
 
         app.route("/files").get(function (req, res) {
-            library.getFiles(function (files) {
+            library.getFiles({}, function (files) {
                 res.send(files);
             });
         });
 
         app.route("/files2").get(function (req, res) {
-            library.getFiles(function (files) {
+            library.getFiles(req.query, function (files) {
                 res.send(_.values(files));
             });
         });

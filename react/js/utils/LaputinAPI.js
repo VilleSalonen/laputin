@@ -1,6 +1,15 @@
 module.exports = {
-    getFiles: function (callbackSuccess) {
-        fetch("/files2")
+    getFiles: function (query, callbackSuccess) {
+        var params = [];
+        if (query.filename) { params.push("filename=" + query.filename); }
+        if (query.status) { params.push("status=" + query.status); }
+
+        var url = "/files2";
+        if (params.length > 0) {
+            url += "?" + params.join("&");
+        }
+
+        fetch(url)
             .then(function (response) {
                 return response.json();
             })

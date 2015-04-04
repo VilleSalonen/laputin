@@ -4,21 +4,77 @@ var SelectedTag = require("./SelectedTag");
 var Search = React.createClass({
     getInitialState: function () {
         return {
-            selectedTags: []
+            selectedTags: [],
+            filename: "",
+            status: "both"
         };
     },
-    foo: function (lol) {
-        this.state.selectedTags.push(lol);
+
+    addToSelected: function (tag) {
+        this.state.selectedTags.push(tag);
         this.setState({ selectedTags: this.state.selectedTags });
     },
+
+    reload: function () {
+        this.props.callback({
+            filename: this.state.filename,
+            status: this.state.status,
+            tagsAnd: [],
+            tagsOr: [],
+            tagsNot: []
+        });
+    },
+
+    _onSubmit: function (e) {
+        e.preventDefault();
+        this.reload();
+    },
+
+    filenameChanged: function (e) {
+        this.setState({ filename: e.target.value });
+    },
+
+    statusChanged: function (e) {
+        var self = this;
+        this.setState({ status: e.target.value }, function () {
+            self.reload();
+        });
+    },
+
     render: function () {
-        return <div>
-            <TagAutocompletion callback={this.foo} />
-            <ul>
-                {this.state.selectedTags.map(function (tag) {
-                    return <li key={tag.id}><SelectedTag tag={tag} /></li>;
-                })}
-            </ul>
+        return <div className="filter-controls">
+            <div className="extra-padded">
+                <div className="row">
+                    <div className="col-md-4">
+                        <form className="form-horizontal" onSubmit={this._onSubmit}>
+                            <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.selectedTags} />
+                            <div className="form-group">
+                                <label for="filename" className="col-sm-2 control-label">Filename</label>
+                                <div className="col-sm-10">
+                                    <input type="text" className="form-control" id="filename" onChange={this.filenameChanged} />
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label for="status" className="col-sm-2 control-label">Status</label>
+                                <div className="col-sm-10">
+                                    <select className="form-control" selected={this.status} onChange={this.statusChanged}>
+                                        <option value="both">Both tagged and untagged</option>
+                                        <option value="untagged">Only untagged</option>
+                                        <option value="tagged">Only tagged</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <input type="submit" className="submit-hack"/>
+                        </form>
+                    </div>
+                    <div className="col-md-7 col-md-offset-1">
+                        {this.state.selectedTags.map(function (tag) {
+                            return <SelectedTag key={tag.id} tag={tag} />;
+                        })}
+                    </div>
+                </div>
+            </div>
         </div>;
     }
 });

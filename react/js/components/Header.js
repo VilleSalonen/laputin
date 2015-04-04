@@ -1,6 +1,6 @@
 var Header = React.createClass({
     render: function () {
-        return <nav className="navbar navbar-inverse" role="navigation">
+        return <nav className="navbar navbar-inverse navbar-static-top" role="navigation">
             <div className="container-fluid">
                 <div className="navbar-header">
                     <a className="navbar-brand" href="/">Laputin</a>
