@@ -35,5 +35,24 @@ module.exports = {
             .catch(function (ex) {
                 console.log('fetching tags failed: ', ex);
             });
+    },
+
+    addTag: function (file, tag, callbackSuccess) {
+        fetch("/files/" + file.hash + "/tags", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                selectedTags: [tag]
+            })
+        }).then(callbackSuccess);
+    },
+
+    deleteTagFileAssoc: function (file, tag, callbackSuccess) {
+        fetch("/files/" + file.hash + "/tags/" + tag.id, {
+            method: "DELETE"
+        }).then(callbackSuccess);
     }
 };
