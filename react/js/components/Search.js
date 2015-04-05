@@ -27,8 +27,6 @@ var Search = React.createClass({
     },
 
     reload: function () {
-        console.log(this.state.selectedTags);
-
         this.props.callback({
             filename: this.state.filename,
             status: this.state.status,
