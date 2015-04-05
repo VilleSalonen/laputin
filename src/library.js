@@ -87,6 +87,9 @@ Library.prototype.getFiles = function (query, callback) {
         }
     }
 
+    if (query.and || query.or || query.not) {
+        sql += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) > 0";
+    }
     sql += this._generateTagFilterQuery(query.and, params, "IN", "AND");
     sql += this._generateTagFilterQuery(query.or, params, "IN", "OR");
     sql += this._generateTagFilterQuery(query.not, params, "NOT IN", "AND");
