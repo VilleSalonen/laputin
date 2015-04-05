@@ -11,9 +11,13 @@ var Search = React.createClass({
     },
 
     addToSelected: function (tag) {
+        tag.mode = "AND";
+
         var self = this;
-        this.state.selectedTags.push(tag);
-        this.setState({ selectedTags: this.state.selectedTags }, function () {
+        var tags = this.state.selectedTags.slice();
+        tags.push(tag);
+
+        this.setState({ selectedTags: tags }, function () {
             self.reload();
         });
     },

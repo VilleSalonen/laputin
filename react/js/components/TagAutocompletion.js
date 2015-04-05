@@ -41,7 +41,6 @@ var TagAutocompletion = React.createClass({
     },
 
     selectTag: function (tag) {
-        tag.mode = "and";
         this.props.callback(tag);
         this.setState({ matchingTags: [], userInput: "", selectedIndex: -1 });
     },
