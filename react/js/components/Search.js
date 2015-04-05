@@ -11,17 +11,30 @@ var Search = React.createClass({
     },
 
     addToSelected: function (tag) {
+        var self = this;
         this.state.selectedTags.push(tag);
-        this.setState({ selectedTags: this.state.selectedTags });
+        this.setState({ selectedTags: this.state.selectedTags }, function () {
+            self.reload();
+        });
+    },
+
+    remove: function (tag) {
+        var self = this;
+        var filtered = _.without(this.state.selectedTags, tag);
+        this.setState({ selectedTags: filtered }, function () {
+            self.reload();
+        });
     },
 
     reload: function () {
+        console.log(this.state.selectedTags);
+
         this.props.callback({
             filename: this.state.filename,
             status: this.state.status,
-            tagsAnd: [],
-            tagsOr: [],
-            tagsNot: []
+            and: _.filter(this.state.selectedTags, function (tag) { return tag.mode === "AND" }),
+            or: _.filter(this.state.selectedTags, function (tag) { return tag.mode === "OR" }),
+            not: _.filter(this.state.selectedTags, function (tag) { return tag.mode === "NOT" })
         });
     },
 
@@ -42,6 +55,8 @@ var Search = React.createClass({
     },
 
     render: function () {
+        var removeCallback = this.remove;
+        var reloadCallback = this.reload;
         return <div className="filter-controls">
             <div className="extra-padded">
                 <div className="row">
@@ -70,7 +85,7 @@ var Search = React.createClass({
                     </div>
                     <div className="col-md-7 col-md-offset-1">
                         {this.state.selectedTags.map(function (tag) {
-                            return <SelectedTag key={tag.id} tag={tag} />;
+                            return <SelectedTag key={tag.id} tag={tag} removeCallback={removeCallback} reloadCallback={reloadCallback} />;
                         })}
                     </div>
                 </div>

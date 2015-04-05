@@ -75,7 +75,7 @@ Library.prototype.getFiles = function (query, callback) {
 
     var params = [];
 
-    var sql = "SELECT * FROM files WHERE active = 1";
+    var sql = "SELECT files.hash, files.path FROM files WHERE active = 1";
     if (query.filename) {
         sql += " AND path LIKE ? COLLATE NOCASE";
         params.push("%" + query.filename + "%");
@@ -86,6 +86,10 @@ Library.prototype.getFiles = function (query, callback) {
             sql += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) " + operator + " 0";
         }
     }
+
+    sql += this._generateTagFilterQuery(query.and, params, "IN", "AND");
+    sql += this._generateTagFilterQuery(query.or, params, "IN", "OR");
+    sql += this._generateTagFilterQuery(query.not, params, "NOT IN", "AND");
 
     var stmt = this._db.prepare(sql);
 
@@ -109,6 +113,22 @@ Library.prototype.getFiles = function (query, callback) {
     params.push(complete);
 
     sqlite3.Statement.prototype.each.apply(stmt, params);
+};
+
+Library.prototype._generateTagFilterQuery = function (ids, params, opr1, opr2) {
+    if (ids) {
+        var splitIds = ids.split(",");
+        _.each(splitIds, function (id) {
+            params.push(id);
+        });
+        var wheres = _.map(splitIds, function (id) {
+            return " files.hash " + opr1 + " (SELECT hash FROM tags_files WHERE id=?) "
+        });
+
+        return " AND ( " + wheres.join(" " + opr2 + " ") + " ) ";
+    }
+
+    return "";
 };
 
 Library.prototype.getDuplicates = function () {

@@ -5,11 +5,13 @@ var SelectedTag = React.createClass({
         }
     },
 
-    mustContain: function () { this.setState({ "mode": "AND" }); },
-    canContain: function () { this.setState({ "mode": "OR" }); },
-    doesNotContain: function () { this.setState({ "mode": "NOT" }); },
+    mustContain: function () { this.setState({ "mode": "AND" }); this.props.tag.mode = "AND"; this.props.reloadCallback(); },
+    canContain: function () { this.setState({ "mode": "OR" }); this.props.tag.mode = "OR"; this.props.reloadCallback(); },
+    doesNotContain: function () { this.setState({ "mode": "NOT" }); this.props.tag.mode = "NOT"; this.props.reloadCallback(); },
 
-    remove: function () { console.log("TODO: remove"); },
+    remove: function () {
+        this.props.removeCallback(this.props.tag);
+    },
 
     getBsStyle: function () {
         switch (this.state.mode) {
