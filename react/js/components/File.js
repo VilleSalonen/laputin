@@ -1,3 +1,6 @@
+var _ = require("underscore");
+var React = require("react");
+
 var FileTagList = require("./FileTagList");
 var TagAutocompletion = require("./TagAutocompletion");
 var LaputinAPI = require("./../utils/LaputinAPI");
@@ -42,7 +45,7 @@ var File = React.createClass({
         var self = this;
         if (e.keyCode === 13 || e.keyCode === 14) {
             LaputinAPI.createTag(this.state.newTagName, function (tag) {
-                self.setState({ "newTagName": "" })
+                self.setState({ "newTagName": "" });
                 self.addToSelected(tag);
             });
         }

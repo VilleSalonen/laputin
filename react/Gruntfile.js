@@ -1,22 +1,22 @@
 module.exports = function (grunt) {
-    'use strict';
+    "use strict";
 
     grunt.initConfig({
         browserify: {
             options: {
                 debug: true,
-                transform: ['reactify']
+                transform: ["reactify", "debowerify"]
             },
             default: {
-                src: "js/main.js",
-                dest: "js/bundle.js"
+                src: "main.js",
+                dest: "bundle.js"
             }
         },
 
         watch: {
             scripts: {
-                files: ['js/**/*.js'],
-                tasks: ['browserify'],
+                files: ["js/**/*.js"],
+                tasks: ["browserify"],
                 options: {
                     nospawn: true,
                     livereload: true

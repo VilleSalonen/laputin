@@ -1,3 +1,5 @@
+var React = require("react");
+
 var Header = require("./Header.js");
 var Search = require("./Search.js");
 var Files = require("./Files.js");

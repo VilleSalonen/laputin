@@ -1,3 +1,6 @@
+var _ = require("underscore");
+var React = require("react");
+
 var FileTagList = React.createClass({
     render: function() {
         if (this.props.tags.length > 0)

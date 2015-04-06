@@ -1,3 +1,6 @@
+var _ = require("underscore");
+var React = require("react");
+
 var TagAutocompletion = require("./TagAutocompletion");
 var SelectedTag = require("./SelectedTag");
 

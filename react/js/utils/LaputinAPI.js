@@ -1,3 +1,5 @@
+var _ = require("underscore");
+
 module.exports = {
     getFiles: function (query, callbackSuccess) {
         var params = [];

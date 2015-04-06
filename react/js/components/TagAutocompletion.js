@@ -1,3 +1,6 @@
+var _ = require("underscore");
+var React = require("react");
+
 var LaputinAPI = require("../utils/LaputinAPI");
 
 var TagAutocompletion = React.createClass({

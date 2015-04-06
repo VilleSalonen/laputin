@@ -1,3 +1,5 @@
+var React = require("react");
+
 var File = require("./File.js");
 var LaputinAPI = require("../utils/LaputinAPI");
 

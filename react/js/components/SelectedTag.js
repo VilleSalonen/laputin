@@ -1,3 +1,9 @@
+var React = require("react");
+var ReactBootstrap = require("react-bootstrap");
+
+var DropdownButton = ReactBootstrap.DropdownButton;
+var MenuItem = ReactBootstrap.MenuItem;
+
 var SelectedTag = React.createClass({
     getInitialState: function () {
         return {
