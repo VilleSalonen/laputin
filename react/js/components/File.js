@@ -6,7 +6,8 @@ var File = React.createClass({
     getInitialState: function () {
         return {
             "mode": "read",
-            tags: this.props.file.tags
+            tags: this.props.file.tags,
+            newTagName: ""
         }
     },
 
@@ -33,6 +34,20 @@ var File = React.createClass({
         });
     },
 
+    handleNewTagNameChange: function (e) {
+        this.setState({ "newTagName": e.target.value });
+    },
+
+    onKeyDown: function (e) {
+        var self = this;
+        if (e.keyCode === 13 || e.keyCode === 14) {
+            LaputinAPI.createTag(this.state.newTagName, function (tag) {
+                self.setState({ "newTagName": "" })
+                self.addToSelected(tag);
+            });
+        }
+    },
+
     render: function() {
         if (this.state.mode === "edit") {
             var remove = this.remove;
@@ -40,7 +55,8 @@ var File = React.createClass({
                 <p><a onClick={this.cancel}><strong>{this.props.file.name}</strong></a></p>
                 <div className="row">
                     <div className="col-md-2">
-                        <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.tags} />
+                        <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.tags} unassociated="1" />
+                        <input type="text" value={this.newTagName} onChange={this.handleNewTagNameChange} onKeyDown={this.onKeyDown} />
                     </div>
                     <div className="col-md-10">
                         {this.state.tags.map(function (tag) {

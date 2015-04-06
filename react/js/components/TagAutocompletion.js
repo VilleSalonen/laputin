@@ -10,7 +10,13 @@ var TagAutocompletion = React.createClass({
 
     getInitialState: function () {
         var self = this;
-        LaputinAPI.getTags(function (tags) {
+
+        var query = {};
+        if (this.props.unassociated === "1") {
+            query.unassociated = true;
+        }
+
+        LaputinAPI.getTags(query, function (tags) {
             self.setState({ tags: tags });
         });
 

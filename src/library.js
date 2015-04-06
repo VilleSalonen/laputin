@@ -45,14 +45,56 @@ Library.prototype.deleteLinkBetweenTagAndFile = function (inputTag, inputFile) {
     });
 };
 
-Library.prototype.getTags = function (callback) {
+Library.prototype.getTags = function (query, callback) {
     var tags = [];
-    this._db.each("SELECT id, name, (SELECT COUNT(*) FROM tags_files JOIN files ON tags_files.hash = files.hash WHERE tags_files.id = tags.id AND files.active = 1) AS count FROM tags WHERE count > 0", function (err, row) {
+
+    var params = [];
+    var sql = "SELECT id, name, (SELECT COUNT(*) FROM tags_files JOIN files ON tags_files.hash = files.hash WHERE tags_files.id = tags.id AND files.active = 1) AS count FROM tags WHERE ";
+
+    if (query && query.unassociated) {
+        sql += " count >= 0 ";
+    } else {
+        sql += " count > 0 ";
+    }
+
+    if (query && query.selectedTags) {
+        var wheres = [];
+        _.each(query.selectedTags, function (tag) {
+            params.push(tag.id);
+            wheres.push(" id = ? ");
+        });
+
+        if (wheres.length > 0) {
+
+        }
+
+        var wheresJoined = wheres.join(" OR ");
+        sql += " AND id IN (SELECT DISTINCT id FROM tags_files WHERE hash IN (SELECT DISTINCT hash FROM tags_files WHERE " + wheresJoined + "))";
+
+
+        var selectedIds = [];
+        _.each(query.selectedTags, function (tag) {
+            params.push(tag.id);
+            selectedIds.push(" ? ");
+        });
+
+        sql += " AND id NOT IN (" + selectedIds.join(",") + ")";
+    }
+
+    var stmt = this._db.prepare(sql);
+
+    var each = function (err, row) {
         tags.push({ "id": row.id, "name": row.name, "associationCount": row.count });
-    }, function () {
+    };
+    var complete = function () {
         if (typeof callback !== "undefined")
             callback(tags);
-    });
+    };
+
+    params.push(each);
+    params.push(complete);
+
+    sqlite3.Statement.prototype.each.apply(stmt, params);
 };
 
 Library.prototype.addFile = function (file) {

@@ -123,13 +123,13 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         app.use("/media", express.static(libraryPath));
 
         app.route("/tags").get(function (req, res) {
-            library.getTags(function (tags) {
+            library.getTags({}, function (tags) {
                 res.send(tags);
             });
         });
 
         app.route("/tags2").get(function (req, res) {
-            library.getTags(function (tags) {
+            library.getTags(req.query, function (tags) {
                 res.send(_.values(tags));
             });
         });
@@ -242,7 +242,7 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
             var selectedHashes = req.body.selectedHashes;
 
             if (_.size(selectedHashes) > 0) {
-                library.getFiles(function (files) {
+                library.getFiles({}, function (files) {
                     var selectedFiles = _.filter(files, function (file) {
                         return _.contains(selectedHashes, file.hash);
                     });

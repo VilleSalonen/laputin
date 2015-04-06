@@ -24,8 +24,19 @@ module.exports = {
             });
     },
 
-    getTags: function (callbackSuccess) {
-        fetch("/tags2")
+    getTags: function (query, callbackSuccess) {
+        var params = [];
+
+        if (query.unassociated) {
+            params.push("unassociated=1");
+        }
+
+        var url = "/tags2";
+        if (params.length > 0) {
+            url += "?" + params.join("&");
+        }
+
+        fetch(url)
             .then(function (response) {
                 return response.json();
             })
@@ -68,5 +79,32 @@ module.exports = {
                 selectedHashes: selectedHashes
             })
         }).then(callbackSuccess);
+    },
+
+    createTag: function (tagName, callbackSuccess) {
+        function status(response) {
+            if (response.status >= 200 && response.status < 300) {
+                return Promise.resolve(response)
+            } else {
+                return Promise.reject(new Error(response.statusText))
+            }
+        }
+
+        function json(response) {
+            return response.json()
+        }
+
+        fetch("/tags", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tagName: tagName
+            })
+        }).then(status)
+          .then(json)
+          .then(callbackSuccess);
     }
 };
