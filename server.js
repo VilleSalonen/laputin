@@ -118,8 +118,8 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         app.use(bodyParser.json({}));
 
         var application_root = __dirname;
-        app.use(express.static(path.join(application_root, "app")));
-        app.use("/2/", express.static(path.join(application_root, "react")));
+        app.use(express.static(path.join(application_root, "react")));
+        app.use("/old", express.static(path.join(application_root, "app")));
         app.use("/media", express.static(libraryPath));
 
         app.route("/tags").get(function (req, res) {
