@@ -108,5 +108,20 @@ module.exports = {
         }).then(status)
           .then(json)
           .then(callbackSuccess);
+    },
+
+    getDuplicates: function (callbackSuccess) {
+        var url = "/duplicates";
+
+        fetch(url)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                callbackSuccess(json);
+            })
+            .catch(function (ex) {
+                console.log('fetching duplicates failed: ', ex);
+            });
     }
 };
