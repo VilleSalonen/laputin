@@ -59,6 +59,13 @@ var Search = React.createClass({
         });
     },
 
+    clear: function () {
+        var self = this;
+        this.setState(this.getInitialState(), function () {
+            self.reload();
+        });
+    },
+
     render: function () {
         var removeCallback = this.remove;
         var reloadCallback = this.reload;
@@ -82,6 +89,11 @@ var Search = React.createClass({
                                         <option value="untagged">Only untagged</option>
                                         <option value="tagged">Only tagged</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <div className="col-sm-10 col-sm-offset-2">
+                                    <p><small><a onClick={this.clear}>Clear search filters</a></small></p>
                                 </div>
                             </div>
 
