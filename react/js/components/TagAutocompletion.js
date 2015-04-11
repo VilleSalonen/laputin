@@ -36,11 +36,6 @@ var TagAutocompletion = React.createClass({
         // variable. Otherwise userInput state won't get updated and hence the
         // input element appears to be readonly.
 
-        if (event.target.value.length < 3) {
-            this.setState({ userInput: event.target.value, matchingTags: []});
-            return;
-        }
-
         var matching = _.filter(this.state.tags, function (tag) {
             return tag.name.toLowerCase().indexOf(event.target.value.toLowerCase()) !== -1;
         });
