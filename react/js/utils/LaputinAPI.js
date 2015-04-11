@@ -9,7 +9,7 @@ module.exports = {
         if (query.or) { params.push("or=" + _.pluck(query.or, "id").join(",")); }
         if (query.not) { params.push("not=" + _.pluck(query.not, "id").join(",")); }
 
-        var url = "/files2";
+        var url = "/files";
         if (params.length > 0) {
             url += "?" + params.join("&");
         }
@@ -33,7 +33,7 @@ module.exports = {
             params.push("unassociated=1");
         }
 
-        var url = "/tags2";
+        var url = "/tags";
         if (params.length > 0) {
             url += "?" + params.join("&");
         }
