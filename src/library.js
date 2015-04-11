@@ -81,6 +81,8 @@ Library.prototype.getTags = function (query, callback) {
         sql += " AND id NOT IN (" + selectedIds.join(",") + ")";
     }
 
+    sql += " ORDER BY name ";
+
     var stmt = this._db.prepare(sql);
 
     var each = function (err, row) {
@@ -144,7 +146,7 @@ Library.prototype.getFiles = function (query, callback) {
         files[row.hash] = { "hash": row.hash, "path": row.path, "tags": [], "name": row.path.replace(self._libraryPath, "") };
     };
     var complete = function () {
-        self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id", function (err, row) {
+        self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name", function (err, row) {
             // Tag associations exist for inactive files but inactive files are
             // not in files list.
             if (typeof files[row.hash] !== "undefined") {
