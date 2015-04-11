@@ -16,15 +16,16 @@ var DuplicatesList = React.createClass({
     },
 
     render: function () {
-        return <div>
-            <h1>Duplicates</h1>
+        var list = "";
+        if (this.state.duplicates)
+        {
+            list = <div>
+                <p>There seem to be some duplicates in your collection. Only one copy of these files will be used and the other is ignored.</p>
 
-            <p>There seem to be some duplicates in your collection. Only one copy of these files will be used and the other is ignored.</p>
+                <p>In case there are two different files with same calculated hash, please select a more thorough hashing algorithm.</p>
 
-            <p>In case there are two different files with same calculated hash, please select a more thorough hashing algorithm.</p>
-
-            <table className="table table-striped">
-                <tbody>
+                <table className="table table-striped">
+                    <tbody>
                     {_.mapObject(this.state.duplicates, function (val, key) {
                         return <tr>
                             <td>
@@ -37,8 +38,15 @@ var DuplicatesList = React.createClass({
                             </td>
                         </tr>;
                     })}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>;
+        }
+
+        return <div>
+            <h1>Duplicates</h1>
+
+            {list}
         </div>;
     }
 });
