@@ -32,7 +32,7 @@ Library.prototype.createNewLinkBetweenTagAndFile = function (inputTag, hash) {
             if (err.code !== "SQLITE_CONSTRAINT" && typeof callback === "function") {
                 callback(err, null);
             } else {
-                console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + inputFile.hash + ". Refusing to add a duplicate association.");
+                console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + hash + ". Refusing to add a duplicate association.");
             }
         }
     });
@@ -212,7 +212,7 @@ Library.prototype.updateTag = function (tagId, updatedTag, callback) {
     stmt.run(updatedTag.name, tagId, function (err) {
         if (err) {
             if (err.code === "SQLITE_CONSTRAINT")
-                console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
+                console.log("Tag already exists with name " + updatedTag.name + ". Refusing to add another tag with this name.");
             callback(err, null);
         }
 
