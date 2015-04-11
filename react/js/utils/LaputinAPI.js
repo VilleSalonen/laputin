@@ -83,6 +83,17 @@ module.exports = {
         }).then(callbackSuccess);
     },
 
+    openFile: function (selectedFile, callbackSuccess) {
+        var url = "/files/" + selectedFile.hash + "/open";
+        fetch(url, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(callbackSuccess);
+    },
+
     createTag: function (tagName, callbackSuccess) {
         function status(response) {
             if (response.status >= 200 && response.status < 300) {

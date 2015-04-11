@@ -207,14 +207,14 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
             res.status(200).end();
         });
 
-        app.route("/files/:hash/open").get(function (req, res) {
+        app.route("/files/:hash/open").post(function (req, res) {
             var hash = req.params.hash;
-            library.getFiles(function (files) {
-                if (typeof files[hash] === "undefined") {
-                    res.status(404).end();
-                } else {
+            library.getFiles({ hash: hash }, function (files) {
+                if (files[hash]) {
                     fileOpener.open([files[hash]]);
                     res.status(200).end();
+                } else {
+                    res.status(404).end();
                 }
             });
         });

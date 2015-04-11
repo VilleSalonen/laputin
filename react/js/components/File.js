@@ -10,7 +10,8 @@ var File = React.createClass({
         return {
             "mode": "read",
             tags: this.props.file.tags,
-            newTagName: ""
+            newTagName: "",
+            showNewTagCreation: false
         }
     },
 
@@ -28,6 +29,14 @@ var File = React.createClass({
 
     cancel: function () {
         this.setState({ "mode": "read" });
+    },
+
+    toggle: function () {
+        this.setState({ showNewTagCreation: !this.state.showNewTagCreation });
+    },
+
+    open: function () {
+        LaputinAPI.openFile(this.props.file);
     },
 
     remove: function (tag) {
@@ -52,6 +61,14 @@ var File = React.createClass({
     },
 
     render: function() {
+        var tagCreation = "";
+        if (this.state.showNewTagCreation) {
+            tagCreation = <form>
+                <input type="text" value={this.state.newTagName} onChange={this.handleNewTagNameChange} onKeyDown={this.onKeyDown}
+                       placeholder="Create a new tag" className="form-control" />
+            </form>;
+        }
+
         if (this.state.mode === "edit") {
             var remove = this.remove;
             return <div>
@@ -59,7 +76,14 @@ var File = React.createClass({
                 <div className="row">
                     <div className="col-md-2">
                         <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.tags} unassociated="1" />
-                        <input type="text" value={this.state.newTagName} onChange={this.handleNewTagNameChange} onKeyDown={this.onKeyDown} />
+
+                        <p>
+                            <small><a onClick={this.toggle}>Didn't find the tag you were looking for..?</a></small>
+                        </p>
+
+                        {tagCreation}
+
+                        <small><a onClick={this.open}>Open only this file</a></small>
                     </div>
                     <div className="col-md-10">
                         {this.state.tags.map(function (tag) {

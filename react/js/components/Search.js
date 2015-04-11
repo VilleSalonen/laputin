@@ -74,7 +74,12 @@ var Search = React.createClass({
                 <div className="row">
                     <div className="col-md-4">
                         <form className="form-horizontal" onSubmit={this._onSubmit}>
-                            <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.selectedTags} />
+                            <div className="form-group">
+                                <label for="tagAutocomplete" className="col-sm-2 control-label">Tags</label>
+                                <div className="col-sm-10">
+                                    <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.selectedTags} />
+                                </div>
+                            </div>
                             <div className="form-group">
                                 <label for="filename" className="col-sm-2 control-label">Filename</label>
                                 <div className="col-sm-10">

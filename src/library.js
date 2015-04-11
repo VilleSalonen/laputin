@@ -131,6 +131,11 @@ Library.prototype.getFiles = function (query, callback) {
         }
     }
 
+    if (query.hash) {
+        sql += " AND hash = ? ";
+        params.push(query.hash);
+    }
+
     if (query.and || query.or || query.not) {
         sql += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) > 0";
     }

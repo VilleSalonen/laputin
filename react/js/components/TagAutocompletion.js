@@ -51,23 +51,20 @@ var TagAutocompletion = React.createClass({
     },
 
     render: function() {
-        return <div className="form-group">
-            <label for="tagAutocomplete" className="col-sm-2 control-label">Tags</label>
-            <div className="col-sm-10">
-                <input className="form-control"
-                       list="tagsList"
-                       id="tagAutocomplete"
-                       value={this.state.userInput}
-                       onChange={this._onChange}
-                       onKeyDown={this._onKeyDown}
-                       type="text" />
+        return <div>
+            <input className="form-control"
+                   list="tagsList"
+                   id="tagAutocomplete"
+                   value={this.state.userInput}
+                   onChange={this._onChange}
+                   onKeyDown={this._onKeyDown}
+                   type="text" />
 
-                <datalist id="tagsList">
-                    {this.state.tags.map(function (tag) {
-                        return <option value={tag.name} />
-                    })}
-                </datalist>
-            </div>
+            <datalist id="tagsList">
+                {this.state.tags.map(function (tag) {
+                    return <option value={tag.name} />
+                })}
+            </datalist>
         </div>;
     }
 });
