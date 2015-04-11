@@ -39,6 +39,20 @@ var File = React.createClass({
         LaputinAPI.openFile(this.props.file);
     },
 
+    copy: function () {
+        localStorage.setItem("tagClipboard", JSON.stringify(this.state.tags));
+    },
+
+    paste: function () {
+        var self = this;
+        var tags = JSON.parse(localStorage.getItem("tagClipboard"));
+        if (tags) {
+            _.each(tags, function (tag) {
+                self.addToSelected(tag);
+            });
+        }
+    },
+
     remove: function (tag) {
         var self = this;
         LaputinAPI.deleteTagFileAssoc(this.props.file, tag, function () {
@@ -83,7 +97,8 @@ var File = React.createClass({
 
                         {tagCreation}
 
-                        <small><a onClick={this.open}>Open only this file</a></small>
+                        <p><small><a onClick={this.copy}>Copy</a> <a onClick={this.paste}>Paste</a></small></p>
+                        <p><small><a onClick={this.open}>Open only this file</a></small></p>
                     </div>
                     <div className="col-md-10">
                         {this.state.tags.map(function (tag) {
