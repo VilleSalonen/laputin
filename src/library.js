@@ -136,6 +136,8 @@ Library.prototype.getFiles = function (query, callback) {
     sql += this._generateTagFilterQuery(query.or, params, "IN", "OR");
     sql += this._generateTagFilterQuery(query.not, params, "NOT IN", "AND");
 
+    sql += " ORDER BY path ";
+
     var stmt = this._db.prepare(sql);
 
     var each = function (err, row) {
