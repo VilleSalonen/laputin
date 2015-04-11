@@ -51,6 +51,9 @@ var TagAutocompletion = React.createClass({
     },
 
     render: function() {
+        var selectedIds = _.pluck(this.props.selectedTags, "id");
+        var tags = _.filter(this.state.tags, function (tag) { return selectedIds.indexOf(tag.id) === -1; });
+
         return <div>
             <input className="form-control"
                    list="tagsList"
@@ -61,7 +64,7 @@ var TagAutocompletion = React.createClass({
                    type="text" />
 
             <datalist id="tagsList">
-                {this.state.tags.map(function (tag) {
+                {tags.map(function (tag) {
                     return <option value={tag.name} />
                 })}
             </datalist>
