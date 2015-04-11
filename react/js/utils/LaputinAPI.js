@@ -5,9 +5,14 @@ module.exports = {
         var params = [];
         if (query.filename) { params.push("filename=" + query.filename); }
         if (query.status) { params.push("status=" + query.status); }
-        if (query.and) { params.push("and=" + _.pluck(query.and, "id").join(",")); }
-        if (query.or) { params.push("or=" + _.pluck(query.or, "id").join(",")); }
-        if (query.not) { params.push("not=" + _.pluck(query.not, "id").join(",")); }
+
+        var and = _.where(query.selectedTags, { mode: "AND" });
+        var or = _.where(query.selectedTags, { mode: "OR" });
+        var not = _.where(query.selectedTags, { mode: "NOT" });
+
+        if (and && and.length > 0) { params.push("and=" + _.pluck(and, "id").join(",")); }
+        if (or && or.length > 0) { params.push("or=" + _.pluck(or, "id").join(",")); }
+        if (not && not.length > 0) { params.push("not=" + _.pluck(not, "id").join(",")); }
 
         var url = "/files";
         if (params.length > 0) {

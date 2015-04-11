@@ -7,7 +7,12 @@ var LaputinAPI = require("../utils/LaputinAPI");
 
 var FileList = React.createClass({
     getInitialState: function () {
-        this.reload({});
+        var stored = JSON.parse(localStorage.getItem("search"));
+        if (stored) {
+            this.reload(stored);
+        } else {
+            this.reload({});
+        }
 
         return {
             files: []

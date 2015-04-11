@@ -6,11 +6,20 @@ var SelectedTag = require("./SelectedTag");
 
 var Search = React.createClass({
     getInitialState: function () {
+        var stored = JSON.parse(localStorage.getItem("search"));
+        if (stored) {
+            return stored;
+        }
+
+        return this._getDefaultState();
+    },
+
+    _getDefaultState: function () {
         return {
             selectedTags: [],
             filename: "",
             status: "both"
-        };
+        }
     },
 
     addToSelected: function (tag) {
@@ -34,13 +43,7 @@ var Search = React.createClass({
     },
 
     reload: function () {
-        this.props.callback({
-            filename: this.state.filename,
-            status: this.state.status,
-            and: _.filter(this.state.selectedTags, function (tag) { return tag.mode === "AND" }),
-            or: _.filter(this.state.selectedTags, function (tag) { return tag.mode === "OR" }),
-            not: _.filter(this.state.selectedTags, function (tag) { return tag.mode === "NOT" })
-        });
+        this.props.callback(this.state);
     },
 
     _onSubmit: function (e) {
@@ -61,12 +64,14 @@ var Search = React.createClass({
 
     clear: function () {
         var self = this;
-        this.setState(this.getInitialState(), function () {
+        this.setState(this._getDefaultState(), function () {
             self.reload();
         });
     },
 
     render: function () {
+        localStorage.setItem("search", JSON.stringify(this.state));
+
         var removeCallback = this.remove;
         var reloadCallback = this.reload;
         return <div className="filter-controls">
@@ -83,13 +88,13 @@ var Search = React.createClass({
                             <div className="form-group">
                                 <label for="filename" className="col-sm-2 control-label">Filename</label>
                                 <div className="col-sm-10">
-                                    <input type="text" className="form-control" id="filename" onChange={this.filenameChanged} />
+                                    <input type="text" className="form-control" id="filename" onChange={this.filenameChanged} value={this.state.filename} />
                                 </div>
                             </div>
                             <div className="form-group">
                                 <label for="status" className="col-sm-2 control-label">Status</label>
                                 <div className="col-sm-10">
-                                    <select className="form-control" selected={this.status} onChange={this.statusChanged}>
+                                    <select className="form-control" value={this.state.status} onChange={this.statusChanged}>
                                         <option value="both">Both tagged and untagged</option>
                                         <option value="untagged">Only untagged</option>
                                         <option value="tagged">Only tagged</option>
