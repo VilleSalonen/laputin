@@ -64,7 +64,7 @@ var File = React.createClass({
                     <div className="col-md-10">
                         {this.state.tags.map(function (tag) {
                             var hack = function () { remove(tag) };
-                            return <button onClick={hack} className="btn btn-success">{tag.name}</button>;
+                            return <button onClick={hack} className="btn btn-success tag">{tag.name}</button>;
                         })}
                     </div>
                 </div>

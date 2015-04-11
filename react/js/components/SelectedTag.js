@@ -30,7 +30,7 @@ var SelectedTag = React.createClass({
     },
 
     render: function() {
-        return <DropdownButton bsStyle={this.getBsStyle()} title={this.props.tag.name}>
+        return <DropdownButton className="tag" bsStyle={this.getBsStyle()} title={this.props.tag.name}>
             <MenuItem onClick={this.mustContain}>Must contain</MenuItem>
             <MenuItem onClick={this.canContain}>Can contain</MenuItem>
             <MenuItem onClick={this.doesNotContain}>Does not contain</MenuItem>
