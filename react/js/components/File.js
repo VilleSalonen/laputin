@@ -59,7 +59,7 @@ var File = React.createClass({
                 <div className="row">
                     <div className="col-md-2">
                         <TagAutocompletion callback={this.addToSelected} selectedTags={this.state.tags} unassociated="1" />
-                        <input type="text" value={this.newTagName} onChange={this.handleNewTagNameChange} onKeyDown={this.onKeyDown} />
+                        <input type="text" value={this.state.newTagName} onChange={this.handleNewTagNameChange} onKeyDown={this.onKeyDown} />
                     </div>
                     <div className="col-md-10">
                         {this.state.tags.map(function (tag) {
