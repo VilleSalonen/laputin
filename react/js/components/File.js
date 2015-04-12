@@ -85,6 +85,8 @@ var File = React.createClass({
 
         if (this.state.mode === "edit") {
             var remove = this.remove;
+            var tags = _.sortBy(this.state.tags, function (tag) { return tag.name });
+
             return <div>
                 <p><a onClick={this.cancel}><strong>{this.props.file.name}</strong></a></p>
                 <div className="row">
@@ -101,7 +103,7 @@ var File = React.createClass({
                         <p><small><a onClick={this.open}>Open only this file</a></small></p>
                     </div>
                     <div className="col-md-10">
-                        {this.state.tags.map(function (tag) {
+                        {tags.map(function (tag) {
                             var hack = function () { remove(tag) };
                             return <button onClick={hack} className="btn btn-success tag">{tag.name}</button>;
                         })}

@@ -5,8 +5,13 @@ var FileTagList = React.createClass({
     render: function() {
         if (this.props.tags.length > 0)
         {
+            var tags = _.chain(this.props.tags)
+                        .sortBy(function (tag) { return tag.name })
+                        .map(function (tag) { return tag.name; })
+                        .value()
+                        .join(", ");
             return <p>
-                <strong>Tags:</strong> {_.map(this.props.tags, function (tag) { return tag.name; }).join(", ")}
+                <strong>Tags:</strong> {tags}
             </p>;
         }
 
