@@ -18,17 +18,23 @@
     width: 100%;
 }
 
+.typeahead-list-container {
+    position: relative;
+}
+
 .typeahead-list {
     background-color: white;
     margin-left: 0px;
     list-style-type: none;
-    padding-left: 0px;
-    position: relative;
+    position: absolute;
     top: 0px;
     left: 0px;
     width: 100%;
-    z-index: 100;
+    z-index: 2;
     right: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
 }
 
 .tag {
