@@ -23,7 +23,10 @@ var TagsList = React.createClass({
             return;
         }
 
-        var matching = _.filter(this.state.tags, function (tag) { return tag.name.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1; });
+        var matching = _.chain(this.state.tags)
+                        .filter(function (tag) { return tag.name.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1; })
+                        .sortBy(function (tag) { return tag.name; })
+                        .value();
         this.setState({ matchingTags: matching });
     },
 

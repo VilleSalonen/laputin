@@ -5,7 +5,7 @@ var LaputinAPI = require("../utils/LaputinAPI");
 var EditableTag = React.createClass({
     getInitialState: function () {
         return {
-            name: this.props.tag.name,
+            name: "",
             mode: "read"
         }
     },
@@ -21,7 +21,7 @@ var EditableTag = React.createClass({
     },
 
     cancel: function () {
-        this.setState({ mode: "read", name: this.props.tag.name });
+        this.setState({ mode: "read", name: "" });
     },
 
     _onChange: function (e) {
@@ -36,7 +36,7 @@ var EditableTag = React.createClass({
             </form>;
         }
 
-        return <div><span onClick={this.edit}>{this.state.name}</span></div>;
+        return <div><span onClick={this.edit}>{this.props.tag.name}</span></div>;
     }
 });
 
