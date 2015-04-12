@@ -33,14 +33,17 @@ var TagAutocompletion = React.createClass({
     },
 
     handleChange: function (event) {
-        // This method has to use received user input to update userInput state
-        // variable. Otherwise userInput state won't get updated and hence the
-        // input element appears to be readonly.
-
-        var matching = _.filter(this.state.tags, function (tag) {
-            return tag.name.toLowerCase().indexOf(event.target.value.toLowerCase()) !== -1;
-        });
-        matching = _.difference(matching, this.props.selectedTags);
+        var input = event.target.value;
+        var matching = _.chain(this.state.tags)
+                        .filter(function (tag) {
+                            return tag.name.toLowerCase().indexOf(input.toLowerCase()) !== -1;
+                        })
+                        .difference(this.props.selectedTags)
+                        // Prefer tags which have matching tags earlier.
+                        .sortBy(function (tag) {
+                            return tag.name.toLowerCase().indexOf(input.toLowerCase());
+                        })
+                        .value();
 
         this.setState({ userInput: event.target.value, matchingTags: matching });
     },
