@@ -6,6 +6,8 @@ var FileList = require("./js/components/FileList");
 var TagsList = require("./js/components/TagsList");
 var DuplicatesList = require("./js/components/DuplicatesList");
 
+var ImageMode = require("./js/components/file-openers/ImageMode");
+
 var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
 var NotFoundRoute = Router.NotFoundRoute;
@@ -23,6 +25,7 @@ var routes = (
         <DefaultRoute handler={FileList} />
         <Route name="tags" handler={TagsList} />
         <Route name="duplicates" handler={DuplicatesList} />
+        <Route name="images" handler={ImageMode} />
 
         <NotFoundRoute handler={NotFound} />
     </Route>

@@ -1,11 +1,11 @@
 var React = require("react");
 
 var File = require("./File.js");
-var LaputinAPI = require("../utils/LaputinAPI");
+var open = require("./file-openers/ServerSideOpener");
 
 var Files = React.createClass({
     openFiles: function () {
-        LaputinAPI.openFiles(this.props.files);
+        open(this.props.files);
     },
 
     render: function() {
