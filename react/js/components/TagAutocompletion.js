@@ -34,15 +34,12 @@ var TagAutocompletion = React.createClass({
 
     handleChange: function (event) {
         var input = event.target.value;
+        var selectedIds = _.pluck(this.props.selectedTags, "id");
+
         var matching = _.chain(this.state.tags)
-                        .filter(function (tag) {
-                            return tag.name.toLowerCase().indexOf(input.toLowerCase()) !== -1;
-                        })
-                        .difference(this.props.selectedTags)
-                        // Prefer tags which have matching tags earlier.
-                        .sortBy(function (tag) {
-                            return tag.name.toLowerCase().indexOf(input.toLowerCase());
-                        })
+                        .filter(function (tag) { return tag.name.toLowerCase().indexOf(input.toLowerCase()) !== -1; })
+                        .filter(function (tag) { return selectedIds.indexOf(tag.id) === -1; })
+                        .sortBy(function (tag) { return tag.name.toLowerCase().indexOf(input.toLowerCase()); })
                         .value();
 
         this.setState({ userInput: event.target.value, matchingTags: matching });
