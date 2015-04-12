@@ -41,6 +41,10 @@
     margin: 3px;
 }
 
+.tag-edit {
+    width: 200px;
+}
+
 /* Shame */
 .submit-hack {
     position: absolute; left: -9999px; width: 1px; height: 1px;

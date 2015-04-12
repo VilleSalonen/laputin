@@ -68,6 +68,19 @@ module.exports = {
         }).then(callbackSuccess);
     },
 
+    updateTag: function (tag, callbackSuccess) {
+        fetch("/tags/" + tag.id, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tag: tag
+            })
+        }).then(callbackSuccess);
+    },
+
     deleteTagFileAssoc: function (file, tag, callbackSuccess) {
         fetch("/files/" + file.hash + "/tags/" + tag.id, {
             method: "DELETE"

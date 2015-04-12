@@ -2,6 +2,7 @@ var _ = require("underscore");
 var React = require("react");
 
 var LaputinAPI = require("../utils/LaputinAPI");
+var EditableTag = require("./EditableTag");
 
 var TagsList = React.createClass({
     getInitialState: function () {
@@ -54,7 +55,7 @@ var TagsList = React.createClass({
                     </tr>
 
                     {this.state.matchingTags.map(function (tag) {
-                        return <tr><td>{tag.name}</td></tr>;
+                        return <tr><td><EditableTag tag={tag} /></td></tr>;
                     })}
                 </tbody>
             </table>
