@@ -80,18 +80,25 @@ var TagAutocompletion = React.createClass({
                 case "ESC":
                     event.preventDefault();
                     event.target.blur();
-                    this.setState({ matchingTags: [], userInput: "", selectedIndex: -1 });
             }
         }
     },
 
     selectTag: function (tag) {
         this.props.callback(tag);
-        this.setState({ matchingTags: [], userInput: "", selectedIndex: -1 });
+        this._resetSelections();
     },
 
     _onChange: function (event) {
         this.setState({ userInput: event.target.value });
+    },
+
+    _onBlur: function () {
+        this._resetSelections();
+    },
+
+    _resetSelections: function () {
+        this.setState({ matchingTags: [], userInput: "", selectedIndex: -1 });
     },
 
     render: function() {
@@ -119,7 +126,8 @@ var TagAutocompletion = React.createClass({
                    type="text"
                    value={this.state.userInput}
                    onChange={this.handleChange}
-                   onKeyDown={this._onKeyDown} />
+                   onKeyDown={this._onKeyDown}
+                   onBlur={this._onBlur} />
             {tagList}
         </div>;
     }
