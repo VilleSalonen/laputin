@@ -3,6 +3,7 @@ var Router = require("react-router");
 
 var Laputin = require("./js/components/Laputin");
 var FileList = require("./js/components/FileList");
+var TagsList = require("./js/components/TagsList");
 var DuplicatesList = require("./js/components/DuplicatesList");
 
 var Route = Router.Route;
@@ -14,12 +15,6 @@ var Link = Router.Link;
 var NotFound = React.createClass({
     render: function () {
         return <p>Not found</p>;
-    }
-});
-
-var TagsList = React.createClass({
-    render: function () {
-        return <p>Tags</p>;
     }
 });
 
