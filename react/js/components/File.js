@@ -67,6 +67,7 @@ var File = React.createClass({
     onKeyDown: function (e) {
         var self = this;
         if (e.keyCode === 13 || e.keyCode === 14) {
+            e.preventDefault();
             LaputinAPI.createTag(this.state.newTagName, function (tag) {
                 self.setState({ "newTagName": "" });
                 self.addToSelected(tag);
