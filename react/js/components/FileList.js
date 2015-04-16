@@ -15,21 +15,30 @@ var FileList = React.createClass({
         }
 
         return {
-            files: []
+            files: [],
+            loading: false
         }
     },
 
     reload: function (query) {
         var self = this;
+        this.setState({ loading: true });
         LaputinAPI.getFiles(query, function (files) {
-            self.setState({ files: files });
+            self.setState({ files: files, loading: false });
         });
     },
 
     render: function() {
+        var content = "";
+        if (this.state.loading) {
+            content = <p>Loading...</p>;
+        } else {
+            content = <Files files={this.state.files} />;
+        }
+
         return <div>
             <Search callback={this.reload} />
-            <Files files={this.state.files} />
+            {content}
         </div>;
     }
 });
