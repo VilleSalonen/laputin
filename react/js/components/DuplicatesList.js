@@ -17,7 +17,7 @@ var DuplicatesList = React.createClass({
 
     render: function () {
         var list = "";
-        if (this.state.duplicates && this.state.duplicates.length > 0)
+        if (this.state.duplicates)
         {
             list = <div>
                 <p>There seem to be some duplicates in your collection. Only one copy of these files will be used and the other is ignored.</p>
