@@ -22,7 +22,9 @@ function Library(libraryPath) {
 Library.prototype.load = function (callback) {
     var self = this;
 
-    self._fileLibrary.load(callback);
+    self.deactivateAll(function () {
+        self._fileLibrary.load(callback);
+    });
 };
 
 Library.prototype.createNewLinkBetweenTagAndFile = function (inputTag, hash) {
@@ -110,6 +112,16 @@ Library.prototype.deactivateFile = function (file) {
     var stmt = this._db.prepare("UPDATE files SET active = 0 WHERE path = ?");
     stmt.run(file.path, function (err) {
         if (err) throw err;
+    });
+};
+
+Library.prototype.deactivateAll = function (callback) {
+    var stmt = this._db.prepare("UPDATE files SET active = 0");
+    stmt.run(function (err) {
+        if (err) throw err;
+
+        if (typeof callback !== 'undefined')
+            callback();
     });
 };
 
