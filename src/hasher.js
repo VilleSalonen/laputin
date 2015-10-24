@@ -8,9 +8,14 @@ var CHUNK_SIZE = 1024;
 function hash(path, callback) {
     fs.open(path, "r", function (err, fd) {
         fs.stat(path, function (err, stats) {
-            var buffer = new Buffer(CHUNK_SIZE);
+            // Sometimes stats is undefined. This is probably due to file being
+            // moved elsewhere or deleted.
+            if (typeof stats === "undefined")
+                return;
+
             var input_size = stats.size;
             var offset = parseInt(input_size / 2.0) - parseInt(CHUNK_SIZE / 2.0);
+            var buffer = new Buffer(CHUNK_SIZE);
 
             try {
                 fs.read(fd, buffer, 0, buffer.length, offset, function (e, l, b) {
@@ -41,3 +46,4 @@ function hash(path, callback) {
 }
 
 exports.hash = hash;
+exports.name = "Quick (1024 bytes from the middle MD5)";

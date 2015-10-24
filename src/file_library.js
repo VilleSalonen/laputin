@@ -2,13 +2,14 @@
 
 var _ = require("underscore");
 var walk = require("walk");
-var hasher = require("./hasher.js");
 var path = require("path");
 var watch = require("watch");
 var events = require("events");
 
-function FileLibrary(libraryPath) {
+function FileLibrary(libraryPath, hasher) {
     this._libraryPath = libraryPath;
+    this._hasher = hasher;
+
     this._files = {};
     this._hashesByPaths = {};
 
@@ -20,6 +21,7 @@ FileLibrary.prototype.__proto__ = events.EventEmitter.prototype;
 FileLibrary.prototype.load = function (callback) {
     var self = this;
 
+    console.time("hashing");
     var walker  = walk.walk(this._libraryPath, { followLinks: false });
     walker.on("file", function(root, stat, next) {
         var filePath = path.normalize(path.join(root, stat.name));
@@ -34,6 +36,7 @@ FileLibrary.prototype.load = function (callback) {
     });
 
     walker.on("end", function () {
+        console.timeEnd("hashing");
         // Start monitoring after library has been hashed. Otherwise changes
         // done to database file cause changed events to be emitted and thus
         // slow down the initial processing.
@@ -70,7 +73,7 @@ FileLibrary.prototype.load = function (callback) {
 
 FileLibrary.prototype.hashAndEmit = function (path, callback) {
     var self = this;
-    hasher.hash(path, function (result) {
+    this._hasher.hash(path, function (result) {
         console.log(result.path);
         self.emit("found", {hash: result.hash, path: result.path});
 

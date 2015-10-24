@@ -4,9 +4,7 @@ var _ = require("underscore");
 var sqlite3 = require("sqlite3").verbose();
 var path = require("path");
 
-var FileLibrary = require("./file_library.js").FileLibrary;
-
-function Library(libraryPath) {
+function Library(libraryPath, fileLibrary) {
     var self = this;
     libraryPath = path.normalize(libraryPath + "/");
 
@@ -14,7 +12,7 @@ function Library(libraryPath) {
 
     this._db = new sqlite3.Database(path.join(libraryPath, ".laputin.db"));
 
-    this._fileLibrary = new FileLibrary(libraryPath);
+    this._fileLibrary = fileLibrary;
     this._fileLibrary.on("found", function (file) { self.addFile(file); });
     this._fileLibrary.on("lost", function (file) { self.deactivateFile(file); });
 }

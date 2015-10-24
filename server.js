@@ -54,9 +54,6 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         });
     });
 } else {
-    var Library = require("./src/library.js").Library;
-    var library = new Library(libraryPath);
-
     var configuration = "";
     if (fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         configuration = JSON.parse(fs.readFileSync(path.join(libraryPath, ".laputin.json"), 'utf8'));
@@ -68,6 +65,17 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
             "port": 12345
         };
     }
+
+    var hasher = require("./src/hashersha512");
+    if (configuration.identification === "quick") {
+        hasher = require("./src/hasher");
+    }
+    console.log("Using: " + hasher.name);
+
+    var Library = require("./src/library.js").Library;
+    var FileLibrary = require("./src/file_library.js").FileLibrary;
+
+    var library = new Library(libraryPath, new FileLibrary(libraryPath, hasher));
 
     var port = 4242;
     if (typeof configuration.port !== "undefined") {
