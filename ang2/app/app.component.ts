@@ -1,70 +1,36 @@
-import {Component, OnInit} from 'angular2/core';
-import {HTTP_PROVIDERS, Headers} from 'angular2/http';
-import {Observable} from 'rxjs/Rx';
+import {Component} from 'angular2/core';
+import {RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
 
-import {HeaderBarComponent} from "./headerbar.component";
-import { File } from "./file";
-import { Tag } from "./tag";
-import { LaputinService } from "./laputinservice";
+import {FilesComponent} from "./files.component";
+import {TagsComponent} from "./tags.component";
+import {DuplicatesComponent} from "./duplicates.component";
 
 @Component({
     selector: 'my-app',
     template: `
-        <header-bar></header-bar>
-    
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <th>
-                        Showing {{files.length}} matching files
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/#/">Laputin</a>
+                </div>
 
-                        <a class="btn btn-primary pull-right">
-                            Open files
-                        </a>
-                    </th>
-                </tr>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a [routerLink]="['Files']">Files</a></li>
+                        <li><a [routerLink]="['Tags']">Tags</a></li>
+                        <li><a [routerLink]="['Duplicates']">Duplicates</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-                <tr *ngFor="#file of files">
-                    <td>
-                        {{file.path}}
-                        
-                        <p>
-                            <span *ngFor="#tag of file.tags">
-                                {{tag.name}}
-                            </span>
-                        </p>
-                        
-                        <button (click)="onSelect(file)">
-                            <button>Open</button>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <router-outlet></router-outlet>
     `,
-    providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [HeaderBarComponent]
+    directives: [ROUTER_DIRECTIVES]
 })
-export class AppComponent implements OnInit {
-    public files : File[] = [];
-    public tags : Tag[] = [];
-    
-    constructor(private _service: LaputinService) {
-    }
-    
-    ngOnInit() {
-        this._service.tags.subscribe(data => {
-            this.tags = [];
-            data.forEach(row => this.tags.push(row));
-        });
-        this._service.files.subscribe(data => {
-            this.files = [];
-            data.forEach(row => this.files.push(row));
-        });
-        this._service.loadTags();
-    }
-    
-    onSelect(file: File) {
-        this._service.openFile(file);
-    }
-}
+@RouteConfig([
+    {path:'/', name: 'Files', component: FilesComponent, useAsDefault: true},
+    {path:'/tags', name: 'Tags', component: TagsComponent},
+    {path:'/duplicates', name: 'Duplicates', component: DuplicatesComponent}
+])
+export class AppComponent { }
