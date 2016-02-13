@@ -12,13 +12,13 @@ import { LaputinService } from "./laputinservice";
     template: `
         <header-bar></header-bar>
     
-        <table className="table table-striped">
+        <table class="table table-striped">
             <tbody>
                 <tr>
                     <th>
                         Showing {{files.length}} matching files
 
-                        <a className="btn btn-primary pull-right">
+                        <a class="btn btn-primary pull-right">
                             Open files
                         </a>
                     </th>
