@@ -1,0 +1,81 @@
+.filter-controls {
+    background-color: #eee;
+    margin-bottom: 15px;
+    margin-top: -20px;
+}
+
+.video-player {
+    margin: -20px 0 15px;
+}
+
+.player-content {
+    padding: 0;
+}
+
+.player-content img {
+    max-width: 100%;
+}
+
+.player-playlist {
+    padding: 0;
+    background-color: #eee;
+}
+
+.player-playlist ul {
+    list-style: none;
+    padding-left: 0;
+    padding-right: 0;
+    height: 1000px;
+    overflow: scroll;
+}
+
+.player-playlist li {
+    margin-left: 0;
+    overflow: hidden;
+}
+
+.extra-padded {
+    padding: 15px;
+}
+
+.hover {
+    border: 1px dotted;
+    background-color: #428bca;
+    color: white;
+}
+
+.typeahead-input {
+    width: 100%;
+}
+
+.typeahead-list-container {
+    position: relative;
+}
+
+.typeahead-list {
+    background-color: white;
+    margin-left: 0;
+    list-style-type: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    right: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.tag {
+    margin: 3px;
+}
+
+.tag-edit {
+    width: 200px;
+}
+
+/* Shame */
+.submit-hack {
+    position: absolute; left: -9999px; width: 1px; height: 1px;
+}
