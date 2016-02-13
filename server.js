@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var fs = require("fs");
 var path = require("path");
 var exec = require('child_process').exec;
+var cors = require("cors");
 
 var libraryPath = "";
 if (process.argv.length === 2) {
@@ -122,6 +123,7 @@ if (!fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
         console.log("Starting server...");
 
         var app = express();
+        app.use(cors());
         app.use(bodyParser.json({}));
 
         app.use(express.static(path.join(__dirname, "react")));
