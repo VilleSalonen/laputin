@@ -1,12 +1,16 @@
-import {Injectable} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {Observable} from 'rxjs/Rx';
 import {Http, HTTP_PROVIDERS, Headers} from 'angular2/http';
 
 import { File } from "./file";
 import { Tag } from "./tag";
 
-@Injectable()
+@Component({
+    providers: [HTTP_PROVIDERS]
+})
 export class LaputinService {
+    private _baseUrl: string = "http://localhost:12345"; 
+    
     public tags : Observable<Tag[]>;
     private _tagObserver: any;
     
@@ -19,26 +23,30 @@ export class LaputinService {
     }
     
     public loadTags() {
-        this._http.get('http://localhost:12345/tags')
+        this._http.get(this._baseUrl + "/tags")
             .map(res => res.json())
             .subscribe(data => {
-                var converted = Observable.fromArray(data).map((tag: any) => new Tag(tag.id, tag.name, tag.associationCount));
+                var converted = this._convertTags(data);
                 this._tagObserver.next(converted);
             });
             
-        this._http.get('http://localhost:12345/files')
+        this._http.get(this._baseUrl + "/files")
             .map(res => res.json())
             .subscribe(data => {
-                var converted = Observable.fromArray(data).map((file: any) => new File(file.hash, file.path, []));
+                var converted = data.map((file: any) => new File(file.hash, file.path, this._convertTags(file.tags)));
                 this._fileObserver.next(converted);
             });
+    }
+    
+    private _convertTags(json: any): Tag[] {
+        return json.map((tag: any) => new Tag(tag.id, tag.name, tag.associationCount));
     }
     
     public openFile(file: File) {
         let body = JSON.stringify({ selectedHashes: [file.hash] });
         const headers = new Headers({'Content-Type': 'application/json'});
         
-        this._http.post("http://localhost:12345/open/files/", body, { headers: headers })
+        this._http.post(this._baseUrl + "/open/files/", body, { headers: headers })
                    .subscribe(
                         data => console.log("Data: " + data),
                         err => console.log("Error: " + err),

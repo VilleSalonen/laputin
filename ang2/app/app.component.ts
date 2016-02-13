@@ -1,5 +1,5 @@
 import {Component, OnInit} from 'angular2/core';
-import {HTTP_PROVIDERS} from 'angular2/http';
+import {HTTP_PROVIDERS, Headers} from 'angular2/http';
 import {Observable} from 'rxjs/Rx';
 
 import { File } from "./file";
@@ -9,23 +9,20 @@ import { LaputinService } from "./laputinservice";
 @Component({
     selector: 'my-app',
     template: `
-        <h1>Tags</h1>
-        <h2>
-            <ul>
-                <li *ngFor="#tag of tags">
-                    {{tag.name}} ({{tag.associationCount}})
-                </li>
-            </ul>
-        </h2>
-        
         <h1>Files</h1>
         <h2>
             <ul>
                 <li *ngFor="#file of files">
                     {{file.path}}
                     
+                    <ul>
+                        <li *ngFor="#tag of file.tags">
+                            {{tag.name}}
+                        </li>
+                    </ul>
+                    
                     <button (click)="onSelect(file)">
-                        <button>Login!</button>
+                        <button>Open</button>
                     </button>
                 </li>
             </ul>
