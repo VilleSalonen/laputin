@@ -135,8 +135,4 @@ export class FilesComponent implements OnInit {
         this.selectedTags = [];
         this.filterFiles();
     }
-    
-    onSelect(file: File): void {
-        this._service.openFile(file);
-    }
 }
