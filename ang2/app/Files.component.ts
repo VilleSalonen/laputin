@@ -28,7 +28,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Filename</label>
                                 <div class="col-sm-10">
-                                    <search-box (update)="term = $event"></search-box>
+                                    <search-box (update)="termChanged($event)"></search-box>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -64,7 +64,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
             <tbody>
                 <tr>
                     <th>
-                        Showing {{files.length}} matching files
+                        Showing {{matchingFiles.length}} matching files
 
                         <a class="btn btn-primary pull-right">
                             Open files
@@ -72,7 +72,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                     </th>
                 </tr>
 
-                <tr *ngFor="#file of files | filenamefilter: term">
+                <tr *ngFor="#file of matchingFiles">
                     <td>
                         {{file.path}}
                         
@@ -94,7 +94,9 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
     directives: [SearchBox, TagAutocompleteComponent]
 })
 export class FilesComponent implements OnInit {
-    public files: File[] = [];
+    public allFiles: File[] = [];
+    public matchingFiles: File[] = [];
+    
     public tags: Tag[] = [];
     
     constructor(private _service: LaputinService) {
@@ -102,7 +104,21 @@ export class FilesComponent implements OnInit {
     
     ngOnInit(): void {
         this._service.tags.subscribe((tags: Tag[]) => { this.tags = tags; });
-        this._service.files.subscribe((files: File[]) => { this.files = files; });
+        this._service.files.subscribe((files: File[]) => {
+            this.allFiles = files;
+            this.matchingFiles = files;
+        });
+    }
+    
+    termChanged(term: string): void {
+        if (term.length == 0) {
+            this.matchingFiles = this.allFiles;
+            return;
+        }
+        
+        var termLowered = term.toLowerCase();
+        this.matchingFiles = this.allFiles
+            .filter((file: File) => file.path.toLowerCase().includes(termLowered));
     }
     
     addTag(tag: Tag): void {
