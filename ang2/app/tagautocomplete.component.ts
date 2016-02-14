@@ -1,4 +1,9 @@
-import {Component, Output, EventEmitter} from "angular2/core";
+import {Component, Output, EventEmitter, ElementRef} from "angular2/core";
+import {Control} from 'angular2/common';
+import {Observable} from 'rxjs/Rx';
+
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 
 import {Tag} from "./tag";
 import {LaputinService} from "./laputinservice";
@@ -8,9 +13,9 @@ import {LaputinService} from "./laputinservice";
     template: `
     <div>
         <input class="typeahead-input form-control"
-                [(ngModel)]="title"
-                (keyup)="onKeyUp($event)"
-                (change)="onValueChange($event)" />
+               [(ngModel)]="title"
+               [ngFormControl]="term"
+               (keyup)="onKeyUp($event)" />
         <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
             <ul class="typeahead-list" role="menu">
                 <li *ngFor="#tag of matchingTags; #i = index" [class]="selectedIndex == i ? 'hover' : ''">
@@ -27,14 +32,25 @@ export class TagAutocompleteComponent {
     public allTags: Tag[] = [];
     public matchingTags: Tag[] = [];
     
+    public term = new Control();
+    
     @Output() select = new EventEmitter<Tag>();
     
-    constructor(private _service: LaputinService) {
+    constructor(private _service: LaputinService, private elementRef: ElementRef) {
         this._service.tags.subscribe((tags: Tag[]) => this.allTags = tags);
+        
+        this.term.valueChanges
+            .debounceTime(500)
+            .distinctUntilChanged()
+            .subscribe(value => this.onValueChange(value));
     }
     
-    onValueChange(value: any) {
+    onValueChange(value: any): void {
         let searchTerm = this.title.toLowerCase();
+
+        if (searchTerm.length == 0) {
+            return;
+        }
 
         this.matchingTags = 
             this.allTags
@@ -42,7 +58,7 @@ export class TagAutocompleteComponent {
                 .slice(0, 10);
     }
     
-    onKeyUp($event: KeyboardEvent) {
+    onKeyUp($event: KeyboardEvent): void {
         const UP: number = 38;
         const DOWN: number = 40;
         const ENTER: number = 13;
