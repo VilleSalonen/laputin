@@ -18,7 +18,9 @@ import {LaputinService} from "./laputinservice";
                (keyup)="onKeyUp($event)" />
         <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
             <ul class="typeahead-list" role="menu">
-                <li *ngFor="#tag of matchingTags; #i = index" [class]="selectedIndex == i ? 'hover' : ''">
+                <li *ngFor="#tag of matchingTags; #i = index"
+                    [class]="selectedIndex == i ? 'hover' : ''"
+                    (click)="mouseSelection(tag)">
                     {{tag.name}}
                 </li>
             </ul>
@@ -34,7 +36,8 @@ export class TagAutocompleteComponent {
     
     public term = new Control();
     
-    @Output() select = new EventEmitter<Tag>();
+    @Output()
+    public select = new EventEmitter<Tag>();
     
     constructor(private _service: LaputinService) {
         this._service.tags.subscribe((tags: Tag[]) => this.allTags = tags);
@@ -57,6 +60,11 @@ export class TagAutocompleteComponent {
             this.allTags
                 .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
                 .slice(0, 10);
+    }
+    
+    mouseSelection(tag: Tag): void {
+        this.select.emit(tag);
+        this.clear();
     }
     
     onKeyUp($event: KeyboardEvent): void {
