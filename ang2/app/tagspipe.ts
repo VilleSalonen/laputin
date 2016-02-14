@@ -7,6 +7,6 @@ import {Tag} from "./tag";
 })
 export class TagsPipe {
     transform(tags: Tag[], [term]): Tag[] {
-        return tags.filter((tag: Tag) => tag.name.toLowerCase().startsWith(term.toLowerCase()));
+        return tags.filter((tag: Tag) => tag.name.toLowerCase().includes(term.toLowerCase()));
     }
 }
