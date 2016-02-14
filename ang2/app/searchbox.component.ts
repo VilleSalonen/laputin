@@ -4,7 +4,7 @@ import {Component, Output, EventEmitter} from "angular2/core";
     selector: "search-box",
     template: `
     <div>
-        <input #input type="text" (input)="update.emit(input.value)" />
+        <input class="form-control" #input type="text" (input)="update.emit(input.value)" />
     </div>`
 })
 export class SearchBox {
