@@ -1,10 +1,11 @@
-import {Component} from 'angular2/core';
-import {Observable} from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import {Http, HTTP_PROVIDERS, Headers} from 'angular2/http';
+import {Component} from "angular2/core";
+import {Observable} from "rxjs/Rx";
+import "rxjs/add/operator/map";
+import {Http, HTTP_PROVIDERS, Headers} from "angular2/http";
 
 import {File} from "./file";
 import {Tag} from "./tag";
+import {Duplicate} from "./duplicate";
 
 @Component({
     providers: [HTTP_PROVIDERS]
@@ -14,6 +15,7 @@ export class LaputinService {
     
     public tags: Observable<Tag[]>;
     public files: Observable<File[]>;
+    public duplicates: Observable<any>;
     
     constructor(private _http: Http) {
         this.tags = this._http.get(this._baseUrl + "/tags")
@@ -22,7 +24,7 @@ export class LaputinService {
                 let result: Tag[] = [];
                 if (tags) {
                     tags.forEach((tag: any) => {
-                        result.push(new Tag(tag.id, tag.name, tag.associationCount))
+                        result.push(this._convertTag(tag))
                     });
                 }
                 return result;
@@ -38,6 +40,20 @@ export class LaputinService {
                     });
                 }
                 
+                return result;
+            });
+        
+        this.duplicates = this._http.get(this._baseUrl + "/duplicates")
+            .map(res => res.json())
+            .map((duplicates: any[]): any[] => {
+                let result: Duplicate[] = [];
+                for (let dup of Reflect.ownKeys(duplicates)) {
+                    var current = duplicates[dup];
+                    
+                    let files = current.map((file: any) => new File(file.hash, file.path, []));
+                    
+                    result.push(new Duplicate(dup, files));
+                }
                 return result;
             });
     }
@@ -56,7 +72,7 @@ export class LaputinService {
     
     public openFile(file: File): void {
         let body = JSON.stringify({ selectedHashes: [file.hash] });
-        const headers = new Headers({'Content-Type': 'application/json'});
+        const headers = new Headers({"Content-Type": "application/json"});
         
         this._http.post(this._baseUrl + "/open/files/", body, { headers: headers })
                    .subscribe(
