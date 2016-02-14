@@ -4,13 +4,28 @@ import {Component, Output, EventEmitter} from "angular2/core";
     selector: "search-box",
     template: `
     <div>
-        <input class="form-control" #input type="text" (input)="update.emit(input.value)" />
+        <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="term"
+            (keyup)="onKeyUp($event)" />
     </div>`
 })
 export class SearchBox {
-    @Output() update = new EventEmitter();
+    public term: string = "";
+    @Output()
+    public update = new EventEmitter<string>();
     
-    ngOnInit(): void {
-        this.update.emit("");
+    onKeyUp($event: KeyboardEvent): void {
+        const ENTER: number = 13;
+        const ESC: number = 27;
+        
+        if ($event.which == ENTER) {
+            this.update.emit(this.term);
+        }
+        
+        if ($event.which == ESC) {
+            this.term = "";
+        }
     }
 }
