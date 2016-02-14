@@ -77,9 +77,11 @@ import {FileRowComponent} from "./file.component";
                     </th>
                 </tr>
 
-                <div *ngFor="#file of matchingFiles">
-                    <file-row [file]="file"></file-row>
-                </div>
+                <tr *ngFor="#file of matchingFiles">
+                    <td>
+                        <file-row [file]="file"></file-row>
+                    </td>
+                </tr>
             </tbody>
         </table>
     `,
