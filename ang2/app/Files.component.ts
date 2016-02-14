@@ -8,6 +8,7 @@ import {LaputinService} from "./laputinservice";
 import {SearchBox} from "./searchbox.component";
 import {FileNamePipe} from "./filenamepipe";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
+import {FileRowComponent} from "./file.component";
 
 @Component({
     pipes: [FileNamePipe],
@@ -45,7 +46,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                                 <div class="col-sm-10 col-sm-offset-2">
                                     <p>
                                         <small>
-                                            <a>Clear search filters</a>
+                                            <a (click)="clear()">Clear search filters</a>
                                         </small>
                                     </p>
                                 </div>
@@ -76,26 +77,14 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                     </th>
                 </tr>
 
-                <tr *ngFor="#file of matchingFiles">
-                    <td>
-                        {{file.path}}
-                        
-                        <p>
-                            <span *ngFor="#tag of file.tags">
-                                {{tag.name}}
-                            </span>
-                        </p>
-                        
-                        <button (click)="onSelect(file)">
-                            <button>Open</button>
-                        </button>
-                    </td>
-                </tr>
+                <div *ngFor="#file of matchingFiles">
+                    <file-row [file]="file"></file-row>
+                </div>
             </tbody>
         </table>
     `,
     providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [SearchBox, TagAutocompleteComponent]
+    directives: [SearchBox, TagAutocompleteComponent, FileRowComponent]
 })
 export class FilesComponent implements OnInit {
     public allFiles: File[] = [];
@@ -103,6 +92,8 @@ export class FilesComponent implements OnInit {
     
     public tags: Tag[] = [];
     public selectedTags: Tag[] = [];
+    
+    private filenameMask: string = "";
     
     constructor(private _service: LaputinService) {
     }
@@ -116,15 +107,16 @@ export class FilesComponent implements OnInit {
     }
     
     termChanged(term: string): void {
-        if (term.length == 0) {
-            this.matchingFiles = this.allFiles;
-            return;
-        }
+        this.filenameMask = term;
         
+        this.filterFiles();
+    }
+    
+    filterFiles(): void {
         var that = this;
-        var termLowered = term.toLowerCase();
+        var termLowered = this.filenameMask.toLowerCase();
         this.matchingFiles = this.allFiles
-            .filter(file => file.path.toLowerCase().includes(termLowered))
+            .filter(file => termLowered.length == 0 || file.path.toLowerCase().includes(termLowered))
             .filter(file => {
                 return that.selectedTags.every(value => file.tags.map(tag => tag.id).indexOf(value.id) > -1);
             });
@@ -133,7 +125,13 @@ export class FilesComponent implements OnInit {
     addTag(tag: Tag): void {
         if (this.selectedTags.indexOf(tag) == -1) {
             this.selectedTags.push(tag);
+            this.filterFiles();
         }
+    }
+    
+    clear(): void {
+        this.selectedTags = [];
+        this.filterFiles();
     }
     
     onSelect(file: File): void {
