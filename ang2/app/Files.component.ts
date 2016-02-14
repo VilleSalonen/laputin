@@ -7,10 +7,13 @@ import {Tag} from "./tag";
 import {LaputinService} from "./laputinservice";
 import {SearchBox} from "./searchbox.component";
 import {FileNamePipe} from "./filenamepipe";
+import {TagAutocompleteComponent} from "./tagautocomplete.component";
 
 @Component({
     pipes: [FileNamePipe],
     template: `
+        <tag-autocomplete (select)="addTag($event)"></tag-autocomplete>
+    
         <search-box (update)="term = $event"></search-box>
     
         <table class="table table-striped">
@@ -44,7 +47,7 @@ import {FileNamePipe} from "./filenamepipe";
         </table>
     `,
     providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [SearchBox]
+    directives: [SearchBox, TagAutocompleteComponent]
 })
 export class FilesComponent implements OnInit {
     public files: File[] = [];
@@ -56,6 +59,10 @@ export class FilesComponent implements OnInit {
     ngOnInit(): void {
         this._service.tags.subscribe((tags: Tag[]) => { this.tags = tags; });
         this._service.files.subscribe((files: File[]) => { this.files = files; });
+    }
+    
+    addTag(tag: Tag): void {
+        console.log(tag);
     }
     
     onSelect(file: File): void {
