@@ -71,7 +71,7 @@ import {FileRowComponent} from "./file.component";
                     <th>
                         Showing {{matchingFiles.length}} matching files
 
-                        <a class="btn btn-primary pull-right">
+                        <a class="btn btn-primary pull-right" (click)="openFiles()">
                             Open files
                         </a>
                     </th>
@@ -134,5 +134,9 @@ export class FilesComponent implements OnInit {
     clear(): void {
         this.selectedTags = [];
         this.filterFiles();
+    }
+    
+    openFiles(): void {
+        this._service.openFiles(this.matchingFiles);
     }
 }

@@ -71,7 +71,13 @@ export class LaputinService {
     }
     
     public openFile(file: File): void {
-        let body = JSON.stringify({ selectedHashes: [file.hash] });
+        this.openFiles([file]);
+    }
+    
+    public openFiles(files: File[]): void {
+        let hashes = files.map(file => file.hash);
+        
+        let body = JSON.stringify({ selectedHashes: hashes });
         const headers = new Headers({"Content-Type": "application/json"});
         
         this._http.post(this._baseUrl + "/open/files/", body, { headers: headers })
