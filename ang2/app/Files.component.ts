@@ -58,8 +58,6 @@ export class FilesComponent implements OnInit {
         this._service.files.subscribe((files: File[]) => { this.files = files; });
     }
     
-    
-    
     onSelect(file: File) {
         this._service.openFile(file);
     }
