@@ -1,9 +1,10 @@
 import {Component} from 'angular2/core';
 import {Observable} from 'rxjs/Rx';
+import 'rxjs/add/operator/map';
 import {Http, HTTP_PROVIDERS, Headers} from 'angular2/http';
 
-import { File } from "./file";
-import { Tag } from "./tag";
+import {File} from "./file";
+import {Tag} from "./tag";
 
 @Component({
     providers: [HTTP_PROVIDERS]
@@ -12,34 +13,45 @@ export class LaputinService {
     private _baseUrl: string = "http://localhost:12345"; 
     
     public tags : Observable<Tag[]>;
-    private _tagObserver: any;
-    
     public files : Observable<File[]>;
-    private _fileObserver: any;
     
     constructor(private _http: Http) {
-        this.tags = new Observable<Tag[]>((observer: any) => this._tagObserver = observer).share();
-        this.files = new Observable<File[]>((observer: any) => this._fileObserver = observer).share();
+        this.tags = this._http.get(this._baseUrl + "/tags")
+            .map(res => res.json())
+            .map((tags: any[]): Tag[] => {
+                let result: Tag[] = [];
+                if (tags) {
+                    tags.forEach((tag: any) => {
+                        result.push(new Tag(tag.id, tag.name, tag.associationCount))
+                    });
+                }
+                return result;
+            });
+        
+        this.files = this._http.get(this._baseUrl + "/files")
+            .map(res => res.json())
+            .map((files: any[]): File[] => {
+                let result: File[] = [];
+                if (files) {
+                    files.forEach((file: any) => {
+                        result.push(this._convertFile(file));
+                    });
+                }
+                
+                return result;
+            });
     }
     
-    public loadTags() {
-        this._http.get(this._baseUrl + "/tags")
-            .map(res => res.json())
-            .subscribe(data => {
-                var converted = this._convertTags(data);
-                this._tagObserver.next(converted);
-            });
-            
-        this._http.get(this._baseUrl + "/files")
-            .map(res => res.json())
-            .subscribe(data => {
-                var converted = data.map((file: any) => new File(file.hash, file.path, this._convertTags(file.tags)));
-                this._fileObserver.next(converted);
-            });
+    private _convertTag(tag: any): Tag {
+        return new Tag(tag.id, tag.name, tag.associationCount);
     }
     
-    private _convertTags(json: any): Tag[] {
-        return json.map((tag: any) => new Tag(tag.id, tag.name, tag.associationCount));
+    private _convertTags(tags: any): Tag[] {
+        return tags.map((tag: any) => this._convertTag(tag));
+    }
+    
+    private _convertFile(file: any): File {
+        return new File(file.hash, file.path, this._convertTags(file.tags));
     }
     
     public openFile(file: File) {

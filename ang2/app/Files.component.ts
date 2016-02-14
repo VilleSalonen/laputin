@@ -2,9 +2,9 @@ import {Component, OnInit} from 'angular2/core';
 import {HTTP_PROVIDERS, Headers} from 'angular2/http';
 import {Observable} from 'rxjs/Rx';
 
-import { File } from "./file";
-import { Tag } from "./tag";
-import { LaputinService } from "./laputinservice";
+import {File} from "./file";
+import {Tag} from "./tag";
+import {LaputinService} from "./laputinservice";
 
 @Component({
     template: `    
@@ -48,16 +48,11 @@ export class FilesComponent implements OnInit {
     }
     
     ngOnInit() {
-        this._service.tags.subscribe(data => {
-            this.tags = [];
-            data.forEach(row => this.tags.push(row));
-        });
-        this._service.files.subscribe(data => {
-            this.files = [];
-            data.forEach(row => this.files.push(row));
-        });
-        this._service.loadTags();
+        this._service.tags.subscribe((tags: Tag[]) => { this.tags = tags; });
+        this._service.files.subscribe((files: File[]) => { this.files = files; });
     }
+    
+    
     
     onSelect(file: File) {
         this._service.openFile(file);
