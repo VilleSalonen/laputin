@@ -1,5 +1,5 @@
-import {Component, OnInit} from 'angular2/core';
-import {HTTP_PROVIDERS, Headers} from 'angular2/http';
+import {Component, OnInit} from "angular2/core";
+import {HTTP_PROVIDERS, Headers} from "angular2/http";
 
 import {File} from "./file";
 import {Tag} from "./tag";
