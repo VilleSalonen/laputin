@@ -24,7 +24,7 @@ export class TagsComponent implements OnInit {
     constructor(private _service: LaputinService) {
     }
     
-    ngOnInit() {
+    ngOnInit(): void {
         this._service.tags.subscribe((tags: Tag[]) => { this.tags = tags; });
     }
 }

@@ -54,7 +54,7 @@ export class LaputinService {
         return new File(file.hash, file.path, this._convertTags(file.tags));
     }
     
-    public openFile(file: File) {
+    public openFile(file: File): void {
         let body = JSON.stringify({ selectedHashes: [file.hash] });
         const headers = new Headers({'Content-Type': 'application/json'});
         

@@ -53,12 +53,12 @@ export class FilesComponent implements OnInit {
     constructor(private _service: LaputinService) {
     }
     
-    ngOnInit() {
+    ngOnInit(): void {
         this._service.tags.subscribe((tags: Tag[]) => { this.tags = tags; });
         this._service.files.subscribe((files: File[]) => { this.files = files; });
     }
     
-    onSelect(file: File) {
+    onSelect(file: File): void {
         this._service.openFile(file);
     }
 }
