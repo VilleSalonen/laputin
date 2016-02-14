@@ -36,16 +36,17 @@ export class TagAutocompleteComponent {
     
     @Output() select = new EventEmitter<Tag>();
     
-    constructor(private _service: LaputinService, private elementRef: ElementRef) {
+    constructor(private _service: LaputinService) {
         this._service.tags.subscribe((tags: Tag[]) => this.allTags = tags);
-        
+
         this.term.valueChanges
             .debounceTime(500)
             .distinctUntilChanged()
-            .subscribe(value => this.onValueChange(value));
+            .map((value: any) => <string> value)
+            .subscribe((value: string) => this.onValueChange(value));
     }
     
-    onValueChange(value: any): void {
+    onValueChange(value: string): void {
         let searchTerm = this.title.toLowerCase();
 
         if (searchTerm.length == 0) {
