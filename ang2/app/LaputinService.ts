@@ -12,8 +12,8 @@ import {Tag} from "./tag";
 export class LaputinService {
     private _baseUrl: string = "http://localhost:12345"; 
     
-    public tags : Observable<Tag[]>;
-    public files : Observable<File[]>;
+    public tags: Observable<Tag[]>;
+    public files: Observable<File[]>;
     
     constructor(private _http: Http) {
         this.tags = this._http.get(this._baseUrl + "/tags")

@@ -47,8 +47,8 @@ import {FileNamePipe} from "./filenamepipe";
     directives: [SearchBox]
 })
 export class FilesComponent implements OnInit {
-    public files : File[] = [];
-    public tags : Tag[] = [];
+    public files: File[] = [];
+    public tags: Tag[] = [];
     
     constructor(private _service: LaputinService) {
     }
