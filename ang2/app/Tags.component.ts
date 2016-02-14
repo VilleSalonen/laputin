@@ -19,7 +19,6 @@ import {SearchBox} from "./searchbox.component";
     directives: [SearchBox]
 })
 export class TagsComponent implements OnInit {
-    public filter: string = "";
     public tags: Tag[] = [];
     
     constructor(private _service: LaputinService) {
