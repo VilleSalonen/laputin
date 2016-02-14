@@ -5,9 +5,14 @@ import {Observable} from 'rxjs/Rx';
 import {File} from "./file";
 import {Tag} from "./tag";
 import {LaputinService} from "./laputinservice";
+import {SearchBox} from "./searchbox.component";
+import {FileNamePipe} from "./filenamepipe";
 
 @Component({
-    template: `    
+    pipes: [FileNamePipe],
+    template: `
+        <search-box (update)="term = $event"></search-box>
+    
         <table class="table table-striped">
             <tbody>
                 <tr>
@@ -20,7 +25,7 @@ import {LaputinService} from "./laputinservice";
                     </th>
                 </tr>
 
-                <tr *ngFor="#file of files">
+                <tr *ngFor="#file of files | filenamefilter: term">
                     <td>
                         {{file.path}}
                         
@@ -38,7 +43,8 @@ import {LaputinService} from "./laputinservice";
             </tbody>
         </table>
     `,
-    providers: [LaputinService, HTTP_PROVIDERS]
+    providers: [LaputinService, HTTP_PROVIDERS],
+    directives: [SearchBox]
 })
 export class FilesComponent implements OnInit {
     public files : File[] = [];
