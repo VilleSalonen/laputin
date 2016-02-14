@@ -54,7 +54,11 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                         </form>
                     </div>
                     <div class="col-md-7 col-md-offset-1">
-                        Here be selected tags
+                        <div class="tag btn-group" *ngFor="#tag of selectedTags">
+                            <button class="dropdown-toggle btn btn-success" type="button">
+                                <span>{{tag.name}}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,6 +102,7 @@ export class FilesComponent implements OnInit {
     public matchingFiles: File[] = [];
     
     public tags: Tag[] = [];
+    public selectedTags: Tag[] = [];
     
     constructor(private _service: LaputinService) {
     }
@@ -116,13 +121,19 @@ export class FilesComponent implements OnInit {
             return;
         }
         
+        var that = this;
         var termLowered = term.toLowerCase();
         this.matchingFiles = this.allFiles
-            .filter((file: File) => file.path.toLowerCase().includes(termLowered));
+            .filter(file => file.path.toLowerCase().includes(termLowered))
+            .filter(file => {
+                return that.selectedTags.every(value => file.tags.map(tag => tag.id).indexOf(value.id) > -1);
+            });
     }
     
     addTag(tag: Tag): void {
-        console.log(tag);
+        if (this.selectedTags.indexOf(tag) == -1) {
+            this.selectedTags.push(tag);
+        }
     }
     
     onSelect(file: File): void {
