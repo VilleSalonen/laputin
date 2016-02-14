@@ -1,6 +1,6 @@
-import {Component, OnInit} from 'angular2/core';
-import {HTTP_PROVIDERS, Headers} from 'angular2/http';
-import {Observable} from 'rxjs/Rx';
+import {Component, OnInit} from "angular2/core";
+import {HTTP_PROVIDERS, Headers} from "angular2/http";
+import {Observable} from "rxjs/Rx";
 
 import {File} from "./file";
 import {Tag} from "./tag";
