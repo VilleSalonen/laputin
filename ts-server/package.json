@@ -1,0 +1,16 @@
+{
+  "name": "laputin-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Ville Salonen <ville.salonen@iki.fi>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.0.6",
+    "gulp-typescript": "^2.11.0"
+  }
+}
