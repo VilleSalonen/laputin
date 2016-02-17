@@ -1,4 +1,5 @@
 import express = require("express");
+import bodyParser = require("body-parser");
 import path = require("path");
 import _ = require("underscore");
 import cors = require("cors");
@@ -11,10 +12,7 @@ var library = new Library(libraryPath);
 var app: express.Express = express();
 
 app.use(cors());
-
-app.get('/', (req, res) => {
-    res.send('Testing 1 2 3');
-});
+app.use(bodyParser.json({}));
 
 app.route("/files").get(function (req, res) {
     library.getFiles(req.query, function (files) {
@@ -23,9 +21,31 @@ app.route("/files").get(function (req, res) {
 });
 
 app.route("/tags").get(function (req, res) {
-    res.send([]);
+    library.getTags(req.query, function (tags) {
+        res.send(_.values(tags));
+    });
 });
 
+app.route("/tags").post(function (req, res) {
+    var tagName = req.body.tagName;
+    library.createNewTag(tagName, function (err, tag) {
+        if (err)
+            res.status(500).send(err);
+        else
+            res.status(200).send(tag);
+    });
+});
+
+app.route("/files/:hash/tags").post(function (req, res) {
+    var selectedTags = req.body.selectedTags;
+
+    console.log(selectedTags);
+    console.log(req.params.hash);
+    _.each(selectedTags, function (tag) {
+        library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
+    });
+    res.status(200).end();
+});
 
 app.use("/media", express.static(libraryPath));
 

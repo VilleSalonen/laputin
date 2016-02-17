@@ -14,7 +14,7 @@ export class Library {
     public getFiles(query: Query, callback): any {
         var files = {};
 
-        var params: string[] = [];
+        var params: any[] = [];
 
         var sql = "SELECT files.hash, files.path FROM files WHERE active = 1";
         if (query.filename) {
@@ -81,5 +81,90 @@ export class Library {
         }
 
         return "";
+    };
+    
+    public createNewTag(tagName, callback): void {
+        var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
+        stmt.run(tagName, function (err) {
+            if (err) {
+                if (err.code === "SQLITE_CONSTRAINT") {
+                    console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
+                    return;
+                }
+                
+                callback(err, null);
+            }
+
+            var tag = { id: stmt.lastID, name: tagName };
+            if (typeof callback !== "undefined")
+                callback(null, tag);
+        });
+    }
+    
+    public getTags(query, callback) {
+        var tags = [];
+
+        var params = [];
+        var sql = "SELECT id, name, (SELECT COUNT(*) FROM tags_files JOIN files ON tags_files.hash = files.hash WHERE tags_files.id = tags.id AND files.active = 1) AS count FROM tags WHERE ";
+
+        if (query && query.unassociated) {
+            sql += " count >= 0 ";
+        } else {
+            sql += " count > 0 ";
+        }
+
+        if (query && query.selectedTags) {
+            var wheres = [];
+            _.each(query.selectedTags, function (tag) {
+                params.push(tag.id);
+                wheres.push(" id = ? ");
+            });
+
+            if (wheres.length > 0) {
+
+            }
+
+            var wheresJoined = wheres.join(" OR ");
+            sql += " AND id IN (SELECT DISTINCT id FROM tags_files WHERE hash IN (SELECT DISTINCT hash FROM tags_files WHERE " + wheresJoined + "))";
+
+
+            var selectedIds = [];
+            _.each(query.selectedTags, function (tag) {
+                params.push(tag.id);
+                selectedIds.push(" ? ");
+            });
+
+            sql += " AND id NOT IN (" + selectedIds.join(",") + ")";
+        }
+
+        sql += " ORDER BY name ";
+
+        var stmt = this._db.prepare(sql);
+
+        var each = function (err, row) {
+            tags.push({ "id": row.id, "name": row.name, "associationCount": row.count });
+        };
+        var complete = function () {
+            if (typeof callback !== "undefined")
+                callback(tags);
+        };
+
+        params.push(each);
+        params.push(complete);
+
+        sqlite3.Statement.prototype.each.apply(stmt, params);
+    }
+
+    public createNewLinkBetweenTagAndFile (inputTag, hash): void {
+        var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
+        stmt.run(inputTag.id, hash, function (err) {
+            if (err) {
+                if (err.code !== "SQLITE_CONSTRAINT" && typeof callback === "function") {
+                    callback(err, null);
+                } else {
+                    console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + hash + ". Refusing to add a duplicate association.");
+                }
+            }
+        });
     };
 }

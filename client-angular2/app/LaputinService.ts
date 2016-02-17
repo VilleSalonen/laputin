@@ -1,7 +1,7 @@
 import {Component} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
-import {Http, HTTP_PROVIDERS, Headers} from "angular2/http";
+import {Http, HTTP_PROVIDERS, Headers, Response} from "angular2/http";
 
 import {File} from "./file";
 import {Tag} from "./tag";
@@ -11,7 +11,7 @@ import {Duplicate} from "./duplicate";
     providers: [HTTP_PROVIDERS]
 })
 export class LaputinService {
-    private _baseUrl: string = "http://localhost:12345"; 
+    private _baseUrl: string = "http://localhost:3200"; 
     
     public tags: Observable<Tag[]>;
     public files: Observable<File[]>;
@@ -81,6 +81,35 @@ export class LaputinService {
         const headers = new Headers({"Content-Type": "application/json"});
         
         this._http.post(this._baseUrl + "/open/files/", body, { headers: headers })
+                   .subscribe(
+                        data => console.log("Data: " + data),
+                        err => console.log("Error: " + err),
+                        () => console.log("Complete")
+                   );
+    }
+    
+    public createTag(file: File, newTagName: string): void {
+        let body = JSON.stringify({ tagName: newTagName });
+        const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
+        
+        this._http.post(this._baseUrl + "/tags", body, { headers: headers })
+                   .subscribe(
+                        data => {
+                            var tag = this._convertTag(data.json());
+                            this.addTag(file, tag);
+                        },
+                        err => console.log("Error: " + err),
+                        () => console.log("Complete")
+                   );
+    }
+    
+    public addTag(file: File, tag: Tag): void {
+        let body = JSON.stringify({
+                selectedTags: [tag]
+            });
+        const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
+        
+        this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers })
                    .subscribe(
                         data => console.log("Data: " + data),
                         err => console.log("Error: " + err),

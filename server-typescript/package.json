@@ -6,8 +6,9 @@
   "author": "Ville Salonen <ville.salonen@iki.fi>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.13.4",
+    "body-parser": "^1.15.0",
     "cors": "^2.7.1",
+    "express": "^4.13.4",
     "sqlite3": "^3.1.1",
     "underscore": "^1.8.3"
   },
