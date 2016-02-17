@@ -5,6 +5,7 @@ import _ = require("underscore");
 import {Query} from "./query.model";
 import {File} from "./file";
 import {Tag} from "./tag";
+import {TagQuery} from "./tagquery.model";
 
 export class Library {
     private _db: any;
@@ -52,11 +53,11 @@ export class Library {
         
         var self = this;
         var complete = function () {
-            self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name", function (err, row) {
+            self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name", function (err: Error, row: any) {
                 // Tag associations exist for inactive files but inactive files are
                 // not in files list.
                 if (typeof files[row.hash] !== "undefined") {
-                    files[row.hash].tags.push(new Tag(row.id, row.name));
+                    files[row.hash].tags.push(new Tag(row.id, row.name, 0));
                 }
             }, function () {
                 if (typeof callback !== "undefined")
@@ -98,16 +99,16 @@ export class Library {
                 callback(err, null);
             }
 
-            var tag = new Tag(stmt.lastID, tagName);
+            var tag = new Tag(stmt.lastID, tagName, 0);
             if (typeof callback !== "undefined")
                 callback(null, tag);
         });
     }
     
-    public getTags(query, callback) {
-        var tags = [];
+    public getTags(query: TagQuery, callback: (tags: Tag[]) => void) {
+        var tags: Tag[] = [];
 
-        var params = [];
+        var params: any[] = [];
         var sql = "SELECT id, name, (SELECT COUNT(*) FROM tags_files JOIN files ON tags_files.hash = files.hash WHERE tags_files.id = tags.id AND files.active = 1) AS count FROM tags WHERE ";
 
         if (query && query.unassociated) {
@@ -117,7 +118,7 @@ export class Library {
         }
 
         if (query && query.selectedTags) {
-            var wheres = [];
+            var wheres: string[] = [];
             _.each(query.selectedTags, function (tag) {
                 params.push(tag.id);
                 wheres.push(" id = ? ");
@@ -131,7 +132,7 @@ export class Library {
             sql += " AND id IN (SELECT DISTINCT id FROM tags_files WHERE hash IN (SELECT DISTINCT hash FROM tags_files WHERE " + wheresJoined + "))";
 
 
-            var selectedIds = [];
+            var selectedIds: string[] = [];
             _.each(query.selectedTags, function (tag) {
                 params.push(tag.id);
                 selectedIds.push(" ? ");
@@ -144,12 +145,12 @@ export class Library {
 
         var stmt = this._db.prepare(sql);
 
-        var each = function (err, row) {
-            tags.push({ "id": row.id, "name": row.name, "associationCount": row.count });
+        var each = function (err: Error, row: any) {
+            tags.push(new Tag(row.id, row.name, row.count));
         };
         var complete = function () {
             if (typeof callback !== "undefined")
-                callback(tags);
+                callback(_.values(tags));
         };
 
         params.push(each);
@@ -158,12 +159,13 @@ export class Library {
         sqlite3.Statement.prototype.each.apply(stmt, params);
     }
 
-    public createNewLinkBetweenTagAndFile (inputTag: Tag, hash): void {
+    public createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): void {
         var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
-        stmt.run(inputTag.id, hash, function (err) {
+        stmt.run(inputTag.id, hash, function (err: any) {
             if (err) {
-                if (err.code !== "SQLITE_CONSTRAINT" && typeof callback === "function") {
-                    callback(err, null);
+                if (err.code !== "SQLITE_CONSTRAINT") {
+                    console.log(err);
+                    return;
                 } else {
                     console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + hash + ". Refusing to add a duplicate association.");
                 }

@@ -8,6 +8,7 @@ import cors = require("cors");
 
 import {Library} from "./library";
 import {File} from "./file";
+import {Tag} from "./tag";
 
 var libraryPath: string = "test-archive-no-commit";
 var library = new Library(libraryPath);
@@ -24,8 +25,8 @@ app.route("/files").get(function (req, res) {
 });
 
 app.route("/tags").get(function (req, res) {
-    library.getTags(req.query, function (tags) {
-        res.send(_.values(tags));
+    library.getTags(req.query, function (tags: Tag[]) {
+        res.send(tags);
     });
 });
 
@@ -41,7 +42,7 @@ app.route("/tags").post(function (req, res) {
 
 app.route("/files/:hash/tags").post(function (req, res) {
     var selectedTags = req.body.selectedTags;
-    _.each(selectedTags, function (tag) {
+    _.each(selectedTags, function (tag: Tag) {
         library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
     });
     res.status(200).end();
