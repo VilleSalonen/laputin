@@ -1,3 +1,5 @@
+/// <reference path="typings/tsd.d.ts" />
+
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require("path");
