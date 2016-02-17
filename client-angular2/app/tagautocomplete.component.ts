@@ -81,7 +81,7 @@ export class TagAutocompleteComponent {
             this.selectedIndex++;
         }
         
-        if ($event.which == ENTER && this.selectedIndex >= 0 && this.selectedIndex < this.matchingTags.length - 1) {
+        if ($event.which == ENTER && this.selectedIndex >= 0 && this.selectedIndex < this.matchingTags.length) {
             this.select.emit(this.matchingTags[this.selectedIndex]);
             this.clear();
         }
