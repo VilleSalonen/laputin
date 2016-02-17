@@ -86,9 +86,9 @@ export class Library {
         return "";
     };
     
-    public createNewTag(tagName: string, callback): void {
+    public createNewTag(tagName: string, callback: (err: any, tag: Tag) => void): void {
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
-        stmt.run(tagName, function (err) {
+        stmt.run(tagName, function (err: any) {
             if (err) {
                 if (err.code === "SQLITE_CONSTRAINT") {
                     console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
@@ -98,7 +98,7 @@ export class Library {
                 callback(err, null);
             }
 
-            var tag = { id: stmt.lastID, name: tagName };
+            var tag = new Tag(stmt.lastID, tagName);
             if (typeof callback !== "undefined")
                 callback(null, tag);
         });
