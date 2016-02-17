@@ -20,6 +20,7 @@ import {SearchBox} from "./searchbox.component";
 })
 export class TagsComponent implements OnInit {
     public tags: Tag[] = [];
+    public term: string = "";
     
     constructor(private _service: LaputinService) {
     }
