@@ -18,21 +18,21 @@ var app: express.Express = express();
 app.use(cors());
 app.use(bodyParser.json({}));
 
-app.route("/files").get(function (req, res) {
-    library.getFiles(req.query, function (files: File[]): void {
+app.route("/files").get((req, res) => {
+    library.getFiles(req.query, (files: File[]) => {
         res.send(files);
     });
 });
 
-app.route("/tags").get(function (req, res) {
-    library.getTags(req.query, function (tags: Tag[]) {
+app.route("/tags").get((req, res) => {
+    library.getTags(req.query, (tags: Tag[]) => {
         res.send(tags);
     });
 });
 
-app.route("/tags").post(function (req, res) {
+app.route("/tags").post((req, res) => {
     var tagName = req.body.tagName;
-    library.createNewTag(tagName, function (err, tag) {
+    library.createNewTag(tagName, (err, tag) => {
         if (err)
             res.status(500).send(err);
         else
@@ -40,9 +40,9 @@ app.route("/tags").post(function (req, res) {
     });
 });
 
-app.route("/files/:hash/tags").post(function (req, res) {
+app.route("/files/:hash/tags").post((req, res) => {
     var selectedTags = req.body.selectedTags;
-    _.each(selectedTags, function (tag: Tag) {
+    _.each(selectedTags, (tag: Tag) => {
         library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
     });
     res.status(200).end();
@@ -52,6 +52,6 @@ app.use("/media", express.static(libraryPath));
 
 var port: number = +process.env.PORT || 3200;
 
-var server = app.listen(port, function() {
+var server = app.listen(port, () => {
   console.log('Express server listening on port ' + port);
 });

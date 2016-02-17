@@ -47,19 +47,19 @@ export class Library {
         
         var stmt = this._db.prepare(sql);
 
-        var each = function (err: any, row: any) {
+        var each = (err: any, row: any) => {
             files[row.hash] = new File(row.hash, row.path, row.path.replace(this._libraryPath, ""), []);
         };
         
         var self = this;
-        var complete = function () {
+        var complete = () => {
             self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name", function (err: Error, row: any) {
                 // Tag associations exist for inactive files but inactive files are
                 // not in files list.
                 if (typeof files[row.hash] !== "undefined") {
                     files[row.hash].tags.push(new Tag(row.id, row.name, 0));
                 }
-            }, function () {
+            }, () => {
                 if (typeof callback !== "undefined")
                     callback(_.values(files));
             });
@@ -74,10 +74,10 @@ export class Library {
     private _generateTagFilterQuery (ids: string, params: string[], opr1: string, opr2: string): string {
         if (ids) {
             var splitIds = ids.split(",");
-            _.each(splitIds, function (id) {
+            _.each(splitIds, (id: string) => {
                 params.push(id);
             });
-            var wheres = _.map(splitIds, function (id) {
+            var wheres = _.map(splitIds, () => {
                 return " files.hash " + opr1 + " (SELECT hash FROM tags_files WHERE id=?) "
             });
 
@@ -89,7 +89,7 @@ export class Library {
     
     public createNewTag(tagName: string, callback: (err: any, tag: Tag) => void): void {
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
-        stmt.run(tagName, function (err: any) {
+        stmt.run(tagName, (err: any) => {
             if (err) {
                 if (err.code === "SQLITE_CONSTRAINT") {
                     console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
@@ -119,7 +119,7 @@ export class Library {
 
         if (query && query.selectedTags) {
             var wheres: string[] = [];
-            _.each(query.selectedTags, function (tag) {
+            _.each(query.selectedTags, (tag) => {
                 params.push(tag.id);
                 wheres.push(" id = ? ");
             });
@@ -133,7 +133,7 @@ export class Library {
 
 
             var selectedIds: string[] = [];
-            _.each(query.selectedTags, function (tag) {
+            _.each(query.selectedTags, (tag) => {
                 params.push(tag.id);
                 selectedIds.push(" ? ");
             });
@@ -145,10 +145,10 @@ export class Library {
 
         var stmt = this._db.prepare(sql);
 
-        var each = function (err: Error, row: any) {
+        var each = (err: Error, row: any) => {
             tags.push(new Tag(row.id, row.name, row.count));
         };
-        var complete = function () {
+        var complete = () => {
             if (typeof callback !== "undefined")
                 callback(_.values(tags));
         };
@@ -161,7 +161,7 @@ export class Library {
 
     public createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): void {
         var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
-        stmt.run(inputTag.id, hash, function (err: any) {
+        stmt.run(inputTag.id, hash, (err: any) => {
             if (err) {
                 if (err.code !== "SQLITE_CONSTRAINT") {
                     console.log(err);
