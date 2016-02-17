@@ -3,6 +3,8 @@ import path = require("path");
 import _ = require("underscore");
 
 import {Query} from "./query.model";
+import {File} from "./file";
+import {Tag} from "./tag";
 
 export class Library {
     private _db: any;
@@ -11,8 +13,8 @@ export class Library {
         this._db = new sqlite3.Database(path.join(this._libraryPath, ".laputin.db"));
     }
     
-    public getFiles(query: Query, callback): any {
-        var files = {};
+    public getFiles(query: Query, callback: (files: File[]) => void): void {
+        var files: { [hash: string]: File } = {};
 
         var params: any[] = [];
 
@@ -44,20 +46,21 @@ export class Library {
         
         var stmt = this._db.prepare(sql);
 
-        var each = function (err, row) {
-            files[row.hash] = { "hash": row.hash, "path": row.path, "tags": [], "name": row.path.replace(this._libraryPath, "") };
+        var each = function (err: any, row: any) {
+            files[row.hash] = new File(row.hash, row.path, row.path.replace(this._libraryPath, ""), []);
         };
+        
         var self = this;
         var complete = function () {
             self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name", function (err, row) {
                 // Tag associations exist for inactive files but inactive files are
                 // not in files list.
                 if (typeof files[row.hash] !== "undefined") {
-                    files[row.hash].tags.push({ id: row.id, name: row.name });
+                    files[row.hash].tags.push(new Tag(row.id, row.name));
                 }
             }, function () {
                 if (typeof callback !== "undefined")
-                    callback(files);
+                    callback(_.values(files));
             });
         };
 
@@ -83,7 +86,7 @@ export class Library {
         return "";
     };
     
-    public createNewTag(tagName, callback): void {
+    public createNewTag(tagName: string, callback): void {
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
         stmt.run(tagName, function (err) {
             if (err) {
@@ -155,7 +158,7 @@ export class Library {
         sqlite3.Statement.prototype.each.apply(stmt, params);
     }
 
-    public createNewLinkBetweenTagAndFile (inputTag, hash): void {
+    public createNewLinkBetweenTagAndFile (inputTag: Tag, hash): void {
         var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
         stmt.run(inputTag.id, hash, function (err) {
             if (err) {

@@ -7,6 +7,7 @@ import _ = require("underscore");
 import cors = require("cors");
 
 import {Library} from "./library";
+import {File} from "./file";
 
 var libraryPath: string = "test-archive-no-commit";
 var library = new Library(libraryPath);
@@ -17,8 +18,8 @@ app.use(cors());
 app.use(bodyParser.json({}));
 
 app.route("/files").get(function (req, res) {
-    library.getFiles(req.query, function (files) {
-        res.send(_.values(files));
+    library.getFiles(req.query, function (files: File[]): void {
+        res.send(files);
     });
 });
 
@@ -40,9 +41,6 @@ app.route("/tags").post(function (req, res) {
 
 app.route("/files/:hash/tags").post(function (req, res) {
     var selectedTags = req.body.selectedTags;
-
-    console.log(selectedTags);
-    console.log(req.params.hash);
     _.each(selectedTags, function (tag) {
         library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
     });
