@@ -35,6 +35,16 @@ export class Library {
         return stmt.runAsync(file.hash, file.path);
     }
     
+    public deactivateFile(file: File): Promise<void> {
+        var stmt = this._db.prepare("UPDATE files SET active = 0 WHERE path = ?");
+        return stmt.runAsync(file.path);
+    }
+
+    public deactivateAll(): Promise<void> {
+        var stmt = this._db.prepare("UPDATE files SET active = 0");
+        return stmt.runAsync();
+    }
+
     public getFiles(query: Query): Promise<File[]> {
         var files: { [hash: string]: File } = {};
 

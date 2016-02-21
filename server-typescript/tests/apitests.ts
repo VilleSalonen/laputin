@@ -131,6 +131,40 @@ describe("Laputin API", () => {
                 });
         });
     });
+
+    describe("Deactivating files", () => {
+        let laputin: Laputin;
+        let file1: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
+        let file2: File = new File("bbbbb", "educational.jpg", "educational.jpg", []);
+        let file3: File = new File("ccccc", "serious.jpg", "serious.jpg", []);
+        
+        before((done) => {
+            initializeLaputin("deactivating-files")
+                .then((l) => { laputin = l; })
+                .then(() => { return laputin.library.addFile(file1); })
+                .then(() => { return laputin.library.addFile(file2); })
+                .then(() => { return laputin.library.addFile(file3); })
+                .then(done);
+        });
+        
+        it("A single file can be deactivated", (done) => {
+            laputin.library.deactivateFile(file1);
+            
+            request(laputin.app)
+                .get("/files")
+                .expect(200)
+                .expect([file2, file3], done);
+        });
+
+        it("All files can be deactivated", (done) => {
+            laputin.library.deactivateAll();
+            
+            request(laputin.app)
+                .get("/files")
+                .expect(200)
+                .expect([], done);
+        });
+    });
 });   
 
 function initializeLaputin(path: string): Promise<Laputin> {
