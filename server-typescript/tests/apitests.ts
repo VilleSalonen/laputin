@@ -49,7 +49,8 @@ describe("Laputin API", () => {
         before((done) => {
             initializeLaputin("adding-tags")
                 .then((l) => { laputin = l; })
-                .then(() => { laputin.library.createNewTag("Funny", done); });
+                .then(() => { laputin.library.createNewTag("Funny"); })
+                .then(done);
         });
         
         it("Added tag can be found from unassociated tags", (done) => {

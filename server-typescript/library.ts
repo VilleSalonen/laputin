@@ -108,22 +108,10 @@ export class Library {
         return "";
     };
     
-    public createNewTag(tagName: string, callback: (err: any, tag: Tag) => void): void {
+    public createNewTag(tagName: string): Promise<Tag> {
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
-        stmt.run(tagName, (err: any) => {
-            if (err) {
-                if (err.code === "SQLITE_CONSTRAINT") {
-                    console.log("Tag already exists with name " + tagName + ". Refusing to add another tag with this name.");
-                    return;
-                }
-                
-                callback(err, null);
-            }
-
-            var tag = new Tag(stmt.lastID, tagName, 0);
-            if (typeof callback !== "undefined")
-                callback(null, tag);
-        });
+        return stmt.runAsync(tagName)
+            .then(() => { return new Tag(stmt.lastID, tagName, 0); });
     }
     
     public getTags(query: TagQuery, callback: (tags: Tag[]) => void) {

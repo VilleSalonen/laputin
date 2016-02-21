@@ -33,12 +33,9 @@ export class Laputin {
 
         this.app.route("/tags").post((req, res) => {
             var tagName = req.body.tagName;
-            this.library.createNewTag(tagName, (err, tag) => {
-                if (err)
-                    res.status(500).send(err);
-                else
-                    res.status(200).send(tag);
-            });
+            this.library.createNewTag(tagName)
+                .catch((err) => { res.status(500).send(err); })
+                .done((tag) => { res.status(200).send(tag); });
         });
 
         this.app.route("/files/:hash/tags").post((req, res) => {
