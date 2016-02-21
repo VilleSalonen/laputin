@@ -1,4 +1,5 @@
 deploy/
+deploy-tests/
 node_modules/
 typings/
 test-archive-no-commit/
