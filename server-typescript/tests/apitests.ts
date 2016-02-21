@@ -1,6 +1,4 @@
-/// <reference path="../typings/mocha/mocha.d.ts" />
-/// <reference path="../typings/supertest/supertest.d.ts" />
-/// <reference path="../typings/should/should.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 
 // Because should extends other prototypes and is not directly used, Typescript
 // compiler omits it. To circumvent this, should is placed in a local variable
@@ -8,13 +6,19 @@
 import should = require("should");
 var persist = should;
 
+import fs = require("fs");
+import rimraf = require("rimraf");
+
 import request = require("supertest");
 
 import {File} from "./../file";
 import {Tag} from "./../tag";
 import {Laputin} from "./../server";
 
-var laputin = new Laputin("test-archive");
+rimraf.sync("deploy-tests/test-archive");
+fs.mkdirSync("deploy-tests/test-archive");
+
+var laputin = new Laputin("deploy-tests/test-archive");
 
 describe("Laputin API", () => {
     before((done) => {
