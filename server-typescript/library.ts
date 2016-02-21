@@ -164,5 +164,10 @@ export class Library {
                 }
             }
         });
+    }
+    
+    public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
+        var stmt = this._db.prepare("DELETE FROM tags_files WHERE id = ? AND hash = ?");
+        return stmt.runAsync(inputTag, inputFile);
     };
 }

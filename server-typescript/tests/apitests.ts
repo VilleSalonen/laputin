@@ -106,6 +106,30 @@ describe("Laputin API", () => {
                         });
                 });
         });
+        
+        it("File tagging can be removed", (done) => {
+            request(laputin.app)
+                .delete("/files/" + file.hash + "/tags/" + tag.id)
+                .send({ tagId: tag.id, hash: file.hash })
+                .expect(200)
+                .end((err, res) => {
+                    if (err) throw err;
+                    
+                    request(laputin.app)
+                        .get("/files")
+                        .expect(200)
+                        .end((err, res) => {
+                            if (err) throw err;
+                            
+                            var values = JSON.parse(res.text);
+                            
+                            var expected = [new File(file.hash, file.path, file.name, [])];
+                            values.should.eql(expected);
+                            
+                            done();
+                        });
+                });
+        });
     });
 });   
 

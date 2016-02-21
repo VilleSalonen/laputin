@@ -44,6 +44,11 @@ export class Laputin {
             res.status(200).end();
         });
 
+        this.app.route("/files/:hash/tags/:tagId").delete((req, res) => {
+            this.library.deleteLinkBetweenTagAndFile(req.params.tagId, req.params.hash)
+                .then(() => { res.status(200).end(); });
+        });
+
         this.app.use("/media", express.static(libraryPath));
     }
 }
