@@ -20,7 +20,7 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         
         before((done) => {
-            initializeLaputin("adding-files", (l) => {
+            initializeLaputin("adding-files").then((l) => {
                 laputin = l;
                 
                 var file = new File(
@@ -57,7 +57,7 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         
         before((done) => {
-            initializeLaputin("adding-tags", (l) => {
+            initializeLaputin("adding-tags").then((l) => {
                 laputin = l;
                 
                 laputin.library.createNewTag("Funny", done);
@@ -96,14 +96,14 @@ describe("Laputin API", () => {
     });
 });   
 
-function initializeLaputin(path: string, callback: ((laputin: Laputin) => void)): void {
+function initializeLaputin(path: string): Promise<Laputin> {
     var archivePath = "deploy-tests/" + path;
     
     rimraf.sync(archivePath);
     fs.mkdirSync(archivePath);
 
     var laputin = new Laputin(archivePath);
-    laputin.library.createTables(() => {
-        callback(laputin);
+    return laputin.library.createTables().then(() => {
+        return laputin;
     });
 } 

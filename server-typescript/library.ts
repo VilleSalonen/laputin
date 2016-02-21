@@ -1,4 +1,10 @@
+/// <reference path="typings/tsd.d.ts" />
+
+import Promise = require("bluebird");
+
 import sqlite3 = require("sqlite3");
+Promise.promisifyAll(sqlite3);
+
 import path = require("path");
 import _ = require("underscore");
 
@@ -14,15 +20,14 @@ export class Library {
         this._db = new sqlite3.Database(path.join(this._libraryPath, ".laputin.db"));
     }
     
-    public createTables(callback: () => void): void {
-        var db = this._db;
-        db.run("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);", function () {
-            db.run("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));", function () {
-                db.run("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);", function () {
-                    callback();
-                });
+    public createTables(): Promise<void> {
+        return this._db.runAsync("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);")
+            .then(() => {
+                return this._db.runAsync("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));");
+            })
+            .then(() => {
+                return this._db.runAsync("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);");
             });
-        });
     }
     
     public addFile(file: File, callback: () => void) {
