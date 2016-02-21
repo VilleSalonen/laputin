@@ -1,9 +1,11 @@
 /// <reference path="typings/tsd.d.ts" />
 
-import {server} from "./server";
+import {Laputin} from "./server";
+
+var laputin = new Laputin("test-archive-no-commit");
 
 var port: number = +process.env.PORT || 3200;
 
-server.listen(port, () => {
+laputin.app.listen(port, () => {
   console.log('Express server listening on port ' + port);
 });

@@ -10,13 +10,15 @@ var persist = should;
 
 import request = require("supertest");
 
-import {server, lib} from "./../server";
 import {File} from "./../file";
 import {Tag} from "./../tag";
+import {Laputin} from "./../server";
+
+var laputin = new Laputin("test-archive");
 
 describe("Laputin API", () => {
     before((done) => {
-        lib.createTables(done);
+        laputin.library.createTables(done);
     });
     
     describe("Files", () => {
@@ -27,11 +29,11 @@ describe("Laputin API", () => {
                 "funny.jpg",
                 []);
                 
-            lib.addFile(file, done);
+            laputin.library.addFile(file, done);
         });
         
         it("Added file can be found", (done) => {
-            request(server)
+            request(laputin.app)
                 .get("/files")
                 .expect(200)
                 .end((err, res) => {
@@ -52,11 +54,11 @@ describe("Laputin API", () => {
     
     describe("Tags", () => {
         before((done) => {
-            lib.createNewTag("Funny", done);
+            laputin.library.createNewTag("Funny", done);
         });
         
         it("Added tag can be found from unassociated tags", (done) => {
-            request(server)
+            request(laputin.app)
                 .get("/tags?unassociated=true")
                 .expect(200)
                 .end((err, res) => {
@@ -71,7 +73,7 @@ describe("Laputin API", () => {
         });
         
         it("Added tag can _not_ be found from associated tags", (done) => {
-            request(server)
+            request(laputin.app)
                 .get("/tags?unassociated=false")
                 .expect(200)
                 .end((err, res) => {
