@@ -15,25 +15,24 @@ import {File} from "./../file";
 import {Tag} from "./../tag";
 import {Laputin} from "./../server";
 
-rimraf.sync("deploy-tests/test-archive");
-fs.mkdirSync("deploy-tests/test-archive");
-
-var laputin = new Laputin("deploy-tests/test-archive");
-
 describe("Laputin API", () => {
-    before((done) => {
-        laputin.library.createTables(done);
-    });
-    
-    describe("Files", () => {
+    describe("Adding a file", () => {
+        let laputin: Laputin;
+        
         before((done) => {
-            var file = new File(
-                "aaaaa",
-                "funny.jpg",
-                "funny.jpg",
-                []);
+            initializeLaputin("adding-files", (l) => {
+                laputin = l;
                 
-            laputin.library.addFile(file, done);
+                var file = new File(
+                    "aaaaa",
+                    "funny.jpg",
+                    "funny.jpg",
+                    []);
+                
+                laputin.library.createTables(() => {
+                    laputin.library.addFile(file, done);                
+                });
+            });
         });
         
         it("Added file can be found", (done) => {
@@ -56,9 +55,17 @@ describe("Laputin API", () => {
         });
     });
     
-    describe("Tags", () => {
+    describe("Adding a tag", () => {
+        let laputin: Laputin;
+        
         before((done) => {
-            laputin.library.createNewTag("Funny", done);
+            initializeLaputin("adding-tags", (l) => {
+                laputin = l;
+                
+                laputin.library.createTables(() => {
+                    laputin.library.createNewTag("Funny", done);
+                });
+            });
         });
         
         it("Added tag can be found from unassociated tags", (done) => {
@@ -91,4 +98,16 @@ describe("Laputin API", () => {
                 });
         });
     })
-});    
+});   
+
+function initializeLaputin(path: string, callback: ((laputin: Laputin) => void)): void {
+    var archivePath = "deploy-tests/" + path;
+    
+    rimraf.sync(archivePath);
+    fs.mkdirSync(archivePath);
+
+    var laputin = new Laputin(archivePath);
+    laputin.library.createTables(() => {
+        callback(laputin);
+    });
+} 
