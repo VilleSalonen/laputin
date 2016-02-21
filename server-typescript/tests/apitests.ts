@@ -31,15 +31,7 @@ describe("Laputin API", () => {
             request(laputin.app)
                 .get("/files")
                 .expect(200)
-                .end((err, res) => {
-                    if (err) throw err;
-                    
-                    var values = JSON.parse(res.text);
-                    values.should.have.length(1);
-                    values[0].should.eql(file);
-                    
-                    done();
-                });
+                .expect([file], done);
         });
     });
     
@@ -57,29 +49,14 @@ describe("Laputin API", () => {
             request(laputin.app)
                 .get("/tags?unassociated=true")
                 .expect(200)
-                .end((err, res) => {
-                    if (err) throw err;
-                    
-                    var values = JSON.parse(res.text);
-                    values.should.have.length(1);
-                    values[0].should.eql(new Tag(1, "Funny", 0));
-                    
-                    done();
-                });
+                .expect([new Tag(1, "Funny", 0)], done);
         });
         
         it("Added tag can _not_ be found from associated tags", (done) => {
             request(laputin.app)
                 .get("/tags")
                 .expect(200)
-                .end((err, res) => {
-                    if (err) throw err;
-                    
-                    var values = JSON.parse(res.text);
-                    values.should.have.length(0);
-                    
-                    done();
-                });
+                .expect([], done);
         });
     });
 
@@ -87,6 +64,7 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         let tag: Tag;
+        let expected: File;
         
         before((done) => {
             initializeLaputin("tagging-files")
@@ -112,10 +90,9 @@ describe("Laputin API", () => {
                             if (err) throw err;
                             
                             var values = JSON.parse(res.text);
-                            values.should.have.length(1);
-                            values[0].should.have.property("hash", file.hash);
-                            values[0].tags.should.have.length(1);
-                            values[0].tags[0].should.eql(tag);
+                            
+                            var expected = [new File(file.hash, file.path, file.name, [tag])];
+                            values.should.eql(expected);
                             
                             done();
                         });
