@@ -26,11 +26,11 @@ describe("Laputin API", () => {
                 .then(() => { return laputin.library.addFile(file); });
         });
         
-        it("Added file can be found", (done) => {
-            request(laputin.app)
+        it("Added file can be found", () => {
+            return request(laputin.app)
                 .get("/files")
                 .expect(200)
-                .expect([file], done);
+                .expect([file]);
         });
     });
     
@@ -45,25 +45,25 @@ describe("Laputin API", () => {
                 .then((t) => { tag = t; });
         });
         
-        it("Added tag can be found from unassociated tags", (done) => {
-            request(laputin.app)
+        it("Added tag can be found from unassociated tags", () => {
+            return request(laputin.app)
                 .get("/tags?unassociated=true")
                 .expect(200)
-                .expect([tag], done);
+                .expect([tag]);
         });
         
-        it("Added tag can _not_ be found from associated tags", (done) => {
-            request(laputin.app)
+        it("Added tag can _not_ be found from associated tags", () => {
+            return request(laputin.app)
                 .get("/tags")
                 .expect(200)
-                .expect([], done);
+                .expect([]);
         });
         
-        it("Creating duplicate tag returns error", (done) => {
-            request(laputin.app)
+        it("Creating duplicate tag returns error", () => {
+            return request(laputin.app)
                 .post("/tags")
                 .send({ tagName: tag.name })
-                .expect(500, done);
+                .expect(500);
         });
     });
 
@@ -143,22 +143,22 @@ describe("Laputin API", () => {
                 .then(() => { return laputin.library.addFile(file3); });
         });
         
-        it("A single file can be deactivated", (done) => {
+        it("A single file can be deactivated", () => {
             laputin.library.deactivateFile(file1);
             
-            request(laputin.app)
+            return request(laputin.app)
                 .get("/files")
                 .expect(200)
-                .expect([file2, file3], done);
+                .expect([file2, file3]);
         });
 
-        it("All files can be deactivated", (done) => {
+        it("All files can be deactivated", () => {
             laputin.library.deactivateAll();
             
-            request(laputin.app)
+            return request(laputin.app)
                 .get("/files")
                 .expect(200)
-                .expect([], done);
+                .expect([]);
         });
     });
 });   
