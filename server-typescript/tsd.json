@@ -37,6 +37,9 @@
     },
     "supertest/supertest.d.ts": {
       "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+    },
+    "should/should.d.ts": {
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     }
   }
 }

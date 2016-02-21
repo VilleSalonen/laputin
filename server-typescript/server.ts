@@ -49,3 +49,4 @@ app.route("/files/:hash/tags").post((req, res) => {
 app.use("/media", express.static(libraryPath));
 
 export var server = app;
+export var lib = library;
