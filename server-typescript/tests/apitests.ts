@@ -83,6 +83,46 @@ describe("Laputin API", () => {
                 });
         });
     });
+
+    describe("Tagging a file", () => {
+        let laputin: Laputin;
+        let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
+        let tag: Tag;
+        
+        before((done) => {
+            initializeLaputin("tagging-files")
+                .then((l) => { laputin = l; })
+                .then(() => { return laputin.library.addFile(file); })
+                .then(() => { return laputin.library.createNewTag("Funny"); })
+                .then((t) => { tag = t })
+                .then(done);
+        });
+        
+        it("File can be tagged", (done) => {
+            request(laputin.app)
+                .post("/files/" + file.hash + "/tags")
+                .send({ selectedTags: [tag], hash: file.hash })
+                .expect(200)
+                .end((err, res) => {
+                    if (err) throw err;
+                    
+                    request(laputin.app)
+                        .get("/files")
+                        .expect(200)
+                        .end((err, res) => {
+                            if (err) throw err;
+                            
+                            var values = JSON.parse(res.text);
+                            values.should.have.length(1);
+                            values[0].should.have.property("hash", file.hash);
+                            values[0].tags.should.have.length(1);
+                            values[0].tags[0].should.eql(tag);
+                            
+                            done();
+                        });
+                });
+        });
+    });
 });   
 
 function initializeLaputin(path: string): Promise<Laputin> {
