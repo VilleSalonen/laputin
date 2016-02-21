@@ -112,7 +112,7 @@ export class Library {
         }
 
         return "";
-    };
+    }
     
     public createNewTag(tagName: string): Promise<Tag> {
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
@@ -179,5 +179,5 @@ export class Library {
     public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
         var stmt = this._db.prepare("DELETE FROM tags_files WHERE id = ? AND hash = ?");
         return stmt.runAsync(inputTag, inputFile);
-    };
+    }
 }
