@@ -35,61 +35,57 @@ export class Library {
         return stmt.runAsync(file.hash, file.path);
     }
     
-    public getFiles(query: Query, callback: (files: File[]) => void): void {
+    public getFiles(query: Query): Promise<File[]> {
         var files: { [hash: string]: File } = {};
 
         var params: any[] = [];
 
-        var sql = "SELECT files.hash, files.path FROM files WHERE active = 1";
+        var sql1 = "SELECT files.hash, files.path FROM files WHERE active = 1";
         if (query.filename) {
-            sql += " AND path LIKE ? COLLATE NOCASE";
+            sql1 += " AND path LIKE ? COLLATE NOCASE";
             params.push("%" + query.filename + "%");
         }
         if (query.status) {
             if (query.status === "tagged" || query.status === "untagged") {
                 var operator = (query.status === "tagged") ? ">" : "=";
-                sql += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) " + operator + " 0";
+                sql1 += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) " + operator + " 0";
             }
         }
 
         if (query.hash) {
-            sql += " AND hash = ? ";
+            sql1 += " AND hash = ? ";
             params.push(query.hash);
         }
 
         if (query.and || query.or || query.not) {
-            sql += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) > 0";
+            sql1 += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) > 0";
         }
-        sql += this._generateTagFilterQuery(query.and, params, "IN", "AND");
-        sql += this._generateTagFilterQuery(query.or, params, "IN", "OR");
-        sql += this._generateTagFilterQuery(query.not, params, "NOT IN", "AND");
+        sql1 += this._generateTagFilterQuery(query.and, params, "IN", "AND");
+        sql1 += this._generateTagFilterQuery(query.or, params, "IN", "OR");
+        sql1 += this._generateTagFilterQuery(query.not, params, "NOT IN", "AND");
 
-        sql += " ORDER BY path ";
-        
-        var stmt = this._db.prepare(sql);
+        sql1 += " ORDER BY path ";
 
-        var each = (err: any, row: any) => {
+        var each1 = (err: any, row: any) => {
             files[row.hash] = new File(row.hash, row.path, row.path.replace(this._libraryPath, ""), []);
         };
         
-        var self = this;
-        var complete = () => {
-            self._db.each("SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name", function (err: Error, row: any) {
-                // Tag associations exist for inactive files but inactive files are
-                // not in files list.
-                if (typeof files[row.hash] !== "undefined") {
-                    files[row.hash].tags.push(new Tag(row.id, row.name, 0));
-                }
-            }, () => {
-                if (typeof callback !== "undefined")
-                    callback(_.values(files));
+        var stmt = this._db.prepare(sql1);
+        return stmt.eachAsync(params, each1)
+            .then(() => {
+                var sql2 = "SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name";
+                var each2 = function (err: Error, row: any) {
+                    // Tag associations exist for inactive files but inactive files are
+                    // not in files list.
+                    if (typeof files[row.hash] !== "undefined") {
+                        files[row.hash].tags.push(new Tag(row.id, row.name, 0));
+                    }
+                };
+                return this._db.eachAsync(sql2, each2);
+            })
+            .then(() => {
+                return _.values(files);
             });
-        };
-
-        params.push(each);
-        params.push(complete);
-
-        sqlite3.Statement.prototype.each.apply(stmt, params);
     }
     
     private _generateTagFilterQuery (ids: string, params: string[], opr1: string, opr2: string): string {

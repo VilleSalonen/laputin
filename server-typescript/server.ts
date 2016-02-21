@@ -20,9 +20,8 @@ export class Laputin {
         this.app.use(bodyParser.json({}));
 
         this.app.route("/files").get((req, res) => {
-            this.library.getFiles(req.query, (files: File[]) => {
-                res.send(files);
-            });
+            this.library.getFiles(req.query)
+                .then((files) => { res.send(files); });
         });
 
         this.app.route("/tags").get((req, res) => {
