@@ -7,17 +7,17 @@ var gulp = require("gulp"),
 gulp.task("build", function () {
     console.log("Compiling TypeScript");
     return gulp.src(["*.ts"])
-               .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy"));
-});
-
-gulp.task("build-tests", function () {
-    console.log("Compiling tests");
-    return gulp.src(["tests/*.ts"])
                .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests"));
 });
 
+gulp.task("build-tests", ["build"], function () {
+    console.log("Compiling tests");
+    return gulp.src(["tests/*.ts"])
+               .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests/tests"));
+});
+
 gulp.task("test", ["build-tests"], function () {
-    return gulp.src(['deploy-tests/*.js'], { read: false })
+    return gulp.src(['deploy-tests/tests/*.js'], { read: false })
         .pipe(mocha({ reporter: 'spec' }))
         .on('error', util.log);
 });
