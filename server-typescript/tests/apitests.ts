@@ -70,14 +70,13 @@ describe("Laputin API", () => {
         
         it("Added tag can _not_ be found from associated tags", (done) => {
             request(laputin.app)
-                .get("/tags?unassociated=false")
+                .get("/tags")
                 .expect(200)
                 .end((err, res) => {
                     if (err) throw err;
                     
                     var values = JSON.parse(res.text);
-                    values.should.have.length(1);
-                    values[0].should.eql(new Tag(1, "Funny", 0));
+                    values.should.have.length(0);
                     
                     done();
                 });
