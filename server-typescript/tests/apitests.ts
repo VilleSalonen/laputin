@@ -20,14 +20,12 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         
-        before((done) => {
-            initializeLaputin("adding-files")
-                .then((l) => { laputin = l; })
-                .then(() => { return laputin.library.addFile(file); })
-                .then(done);
+        before(async () => {
+            laputin = await initializeLaputin("adding-files")
+            await  laputin.library.addFile(file);
         });
         
-        it("Added file can be found", (done) => {
+        it("Added file can be found", () => {
             request(laputin.app)
                 .get("/files")
                 .expect(200)
