@@ -3,14 +3,20 @@ var gulp = require("gulp"),
     nodemon = require("gulp-nodemon"),
     mocha = require("gulp-mocha"),
     util = require("gulp-util");
-    
+
 gulp.task("build", function () {
-    console.log("Compiling TypeScript");
+    console.log("Compiling Laputin");
+    return gulp.src(["*.ts"])
+               .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy"));
+});
+    
+gulp.task("build-for-tests", function () {
+    console.log("Compiling Laputin for tests");
     return gulp.src(["*.ts"])
                .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests"));
 });
 
-gulp.task("build-tests", ["build"], function () {
+gulp.task("build-tests", ["build-for-tests"], function () {
     console.log("Compiling tests");
     return gulp.src(["tests/*.ts"])
                .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests/tests"));
