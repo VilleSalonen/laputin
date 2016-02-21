@@ -29,9 +29,7 @@ describe("Laputin API", () => {
                     "funny.jpg",
                     []);
                 
-                laputin.library.createTables(() => {
-                    laputin.library.addFile(file, done);                
-                });
+                laputin.library.addFile(file, done);                
             });
         });
         
@@ -62,9 +60,7 @@ describe("Laputin API", () => {
             initializeLaputin("adding-tags", (l) => {
                 laputin = l;
                 
-                laputin.library.createTables(() => {
-                    laputin.library.createNewTag("Funny", done);
-                });
+                laputin.library.createNewTag("Funny", done);
             });
         });
         
@@ -97,7 +93,7 @@ describe("Laputin API", () => {
                     done();
                 });
         });
-    })
+    });
 });   
 
 function initializeLaputin(path: string, callback: ((laputin: Laputin) => void)): void {
