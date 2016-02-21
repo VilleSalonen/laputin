@@ -37,11 +37,13 @@ describe("Laputin API", () => {
     
     describe("Adding a tag", () => {
         let laputin: Laputin;
+        let tag: Tag;
         
         before((done) => {
             initializeLaputin("adding-tags")
                 .then((l) => { laputin = l; })
-                .then(() => { laputin.library.createNewTag("Funny"); })
+                .then(() => { return laputin.library.createNewTag("Funny"); })
+                .then((t) => { tag = t; })
                 .then(done);
         });
         
@@ -49,7 +51,7 @@ describe("Laputin API", () => {
             request(laputin.app)
                 .get("/tags?unassociated=true")
                 .expect(200)
-                .expect([new Tag(1, "Funny", 0)], done);
+                .expect([tag], done);
         });
         
         it("Added tag can _not_ be found from associated tags", (done) => {
@@ -57,6 +59,13 @@ describe("Laputin API", () => {
                 .get("/tags")
                 .expect(200)
                 .expect([], done);
+        });
+        
+        it("Creating duplicate tag returns error", (done) => {
+            request(laputin.app)
+                .post("/tags")
+                .send({ tagName: tag.name })
+                .expect(500, done);
         });
     });
 
