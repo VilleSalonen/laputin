@@ -73,7 +73,6 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         let tag: Tag;
-        let expected: File;
         
         before((done) => {
             initializeLaputin("tagging-files")
