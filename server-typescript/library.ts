@@ -129,13 +129,8 @@ export class Library {
                 wheres.push(" id = ? ");
             });
 
-            if (wheres.length > 0) {
-
-            }
-
             var wheresJoined = wheres.join(" OR ");
             sql += " AND id IN (SELECT DISTINCT id FROM tags_files WHERE hash IN (SELECT DISTINCT hash FROM tags_files WHERE " + wheresJoined + "))";
-
 
             var selectedIds: string[] = [];
             _.each(query.selectedTags, (tag) => {
