@@ -26,9 +26,8 @@ export class Laputin {
         });
 
         this.app.route("/tags").get((req, res) => {
-            this.library.getTags(req.query, (tags: Tag[]) => {
-                res.send(tags);
-            });
+            this.library.getTags(req.query)
+                .then((tags) => { res.send(tags); });
         });
 
         this.app.route("/tags").post((req, res) => {

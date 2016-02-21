@@ -114,7 +114,7 @@ export class Library {
             .then(() => { return new Tag(stmt.lastID, tagName, 0); });
     }
     
-    public getTags(query: TagQuery, callback: (tags: Tag[]) => void) {
+    public getTags(query: TagQuery): Promise<Tag[]> {
         var tags: Tag[] = [];
 
         var params: any[] = [];
@@ -152,20 +152,13 @@ export class Library {
 
         sql += " ORDER BY name ";
 
-        var stmt = this._db.prepare(sql);
-
         var each = (err: Error, row: any) => {
             tags.push(new Tag(row.id, row.name, row.count));
         };
-        var complete = () => {
-            if (typeof callback !== "undefined")
-                callback(_.values(tags));
-        };
 
-        params.push(each);
-        params.push(complete);
-
-        sqlite3.Statement.prototype.each.apply(stmt, params);
+        var stmt = this._db.prepare(sql);
+        return stmt.eachAsync(params, each)
+                .then(() => { return _.values(tags); });
     }
 
     public createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): void {
