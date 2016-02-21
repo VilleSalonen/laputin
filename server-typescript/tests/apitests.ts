@@ -20,11 +20,10 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         
-        before((done) => {
-            initializeLaputin("adding-files")
+        before(() => {
+            return initializeLaputin("adding-files")
                 .then((l) => { laputin = l; })
-                .then(() => { return laputin.library.addFile(file); })
-                .then(done);
+                .then(() => { return laputin.library.addFile(file); });
         });
         
         it("Added file can be found", (done) => {
@@ -39,12 +38,11 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let tag: Tag;
         
-        before((done) => {
-            initializeLaputin("adding-tags")
+        before(() => {
+            return initializeLaputin("adding-tags")
                 .then((l) => { laputin = l; })
                 .then(() => { return laputin.library.createNewTag("Funny"); })
-                .then((t) => { tag = t; })
-                .then(done);
+                .then((t) => { tag = t; });
         });
         
         it("Added tag can be found from unassociated tags", (done) => {
@@ -74,13 +72,12 @@ describe("Laputin API", () => {
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         let tag: Tag;
         
-        before((done) => {
-            initializeLaputin("tagging-files")
+        before(() => {
+            return initializeLaputin("tagging-files")
                 .then((l) => { laputin = l; })
                 .then(() => { return laputin.library.addFile(file); })
                 .then(() => { return laputin.library.createNewTag("Funny"); })
-                .then((t) => { tag = t })
-                .then(done);
+                .then((t) => { tag = t });
         });
         
         it("File can be tagged", (done) => {
@@ -138,13 +135,12 @@ describe("Laputin API", () => {
         let file2: File = new File("bbbbb", "educational.jpg", "educational.jpg", []);
         let file3: File = new File("ccccc", "serious.jpg", "serious.jpg", []);
         
-        before((done) => {
-            initializeLaputin("deactivating-files")
+        before(() => {
+            return initializeLaputin("deactivating-files")
                 .then((l) => { laputin = l; })
                 .then(() => { return laputin.library.addFile(file1); })
                 .then(() => { return laputin.library.addFile(file2); })
-                .then(() => { return laputin.library.addFile(file3); })
-                .then(done);
+                .then(() => { return laputin.library.addFile(file3); });
         });
         
         it("A single file can be deactivated", (done) => {
