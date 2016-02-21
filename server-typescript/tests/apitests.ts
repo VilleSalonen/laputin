@@ -25,7 +25,7 @@ describe("Laputin API", () => {
             await  laputin.library.addFile(file);
         });
         
-        it("Added file can be found", () => {
+        it("Added file can be found", (done) => {
             request(laputin.app)
                 .get("/files")
                 .expect(200)
