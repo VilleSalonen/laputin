@@ -14,6 +14,25 @@ export class Library {
         this._db = new sqlite3.Database(path.join(this._libraryPath, ".laputin.db"));
     }
     
+    public createTables(callback: () => void): void {
+        var db = this._db;
+        db.run("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);", function () {
+            db.run("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));", function () {
+                db.run("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);", function () {
+                    callback();
+                });
+            });
+        });
+    }
+    
+    public addFile(file: File, callback: () => void) {
+        var stmt = this._db.prepare("INSERT OR REPLACE INTO files (hash, path, active) VALUES (?, ?, 1)");
+        stmt.run(file.hash, file.path, function (err: any) {
+            if (err) throw err;
+            if (callback) callback();
+        });
+    }
+    
     public getFiles(query: Query, callback: (files: File[]) => void): void {
         var files: { [hash: string]: File } = {};
 
