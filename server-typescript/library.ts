@@ -30,12 +30,9 @@ export class Library {
             });
     }
     
-    public addFile(file: File, callback: () => void) {
+    public addFile(file: File): Promise<void> {
         var stmt = this._db.prepare("INSERT OR REPLACE INTO files (hash, path, active) VALUES (?, ?, 1)");
-        stmt.run(file.hash, file.path, function (err: any) {
-            if (err) throw err;
-            if (callback) callback();
-        });
+        return stmt.runAsync(file.hash, file.path);
     }
     
     public getFiles(query: Query, callback: (files: File[]) => void): void {

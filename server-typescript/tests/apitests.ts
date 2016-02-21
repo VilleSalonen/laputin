@@ -18,19 +18,13 @@ import {Laputin} from "./../server";
 describe("Laputin API", () => {
     describe("Adding a file", () => {
         let laputin: Laputin;
+        let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         
         before((done) => {
-            initializeLaputin("adding-files").then((l) => {
-                laputin = l;
-                
-                var file = new File(
-                    "aaaaa",
-                    "funny.jpg",
-                    "funny.jpg",
-                    []);
-                
-                laputin.library.addFile(file, done);                
-            });
+            initializeLaputin("adding-files")
+                .then((l) => { laputin = l; })
+                .then(() => { return laputin.library.addFile(file); })
+                .then(done);
         });
         
         it("Added file can be found", (done) => {
@@ -42,11 +36,7 @@ describe("Laputin API", () => {
                     
                     var values = JSON.parse(res.text);
                     values.should.have.length(1);
-                    values[0].should.eql(new File(
-                        "aaaaa",
-                        "funny.jpg",
-                        "funny.jpg",
-                        []));
+                    values[0].should.eql(file);
                     
                     done();
                 });
@@ -57,11 +47,9 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         
         before((done) => {
-            initializeLaputin("adding-tags").then((l) => {
-                laputin = l;
-                
-                laputin.library.createNewTag("Funny", done);
-            });
+            initializeLaputin("adding-tags")
+                .then((l) => { laputin = l; })
+                .then(() => { laputin.library.createNewTag("Funny", done); });
         });
         
         it("Added tag can be found from unassociated tags", (done) => {
