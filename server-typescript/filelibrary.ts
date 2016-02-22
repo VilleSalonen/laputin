@@ -18,56 +18,58 @@ export class FileLibrary {
     }
     
     public load(callback: (() => void)) {
-        var self = this;
-
-        console.log("hashing");
         console.time("hashing");
+        
         var walker = walk.walk(this._libraryPath, { followLinks: false });
-        walker.on("file", function(root, stat, next) {
-            var filePath = path.normalize(path.join(root, stat.name));
-
-            if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
-                self.hashAndEmit(filePath, function () {
-                    next();
-                });
-            } else {
-                next();
-            }
-        });
-
-        walker.on("end", function () {
+        walker.on("file", this.processFile);
+        walker.on("end", () => {
             console.timeEnd("hashing");
-            // Start monitoring after library has been hashed. Otherwise changes
-            // done to database file cause changed events to be emitted and thus
-            // slow down the initial processing.
-            watch.createMonitor(self._libraryPath, { "ignoreDotFiles": true }, function (monitor) {
-                // If files are big or copying is otherwise slow, both created and
-                // changed events might be emitted for a new file. If this is the
-                // case, hashing is not possible during created event and must be
-                // done in changed event. However for small files or files that were
-                // otherwise copied fast, only created event is emitted.
-                //
-                // Because of this, hashing and emitting must be done on both
-                // events. Based on experiments, if both events are coming, hashing
-                // cannot be done on created events. Hasher will swallow the error.
-                // Thus each files is hashed and emitted just once even if both
-                // events will be emitted.
-                monitor.on("created", function (f) { self.hashAndEmit(f, () => {}); });
-                monitor.on("changed", function (f) { self.hashAndEmit(f, () => {}); });
-                monitor.on("removed", function (f) {
-                    var hash = self._hashesByPaths[f];
-                    var files = self._files[hash];
-                    self._files[hash] = _.filter(files, function (file) {
-                        return file.path !== f;
-                    });
-
-                    self._library.deactivateFile(new File(hash, f, f, []));
-                });
-            });
-
+            
             if (typeof callback !== "undefined") {
                 callback();
             }
+
+            // Start monitoring after library has been hashed. Otherwise changes
+            // done to database file cause changed events to be emitted and thus
+            // slow down the initial processing.
+            watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, this.startMonitoring);
+        });
+    }
+    
+    private processFile(root: string, stat: walk.WalkStat, next: (() => void)): void {
+        var filePath = path.normalize(path.join(root, stat.name));
+
+        if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
+            this.hashAndEmit(filePath, function () {
+                next();
+            });
+        } else {
+            next();
+        }
+    }
+    
+    private startMonitoring(monitor: watch.Monitor): void {
+        // If files are big or copying is otherwise slow, both created and
+        // changed events might be emitted for a new file. If this is the
+        // case, hashing is not possible during created event and must be
+        // done in changed event. However for small files or files that were
+        // otherwise copied fast, only created event is emitted.
+        //
+        // Because of this, hashing and emitting must be done on both
+        // events. Based on experiments, if both events are coming, hashing
+        // cannot be done on created events. Hasher will swallow the error.
+        // Thus each files is hashed and emitted just once even if both
+        // events will be emitted.
+        monitor.on("created", function (f) { this.hashAndEmit(f, () => {}); });
+        monitor.on("changed", function (f) { this.hashAndEmit(f, () => {}); });
+        monitor.on("removed", function (f) {
+            var hash = this._hashesByPaths[f];
+            var files = this._files[hash];
+            this._files[hash] = _.filter(files, function (file) {
+                return file.path !== f;
+            });
+
+            this._library.deactivateFile(new File(hash, f, f, []));
         });
     }
     
