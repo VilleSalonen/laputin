@@ -59,21 +59,21 @@ export class FileLibrary {
         // events. Based on experiments, if both events are coming, hashing
         // cannot be done on created events. Hasher will swallow the error.
         // Thus each files is hashed and emitted just once even if both
-        // events will be emitted.
-        monitor.on("created", function (f) { this.hashAndEmit(f, () => {}); });
-        monitor.on("changed", function (f) { this.hashAndEmit(f, () => {}); });
-        monitor.on("removed", function (f) {
-            var hash = this._hashesByPaths[f];
+        // events will be emitted.        
+        monitor.on("created", (path: string) => { this.hashAndEmit(path, () => {}); });
+        monitor.on("changed", (path: string) => { this.hashAndEmit(path, () => {}); });
+        monitor.on("removed", (path: string) => {
+            var hash = this._hashesByPaths[path];
             var files = this._files[hash];
             this._files[hash] = _.filter(files, function (file) {
-                return file.path !== f;
+                return file.path !== path;
             });
 
-            this._library.deactivateFile(new File(hash, f, f, []));
+            this._library.deactivateFile(new File(hash, path, path, []));
         });
     }
     
-    private hashAndEmit(path: any, callback: any) {
+    private hashAndEmit(path: string, callback: any) {
         var self = this;
         this._hasher.hash(path, function (result) {
             console.log(result.path);
