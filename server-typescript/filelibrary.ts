@@ -1,4 +1,5 @@
 /// <reference path="typings/tsd.d.ts" />
+/// <reference path="walk.d.ts" />
 
 import _ = require("underscore");
 import walk = require("walk");
@@ -21,7 +22,7 @@ export class FileLibrary {
 
         console.log("hashing");
         console.time("hashing");
-        var walker  = walk.walk(this._libraryPath, { followLinks: false });
+        var walker = walk.walk(this._libraryPath, { followLinks: false });
         walker.on("file", function(root, stat, next) {
             var filePath = path.normalize(path.join(root, stat.name));
 
