@@ -12,6 +12,7 @@ import {Query} from "./query.model";
 import {File} from "./file";
 import {Tag} from "./tag";
 import {TagQuery} from "./tagquery.model";
+import {FileLibrary} from "./filelibrary";
 
 export class Library {
     private _db: any;

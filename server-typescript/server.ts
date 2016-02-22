@@ -5,15 +5,25 @@ import _ = require("underscore");
 import cors = require("cors");
 
 import {Library} from "./library";
+import {FileLibrary} from "./filelibrary";
+import {Sha512Hasher} from "./sha512hasher";
 import {File} from "./file";
 import {Tag} from "./tag";
 
 export class Laputin {
     public library: Library;
+    public fileLibrary: FileLibrary;
     public app: express.Express;
     
     constructor(libraryPath: string) {
         this.library = new Library(libraryPath);
+        this.fileLibrary = new FileLibrary(libraryPath, new Sha512Hasher(), this.library);
+        
+        //this.library.createTables();
+        this.library.deactivateAll().then(() => {
+            this.fileLibrary.load(() => {});
+        });
+        
         this.app = express();
 
         this.app.use(cors());

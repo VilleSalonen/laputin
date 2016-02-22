@@ -9,7 +9,7 @@
       "commit": "aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b"
     },
     "node/node.d.ts": {
-      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+      "commit": "bd269cad4cb2b495f940c7b6afc5825d568029be"
     },
     "underscore/underscore.d.ts": {
       "commit": "aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b"
@@ -46,6 +46,9 @@
     },
     "bluebird/bluebird.d.ts": {
       "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+    },
+    "watch/watch.d.ts": {
+      "commit": "bd269cad4cb2b495f940c7b6afc5825d568029be"
     }
   }
 }

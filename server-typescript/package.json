@@ -11,7 +11,9 @@
     "cors": "^2.7.1",
     "express": "^4.13.4",
     "sqlite3": "^3.1.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "walk": "^2.3.9",
+    "watch": "^0.17.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -20,6 +22,6 @@
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
     "should": "^8.2.2",
-    "supertest": "^1.2.0"
+    "supertest": "^1.2.0",
   }
 }
