@@ -8,18 +8,12 @@ declare module "walk" {
         type: string;
     }
     
-    export function walk(pathname: string, options: WalkerOptions): Walker;
-    export function walkSync(pathname: string, options: WalkerOptions): Walker;
+    export function walk(pathname: string, options: any): Walker;
+    export function walkSync(pathname: string, options: any): Walker;
     
     export class Walker {
         on(event: string, callback: (root: string, stat: WalkStat, callback: (() => void)) => void): void;
         pause(): void;
         resume(): void;
-    }
-    
-    export interface WalkerOptions {
-        followLinks: boolean;
-        filters: string[];
-        listeners: any;
     }
 }
