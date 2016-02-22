@@ -170,6 +170,7 @@ function initializeLaputin(path: string): Promise<Laputin> {
     fs.mkdirSync(archivePath);
 
     var laputin = new Laputin(archivePath);
+    laputin.initializeRoutes();
     return laputin.library.createTables().then(() => {
         return laputin;
     });

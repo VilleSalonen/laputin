@@ -15,15 +15,12 @@ export class Laputin {
     public fileLibrary: FileLibrary;
     public app: express.Express;
     
-    constructor(libraryPath: string) {
-        this.library = new Library(libraryPath);
-        this.fileLibrary = new FileLibrary(libraryPath, new Sha512Hasher(), this.library);
-        
-        //this.library.createTables();
-        this.library.deactivateAll().then(() => {
-            this.fileLibrary.load(() => {});
-        });
-        
+    constructor(private _libraryPath: string) {
+        this.library = new Library(this._libraryPath);
+        this.fileLibrary = new FileLibrary(this._libraryPath, new Sha512Hasher(), this.library);
+    }
+    
+    public initializeRoutes(): void {
         this.app = express();
 
         this.app.use(cors());
@@ -59,6 +56,13 @@ export class Laputin {
                 .then(() => { res.status(200).end(); });
         });
 
-        this.app.use("/media", express.static(libraryPath));
+        this.app.use("/media", express.static(this._libraryPath));
+    }
+    
+    public loadFiles(): void {
+        //this.library.createTables();
+        this.library.deactivateAll().then(() => {
+            this.fileLibrary.load(() => {});
+        });
     }
 }
