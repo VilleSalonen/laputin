@@ -1,3 +1,5 @@
+/// <reference path="typings/node/node.d.ts" />
+
 import crypto = require("crypto");
 import fs = require("fs");
 
@@ -8,7 +10,7 @@ export class Sha512Hasher implements IHasher {
         var shasum = crypto.createHash("sha512");
 
         try {
-            var s = new fs.ReadStream(path);
+            var s = fs.createReadStream(path);
             s.on('data', function(d) { shasum.update(d); });
             s.on('end', function() {
                 var d = shasum.digest('hex');
