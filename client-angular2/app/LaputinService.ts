@@ -97,10 +97,7 @@ export class LaputinService {
                         data => {
                             var tag = this._convertTag(data.json());
                             this.addTag(file, tag);
-                        },
-                        err => console.log("Error: " + err),
-                        () => console.log("Complete")
-                   );
+                        });
     }
     
     public addTag(file: File, tag: Tag): void {
@@ -110,10 +107,6 @@ export class LaputinService {
         const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
         
         this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers })
-                   .subscribe(
-                        data => console.log("Data: " + data),
-                        err => console.log("Error: " + err),
-                        () => console.log("Complete")
-                   );
+                   .subscribe(data => { file.tags.push(tag); });
     }
 }

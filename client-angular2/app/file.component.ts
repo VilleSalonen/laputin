@@ -53,7 +53,6 @@ export class FileRowComponent {
     }
     
     public addTag(tag: Tag): void {
-        this.file.tags.push(tag);
         this._service.addTag(this.file, tag);
     }
     
