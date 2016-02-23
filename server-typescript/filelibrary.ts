@@ -21,7 +21,7 @@ export class FileLibrary {
         console.time("hashing");
         
         var walker = walk.walk(this._libraryPath, { followLinks: false });
-        walker.on("file", this.processFile);
+        walker.on("file", (root, stat, callback) => { this.processFile(root, stat, callback); });
         walker.on("end", () => {
             console.timeEnd("hashing");
             
@@ -40,7 +40,7 @@ export class FileLibrary {
         var filePath = path.normalize(path.join(root, stat.name));
 
         if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
-            this.hashAndEmit(filePath, function () {
+            this.hashAndEmit(filePath, () => {
                 next();
             });
         } else {
@@ -59,7 +59,7 @@ export class FileLibrary {
         // events. Based on experiments, if both events are coming, hashing
         // cannot be done on created events. Hasher will swallow the error.
         // Thus each files is hashed and emitted just once even if both
-        // events will be emitted.        
+        // events will be emitted.
         monitor.on("created", (path: string) => { this.hashAndEmit(path, () => {}); });
         monitor.on("changed", (path: string) => { this.hashAndEmit(path, () => {}); });
         monitor.on("removed", (path: string) => {
