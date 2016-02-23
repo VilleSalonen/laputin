@@ -39,7 +39,8 @@ export class Laputin {
         this.app.route("/tags").post((req, res) => {
             var tagName = req.body.tagName;
             this.library.createNewTag(tagName)
-                .then((tag) => { res.send(tag); });
+                .then((tag) => { res.send(tag); })
+                .catch(() => res.status(500).end());
         });
 
         this.app.route("/files/:hash/tags").post((req, res) => {
