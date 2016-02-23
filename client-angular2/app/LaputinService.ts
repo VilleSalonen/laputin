@@ -50,7 +50,7 @@ export class LaputinService {
                 for (let dup of Reflect.ownKeys(duplicates)) {
                     var current = duplicates[dup];
                     
-                    let files = current.map((file: any) => new File(file.hash, file.path, []));
+                    let files = current.map((file: any) => new File(file.hash, file.path, file.name, []));
                     
                     result.push(new Duplicate(dup, files));
                 }
@@ -67,7 +67,7 @@ export class LaputinService {
     }
     
     private _convertFile(file: any): File {
-        return new File(file.hash, file.path, this._convertTags(file.tags));
+        return new File(file.hash, file.path, file.name, this._convertTags(file.tags));
     }
     
     public openFile(file: File): void {

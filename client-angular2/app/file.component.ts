@@ -18,7 +18,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
         </p>
         
         <div *ngIf="detailsOpen">
-            <p><img src="http://localhost:3200/media/{{file.path}}" width="320" /></p>
+            <p><img src="http://localhost:3200/media/{{file.name}}" width="320" /></p>
             
             <p>
                 <tag-autocomplete (select)="addTag($event)"></tag-autocomplete>

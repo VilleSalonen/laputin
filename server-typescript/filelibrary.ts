@@ -69,7 +69,7 @@ export class FileLibrary {
                 return file.path !== path;
             });
 
-            this._library.deactivateFile(new File(hash, path, path, []));
+            this._library.deactivateFile(new File(hash, path, path.replace(this._libraryPath, ""), []));
         });
     }
     
