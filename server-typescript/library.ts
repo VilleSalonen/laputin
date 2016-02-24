@@ -116,6 +116,10 @@ export class Library {
     }
     
     public createNewTag(tagName: string): Promise<Tag> {
+        if (!tagName) {
+            return Promise.reject<Tag>("Tag name is required");
+        }
+        
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
         return stmt.runAsync(tagName)
             .then(() => { return new Tag(stmt.lastID, tagName, 0); });

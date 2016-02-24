@@ -65,6 +65,13 @@ describe("Laputin API", () => {
                 .send({ tagName: tag.name })
                 .expect(500);
         });
+
+        it("Creating tag with empty name returns error", () => {
+            return request(laputin.app)
+                .post("/tags")
+                .send({ tagName: "" })
+                .expect(500);
+        });
     });
 
     describe("Tagging a file", () => {
