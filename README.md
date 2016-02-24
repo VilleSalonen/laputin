@@ -17,16 +17,15 @@ Technical Details
 -----------------
 Technically Laputin is implemented in two parts:
 * Backend implemented in Node. This handles interaction with file system and opening of the file opener associated with the collection.
-* Frontend implemented in HTML5 using AngularJS. Because desktop and command line UIs are so 90s, with Laputin you can organize your file collection from the browser!
+* Frontend implemented in HTML5 using Angular 2. Because desktop and command line UIs are so 90s, with Laputin you can organize your file collection from the browser!
 
 Each file in collection is identified by its content. This means that you can
 move and rename your files within the collection and Laputin still associates
 correct tags to your files.
 
-More specifically, 1024 bytes from the middle of the file is selected for
-hashing. This selection is then processed through MD5 algorithm. Middle of the
-file is used for selection to so that similar header data would not lead to
-collided IDs.
+There are multiple hashing algorithms available. Quick version checks 1024
+bytes from the middle of the file and runs that through MD5. Accurate
+version runs the whole file through SHA512.
 
 Installation
 ------------
