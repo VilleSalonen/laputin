@@ -3,5 +3,5 @@ node_js:
 - '5.4.1'
 before_install:
 - npm install -g typescript
-script:
-- gulp test
+- npm install -g gulp
+script: cd server-typescript && npm install && gulp test
