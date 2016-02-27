@@ -4,4 +4,4 @@ node_js:
 before_install:
 - npm install -g typescript
 - npm install -g gulp
-script: cd server-typescript && npm install && gulp test
+script: cd server-typescript && npm install && tsd install && gulp test
