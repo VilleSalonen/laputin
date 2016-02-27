@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/VilleSalonen/laputin.svg?branch=master)](https://travis-ci.org/VilleSalonen/laputin) 
+
 Laputin
 =======
 Cloud is the cool kid in town these days but sometimes you just want to own your
