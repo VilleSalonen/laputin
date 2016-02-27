@@ -1,0 +1,19 @@
+{
+  "ambientDependencies": {
+    "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#bd269cad4cb2b495f940c7b6afc5825d568029be",
+    "underscore": "github:DefinitelyTyped/DefinitelyTyped/underscore/underscore.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "cors": "github:DefinitelyTyped/DefinitelyTyped/cors/cors.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "sqlite3": "github:DefinitelyTyped/DefinitelyTyped/sqlite3/sqlite3.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "body-parser": "github:DefinitelyTyped/DefinitelyTyped/body-parser/body-parser.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
+    "mocha": "github:DefinitelyTyped/DefinitelyTyped/mocha/mocha.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
+    "superagent": "github:DefinitelyTyped/DefinitelyTyped/superagent/superagent.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
+    "supertest": "github:DefinitelyTyped/DefinitelyTyped/supertest/supertest.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
+    "should": "github:DefinitelyTyped/DefinitelyTyped/should/should.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
+    "rimraf": "github:DefinitelyTyped/DefinitelyTyped/rimraf/rimraf.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
+    "bluebird": "github:DefinitelyTyped/DefinitelyTyped/bluebird/bluebird.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
+    "watch": "github:DefinitelyTyped/DefinitelyTyped/watch/watch.d.ts#bd269cad4cb2b495f940c7b6afc5825d568029be"
+  }
+}

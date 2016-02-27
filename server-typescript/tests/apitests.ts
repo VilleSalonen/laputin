@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/main.d.ts" />
 
 // Because should extends other prototypes and is not directly used, Typescript
 // compiler omits it. To circumvent this, should is placed in a local variable

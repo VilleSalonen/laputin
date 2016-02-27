@@ -1,4 +1,4 @@
-/// <reference path="typings/tsd.d.ts" />
+/// <reference path="typings/main.d.ts" />
 
 import Promise = require("bluebird");
 
@@ -117,7 +117,7 @@ export class Library {
     
     public createNewTag(tagName: string): Promise<Tag> {
         if (!tagName) {
-            return Promise.reject<Tag>("Tag name is required");
+            return Promise.reject<Tag>(new Error("Tag name is required"));
         }
         
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");

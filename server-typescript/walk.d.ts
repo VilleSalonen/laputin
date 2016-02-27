@@ -1,4 +1,4 @@
-/// <reference path="typings/node/node.d.ts" />
+/// <reference path="typings/main.d.ts" />
 
 declare module "walk" {
     import * as fs from "fs";
