@@ -12,7 +12,4 @@ addons:
     packages:
       - clang-3.6
       - g++-4.8
-before_install:
-- npm install -g typescript
-- npm install -g gulp
 script: cd server-typescript && npm install && typings install && gulp test
