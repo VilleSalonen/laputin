@@ -1,14 +1,9 @@
 /// <reference path="../typings/main.d.ts" />
 
-// Because should extends other prototypes and is not directly used, Typescript
-// compiler omits it. To circumvent this, should is placed in a local variable
-// so compiler understands that it is actually used.
-import should = require("should");
-var persist = should;
-
+import chai = require("chai");
+var expect = chai.expect;
 import fs = require("fs");
 import rimraf = require("rimraf");
-
 import request = require("supertest");
 
 import {File} from "./../file";
@@ -102,9 +97,8 @@ describe("Laputin API", () => {
                             if (err) throw err;
                             
                             var values = JSON.parse(res.text);
-                            
                             var expected = [new File(file.hash, file.path, file.name, [tag])];
-                            values.should.eql(expected);
+                            expect(values).to.eql(expected);
                             
                             done();
                         });
@@ -126,9 +120,8 @@ describe("Laputin API", () => {
                             if (err) throw err;
                             
                             var values = JSON.parse(res.text);
-                            
                             var expected = [new File(file.hash, file.path, file.name, [])];
-                            values.should.eql(expected);
+                            expect(values).to.eql(expected);
                             
                             done();
                         });
