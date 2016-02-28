@@ -2,15 +2,20 @@ var gulp = require("gulp"),
     ts = require("gulp-typescript"),
     nodemon = require("gulp-nodemon"),
     mocha = require("gulp-mocha"),
-    util = require("gulp-util");
+    util = require("gulp-util"),
+    rimraf = require("rimraf");
 
 gulp.task("build", function () {
     console.log("Compiling Laputin");
     return gulp.src(["*.ts"])
                .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy"));
 });
-    
-gulp.task("build-for-tests", function () {
+
+gulp.task("clean-tests", function (cb) {
+    return rimraf("deploy-tests", cb);
+});
+
+gulp.task("build-for-tests", ["clean-tests"], function () {
     console.log("Compiling Laputin for tests");
     return gulp.src(["*.ts"])
                .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests"));
