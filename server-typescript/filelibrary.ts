@@ -44,7 +44,7 @@ export class FileLibrary extends events.EventEmitter {
         var filePath = path.normalize(path.join(root, stat.name));
 
         if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
-            this.hashAndEmit(filePath)
+            this.addFileFromPath(filePath)
                 .then(() => { next(); });
         } else {
             next();
@@ -61,41 +61,50 @@ export class FileLibrary extends events.EventEmitter {
         // Because of this, hashing and emitting must be done on both
         // events. Based on experiments, if both events are coming, hashing
         // cannot be done on created events. Hasher will swallow the error.
-        // Thus each files is hashed and emitted just once even if both
+        // Thus each file is hashed and emitted just once even if both
         // events will be emitted.
-        monitor.on("created", (path: string) => { this.hashAndEmit(path); });
-        monitor.on("changed", (path: string) => { this.hashAndEmit(path); });
-        monitor.on("removed", (path: string) => {
-            var hash = this._hashesByPaths[path];
-            var files = this._files[hash];
-            this._files[hash] = _.filter(files, (file: File) => {
-                return file.path !== path;
-            });
-
-            this.emit("lost", new File(hash, path, path.replace(this._libraryPath, ""), []));
-        });
+        monitor.on("created", (path: string) => this.addFileFromPath(path));
+        monitor.on("changed", (path: string) => this.addFileFromPath(path));
+        monitor.on("removed", (path: string) => this.removeFileFromPath(path));
     }
     
-    private hashAndEmit(path: string): Promise<void> {
+    private addFileFromPath(path: string): Promise<void> {
         return this._hasher.hash(path)
-            .then((result) => { return new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []) })
+            .then((result) => new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []))
             .then((file) => {
-                if (typeof this._files[file.hash] === 'undefined') {
-                    this._files[file.hash] = [];
-                }
-                
-                if (!this.identicalFileAlreadyExistsInIdenticalPath(file)) {
-                    this._files[file.hash].push(file);
-                    this._hashesByPaths[file.path] = file.hash;
-                }
-                
+                this.addFileToBookkeeping(file);
                 this.emit("found", file);
             });
+    }
+    
+    private addFileToBookkeeping(file: File): void {
+        this.initializeListForHash(file);
+        
+        if (!this.identicalFileAlreadyExistsInIdenticalPath(file)) {
+            this._files[file.hash].push(file);
+            this._hashesByPaths[file.path] = file.hash;
+        }
+    }
+    
+    private initializeListForHash(file: File): void {
+        if (!this._files[file.hash]) {
+            this._files[file.hash] = [];
+        }
     }
     
     private identicalFileAlreadyExistsInIdenticalPath(file: File): boolean {
         let files = this._files[file.hash];
         return _.any(files, (fileForChecking: File): boolean => file.path == fileForChecking.path);
+    }
+
+    private removeFileFromPath(path: string): void {
+        var hash = this._hashesByPaths[path];
+        var files = this._files[hash];
+        this._files[hash] = _.filter(files, (file: File) => {
+            return file.path !== path;
+        });
+
+        this.emit("lost", new File(hash, path, path.replace(this._libraryPath, ""), []));
     }
 
     public getDuplicates(): any {
