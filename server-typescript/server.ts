@@ -1,3 +1,4 @@
+import Promise = require("bluebird");
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require("path");
@@ -59,10 +60,8 @@ export class Laputin {
         this.app.use("/media", express.static(this._libraryPath));
     }
     
-    public loadFiles(): void {
-        //this.library.createTables();
-        this.library.deactivateAll().then(() => {
-            this.fileLibrary.load(() => {});
-        });
+    public loadFiles(): Promise<void> {
+        return this.library.deactivateAll()
+            .then(() => { return this.fileLibrary.load(); });
     }
 }

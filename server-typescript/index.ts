@@ -5,10 +5,11 @@ import {Laputin} from "./server";
 var laputin = new Laputin("test-archive-no-commit");
 
 laputin.initializeRoutes();
-laputin.loadFiles();
+laputin.loadFiles()
+    .then(() => {
+        var port: number = +process.env.PORT || 3200;
 
-var port: number = +process.env.PORT || 3200;
-
-laputin.app.listen(port, () => {
-  console.log('Express server listening on port ' + port);
-});
+        laputin.app.listen(port, () => {
+        console.log('Express server listening on port ' + port);
+        });
+    });

@@ -17,23 +17,26 @@ export class FileLibrary {
     constructor(private _libraryPath: string, private _hasher: IHasher, private _library: Library) {
     }
     
-    public load(callback: (() => void)) {
+    public load(): Promise<void> {
+        var done: Function;
+        var promise = new Promise<void>((resolve, reject) => { done = resolve; });
+        
         console.time("hashing");
         
         var walker = walk.walk(this._libraryPath, { followLinks: false });
         walker.on("file", (root, stat, callback) => { this.processFile(root, stat, callback); });
         walker.on("end", () => {
             console.timeEnd("hashing");
-            
-            if (typeof callback !== "undefined") {
-                callback();
-            }
 
             // Start monitoring after library has been hashed. Otherwise changes
             // done to database file cause changed events to be emitted and thus
             // slow down the initial processing.
             watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, this.startMonitoring);
+            
+            done();
         });
+        
+        return promise;
     }
     
     private processFile(root: string, stat: walk.WalkStat, next: (() => void)): void {
