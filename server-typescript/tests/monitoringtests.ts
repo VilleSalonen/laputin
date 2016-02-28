@@ -111,6 +111,40 @@ describe("File Library", () => {
                     done(error);
                 });
         });
+        
+        it("When a duplicate file is copied to library path, it is detected as duplicate", function (done) {
+            this.timeout(10000);
+
+            copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-initial-files/car-duplicate.jpg")
+                .then(() => {
+                    return waitForEvent(laputin.fileLibrary, "found", 8000)
+                })
+                .then(() => {
+                    var duplicates = laputin.fileLibrary.getDuplicates();
+                    expect(duplicates).to.eql({
+                        '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592':
+                        [
+                            carFile,
+                            new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
+                                "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
+                                "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
+                                [])
+                        ]
+                    });
+                })
+                .then(() => {
+                    request(laputin.app)
+                        .get("/files")
+                        .expect(200)
+                        .expect([carFile, landscapeFile])
+                        .end(() => {
+                            done();
+                        });
+                })
+                .catch((error) => {
+                    done(error);
+                });
+        });
     });
 });
 
