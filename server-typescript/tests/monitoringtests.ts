@@ -103,8 +103,6 @@ describe("File Library", function () {
         });
 
         it("When a file is overwritten with exact same file to exact same path, it is not detected as duplicate", async function () {
-            this.timeout(10000);
-
             await copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/monitor-initial-files/jyvasjarvi.jpg");
             await waitForEvent(laputin.fileLibrary, "found", 8000);
             
