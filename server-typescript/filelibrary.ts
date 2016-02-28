@@ -65,7 +65,7 @@ export class FileLibrary {
         monitor.on("removed", (path: string) => {
             var hash = this._hashesByPaths[path];
             var files = this._files[hash];
-            this._files[hash] = _.filter(files, function (file) {
+            this._files[hash] = _.filter(files, (file: File) => {
                 return file.path !== path;
             });
 

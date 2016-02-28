@@ -11,8 +11,8 @@ export class Sha512Hasher implements IHasher {
 
         try {
             var s = fs.createReadStream(path);
-            s.on('data', function(d) { shasum.update(d); });
-            s.on('end', function() {
+            s.on('data', (d: any) => { shasum.update(d); });
+            s.on('end', () => {
                 var d = shasum.digest('hex');
                 if (typeof callback !== "undefined") {
                     callback({ path: path, hash: d });

@@ -102,7 +102,7 @@ export class Library {
     private _generateTagFilterQuery (ids: string, params: string[], opr1: string, opr2: string): string {
         if (ids) {
             var splitIds = ids.split(",");
-            _.each(splitIds, (id: string) => {
+            splitIds.forEach((id) => {
                 params.push(id);
             });
             var wheres = _.map(splitIds, () => {
@@ -139,7 +139,7 @@ export class Library {
 
         if (query && query.selectedTags) {
             var wheres: string[] = [];
-            _.each(query.selectedTags, (tag) => {
+            query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
                 wheres.push(" id = ? ");
             });
@@ -148,7 +148,7 @@ export class Library {
             sql += " AND id IN (SELECT DISTINCT id FROM tags_files WHERE hash IN (SELECT DISTINCT hash FROM tags_files WHERE " + wheresJoined + "))";
 
             var selectedIds: string[] = [];
-            _.each(query.selectedTags, (tag) => {
+            query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
                 selectedIds.push(" ? ");
             });
