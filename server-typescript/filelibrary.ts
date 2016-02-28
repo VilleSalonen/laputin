@@ -45,9 +45,8 @@ export class FileLibrary extends events.EventEmitter {
         var filePath = path.normalize(path.join(root, stat.name));
 
         if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
-            this.hashAndEmit(filePath, () => {
-                next();
-            });
+            this.hashAndEmit(filePath)
+                .then(() => { next(); });
         } else {
             next();
         }
@@ -65,8 +64,8 @@ export class FileLibrary extends events.EventEmitter {
         // cannot be done on created events. Hasher will swallow the error.
         // Thus each files is hashed and emitted just once even if both
         // events will be emitted.
-        monitor.on("created", (path: string) => { this.hashAndEmit(path, () => {}); });
-        monitor.on("changed", (path: string) => { this.hashAndEmit(path, () => {}); });
+        monitor.on("created", (path: string) => { this.hashAndEmit(path); });
+        monitor.on("changed", (path: string) => { this.hashAndEmit(path); });
         monitor.on("removed", (path: string) => {
             var hash = this._hashesByPaths[path];
             var files = this._files[hash];
@@ -78,24 +77,20 @@ export class FileLibrary extends events.EventEmitter {
         });
     }
     
-    private hashAndEmit(path: string, callback: any) {
-        this._hasher.hash(path, (result) => {
-            console.log(result.path);
-            
-            var file = new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []);
-            
-            if (typeof this._files[result.hash] === 'undefined') {
-                this._files[file.hash] = [];
-            }
-            
-            this._files[result.hash].push(file);
-            this._hashesByPaths[result.path] = result.hash;
-            
-            this.emit("found", file);
-
-            if (typeof callback !== "undefined")
-                callback();
-        });
+    private hashAndEmit(path: string): Promise<void> {
+        return this._hasher.hash(path)
+            .then((result) => {
+                var file = new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []);
+                
+                if (typeof this._files[result.hash] === 'undefined') {
+                    this._files[file.hash] = [];
+                }
+                
+                this._files[result.hash].push(file);
+                this._hashesByPaths[result.path] = result.hash;
+                
+                this.emit("found", file);
+            });
     }
 
     public getDuplicates(): any {

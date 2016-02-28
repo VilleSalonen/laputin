@@ -1,3 +1,7 @@
+import Promise = require("bluebird");
+
+import File = require("./file");
+
 export interface IHasher {
-    hash(path: string, callback: ((f: any) => void)): void;
+    hash(path: string): Promise<any>;
 }
