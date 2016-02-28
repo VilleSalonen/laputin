@@ -33,12 +33,6 @@ gulp.task("test", ["build-tests"], function () {
         .on('error', util.log);
 });
 
-gulp.task("test-travis", ["build-tests"], function () {
-    return gulp.src(['deploy-tests/tests/apitests.js'], { read: false })
-        .pipe(mocha({ reporter: 'spec' }))
-        .on('error', util.log);
-});
-
 gulp.task("watch", function () {
     gulp.watch("*.ts", ["build"]);
 });
