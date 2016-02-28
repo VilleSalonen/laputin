@@ -96,6 +96,9 @@ describe("File Library", function () {
                 [carFile, duplicateCarFile]
             });
             
+            // Note that Laputin returns newly copied duplicate version of car.
+            // This is because newer versions of file with same hash are always
+            // used to overwrite the previous path. 
             return await shouldContainFiles(laputin, [duplicateCarFile, landscapeFile]);
         });
 
