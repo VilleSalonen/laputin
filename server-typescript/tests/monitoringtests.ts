@@ -21,8 +21,8 @@ describe("File Library", function () {
 
     describe("No initial files in library path", () => {
         let carFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
-            "deploy-tests\\monitor-adding-files\\car.jpg",
-            "deploy-tests\\monitor-adding-files\\car.jpg",
+            "deploy-tests/monitor-adding-files/car.jpg",
+            "deploy-tests/monitor-adding-files/car.jpg",
             []);
         
         let laputin: Laputin;
@@ -47,21 +47,21 @@ describe("File Library", function () {
     describe("Initial files in library path", () => {
         let laputin: Laputin;
         let carFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
-            "deploy-tests\\monitor-initial-files\\car.jpg",
-            "deploy-tests\\monitor-initial-files\\car.jpg",
+            "/car.jpg",
+            "deploy-tests/monitor-initial-files/car.jpg",
             []);
         let catsFile = new File("70342c64bed51a0921b68e2df2fe893bc52c89454ee2dcb47aff436b7259d71805dbaf36838db76a7e919ba6249273d261b0f892b8b4958748350ff1f25d572e",
-            "deploy-tests\\monitor-initial-files\\cats.jpg",
-            "deploy-tests\\monitor-initial-files\\cats.jpg",
+            "/cats.jpg",
+            "deploy-tests/monitor-initial-files/cats.jpg",
             []);
         let landscapeFile = new File("44f332dadcd09cc73c14b30a8334c1bf7d615829dd111f47fa9d3ae212933e32cbf59cd700010bd0e950309d64c23b03badcb990170676e003a0b02b63d3e757",
-            "deploy-tests\\monitor-initial-files\\jyvasjarvi.jpg",
-            "deploy-tests\\monitor-initial-files\\jyvasjarvi.jpg",
+            "/jyvasjarvi.jpg",
+            "deploy-tests/monitor-initial-files/jyvasjarvi.jpg",
             []);
             
         let duplicateCarFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
-            "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
-            "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
+            "/car-duplicate.jpg",
+            "deploy-tests/monitor-initial-files/car-duplicate.jpg",
             []);
         
         before(async () => {
