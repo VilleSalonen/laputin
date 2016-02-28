@@ -13,7 +13,7 @@ import {Laputin} from "./../server";
 describe("Laputin API", () => {
     describe("Adding a file", () => {
         let laputin: Laputin;
-        let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
+        let file: File = new File("aaaaa", "funny.jpg", []);
         
         before(async () => {
             laputin = await initializeLaputin("adding-files");
@@ -63,7 +63,7 @@ describe("Laputin API", () => {
 
     describe("Tagging a file", () => {
         let laputin: Laputin;
-        let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
+        let file: File = new File("aaaaa", "funny.jpg", []);
         let tag: Tag;
         
         before(async () => {
@@ -78,7 +78,7 @@ describe("Laputin API", () => {
                 .send({ selectedTags: [tag], hash: file.hash })
                 .expect(200);
 
-            await shouldContainFiles(laputin, [new File(file.hash, file.path, file.name, [tag])]);
+            await shouldContainFiles(laputin, [new File(file.hash, file.path, [tag])]);
         });
         
         it("File tagging can be removed", async () => {
@@ -87,15 +87,15 @@ describe("Laputin API", () => {
                 .send({ tagId: tag.id, hash: file.hash })
                 .expect(200);
 
-            await shouldContainFiles(laputin, [new File(file.hash, file.path, file.name, [])]);
+            await shouldContainFiles(laputin, [new File(file.hash, file.path, [])]);
         });
     });
 
     describe("Deactivating files", () => {
         let laputin: Laputin;
-        let file1: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
-        let file2: File = new File("bbbbb", "educational.jpg", "educational.jpg", []);
-        let file3: File = new File("ccccc", "serious.jpg", "serious.jpg", []);
+        let file1: File = new File("aaaaa", "funny.jpg", []);
+        let file2: File = new File("bbbbb", "educational.jpg", []);
+        let file3: File = new File("ccccc", "serious.jpg", []);
         
         before(async () => {
             laputin = await initializeLaputin("deactivating-files"); 

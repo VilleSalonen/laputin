@@ -64,7 +64,7 @@ export class FileLibrary extends events.EventEmitter {
     
     private addFileFromPath(path: string): Promise<void> {
         return this._hasher.hash(path)
-            .then((result) => new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []))
+            .then((result) => new File(result.hash, result.path, []))
             .then((file) => {
                 if (this.fileShouldBeIgnored(file)) return;
 
@@ -106,7 +106,7 @@ export class FileLibrary extends events.EventEmitter {
             return file.path !== path;
         });
 
-        this.emit("lost", new File(hash, path, path.replace(this._libraryPath, ""), []));
+        this.emit("lost", new File(hash, path, []));
     }
 
     public getDuplicates(): any {

@@ -78,7 +78,7 @@ export class Library {
         sql1 += " ORDER BY path ";
 
         var each1 = (err: any, row: any) => {
-            files[row.hash] = new File(row.hash, row.path, row.path.replace(this._libraryPath, ""), []);
+            files[row.hash] = new File(row.hash, row.path, []);
         };
         
         var stmt = this._db.prepare(sql1);
