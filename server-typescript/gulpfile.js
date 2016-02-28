@@ -5,10 +5,12 @@ var gulp = require("gulp"),
     util = require("gulp-util"),
     rimraf = require("rimraf");
 
+var tsOptions = {module: "commonjs", target: "es6"};
+
 gulp.task("build", function () {
     console.log("Compiling Laputin");
     return gulp.src(["*.ts"])
-               .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy"));
+               .pipe(ts(tsOptions)).js.pipe(gulp.dest("deploy"));
 });
 
 gulp.task("clean-tests", function (cb) {
@@ -18,13 +20,13 @@ gulp.task("clean-tests", function (cb) {
 gulp.task("build-for-tests", ["clean-tests"], function () {
     console.log("Compiling Laputin for tests");
     return gulp.src(["*.ts"])
-               .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests"));
+               .pipe(ts(tsOptions)).js.pipe(gulp.dest("deploy-tests"));
 });
 
 gulp.task("build-tests", ["build-for-tests"], function () {
     console.log("Compiling tests");
     return gulp.src(["tests/*.ts"])
-               .pipe(ts({module: "commonjs"})).js.pipe(gulp.dest("deploy-tests/tests"));
+               .pipe(ts(tsOptions)).js.pipe(gulp.dest("deploy-tests/tests"));
 });
 
 gulp.task("test", ["build-tests"], function () {
