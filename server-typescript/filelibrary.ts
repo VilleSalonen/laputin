@@ -20,8 +20,8 @@ export class FileLibrary extends events.EventEmitter {
     }
     
     public load(): Promise<void> {
-        var done: Function;
-        var promise = new Promise<void>((resolve, reject) => { done = resolve; });
+        var loadingDone: Function;
+        var promise = new Promise<void>((resolve, reject) => loadingDone = resolve);
         
         var walker = walk.walk(this._libraryPath, { followLinks: false });
         walker.on("file", (root, stat, callback) => { this.processFile(root, stat, callback); });
@@ -30,8 +30,7 @@ export class FileLibrary extends events.EventEmitter {
             // done to database file cause changed events to be emitted and thus
             // slow down the initial processing.
             watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, (monitor) => this.startMonitoring(monitor));
-            
-            done();
+            loadingDone();
         });
         
         return promise;
