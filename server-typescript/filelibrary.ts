@@ -20,58 +20,54 @@ export class FileLibrary extends events.EventEmitter {
     }
     
     public load(): Promise<void> {
-        var loadingDone: Function;
-        var promise = new Promise<void>((resolve, reject) => loadingDone = resolve);
-        
-        var walker = walk.walk(this._libraryPath, { followLinks: false });
-        walker.on("file", (root, stat, callback) => { this.processFile(root, stat, callback); });
-        walker.on("end", () => {
-            // Start monitoring after library has been hashed. Otherwise changes
-            // done to database file cause changed events to be emitted and thus
-            // slow down the initial processing.
-            watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, (monitor) => this.startMonitoring(monitor));
-            loadingDone();
+        return new Promise<void>((resolve, reject) => {
+            var walker = walk.walk(this._libraryPath, { followLinks: false });
+            walker.on("file", (root, stat, callback) => { this.processFile(root, stat, callback); });
+            walker.on("end", () => {
+                this.startMonitoring();
+                resolve();
+            });
         });
-        
-        return promise;
     }
     
     public close(): void {
         watch.unwatchTree(this._libraryPath);
     }
     
-    private processFile(root: string, stat: walk.WalkStat, next: (() => void)): void {
-        var filePath = path.normalize(path.join(root, stat.name));
-
-        if (filePath.indexOf(".git") === -1 && stat.name.charAt(0) != "." && filePath.indexOf("Thumbs.db") === -1) {
-            this.addFileFromPath(filePath)
-                .then(() => { next(); });
-        } else {
-            next();
-        }
+    private startMonitoring(): void {
+        // Start monitoring after library has been hashed. Otherwise changes
+        // done to database file cause changed events to be emitted and thus
+        // slow down the initial processing.
+        watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, (monitor) => {
+            // If files are big or copying is otherwise slow, both created and
+            // changed events might be emitted for a new file. If this is the
+            // case, hashing is not possible during created event and must be
+            // done in changed event. However for small files or files that were
+            // otherwise copied fast, only created event is emitted.
+            //
+            // Because of this, hashing and emitting must be done on both
+            // events. Based on experiments, if both events are coming, hashing
+            // cannot be done on created events. Hasher will swallow the error.
+            // Thus each file is hashed and emitted just once even if both
+            // events will be emitted.
+            monitor.on("created", (path: string) => this.addFileFromPath(path));
+            monitor.on("changed", (path: string) => this.addFileFromPath(path));
+            monitor.on("removed", (path: string) => this.removeFileFromPath(path));
+        });
     }
     
-    private startMonitoring(monitor: watch.Monitor): void {
-        // If files are big or copying is otherwise slow, both created and
-        // changed events might be emitted for a new file. If this is the
-        // case, hashing is not possible during created event and must be
-        // done in changed event. However for small files or files that were
-        // otherwise copied fast, only created event is emitted.
-        //
-        // Because of this, hashing and emitting must be done on both
-        // events. Based on experiments, if both events are coming, hashing
-        // cannot be done on created events. Hasher will swallow the error.
-        // Thus each file is hashed and emitted just once even if both
-        // events will be emitted.
-        monitor.on("created", (path: string) => this.addFileFromPath(path));
-        monitor.on("changed", (path: string) => this.addFileFromPath(path));
-        monitor.on("removed", (path: string) => this.removeFileFromPath(path));
+    private processFile(root: string, stat: walk.WalkStat, next: (() => void)): void {
+        var filePath = path.normalize(path.join(root, stat.name));
+        this.addFileFromPath(filePath)
+            .then(next);
     }
     
     private addFileFromPath(path: string): Promise<void> {
         return this._hasher.hash(path)
             .then((result) => new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []))
             .then((file) => {
+                if (this.fileShouldBeIgnored(file)) return;
+
                 this.addFileToBookkeeping(file);
                 this.emit("found", file);
             });
@@ -84,6 +80,12 @@ export class FileLibrary extends events.EventEmitter {
             this._files[file.hash].push(file);
             this._hashesByPaths[file.path] = file.hash;
         }
+    }
+    
+    private fileShouldBeIgnored(file: File) {
+        return path.basename(file.path).charAt(0) === "."
+            || file.path.indexOf(".git") !== -1
+            || file.path.indexOf("Thumbs.db") !== -1; 
     }
     
     private initializeListForHash(file: File): void {
