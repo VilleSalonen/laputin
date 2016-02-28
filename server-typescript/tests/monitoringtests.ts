@@ -13,7 +13,12 @@ import {File} from "./../file";
 import {Tag} from "./../tag";
 import {Laputin} from "./../server";
 
-describe("File Library", () => {
+describe("File Library", function () {
+    // For some reason watching for file changes seems to always take about 5
+    // seconds to notify about the changes. Normal timeout for mocha tests is
+    // 2 seconds so we need to increase the timeout.
+    this.timeout(10000);
+
     describe("No initial files in library path", () => {
         let carFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
             "deploy-tests\\monitor-adding-files\\car.jpg",
@@ -22,41 +27,20 @@ describe("File Library", () => {
         
         let laputin: Laputin;
         
-        before(() => {
-            return initializeLaputin("monitor-adding-files")
-                .then((l) => { laputin = l; });
+        before(async () => {
+            laputin = await initializeLaputin("monitor-adding-files")
         });
         
         after(() => {
             laputin.fileLibrary.close();
         });
         
-        it("No files can be found", function () {
-            return request(laputin.app)
-                .get("/files")
-                .expect(200)
-                .expect([]);
-        });
+        it("No files can be found", () => shouldContainFiles(laputin, []));
         
-        it("When file is copied to library path, it can be found", function (done) {
-            this.timeout(10000);
-            
-            copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-adding-files/car.jpg")
-                .then(() => {
-                    return waitForEvent(laputin.fileLibrary, "found", 8000)
-                })
-                .then(() => {
-                    request(laputin.app)
-                        .get("/files")
-                        .expect(200)
-                        .expect([carFile])
-                        .end(() => {
-                            done();
-                        });
-                })
-                .catch((error) => {
-                    done(error);
-                });
+        it("When file is copied to library path, it can be found", async function () {
+            await copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-adding-files/car.jpg");
+            await waitForEvent(laputin.fileLibrary, "found", 8000);
+            return shouldContainFiles(laputin, [carFile]);
         });
     });
     
@@ -74,112 +58,69 @@ describe("File Library", () => {
             "deploy-tests\\monitor-initial-files\\jyvasjarvi.jpg",
             "deploy-tests\\monitor-initial-files\\jyvasjarvi.jpg",
             []);
+            
+        let duplicateCarFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
+            "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
+            "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
+            []);
         
-        before(() => {
+        before(async () => {
             fs.mkdirSync("deploy-tests/monitor-initial-files");
-            return copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-initial-files/car.jpg")
-                .then(() => copyFile("tests/test-content/cats.jpg", "deploy-tests/monitor-initial-files/cats.jpg"))
-                .then(() => copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/monitor-initial-files/jyvasjarvi.jpg"))
-                .then(() => initializeLaputin("monitor-initial-files"))
-                .then((l) => { laputin = l; });
+            
+            await copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-initial-files/car.jpg");
+            await copyFile("tests/test-content/cats.jpg", "deploy-tests/monitor-initial-files/cats.jpg");
+            await copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/monitor-initial-files/jyvasjarvi.jpg");
+            
+            return laputin = await initializeLaputin("monitor-initial-files");
         });
         
         after(() => {
             laputin.fileLibrary.close();
         });
         
-        it("Initial files can be found", function () {
-            return request(laputin.app)
-                .get("/files")
-                .expect(200)
-                .expect([carFile, catsFile, landscapeFile]);
-        });
+        it("Initial files can be found", () => shouldContainFiles(laputin, [carFile, catsFile, landscapeFile]));
         
-        it("When file is deleted from library path, it can no longer be found", function (done) {
-            this.timeout(10000);
-            
+        it("When file is deleted from library path, it can no longer be found", async function () {
             fs.unlinkSync("deploy-tests/monitor-initial-files/cats.jpg");
-            return waitForEvent(laputin.fileLibrary, "lost", 8000)
-                .then(() => {
-                    request(laputin.app)
-                        .get("/files")
-                        .expect(200)
-                        .expect([carFile, catsFile, landscapeFile])
-                        .end(() => done());
-                })
-                .catch((error) => {
-                    done(error);
-                });
+            await waitForEvent(laputin.fileLibrary, "lost", 8000);
+            return await shouldContainFiles(laputin, [carFile, landscapeFile]);
         });
 
-        it("When a duplicate file is copied to library path, it is detected as duplicate", function (done) {
-            this.timeout(10000);
+        it("When a duplicate file is copied to library path, it is detected as duplicate", async function () {
+            await copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-initial-files/car-duplicate.jpg")
+            await waitForEvent(laputin.fileLibrary, "found", 8000);
 
-            copyFile("tests/test-content/car.jpg", "deploy-tests/monitor-initial-files/car-duplicate.jpg")
-                .then(() => {
-                    return waitForEvent(laputin.fileLibrary, "found", 8000)
-                })
-                .then(() => {
-                    var duplicates = laputin.fileLibrary.getDuplicates();
-                    expect(duplicates).to.eql({
-                        '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592':
-                        [
-                            carFile,
-                            new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
-                                "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
-                                "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
-                                [])
-                        ]
-                    });
-                })
-                .then(() => {
-                    request(laputin.app)
-                        .get("/files")
-                        .expect(200)
-                        .expect([carFile, landscapeFile])
-                        .end(() => {
-                            done();
-                        });
-                })
-                .catch((error) => {
-                    done(error);
-                });
+            var duplicates = laputin.fileLibrary.getDuplicates();
+            expect(duplicates).to.eql({
+                "32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592":
+                [carFile, duplicateCarFile]
+            });
+            
+            return await shouldContainFiles(laputin, [duplicateCarFile, landscapeFile]);
         });
 
-        it("When a file is overwritten with exact same file to exact same path, it is not detected as duplicate", function (done) {
+        it("When a file is overwritten with exact same file to exact same path, it is not detected as duplicate", async function () {
             this.timeout(10000);
 
-            copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/monitor-initial-files/jyvasjarvi.jpg")
-                .then(() => {
-                    return waitForEvent(laputin.fileLibrary, "found", 8000)
-                })
-                .then(() => {
-                    var duplicates = laputin.fileLibrary.getDuplicates();
-                    expect(duplicates).to.eql({
-                        '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592':
-                        [
-                            carFile,
-                            new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
-                                "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
-                                "deploy-tests\\monitor-initial-files\\car-duplicate.jpg",
-                                [])
-                        ]
-                    });
-                })
-                .then(() => {
-                    request(laputin.app)
-                        .get("/files")
-                        .expect(200)
-                        .expect([carFile, landscapeFile])
-                        .end(() => {
-                            done();
-                        });
-                })
-                .catch((error) => {
-                    done(error);
-                });
+            await copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/monitor-initial-files/jyvasjarvi.jpg");
+            await waitForEvent(laputin.fileLibrary, "found", 8000);
+            
+            var duplicates = laputin.fileLibrary.getDuplicates();
+            expect(duplicates).to.eql({
+                "32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592":
+                [carFile, duplicateCarFile]
+            });
+            
+            return await shouldContainFiles(laputin, [duplicateCarFile, landscapeFile]);
         });
     });
+
+    function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
+        return request(laputin.app)
+                .get("/files")
+                .expect(200)
+                .expect(expectedFiles);
+    }
 });
 
 function waitForEvent(emitter: events.EventEmitter, eventName: string, timeoutMs: number): Promise<void> {
@@ -195,7 +136,7 @@ function waitForEvent(emitter: events.EventEmitter, eventName: string, timeoutMs
     });
 }
 
-function initializeLaputin(path: string): Promise<Laputin> {
+async function initializeLaputin(path: string): Promise<Laputin> {
     var archivePath = "deploy-tests/" + path;
     
     if (!fs.existsSync(archivePath)) {
@@ -204,9 +145,10 @@ function initializeLaputin(path: string): Promise<Laputin> {
 
     var laputin = new Laputin(archivePath);
     laputin.initializeRoutes();
-    return laputin.library.createTables()
-        .then(() => laputin.loadFiles())
-        .then(() => { return laputin; });
+    await laputin.library.createTables();
+    await laputin.loadFiles();
+    
+    return laputin;
 } 
 
 function copyFile(source: string, target: string): Promise<void> {

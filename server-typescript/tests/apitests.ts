@@ -15,10 +15,9 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         
-        before(() => {
-            return initializeLaputin("adding-files")
-                .then((l) => { laputin = l; })
-                .then(() => { return laputin.library.addFile(file); });
+        before(async () => {
+            laputin = await initializeLaputin("adding-files");
+            return laputin.library.addFile(file);
         });
         
         it("Added file can be found", () => shouldContainFiles(laputin, [file]));
@@ -28,11 +27,9 @@ describe("Laputin API", () => {
         let laputin: Laputin;
         let tag: Tag;
         
-        before(() => {
-            return initializeLaputin("adding-tags")
-                .then((l) => { laputin = l; })
-                .then(() => { return laputin.library.createNewTag("Funny"); })
-                .then((t) => { tag = t; });
+        before(async () => {
+            laputin = await initializeLaputin("adding-tags");
+            tag = await laputin.library.createNewTag("Funny");
         });
         
         it("Added tag can be found from unassociated tags", () => {
@@ -69,58 +66,28 @@ describe("Laputin API", () => {
         let file: File = new File("aaaaa", "funny.jpg", "funny.jpg", []);
         let tag: Tag;
         
-        before(() => {
-            return initializeLaputin("tagging-files")
-                .then((l) => { laputin = l; })
-                .then(() => { return laputin.library.addFile(file); })
-                .then(() => { return laputin.library.createNewTag("Funny"); })
-                .then((t) => { tag = t });
+        before(async () => {
+            laputin = await initializeLaputin("tagging-files");
+            tag = await laputin.library.createNewTag("Funny");
+            return laputin.library.addFile(file);
         });
         
-        it("File can be tagged", (done) => {
-            request(laputin.app)
+        it("File can be tagged", async () => {
+            await request(laputin.app)
                 .post("/files/" + file.hash + "/tags")
                 .send({ selectedTags: [tag], hash: file.hash })
-                .expect(200)
-                .end((err, res) => {
-                    if (err) throw err;
-                    
-                    request(laputin.app)
-                        .get("/files")
-                        .expect(200)
-                        .end((err, res) => {
-                            if (err) throw err;
-                            
-                            var values = JSON.parse(res.text);
-                            var expected = [new File(file.hash, file.path, file.name, [tag])];
-                            expect(values).to.eql(expected);
-                            
-                            done();
-                        });
-                });
+                .expect(200);
+
+            await shouldContainFiles(laputin, [new File(file.hash, file.path, file.name, [tag])]);
         });
         
-        it("File tagging can be removed", (done) => {
-            request(laputin.app)
+        it("File tagging can be removed", async () => {
+            await request(laputin.app)
                 .delete("/files/" + file.hash + "/tags/" + tag.id)
                 .send({ tagId: tag.id, hash: file.hash })
-                .expect(200)
-                .end((err, res) => {
-                    if (err) throw err;
-                    
-                    request(laputin.app)
-                        .get("/files")
-                        .expect(200)
-                        .end((err, res) => {
-                            if (err) throw err;
-                            
-                            var values = JSON.parse(res.text);
-                            var expected = [new File(file.hash, file.path, file.name, [])];
-                            expect(values).to.eql(expected);
-                            
-                            done();
-                        });
-                });
+                .expect(200);
+
+            await shouldContainFiles(laputin, [new File(file.hash, file.path, file.name, [])]);
         });
     });
 
@@ -130,12 +97,11 @@ describe("Laputin API", () => {
         let file2: File = new File("bbbbb", "educational.jpg", "educational.jpg", []);
         let file3: File = new File("ccccc", "serious.jpg", "serious.jpg", []);
         
-        before(() => {
-            return initializeLaputin("deactivating-files")
-                .then((l) => { laputin = l; })
-                .then(() => { return laputin.library.addFile(file1); })
-                .then(() => { return laputin.library.addFile(file2); })
-                .then(() => { return laputin.library.addFile(file3); });
+        before(async () => {
+            laputin = await initializeLaputin("deactivating-files"); 
+            await laputin.library.addFile(file1);
+            await laputin.library.addFile(file2);
+            await laputin.library.addFile(file3);
         });
         
         it("A single file can be deactivated", () => {
@@ -149,7 +115,7 @@ describe("Laputin API", () => {
         });
     });
     
-    function initializeLaputin(path: string): Promise<Laputin> {
+    async function initializeLaputin(path: string): Promise<Laputin> {
         var archivePath = "deploy-tests/" + path;
         
         rimraf.sync(archivePath);
@@ -157,9 +123,9 @@ describe("Laputin API", () => {
 
         var laputin = new Laputin(archivePath);
         laputin.initializeRoutes();
-        return laputin.library.createTables().then(() => {
-            return laputin;
-        });
+        
+        await laputin.library.createTables();
+        return laputin;
     } 
 
     function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
