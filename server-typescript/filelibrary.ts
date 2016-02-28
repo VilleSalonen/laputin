@@ -37,6 +37,10 @@ export class FileLibrary extends events.EventEmitter {
         return promise;
     }
     
+    public close(): void {
+        watch.unwatchTree(this._libraryPath);
+    }
+    
     private processFile(root: string, stat: walk.WalkStat, next: (() => void)): void {
         var filePath = path.normalize(path.join(root, stat.name));
 
