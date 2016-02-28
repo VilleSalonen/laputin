@@ -42,8 +42,8 @@ describe("File Library", () => {
                 []);
             
             copyFile(
-                "tests\\test-content\\car.jpg",
-                "deploy-tests\\monitor-adding-files\\car.jpg")
+                "tests/test-content/car.jpg",
+                "deploy-tests/monitor-adding-files/car.jpg")
             .then(() => {
                 return waitForEvent(laputin.fileLibrary, "found", 8000)
             })
