@@ -21,12 +21,7 @@ describe("Laputin API", () => {
                 .then(() => { return laputin.library.addFile(file); });
         });
         
-        it("Added file can be found", () => {
-            return request(laputin.app)
-                .get("/files")
-                .expect(200)
-                .expect([file]);
-        });
+        it("Added file can be found", () => shouldContainFiles(laputin, [file]));
     });
     
     describe("Adding a tag", () => {
@@ -145,33 +140,32 @@ describe("Laputin API", () => {
         
         it("A single file can be deactivated", () => {
             laputin.library.deactivateFile(file1);
-            
-            return request(laputin.app)
-                .get("/files")
-                .expect(200)
-                .expect([file2, file3]);
+            return shouldContainFiles(laputin, [file2, file3]);
         });
 
         it("All files can be deactivated", () => {
             laputin.library.deactivateAll();
-            
-            return request(laputin.app)
-                .get("/files")
-                .expect(200)
-                .expect([]);
+            return shouldContainFiles(laputin, []);
         });
     });
-});   
-
-function initializeLaputin(path: string): Promise<Laputin> {
-    var archivePath = "deploy-tests/" + path;
     
-    rimraf.sync(archivePath);
-    fs.mkdirSync(archivePath);
+    function initializeLaputin(path: string): Promise<Laputin> {
+        var archivePath = "deploy-tests/" + path;
+        
+        rimraf.sync(archivePath);
+        fs.mkdirSync(archivePath);
 
-    var laputin = new Laputin(archivePath);
-    laputin.initializeRoutes();
-    return laputin.library.createTables().then(() => {
-        return laputin;
-    });
-} 
+        var laputin = new Laputin(archivePath);
+        laputin.initializeRoutes();
+        return laputin.library.createTables().then(() => {
+            return laputin;
+        });
+    } 
+
+    function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
+        return request(laputin.app)
+                .get("/files")
+                .expect(200)
+                .expect(expectedFiles);
+    }
+});
