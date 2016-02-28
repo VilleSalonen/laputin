@@ -18,7 +18,10 @@ export class Laputin {
     
     constructor(private _libraryPath: string) {
         this.library = new Library(this._libraryPath);
-        this.fileLibrary = new FileLibrary(this._libraryPath, new Sha512Hasher(), this.library);
+        this.fileLibrary = new FileLibrary(this._libraryPath, new Sha512Hasher());
+        
+        this.fileLibrary.on("found", (file: File) => this.library.addFile(file));
+        this.fileLibrary.on("lost", (file: File) => this.library.deactivateFile(file));
     }
     
     public initializeRoutes(): void {

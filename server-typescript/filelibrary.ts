@@ -5,16 +5,18 @@ import _ = require("underscore");
 import walk = require("walk");
 import path = require("path");
 import watch = require("watch");
+import events = require("events");
 
 import {IHasher} from "./ihasher";
 import {Library} from "./library";
 import {File} from "./file";
 
-export class FileLibrary {
+export class FileLibrary extends events.EventEmitter {
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [path: string]: string } = {};
     
-    constructor(private _libraryPath: string, private _hasher: IHasher, private _library: Library) {
+    constructor(private _libraryPath: string, private _hasher: IHasher) {
+        super();
     }
     
     public load(): Promise<void> {
@@ -31,7 +33,7 @@ export class FileLibrary {
             // Start monitoring after library has been hashed. Otherwise changes
             // done to database file cause changed events to be emitted and thus
             // slow down the initial processing.
-            watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, this.startMonitoring);
+            watch.createMonitor(this._libraryPath, { "ignoreDotFiles": true }, (monitor) => this.startMonitoring(monitor));
             
             done();
         });
@@ -72,25 +74,24 @@ export class FileLibrary {
                 return file.path !== path;
             });
 
-            this._library.deactivateFile(new File(hash, path, path.replace(this._libraryPath, ""), []));
+            this.emit("lost", new File(hash, path, path.replace(this._libraryPath, ""), []));
         });
     }
     
     private hashAndEmit(path: string, callback: any) {
-        var self = this;
-        this._hasher.hash(path, function (result) {
+        this._hasher.hash(path, (result) => {
             console.log(result.path);
             
-            var file = new File(result.hash, result.path, result.path.replace(self._libraryPath, ""), []);
+            var file = new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []);
             
-            self._library.addFile(file);
-
-            if (typeof self._files[result.hash] === 'undefined') {
-                self._files[file.hash] = [];
+            if (typeof this._files[result.hash] === 'undefined') {
+                this._files[file.hash] = [];
             }
             
-            self._files[result.hash].push(file);
-            self._hashesByPaths[result.path] = result.hash;
+            this._files[result.hash].push(file);
+            this._hashesByPaths[result.path] = result.hash;
+            
+            this.emit("found", file);
 
             if (typeof callback !== "undefined")
                 callback();
