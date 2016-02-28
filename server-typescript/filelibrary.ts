@@ -79,18 +79,24 @@ export class FileLibrary extends events.EventEmitter {
     
     private hashAndEmit(path: string): Promise<void> {
         return this._hasher.hash(path)
-            .then((result) => {
-                var file = new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []);
-                
-                if (typeof this._files[result.hash] === 'undefined') {
+            .then((result) => { return new File(result.hash, result.path, result.path.replace(this._libraryPath, ""), []) })
+            .then((file) => {
+                if (typeof this._files[file.hash] === 'undefined') {
                     this._files[file.hash] = [];
                 }
                 
-                this._files[result.hash].push(file);
-                this._hashesByPaths[result.path] = result.hash;
+                if (!this.identicalFileAlreadyExistsInIdenticalPath(file)) {
+                    this._files[file.hash].push(file);
+                    this._hashesByPaths[file.path] = file.hash;
+                }
                 
                 this.emit("found", file);
             });
+    }
+    
+    private identicalFileAlreadyExistsInIdenticalPath(file: File): boolean {
+        let files = this._files[file.hash];
+        return _.any(files, (fileForChecking: File): boolean => file.path == fileForChecking.path);
     }
 
     public getDuplicates(): any {
