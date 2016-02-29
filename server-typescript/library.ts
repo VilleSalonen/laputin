@@ -21,14 +21,10 @@ export class Library {
         this._db = new sqlite3.Database(path.join(this._libraryPath, ".laputin.db"));
     }
     
-    public createTables(): Promise<void> {
-        return this._db.runAsync("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);")
-            .then(() => {
-                return this._db.runAsync("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));");
-            })
-            .then(() => {
-                return this._db.runAsync("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);");
-            });
+    public async createTables(): Promise<void> {
+        await this._db.runAsync("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);");
+        await this._db.runAsync("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));");
+        await this._db.runAsync("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);");
     }
     
     public addFile(file: File): Promise<void> {
@@ -46,7 +42,7 @@ export class Library {
         return stmt.runAsync();
     }
 
-    public getFiles(query: Query): Promise<File[]> {
+    public async getFiles(query: Query): Promise<File[]> {
         var files: { [hash: string]: File } = {};
 
         var params: any[] = [];
@@ -82,21 +78,19 @@ export class Library {
         };
         
         var stmt = this._db.prepare(sql1);
-        return stmt.eachAsync(params, each1)
-            .then(() => {
-                var sql2 = "SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name";
-                var each2 = function (err: Error, row: any) {
-                    // Tag associations exist for inactive files but inactive files are
-                    // not in files list.
-                    if (typeof files[row.hash] !== "undefined") {
-                        files[row.hash].tags.push(new Tag(row.id, row.name, 0));
-                    }
-                };
-                return this._db.eachAsync(sql2, each2);
-            })
-            .then(() => {
-                return _.values(files);
-            });
+        await stmt.eachAsync(params, each1)
+
+        var sql2 = "SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name";
+        var each2 = function (err: Error, row: any) {
+            // Tag associations exist for inactive files but inactive files are
+            // not in files list.
+            if (typeof files[row.hash] !== "undefined") {
+                files[row.hash].tags.push(new Tag(row.id, row.name, 0));
+            }
+        };
+        await this._db.eachAsync(sql2, each2);
+
+        return _.values(files);
     }
     
     private _generateTagFilterQuery (ids: string, params: string[], opr1: string, opr2: string): string {
@@ -115,17 +109,17 @@ export class Library {
         return "";
     }
     
-    public createNewTag(tagName: string): Promise<Tag> {
+    public async createNewTag(tagName: string): Promise<Tag> {
         if (!tagName) {
             return Promise.reject<Tag>(new Error("Tag name is required"));
         }
         
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
-        return stmt.runAsync(tagName)
-            .then(() => { return new Tag(stmt.lastID, tagName, 0); });
+        await stmt.runAsync(tagName);
+        return new Tag(stmt.lastID, tagName, 0);
     }
     
-    public getTags(query: TagQuery): Promise<Tag[]> {
+    public async getTags(query: TagQuery): Promise<Tag[]> {
         var tags: Tag[] = [];
 
         var params: any[] = [];
@@ -163,22 +157,25 @@ export class Library {
         };
 
         var stmt = this._db.prepare(sql);
-        return stmt.eachAsync(params, each)
-                .then(() => { return _.values(tags); });
+        await stmt.eachAsync(params, each)
+        return _.values(tags);
     }
 
-    public createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): void {
+    public async createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): Promise<void> {
         var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
-        stmt.run(inputTag.id, hash, (err: any) => {
-            if (err) {
-                if (err.code !== "SQLITE_CONSTRAINT") {
-                    console.log(err);
-                    return;
-                } else {
-                    console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + hash + ". Refusing to add a duplicate association.");
-                }
+        
+        try
+        {
+            await stmt.runAsync(inputTag.id, hash);
+        }
+        catch (err) {
+            if (err.code !== "SQLITE_CONSTRAINT") {
+                console.log(err);
+                return;
+            } else {
+                console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + hash + ". Refusing to add a duplicate association.");
             }
-        });
+        }
     }
     
     public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
