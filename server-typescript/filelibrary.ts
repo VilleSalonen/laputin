@@ -56,21 +56,20 @@ export class FileLibrary extends events.EventEmitter {
         });
     }
     
-    private processFile(root: string, stat: walk.WalkStat, next: (() => void)): void {
+    private async processFile(root: string, stat: walk.WalkStat, next: (() => void)): Promise<void> {
         var filePath = path.normalize(path.join(root, stat.name));
-        this.addFileFromPath(filePath)
-            .then(next);
+        await this.addFileFromPath(filePath);
+        next();
     }
     
-    private addFileFromPath(path: string): Promise<void> {
-        return this._hasher.hash(path)
-            .then((result) => new File(result.hash, result.path, []))
-            .then((file) => {
-                if (this.fileShouldBeIgnored(file)) return;
+    private async addFileFromPath(path: string): Promise<void> {
+        let result = await this._hasher.hash(path)
+        let file = new File(result.hash, result.path, []);
 
-                this.addFileToBookkeeping(file);
-                this.emit("found", file);
-            });
+        if (this.fileShouldBeIgnored(file)) return;
+
+        this.addFileToBookkeeping(file);
+        this.emit("found", file);
     }
     
     private addFileToBookkeeping(file: File): void {
