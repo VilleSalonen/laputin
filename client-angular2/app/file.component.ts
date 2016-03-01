@@ -5,6 +5,7 @@ import {LaputinService} from "./laputinservice";
 import {File} from "./file";
 import {Tag} from "./tag";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
+import {SearchBox} from "./searchbox.component";
 
 @Component({
     selector: "file-row",
@@ -34,10 +35,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                         </p>
                         
                         <div *ngIf="tagCreationOpen">
-                            <form>
-                                <input type="text" [(ngModel)]="newTag" placeholder="Create a new tag" class="form-control" />
-                                <button (click)="addNewTag()">Add tag</button>
-                            </form>
+                            <search-box (update)="addNewTag($event)" clearOnEnter="1"></search-box>
                         </div>
                     </div>
                     
@@ -54,11 +52,9 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
             </div>
         </div>`,
     providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [TagAutocompleteComponent]
+    directives: [TagAutocompleteComponent, SearchBox]
 })
 export class FileRowComponent {
-    public newTag: string = "";
-    
     @Input() file: File;
     
     public detailsOpen: boolean = false;
@@ -75,13 +71,12 @@ export class FileRowComponent {
         this.tagCreationOpen = !this.tagCreationOpen;
     }
     
-    public addNewTag(): void {
-        this._service.createTag(this.file, this.newTag)
+    public addNewTag(newTag: string): void {
+        this._service.createTag(this.file, newTag)
                      .subscribe(tag => {
                         this._service.addTag(this.file, tag)
                             .subscribe(() => this.addTagToFile(tag));
                      });
-        this.newTag = "";
     }
     
     public addTag(tag: Tag): void {
