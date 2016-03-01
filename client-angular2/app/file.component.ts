@@ -76,12 +76,24 @@ export class FileRowComponent {
     }
     
     public addNewTag(): void {
-        this._service.createTag(this.file, this.newTag);
+        this._service.createTag(this.file, this.newTag)
+                     .subscribe(tag => {
+                        this._service.addTag(this.file, tag);
+                        this.addTagToFile(tag);
+                     });
         this.newTag = "";
     }
     
     public addTag(tag: Tag): void {
-        this._service.addTag(this.file, tag);
+        this._service.addTag(this.file, tag)
+                     .subscribe(() => this.addTagToFile(tag));
+    }
+    
+    private addTagToFile(tag: Tag): void {
+        var tags = this.file.tags;
+        tags.push(tag);
+        var sorted = _.sortBy(tags, (tag) => tag.name);
+        this.file.tags = sorted;
     }
     
     public onSelect(file: File): void {

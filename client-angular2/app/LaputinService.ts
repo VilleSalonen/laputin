@@ -88,33 +88,22 @@ export class LaputinService {
                    );
     }
     
-    public createTag(file: File, newTagName: string): void {
+    public createTag(file: File, newTagName: string): Observable<Tag> {
         let body = JSON.stringify({ tagName: newTagName });
         const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
         
-        this._http.post(this._baseUrl + "/tags", body, { headers: headers })
-                   .subscribe(
-                        data => {
-                            var tag = this._convertTag(data.json());
-                            this.addTag(file, tag);
-                        });
+        return this._http
+            .post(this._baseUrl + "/tags", body, { headers: headers })
+            .map(res => res.json())
+            .map(tag => this._convertTag(tag));
     }
     
-    public addTag(file: File, tag: Tag): void {
+    public addTag(file: File, tag: Tag): Observable<Response> {
         let body = JSON.stringify({
                 selectedTags: [tag]
             });
         const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
         
-        this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers })
-                   .subscribe(data => {
-                       var tags = file.tags;
-                       tags.push(tag);
-                       
-                       var sorted = _.sortBy(tags, (tag) => tag.name);
-                       
-                       file.tags = sorted;
-                       
-                    });
+        return this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers });
     }
 }
