@@ -56,7 +56,7 @@ import {FileRowComponent} from "./file.component";
                     </div>
                     <div class="col-md-7 col-md-offset-1">
                         <div class="tag btn-group" *ngFor="#tag of selectedTags">
-                            <button class="dropdown-toggle btn btn-success" type="button">
+                            <button class="dropdown-toggle btn btn-success" type="button" (click)="removeTag(tag)">
                                 <span>{{tag.name}}</span>
                             </button>
                         </div>
@@ -129,6 +129,11 @@ export class FilesComponent implements OnInit {
             this.selectedTags.push(tag);
             this.filterFiles();
         }
+    }
+    
+    removeTag(tag: Tag): void {
+        this.selectedTags = this.selectedTags.filter((t) => t.id != tag.id);
+        this.filterFiles();
     }
     
     clear(): void {
