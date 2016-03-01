@@ -107,6 +107,14 @@ export class LaputinService {
         const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
         
         this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers })
-                   .subscribe(data => { file.tags.push(tag); });
+                   .subscribe(data => {
+                       var tags = file.tags;
+                       tags.push(tag);
+                       
+                       var sorted = _.sortBy(tags, (tag) => tag.name);
+                       
+                       file.tags = sorted;
+                       
+                    });
     }
 }

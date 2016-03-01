@@ -32,6 +32,7 @@
     <script src="node_modules/rxjs/bundles/Rx.js"></script>
     <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
     <script src="node_modules/angular2/bundles/router.dev.js"></script>
+    <script src="node_modules/lodash/lodash.min.js"></script>
     
     <script src="node_modules/angular2/bundles/http.dev.js"></script>
     
@@ -42,6 +43,9 @@
             format: 'register',
             defaultExtension: 'js'
           }
+        },
+        paths: {
+            lodash: "./node_modules/lodash/lodash.min.js"
         }
       });
       System.import('app/main')
