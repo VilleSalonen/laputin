@@ -46,7 +46,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                     
                         <p>
                             <span *ngFor="#tag of file.tags">
-                                {{tag.name}}
+                                <button (click)="removeTag(tag)" class="btn btn-success tag">{{tag.name}}</button>
                             </span>
                         </p>
                     </div>
@@ -78,8 +78,8 @@ export class FileRowComponent {
     public addNewTag(): void {
         this._service.createTag(this.file, this.newTag)
                      .subscribe(tag => {
-                        this._service.addTag(this.file, tag);
-                        this.addTagToFile(tag);
+                        this._service.addTag(this.file, tag)
+                            .subscribe(() => this.addTagToFile(tag));
                      });
         this.newTag = "";
     }
@@ -87,6 +87,13 @@ export class FileRowComponent {
     public addTag(tag: Tag): void {
         this._service.addTag(this.file, tag)
                      .subscribe(() => this.addTagToFile(tag));
+    }
+    
+    public removeTag(tag: Tag): void {
+        var tags = this.file.tags;
+        this.file.tags = _.filter(this.file.tags, (t: Tag): boolean => t.id !== tag.id);
+        this._service.deleteTagFileAssoc(this.file, tag)
+            .subscribe(() => {});
     }
     
     private addTagToFile(tag: Tag): void {

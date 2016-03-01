@@ -106,4 +106,8 @@ export class LaputinService {
         
         return this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers });
     }
+    
+    public deleteTagFileAssoc(file: File, tag: Tag): Observable<Response> {
+        return this._http.delete(this._baseUrl + "/files/" + file.hash + "/tags/" + tag.id);
+    }
 }
