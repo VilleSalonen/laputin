@@ -37,6 +37,8 @@ import {SearchBox} from "./searchbox.component";
                         <div *ngIf="tagCreationOpen">
                             <search-box (update)="addNewTag($event)" clearOnEnter="1"></search-box>
                         </div>
+
+                        <p><small><a (click)="copy()">Copy</a> <a (click)="paste()">Paste</a></small></p>
                     </div>
                     
                     <div class="col-md-10">
@@ -75,13 +77,17 @@ export class FileRowComponent {
         this._service.createTag(this.file, newTag)
                      .subscribe(tag => {
                         this._service.addTag(this.file, tag)
-                            .subscribe(() => this.addTagToFile(tag));
+                            .subscribe(() => this.addTagsToFile([tag]));
                      });
     }
     
     public addTag(tag: Tag): void {
-        this._service.addTag(this.file, tag)
-                     .subscribe(() => this.addTagToFile(tag));
+        this.addTags([tag]);
+    }
+    
+    public addTags(tags: Tag[]): void {
+        this._service.addTags(this.file, tags)
+                     .subscribe(() => this.addTagsToFile(tags));
     }
     
     public removeTag(tag: Tag): void {
@@ -91,14 +97,23 @@ export class FileRowComponent {
             .subscribe(() => {});
     }
     
-    private addTagToFile(tag: Tag): void {
-        var tags = this.file.tags;
-        tags.push(tag);
-        var sorted = _.sortBy(tags, (tag) => tag.name);
+    private addTagsToFile(tags: Tag[]): void {
+        var currentTags = this.file.tags;
+        _.each(tags, (tag) => currentTags.push(tag));
+        var sorted = _.sortBy(currentTags, (tag) => tag.name);
         this.file.tags = sorted;
     }
     
     public onSelect(file: File): void {
         this._service.openFile(file);
+    }
+    
+    public copy(): void {
+        localStorage.setItem("tagClipboard", JSON.stringify(this.file.tags));
+    }
+
+    public paste(): void {
+        var tags = JSON.parse(localStorage.getItem("tagClipboard"));
+        this.addTags(tags);
     }
 }

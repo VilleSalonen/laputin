@@ -98,13 +98,17 @@ export class LaputinService {
             .map(tag => this._convertTag(tag));
     }
     
-    public addTag(file: File, tag: Tag): Observable<Response> {
+    public addTags(file: File, tags: Tag[]): Observable<Response> {
         let body = JSON.stringify({
-                selectedTags: [tag]
+                selectedTags: tags
             });
         const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
         
         return this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers });
+    }
+    
+    public addTag(file: File, tag: Tag): Observable<Response> {
+        return this.addTags(file, [tag]);
     }
     
     public deleteTagFileAssoc(file: File, tag: Tag): Observable<Response> {
