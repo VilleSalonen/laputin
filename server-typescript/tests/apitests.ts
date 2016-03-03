@@ -75,7 +75,7 @@ describe("Laputin API", () => {
         it("File can be tagged", async () => {
             await request(laputin.app)
                 .post("/files/" + file.hash + "/tags")
-                .send({ selectedTags: [tag], hash: file.hash })
+                .send({ selectedTags: [tag] })
                 .expect(200);
 
             await shouldContainFiles(laputin, [new File(file.hash, file.path, [tag])]);
@@ -84,7 +84,7 @@ describe("Laputin API", () => {
         it("File tagging can be removed", async () => {
             await request(laputin.app)
                 .delete("/files/" + file.hash + "/tags/" + tag.id)
-                .send({ tagId: tag.id, hash: file.hash })
+                .send({ tagId: tag.id })
                 .expect(200);
 
             await shouldContainFiles(laputin, [new File(file.hash, file.path, [])]);
@@ -106,7 +106,7 @@ describe("Laputin API", () => {
             tag = await laputin.library.createNewTag("Funnyyyy");
             return request(laputin.app)
                 .post("/files/" + taggedFile.hash + "/tags")
-                .send({ selectedTags: [tag], hash: taggedFile.hash })
+                .send({ selectedTags: [tag] })
                 .expect(200);
         });
         
