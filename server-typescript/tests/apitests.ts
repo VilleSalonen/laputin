@@ -91,6 +91,49 @@ describe("Laputin API", () => {
         });
     });
 
+    describe("Querying by tagging status", () => {
+        let laputin: Laputin;
+        let taggedFile: File = new File("aaaaa", "funny.jpg", []);
+        let untaggedFile: File = new File("bbbbb", "untagged.jpg", []);
+        let tag: Tag;
+        
+        before(async () => {
+            laputin = await initializeLaputin("querying-by-tagging-status");
+
+            await laputin.library.addFile(taggedFile);
+            await laputin.library.addFile(untaggedFile);
+
+            tag = await laputin.library.createNewTag("Funnyyyy");
+            return request(laputin.app)
+                .post("/files/" + taggedFile.hash + "/tags")
+                .send({ selectedTags: [tag], hash: taggedFile.hash })
+                .expect(200);
+        });
+        
+        it("Querying both tagged and untagged files", async () => {
+            return request(laputin.app)
+                .get("/files?status=both")
+                .expect(200)
+                .expect([
+                    new File(taggedFile.hash, taggedFile.path, [tag]),
+                    untaggedFile]);
+        });
+
+        it("Querying only tagged", async () => {
+            return request(laputin.app)
+                .get("/files?status=tagged")
+                .expect(200)
+                .expect([new File(taggedFile.hash, taggedFile.path, [tag])]);
+        });
+        
+        it("Querying only untagged", async () => {
+            return request(laputin.app)
+                .get("/files?status=untagged")
+                .expect(200)
+                .expect([untaggedFile]);
+        });
+    });
+
     describe("Deactivating files", () => {
         let laputin: Laputin;
         let file1: File = new File("aaaaa", "funny.jpg", []);
