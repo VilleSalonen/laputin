@@ -6,6 +6,7 @@ import {Http, HTTP_PROVIDERS, Headers, Response} from "angular2/http";
 
 import {File} from "./../models/file";
 import {Tag} from "./../models/tag";
+import {FileQuery} from "./../models/filequery";
 import {Duplicate} from "./../models/duplicate";
 
 @Component({
@@ -17,8 +18,16 @@ export class LaputinService {
     constructor(private _http: Http) {
     }
     
-    public getFiles(): Promise<File[]> {
-        return this._http.get(this._baseUrl + "/files")
+    public queryFiles(query: FileQuery): Promise<File[]> {
+        var params: string[] = [];
+        
+        if (query.filename) params.push("filename=" + query.filename);
+        
+        var paramsStr: string = "";
+        if (params.length > 0)
+            paramsStr = "?" + params.join("&");
+        
+        return this._http.get(this._baseUrl + "/files" + paramsStr)
             .map(res => res.json())
             .map((files: any[]): File[] => {
                 let result: File[] = [];

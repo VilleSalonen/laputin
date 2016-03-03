@@ -4,8 +4,8 @@ import {Observable} from "rxjs/Rx";
 
 import {File} from "./../models/file";
 import {Tag} from "./../models/tag";
+import {FileQuery} from "./../models/filequery";
 import {LaputinService} from "./../services/laputinservice";
-import {SearchBox} from "./searchbox.component";
 import {FileNamePipe} from "./filenamepipe";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
 import {FileRowComponent} from "./file.component";
@@ -29,7 +29,7 @@ import {FileRowComponent} from "./file.component";
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Filename</label>
                                 <div class="col-sm-10">
-                                    <search-box (update)="termChanged($event)"></search-box>
+                                    <input type="text" class="form-control" [(ngModel)]="query.filename" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -51,7 +51,7 @@ import {FileRowComponent} from "./file.component";
                                     </p>
                                 </div>
                             </div>
-                            <input type="submit" class="submit-hack">
+                            <input type="submit" (click)="submitClicked($event)" />
                         </form>
                     </div>
                     <div class="col-md-7 col-md-offset-1">
@@ -86,7 +86,7 @@ import {FileRowComponent} from "./file.component";
         </table>
     `,
     providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [SearchBox, TagAutocompleteComponent, FileRowComponent]
+    directives: [TagAutocompleteComponent, FileRowComponent]
 })
 export class FilesComponent implements OnInit {
     public allFiles: File[] = [];
@@ -96,32 +96,28 @@ export class FilesComponent implements OnInit {
     public selectedTags: Tag[] = [];
     
     private filenameMask: string = "";
+    private query: FileQuery = new FileQuery();
     
     constructor(private _service: LaputinService) {
     }
     
     ngOnInit(): void {
         this._service.getTags().then((tags: Tag[]) => { this.tags = tags; });
-        this._service.getFiles().then((files: File[]) => {
+        this._service.queryFiles(this.query).then((files: File[]) => {
             this.allFiles = files;
             this.matchingFiles = files;
         });
     }
     
-    termChanged(term: string): void {
-        this.filenameMask = term;
-        
+    submitClicked(event: Event): void {
+        event.preventDefault();
         this.filterFiles();
     }
     
     filterFiles(): void {
-        var that = this;
-        var termLowered = this.filenameMask.toLowerCase();
-        this.matchingFiles = this.allFiles
-            .filter(file => termLowered.length == 0 || file.path.toLowerCase().includes(termLowered))
-            .filter(file => {
-                return that.selectedTags.every(value => file.tags.map(tag => tag.id).indexOf(value.id) > -1);
-            });
+        this._service.queryFiles(this.query).then((files: File[]) => {
+            this.matchingFiles = files;
+        });
     }
     
     addTag(tag: Tag): void {
@@ -138,6 +134,7 @@ export class FilesComponent implements OnInit {
     
     clear(): void {
         this.selectedTags = [];
+        this.query.clear();
         this.filterFiles();
     }
     
