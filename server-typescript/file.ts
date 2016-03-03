@@ -10,7 +10,7 @@ export class File {
     
     constructor(hash: string, path: string, tags: Tag[]) {
         this.hash = hash;
-        this.path = path.replace("\\", "/");
+        this.path = path.replace(/\\/g, "/");
         this.name = this.cleanPath(); 
         this.tags = tags;
     }
