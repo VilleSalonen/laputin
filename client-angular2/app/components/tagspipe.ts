@@ -1,6 +1,6 @@
 import {Pipe} from "angular2/core";
 
-import {Tag} from "./tag";
+import {Tag} from "./../models/tag";
 
 @Pipe({
     name: "tagfilter"

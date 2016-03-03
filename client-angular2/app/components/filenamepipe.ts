@@ -1,6 +1,6 @@
 import {Pipe} from "angular2/core";
 
-import {File} from "./file";
+import {File} from "./../models/file";
 
 @Pipe({
     name: "filenamefilter"

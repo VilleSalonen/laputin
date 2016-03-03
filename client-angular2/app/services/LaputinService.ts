@@ -3,9 +3,9 @@ import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import {Http, HTTP_PROVIDERS, Headers, Response} from "angular2/http";
 
-import {File} from "./file";
-import {Tag} from "./tag";
-import {Duplicate} from "./duplicate";
+import {File} from "./../models/file";
+import {Tag} from "./../models/tag";
+import {Duplicate} from "./../models/duplicate";
 
 @Component({
     providers: [HTTP_PROVIDERS]

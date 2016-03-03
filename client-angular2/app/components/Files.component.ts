@@ -2,9 +2,9 @@ import {Component, OnInit} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 import {Observable} from "rxjs/Rx";
 
-import {File} from "./file";
-import {Tag} from "./tag";
-import {LaputinService} from "./laputinservice";
+import {File} from "./../models/file";
+import {Tag} from "./../models/tag";
+import {LaputinService} from "./../services/laputinservice";
 import {SearchBox} from "./searchbox.component";
 import {FileNamePipe} from "./filenamepipe";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";

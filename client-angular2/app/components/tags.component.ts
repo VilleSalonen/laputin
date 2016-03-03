@@ -1,9 +1,9 @@
 import {Component, OnInit} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 
-import {File} from "./file";
-import {Tag} from "./tag";
-import {LaputinService} from "./laputinservice";
+import {File} from "./../models/file";
+import {Tag} from "./../models/tag";
+import {LaputinService} from "./../services/laputinservice";
 import {TagsPipe} from "./tagspipe";
 import {SearchBox} from "./searchbox.component";
 

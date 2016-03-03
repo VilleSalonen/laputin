@@ -5,8 +5,8 @@ import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
-import {Tag} from "./tag";
-import {LaputinService} from "./laputinservice";
+import {Tag} from "./../models/tag";
+import {LaputinService} from "./../services/laputinservice";
 
 @Component({
     selector: "tag-autocomplete",

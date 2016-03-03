@@ -1,9 +1,9 @@
 import {Component, Input, EventEmitter} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 
-import {LaputinService} from "./laputinservice";
-import {File} from "./file";
-import {Tag} from "./tag";
+import {LaputinService} from "./../services/laputinservice";
+import {File} from "./../models/file";
+import {Tag} from "./../models/tag";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
 import {SearchBox} from "./searchbox.component";
 
