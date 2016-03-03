@@ -22,6 +22,7 @@ export class LaputinService {
         var params: string[] = [];
         
         if (query.filename) params.push("filename=" + query.filename);
+        if (query.status) params.push("status=" + query.status);
         
         var paramsStr: string = "";
         if (params.length > 0)

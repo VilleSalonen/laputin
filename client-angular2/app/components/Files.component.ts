@@ -35,7 +35,7 @@ import {FileRowComponent} from "./file.component";
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Status</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control">
+                                    <select class="form-control" [(ngModel)]="query.status">
                                         <option value="both">Both tagged and untagged</option>
                                         <option value="untagged">Only untagged</option>
                                         <option value="tagged">Only tagged</option>

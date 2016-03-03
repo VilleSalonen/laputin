@@ -1,5 +1,6 @@
 export class FileQuery {
     public filename: string;
+    public status: string;
     
     constructor() {
         this.clear();
@@ -7,5 +8,6 @@ export class FileQuery {
 
     public clear(): void {
         this.filename = "";
+        this.status = "both";
     }
 }
