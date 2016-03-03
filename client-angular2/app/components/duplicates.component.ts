@@ -2,6 +2,7 @@ import {Component} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 
 import {LaputinService} from "./../services/laputinservice";
+import {Duplicate} from "./../models/duplicate";
 
 @Component({
     template: `
@@ -20,9 +21,9 @@ import {LaputinService} from "./../services/laputinservice";
     providers: [LaputinService, HTTP_PROVIDERS]
 })
 export class DuplicatesComponent {
-    public duplicates: any;
+    public duplicates: Duplicate[];
     
     constructor(private _service: LaputinService) {
-        _service.duplicates.subscribe(data: any => this.duplicates = data);
+        _service.getDuplicates().then((duplicates: Duplicate[]) => this.duplicates = duplicates);
     }
 }

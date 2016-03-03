@@ -101,8 +101,8 @@ export class FilesComponent implements OnInit {
     }
     
     ngOnInit(): void {
-        this._service.tags.subscribe((tags: Tag[]) => { this.tags = tags; });
-        this._service.files.subscribe((files: File[]) => {
+        this._service.getTags().then((tags: Tag[]) => { this.tags = tags; });
+        this._service.getFiles().then((files: File[]) => {
             this.allFiles = files;
             this.matchingFiles = files;
         });

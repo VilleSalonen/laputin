@@ -40,7 +40,7 @@ export class TagAutocompleteComponent {
     public select = new EventEmitter<Tag>();
     
     constructor(private _service: LaputinService) {
-        this._service.tags.subscribe((tags: Tag[]) => this.allTags = tags);
+        this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
 
         this.term.valueChanges
             .debounceTime(500)

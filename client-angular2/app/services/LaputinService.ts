@@ -1,6 +1,7 @@
 import {Component} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/toPromise";
 import {Http, HTTP_PROVIDERS, Headers, Response} from "angular2/http";
 
 import {File} from "./../models/file";
@@ -13,24 +14,11 @@ import {Duplicate} from "./../models/duplicate";
 export class LaputinService {
     private _baseUrl: string = "http://localhost:3200"; 
     
-    public tags: Observable<Tag[]>;
-    public files: Observable<File[]>;
-    public duplicates: Observable<any>;
-    
     constructor(private _http: Http) {
-        this.tags = this._http.get(this._baseUrl + "/tags")
-            .map(res => res.json())
-            .map((tags: any[]): Tag[] => {
-                let result: Tag[] = [];
-                if (tags) {
-                    tags.forEach((tag: any) => {
-                        result.push(this._convertTag(tag))
-                    });
-                }
-                return result;
-            });
-        
-        this.files = this._http.get(this._baseUrl + "/files")
+    }
+    
+    public getFiles(): Promise<File[]> {
+        return this._http.get(this._baseUrl + "/files")
             .map(res => res.json())
             .map((files: any[]): File[] => {
                 let result: File[] = [];
@@ -41,9 +29,25 @@ export class LaputinService {
                 }
                 
                 return result;
-            });
-        
-        this.duplicates = this._http.get(this._baseUrl + "/duplicates")
+            }).toPromise();
+    }
+    
+    public getTags(): Promise<Tag[]> {
+        return this._http.get(this._baseUrl + "/tags")
+            .map(res => res.json())
+            .map((tags: any[]): Tag[] => {
+                let result: Tag[] = [];
+                if (tags) {
+                    tags.forEach((tag: any) => {
+                        result.push(this._convertTag(tag))
+                    });
+                }
+                return result;
+            }).toPromise();
+    }
+    
+    public getDuplicates(): Promise<Duplicate[]> {
+        return this._http.get(this._baseUrl + "/duplicates")
             .map(res => res.json())
             .map((duplicates: any[]): any[] => {
                 let result: Duplicate[] = [];
@@ -55,7 +59,7 @@ export class LaputinService {
                     result.push(new Duplicate(dup, files));
                 }
                 return result;
-            });
+            }).toPromise();
     }
     
     private _convertTag(tag: any): Tag {
