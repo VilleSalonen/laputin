@@ -2,9 +2,10 @@ import {Component, Input, Output, EventEmitter} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 
 import {File} from "./../models/file";
-import {Tag} from "./../models/tag";
+import {Tag, TagStatus} from "./../models/tag";
 import {FileQuery} from "./../models/filequery";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
+import {SearchTag, TagChange} from "./searchtag.component";
 
 @Component({
     selector: "file-search",
@@ -51,17 +52,15 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                         </form>
                     </div>
                     <div class="col-md-7 col-md-offset-1">
-                        <div class="tag btn-group" *ngFor="#tag of query.andTags">
-                            <button class="dropdown-toggle btn btn-success" type="button" (click)="removeTag(tag)">
-                                <span>{{tag.name}}</span>
-                            </button>
+                        <div class="tag btn-group" *ngFor="#tag of query.tags">
+                            <search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></search-tag>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     `,
-    directives: [TagAutocompleteComponent]
+    directives: [TagAutocompleteComponent, SearchTag]
 })
 export class FileSearchComponent {
     public query: FileQuery = new FileQuery();
@@ -79,6 +78,17 @@ export class FileSearchComponent {
     
     addTag(tag: Tag): void {
         this.query.andTag(tag);
+        this.update.emit(this.query);
+    }
+
+    changeTag(tagChange: TagChange): void {
+        if (tagChange.tagStatus == TagStatus.And) {
+            this.query.andTag(tagChange.tag);
+        } else if (tagChange.tagStatus == TagStatus.Or) {
+            this.query.orTag(tagChange.tag);
+        } else if (tagChange.tagStatus == TagStatus.Not) {
+            this.query.notTag(tagChange.tag);
+        }
         this.update.emit(this.query);
     }
     

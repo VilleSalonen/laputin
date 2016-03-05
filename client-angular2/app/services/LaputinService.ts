@@ -21,21 +21,8 @@ export class LaputinService {
     }
     
     public queryFiles(query: FileQuery): Promise<File[]> {
-        var params: string[] = [];
-        
-        if (query.filename) params.push("filename=" + query.filename);
-        if (query.status) params.push("status=" + query.status);
-        
-        if (query.andTags.length > 0) {
-            var ids: number[] = _.map(query.andTags, (tag: Tag) => tag.id);
-            params.push("and=" + ids.join(","));
-        }
-        
-        var paramsStr: string = "";
-        if (params.length > 0)
-            paramsStr = "?" + params.join("&");
-        
-        return this._http.get(this._baseUrl + "/files" + paramsStr)
+        var params = this.compileParams(query);
+        return this._http.get(this._baseUrl + "/files" + params)
             .map(res => res.json())
             .map((files: any[]): File[] => {
                 let result: File[] = [];
@@ -132,5 +119,28 @@ export class LaputinService {
     
     public deleteTagFileAssoc(file: File, tag: Tag): Observable<Response> {
         return this._http.delete(this._baseUrl + "/files/" + file.hash + "/tags/" + tag.id);
+    }
+    
+    private compileParams(query: FileQuery): string {
+        var params: string[] = [];
+        
+        if (query.filename) params.push("filename=" + query.filename);
+        if (query.status) params.push("status=" + query.status);
+        
+        if (query.andTags.length > 0) {
+            params.push("and=" + _.map(query.andTags, (tag: Tag) => tag.id).join(","));
+        }
+        if (query.orTags.length > 0) {
+            params.push("or=" + _.map(query.orTags, (tag: Tag) => tag.id).join(","));
+        }
+        if (query.notTags.length > 0) {
+            params.push("not=" + _.map(query.notTags, (tag: Tag) => tag.id).join(","));
+        }
+        
+        var paramsStr: string = "";
+        if (params.length > 0)
+            paramsStr = "?" + params.join("&");
+        
+        return paramsStr;
     }
 }
