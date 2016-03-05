@@ -2,17 +2,20 @@
 
 import {Laputin} from "./server";
 
-var laputin = new Laputin("test-archive-no-commit");
+var libraryPath = process.env.LAPUTIN_PATH || "test-archive-no-commit";
+var laputin = new Laputin(libraryPath);
 
 laputin.initializeRoutes();
 console.time("hashing");
 laputin.loadFiles()
     .then(() => {
         console.timeEnd("hashing");
-        
+
         var port: number = +process.env.PORT || 3200;
 
         laputin.app.listen(port, () => {
-        console.log('Express server listening on port ' + port);
+            console.log("Laputin started:");
+            console.log("Port: " + port);
+            console.log("Path: " + libraryPath);
         });
     });
