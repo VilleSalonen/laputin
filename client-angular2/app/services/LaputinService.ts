@@ -4,6 +4,7 @@ import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/toPromise";
 import {Http, HTTP_PROVIDERS, Headers, Response} from "angular2/http";
+import * as _ from "lodash";
 
 import {File} from "./../models/file";
 import {Tag} from "./../models/tag";
@@ -62,11 +63,9 @@ export class LaputinService {
             .map(res => res.json())
             .map((duplicates: any[]): any[] => {
                 let result: Duplicate[] = [];
-                for (let dup of Reflect.ownKeys(duplicates)) {
+                for (let dup of _.forOwn(duplicates)) {
                     var current = duplicates[dup];
-                    
                     let files = current.map((file: any) => new File(file.hash, file.path, file.name, []));
-                    
                     result.push(new Duplicate(dup, files));
                 }
                 return result;
