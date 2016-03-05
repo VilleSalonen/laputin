@@ -18,7 +18,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                                 <label class="col-sm-2 control-label">Tags</label>
                                 <div class="col-sm-10">
                                     <div>
-                                        <tag-autocomplete (select)="addTag($event)"></tag-autocomplete>
+                                        <tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></tag-autocomplete>
                                     </div>
                                 </div>
                             </div>

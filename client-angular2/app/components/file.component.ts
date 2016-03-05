@@ -28,7 +28,7 @@ import {SearchBox} from "./searchbox.component";
                 <div class="row">
                     <div class="col-md-2">
                         <p>
-                            <tag-autocomplete (select)="addTag($event)"></tag-autocomplete>
+                            <tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></tag-autocomplete>
                         </p>
                         
                         <p>
@@ -100,7 +100,7 @@ export class FileRowComponent {
     
     private addTagsToFile(tags: Tag[]): void {
         var currentTags = this.file.tags;
-        var sorted = _(tags)
+        var sorted = _.chain(tags)
             .each((tag: Tag) => currentTags.push(tag))
             .sortBy((tag: Tag) => tag.name)
             .value();

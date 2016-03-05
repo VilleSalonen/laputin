@@ -1,12 +1,17 @@
 import * as _ from "lodash";
 
 import {Tag} from "./tag";
+import {TagContainer} from "./tagcontainer";
 
-export class FileQuery {
+export class FileQuery implements TagContainer {
     public filename: string;
     public status: string;
     
     public andTags: Tag[] = [];
+    
+    public get tags(): Tag[] {
+        return this.andTags;
+    }
     
     constructor() {
         this.clear();

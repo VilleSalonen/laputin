@@ -1,4 +1,4 @@
-import {Component, Output, EventEmitter, ElementRef} from "angular2/core";
+import {Component, Input, Output, EventEmitter, ElementRef} from "angular2/core";
 import {Control} from 'angular2/common';
 import {Observable} from 'rxjs/Rx';
 
@@ -6,6 +6,8 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
 import {Tag} from "./../models/tag";
+import {TagContainer} from "./../models/tagcontainer";
+import {FileQuery} from "./../models/filequery";
 import {LaputinService} from "./../services/laputinservice";
 
 @Component({
@@ -36,6 +38,8 @@ export class TagAutocompleteComponent {
     
     public term = new Control();
     
+    @Input() tagContainer: TagContainer;
+    
     @Output()
     public select = new EventEmitter<Tag>();
     
@@ -52,12 +56,14 @@ export class TagAutocompleteComponent {
     onValueChange(value: string): void {
         let searchTerm = this.title.toLowerCase();
 
-        if (searchTerm.length == 0) {
-            return;
-        }
+        if (searchTerm.length == 0) return;
+        if (!this.tagContainer) return;
 
-        this.matchingTags = 
+        let alreadyAdded = _.map(this.tagContainer.tags, (tag: Tag) => { return tag.id }); 
+
+        this.matchingTags =
             this.allTags
+                .filter((tag: Tag) => _.indexOf(alreadyAdded, tag.id) == -1)
                 .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
                 .slice(0, 10);
     }
