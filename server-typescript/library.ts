@@ -43,6 +43,9 @@ export class Library {
     }
 
     public async getFiles(query: Query): Promise<File[]> {
+        var done: Function;
+        var promise = new Promise<File[]>((resolve, reject) => done = resolve);
+        
         var files: { [hash: string]: File } = {};
 
         var params: any[] = [];
@@ -90,7 +93,9 @@ export class Library {
         };
         await this._db.eachAsync(sql2, each2);
 
-        return _.values(files);
+        done(_.values(files));
+
+        return promise;
     }
     
     private _generateTagFilterQuery (ids: string, params: string[], opr1: string, opr2: string): string {
