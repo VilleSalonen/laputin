@@ -51,7 +51,7 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
                         </form>
                     </div>
                     <div class="col-md-7 col-md-offset-1">
-                        <div class="tag btn-group" *ngFor="#tag of selectedTags">
+                        <div class="tag btn-group" *ngFor="#tag of query.andTags">
                             <button class="dropdown-toggle btn btn-success" type="button" (click)="removeTag(tag)">
                                 <span>{{tag.name}}</span>
                             </button>
@@ -64,14 +64,10 @@ import {TagAutocompleteComponent} from "./tagautocomplete.component";
     directives: [TagAutocompleteComponent]
 })
 export class FileSearchComponent {
-    private query: FileQuery = new FileQuery();
+    public query: FileQuery = new FileQuery();
     
     @Output()
     public update: EventEmitter<FileQuery> = new EventEmitter<FileQuery>(); 
-    
-    public selectedTags: Tag[] = [];
-    
-    private filenameMask: string = "";
     
     constructor() {
     }
@@ -82,21 +78,16 @@ export class FileSearchComponent {
     }
     
     addTag(tag: Tag): void {
-        if (this.selectedTags.indexOf(tag) == -1) {
-            this.selectedTags.push(tag);
-            this.query.andTag(tag);
-            this.update.emit(this.query);
-        }
+        this.query.andTag(tag);
+        this.update.emit(this.query);
     }
     
     removeTag(tag: Tag): void {
-        this.selectedTags = this.selectedTags.filter((t) => t.id != tag.id);
         this.query.removeTag(tag);
         this.update.emit(this.query);
     }
     
     clear(): void {
-        this.selectedTags = [];
         this.query.clear();
         this.update.emit(this.query);
     }
