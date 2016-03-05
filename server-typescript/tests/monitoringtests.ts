@@ -51,6 +51,22 @@ describe("File Library", function() {
         return shouldContainFiles(laputin, [carFile]);
     });
 
+    it("When file is moved without changing its content, it can be found with same hash from new path", async function() {
+        let carFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
+            "deploy-tests/" + currentPath + "/automobile.jpg",
+            []);
+
+        fs.mkdirSync("deploy-tests/" + currentPath + "");
+        await copyFile("tests/test-content/car.jpg", "deploy-tests/" + currentPath + "/car.jpg");
+
+        // Start monitoring before file is copied
+        laputin = await initializeLaputin(currentPath);
+
+        fs.renameSync("deploy-tests/" + currentPath + "/car.jpg", "deploy-tests/" + currentPath + "/automobile.jpg");
+        await waitForEvent(laputin.fileLibrary, "found", 8000);
+        return shouldContainFiles(laputin, [carFile]);
+    });
+
     it("Initial files can be found", async () => {
         let carFile = new File("32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592",
             "deploy-tests/" + currentPath + "/car.jpg",
