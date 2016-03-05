@@ -6,12 +6,10 @@ import {File} from "./../models/file";
 import {Tag} from "./../models/tag";
 import {FileQuery} from "./../models/filequery";
 import {LaputinService} from "./../services/laputinservice";
-import {FileNamePipe} from "./filenamepipe";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
 import {FileRowComponent} from "./file.component";
 
 @Component({
-    pipes: [FileNamePipe],
     template: `
         <div class="filter-controls">
             <div class="extra-padded">
