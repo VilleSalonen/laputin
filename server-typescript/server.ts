@@ -7,7 +7,9 @@ import cors = require("cors");
 
 import {Library} from "./library";
 import {FileLibrary} from "./filelibrary";
+import {IHasher} from "./ihasher";
 import {Sha512Hasher} from "./sha512hasher";
+import {QuickMD5Hasher} from "./quickmd5hasher";
 import {File} from "./file";
 import {Tag} from "./tag";
 
@@ -16,9 +18,17 @@ export class Laputin {
     public fileLibrary: FileLibrary;
     public app: express.Express;
     
-    constructor(private _libraryPath: string) {
+    constructor(private _libraryPath: string, private configuration: any) {
         this.library = new Library(this._libraryPath);
-        this.fileLibrary = new FileLibrary(this._libraryPath, new Sha512Hasher());
+        
+        var hasher: IHasher;
+        if (configuration.identification == "quick") {
+            hasher = new QuickMD5Hasher();
+        } else {
+            hasher = new Sha512Hasher();
+        }
+        
+        this.fileLibrary = new FileLibrary(this._libraryPath, hasher);
         
         this.fileLibrary.on("found", (file: File) => this.library.addFile(file));
         this.fileLibrary.on("lost", (file: File) => this.library.deactivateFile(file));
@@ -29,6 +39,8 @@ export class Laputin {
 
         this.app.use(cors());
         this.app.use(bodyParser.json({}));
+
+        this.app.use(express.static("C:\GitHub\laputin\client-angular2"));
 
         this.app.route("/files").get(async (req, res) => {
             let files = await this.library.getFiles(req.query);
