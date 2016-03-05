@@ -186,7 +186,7 @@ describe("File Library", function() {
             fs.mkdirSync(archivePath);
         }
 
-        var laputin = new Laputin(archivePath);
+        var laputin = new Laputin(archivePath, {});
         laputin.initializeRoutes();
         await laputin.library.createTables();
         await laputin.loadFiles();
