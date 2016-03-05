@@ -23,7 +23,14 @@
   },
   "devDependencies": {
     "concurrently": "^1.0.0",
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-nodemon": "^2.0.6",
+    "gulp-typescript": "^2.11.0",
+    "gulp-util": "^3.0.7",
     "lite-server": "^2.0.1",
+    "mocha": "^2.4.5",
+    "rimraf": "^2.5.2",
     "typescript": "^1.7.5",
     "typings": "^0.6.8"
   }

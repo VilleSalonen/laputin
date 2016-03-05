@@ -1,5 +1,6 @@
 import {Component, Input, EventEmitter} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
+import * as _ from "lodash";
 
 import {LaputinService} from "./../services/laputinservice";
 import {File} from "./../models/file";
