@@ -26,6 +26,11 @@ export class LaputinService {
         if (query.filename) params.push("filename=" + query.filename);
         if (query.status) params.push("status=" + query.status);
         
+        if (query.andTags.length > 0) {
+            var ids: number[] = _.map(query.andTags, (tag: Tag) => tag.id);
+            params.push("and=" + ids.join(","));
+        }
+        
         var paramsStr: string = "";
         if (params.length > 0)
             paramsStr = "?" + params.join("&");
