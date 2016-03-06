@@ -6,11 +6,8 @@ import _ = require("lodash");
 import cors = require("cors");
 
 import {Library} from "./library";
-import {LaputinConfiguration} from "./laputinconfiguration";
 import {FileLibrary} from "./filelibrary";
 import {IHasher} from "./ihasher";
-import {Sha512Hasher} from "./sha512hasher";
-import {QuickMD5Hasher} from "./quickmd5hasher";
 import {File} from "./file";
 import {Tag} from "./tag";
 
@@ -19,15 +16,8 @@ export class Laputin {
     public fileLibrary: FileLibrary;
     public app: express.Express;
     
-    constructor(private _libraryPath: string, private _configuration: LaputinConfiguration) {
+    constructor(private _libraryPath: string, hasher: IHasher) {
         this.library = new Library(this._libraryPath);
-        
-        var hasher: IHasher;
-        if (this._configuration.identification == "quick") {
-            hasher = new QuickMD5Hasher();
-        } else {
-            hasher = new Sha512Hasher();
-        }
         
         this.fileLibrary = new FileLibrary(this._libraryPath, hasher);
         

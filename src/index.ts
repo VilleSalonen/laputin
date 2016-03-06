@@ -7,6 +7,9 @@ import path = require("path");
 import winston = require("winston");
 
 import {Laputin} from "./laputin";
+import {IHasher} from "./ihasher";
+import {Sha512Hasher} from "./sha512hasher";
+import {QuickMD5Hasher} from "./quickmd5hasher";
 import {Library} from "./library";
 import {LaputinConfiguration} from "./laputinconfiguration";
 
@@ -56,7 +59,13 @@ import {LaputinConfiguration} from "./laputinconfiguration";
         ? JSON.parse(fs.readFileSync(configFilePath, "utf8"))
         : new LaputinConfiguration(3200, "accurate");
 
-    let laputin = new Laputin(options.libraryPath, configuration);
+    let hasher: IHasher;
+    if (configuration.identification == "quick") {
+        hasher = new QuickMD5Hasher();
+    } else {
+        hasher = new Sha512Hasher();
+    }
+    let laputin = new Laputin(options.libraryPath, hasher);
 
     laputin.initializeRoutes();
 
