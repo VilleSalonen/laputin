@@ -40,7 +40,9 @@ export class Laputin {
         this.app.use(cors());
         this.app.use(bodyParser.json({}));
 
-        this.app.use(express.static("C:\GitHub\laputin\client-angular2"));
+        this.app.use(express.static(path.join(__dirname, "../client")));
+        this.app.use("/node_modules", express.static(path.join(__dirname, "../node_modules")));
+        this.app.use("/media", express.static(this._libraryPath));
 
         this.app.route("/files").get(async (req, res) => {
             let files = await this.library.getFiles(req.query);
@@ -75,8 +77,6 @@ export class Laputin {
             await this.library.deleteLinkBetweenTagAndFile(req.params.tagId, req.params.hash);
             res.status(200).end();
         });
-
-        this.app.use("/media", express.static(this._libraryPath));
     }
     
     public async loadFiles(): Promise<void> {

@@ -16,6 +16,7 @@
     "watch": "github:DefinitelyTyped/DefinitelyTyped/watch/watch.d.ts#bd269cad4cb2b495f940c7b6afc5825d568029be"
   },
   "dependencies": {
+    "es6-promise": "github:typed-typings/npm-es6-promise#fb04188767acfec1defd054fc8024fafa5cd4de7",
     "lodash": "github:typed-typings/npm-lodash#65781ee6b25562ee9b5913043a3ba249acfcee17"
   }
 }
