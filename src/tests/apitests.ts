@@ -8,7 +8,7 @@ import request = require("supertest");
 
 import {File} from "./../file";
 import {Tag} from "./../tag";
-import {Laputin} from "./../server";
+import {Laputin} from "./../laputin";
 
 describe("Laputin API", function() {
     let currentPath: string;

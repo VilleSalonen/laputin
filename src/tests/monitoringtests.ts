@@ -11,7 +11,7 @@ import events = require("events");
 
 import {File} from "./../file";
 import {Tag} from "./../tag";
-import {Laputin} from "./../server";
+import {Laputin} from "./../laputin";
 
 describe("File Library", function() {
     // For some reason watching for file changes seems to always take about 5

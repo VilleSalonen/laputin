@@ -5,7 +5,7 @@ import commandLineArgs = require("command-line-args");
 import fs = require("fs");
 import path = require("path");
 
-import {Laputin} from "./server";
+import {Laputin} from "./laputin";
 import {Library} from "./library";
 import {LaputinConfiguration} from "./laputinconfiguration";
 
