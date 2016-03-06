@@ -163,7 +163,7 @@ export class Library {
 
         var stmt = this._db.prepare(sql);
         await stmt.eachAsync(params, each)
-        return _.values(tags);
+        return tags;
     }
 
     public async createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): Promise<void> {
