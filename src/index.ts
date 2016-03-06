@@ -46,12 +46,9 @@ import {LaputinConfiguration} from "./laputinconfiguration";
     console.log("Library path: " + options.libraryPath);
 
     let configFilePath = path.join(options.libraryPath, ".laputin.json");
-    let configuration: LaputinConfiguration;
-    if (fs.existsSync(configFilePath)) {
-        configuration = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
-    } else {
-        configuration = new LaputinConfiguration(3200);
-    }
+    let configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
+        ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
+        : new LaputinConfiguration(3200);
 
     let laputin = new Laputin(options.libraryPath, configuration);
 
