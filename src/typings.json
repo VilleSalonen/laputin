@@ -13,7 +13,8 @@
     "sqlite3": "github:DefinitelyTyped/DefinitelyTyped/sqlite3/sqlite3.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
     "superagent": "github:DefinitelyTyped/DefinitelyTyped/superagent/superagent.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
     "supertest": "github:DefinitelyTyped/DefinitelyTyped/supertest/supertest.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
-    "watch": "github:DefinitelyTyped/DefinitelyTyped/watch/watch.d.ts#bd269cad4cb2b495f940c7b6afc5825d568029be"
+    "watch": "github:DefinitelyTyped/DefinitelyTyped/watch/watch.d.ts#bd269cad4cb2b495f940c7b6afc5825d568029be",
+    "winston": "github:DefinitelyTyped/DefinitelyTyped/winston/winston.d.ts#f29447a4693f90a2543b56eae0efeb344da08cda"
   },
   "dependencies": {
     "es6-promise": "github:typed-typings/npm-es6-promise#fb04188767acfec1defd054fc8024fafa5cd4de7",
