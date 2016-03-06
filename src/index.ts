@@ -1,8 +1,10 @@
 /// <reference path="typings/main.d.ts" />
 
-import {Laputin} from "./server";
 import fs = require("fs");
 import path = require("path");
+
+import {Laputin} from "./server";
+import {LaputinConfiguration} from "./laputinconfiguration";
 
 var libraryPath = "";
 if (process.argv.length === 2) {
@@ -22,9 +24,11 @@ if (!fs.existsSync(libraryPath) || !fs.statSync(libraryPath).isDirectory()) {
     process.exit(-2);
 }
 
-var configuration = {};
+var configuration: LaputinConfiguration;
 if (fs.existsSync(path.join(libraryPath, ".laputin.json"))) {
     configuration = JSON.parse(fs.readFileSync(path.join(libraryPath, ".laputin.json"), 'utf8'));
+} else {
+    configuration = new LaputinConfiguration(3200);
 }
 
 var laputin = new Laputin(libraryPath, configuration);
@@ -35,10 +39,8 @@ laputin.loadFiles()
     .then(() => {
         console.timeEnd("hashing");
 
-        var port: number = configuration.port || 3200;
-
-        laputin.app.listen(port, () => {
+        laputin.app.listen(configuration.port, () => {
             console.log("Laputin started:");
-            console.log("Port: " + port);
+            console.log("Port: " + configuration.port);
         });
     });
