@@ -8,7 +8,9 @@ import request = require("supertest");
 
 import {File} from "./../file";
 import {Tag} from "./../tag";
+import {compose} from "./../compose";
 import {Laputin} from "./../laputin";
+import {LaputinConfiguration} from "./../laputinconfiguration";
 
 describe("Laputin API", function() {
     let currentPath: string;
@@ -185,7 +187,7 @@ describe("Laputin API", function() {
         rimraf.sync(archivePath);
         fs.mkdirSync(archivePath);
 
-        var laputin = new Laputin(archivePath, {});
+        var laputin = compose(archivePath, new LaputinConfiguration(1234, "accurate"));
         laputin.initializeRoutes();
 
         await laputin.library.createTables();

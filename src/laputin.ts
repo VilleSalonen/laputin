@@ -12,15 +12,9 @@ import {File} from "./file";
 import {Tag} from "./tag";
 
 export class Laputin {
-    public library: Library;
-    public fileLibrary: FileLibrary;
     public app: express.Express;
     
-    constructor(private _libraryPath: string, hasher: IHasher) {
-        this.library = new Library(this._libraryPath);
-        
-        this.fileLibrary = new FileLibrary(this._libraryPath, hasher);
-        
+    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary) {
         this.fileLibrary.on("found", (file: File) => this.library.addFile(file));
         this.fileLibrary.on("lost", (file: File) => this.library.deactivateFile(file));
     }

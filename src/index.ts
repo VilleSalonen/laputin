@@ -7,11 +7,9 @@ import path = require("path");
 import winston = require("winston");
 
 import {Laputin} from "./laputin";
-import {IHasher} from "./ihasher";
-import {Sha512Hasher} from "./sha512hasher";
-import {QuickMD5Hasher} from "./quickmd5hasher";
 import {Library} from "./library";
 import {LaputinConfiguration} from "./laputinconfiguration";
+import {compose} from "./compose";
 
 (async function() {
     let cli = commandLineArgs([
@@ -72,15 +70,3 @@ import {LaputinConfiguration} from "./laputinconfiguration";
         winston.info("Laputin started at http://localhost:" + configuration.port);
     });
 })();
-
-function compose(libraryPath: string, configuration: LaputinConfiguration): Laputin {
-    let hasher: IHasher = composeHasher(configuration);
-
-    return new Laputin(libraryPath, hasher);
-}
-
-function composeHasher(configuration: LaputinConfiguration): IHasher {
-    return (configuration.identification == "quick")
-        ? new QuickMD5Hasher()
-        : new Sha512Hasher();
-}

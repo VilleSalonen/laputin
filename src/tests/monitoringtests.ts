@@ -11,7 +11,9 @@ import events = require("events");
 
 import {File} from "./../file";
 import {Tag} from "./../tag";
+import {compose} from "./../compose";
 import {Laputin} from "./../laputin";
+import {LaputinConfiguration} from "./../laputinconfiguration";
 
 describe("File Library", function() {
     // For some reason watching for file changes seems to always take about 5
@@ -186,7 +188,7 @@ describe("File Library", function() {
             fs.mkdirSync(archivePath);
         }
 
-        var laputin = new Laputin(archivePath, {});
+        var laputin = compose(archivePath, new LaputinConfiguration(1234, "accurate"));
         laputin.initializeRoutes();
         await laputin.library.createTables();
         await laputin.loadFiles();
