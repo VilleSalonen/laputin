@@ -59,13 +59,7 @@ import {LaputinConfiguration} from "./laputinconfiguration";
         ? JSON.parse(fs.readFileSync(configFilePath, "utf8"))
         : new LaputinConfiguration(3200, "accurate");
 
-    let hasher: IHasher;
-    if (configuration.identification == "quick") {
-        hasher = new QuickMD5Hasher();
-    } else {
-        hasher = new Sha512Hasher();
-    }
-    let laputin = new Laputin(options.libraryPath, hasher);
+    let laputin = compose(options.libraryPath, configuration);
 
     laputin.initializeRoutes();
 
@@ -78,3 +72,15 @@ import {LaputinConfiguration} from "./laputinconfiguration";
         winston.info("Laputin started at http://localhost:" + configuration.port);
     });
 })();
+
+function compose(libraryPath: string, configuration: LaputinConfiguration): Laputin {
+    let hasher: IHasher = composeHasher(configuration);
+
+    return new Laputin(libraryPath, hasher);
+}
+
+function composeHasher(configuration: LaputinConfiguration): IHasher {
+    return (configuration.identification == "quick")
+        ? new QuickMD5Hasher()
+        : new Sha512Hasher();
+}
