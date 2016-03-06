@@ -22,6 +22,7 @@
     "typings": "^0.6.8",
     "walk": "^2.3.9",
     "watch": "^0.17.1",
+    "winston": "^2.2.0",
     "zone.js": "0.5.15"
   },
   "devDependencies": {

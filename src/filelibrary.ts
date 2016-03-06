@@ -6,6 +6,7 @@ import walk = require("walk");
 import path = require("path");
 import watch = require("watch");
 import events = require("events");
+import winston = require("winston");
 
 import {IHasher} from "./ihasher";
 import {Library} from "./library";
@@ -14,11 +15,11 @@ import {File} from "./file";
 export class FileLibrary extends events.EventEmitter {
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [path: string]: string } = {};
-    
+
     constructor(private _libraryPath: string, private _hasher: IHasher) {
         super();
     }
-    
+
     public load(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             var walker = walk.walk(this._libraryPath, { followLinks: false });
@@ -29,11 +30,11 @@ export class FileLibrary extends events.EventEmitter {
             });
         });
     }
-    
+
     public close(): void {
         watch.unwatchTree(this._libraryPath);
     }
-    
+
     private startMonitoring(): void {
         // Start monitoring after library has been hashed. Otherwise changes
         // done to database file cause changed events to be emitted and thus
@@ -55,13 +56,13 @@ export class FileLibrary extends events.EventEmitter {
             monitor.on("removed", (path: string) => this.removeFileFromPath(path));
         });
     }
-    
+
     private async processFile(root: string, stat: walk.WalkStat, next: (() => void)): Promise<void> {
         var filePath = path.normalize(path.join(root, stat.name));
         await this.addFileFromPath(filePath);
         next();
     }
-    
+
     private async addFileFromPath(path: string): Promise<void> {
         let result = await this._hasher.hash(path)
         let file = new File(result.hash, result.path, []);
@@ -70,29 +71,31 @@ export class FileLibrary extends events.EventEmitter {
 
         this.addFileToBookkeeping(file);
         this.emit("found", file);
+
+        winston.log("verbose", "Found file: " + path);
     }
-    
+
     private addFileToBookkeeping(file: File): void {
         this.initializeListForHash(file);
-        
+
         if (!this.identicalFileAlreadyExistsInIdenticalPath(file)) {
             this._files[file.hash].push(file);
             this._hashesByPaths[file.path] = file.hash;
         }
     }
-    
+
     private fileShouldBeIgnored(file: File) {
         return path.basename(file.path).charAt(0) === "."
             || file.path.indexOf(".git") !== -1
-            || file.path.indexOf("Thumbs.db") !== -1; 
+            || file.path.indexOf("Thumbs.db") !== -1;
     }
-    
+
     private initializeListForHash(file: File): void {
         if (!this._files[file.hash]) {
             this._files[file.hash] = [];
         }
     }
-    
+
     private identicalFileAlreadyExistsInIdenticalPath(file: File): boolean {
         let files = this._files[file.hash];
         return _.some(files, (fileForChecking: File): boolean => file.path == fileForChecking.path);
@@ -106,15 +109,17 @@ export class FileLibrary extends events.EventEmitter {
         });
 
         this.emit("lost", new File(hash, path, []));
+
+        winston.log("verbose", "Lost file:  " + path);
     }
 
     public getDuplicates(): any {
         var duplicates: any = {};
-        
-        _.forOwn(this._files, function (file: any, key: string) {
+
+        _.forOwn(this._files, function(file: any, key: string) {
             duplicates[key] = file;
         });
-        
+
         return duplicates;
     }
 }

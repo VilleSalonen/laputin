@@ -4,6 +4,7 @@
 import commandLineArgs = require("command-line-args");
 import fs = require("fs");
 import path = require("path");
+import winston = require("winston");
 
 import {Laputin} from "./laputin";
 import {Library} from "./library";
@@ -13,9 +14,14 @@ import {LaputinConfiguration} from "./laputinconfiguration";
     let cli = commandLineArgs([
         { name: "libraryPath", type: String, multiple: false, defaultOption: true },
         { name: "initialize", type: Boolean, multiple: false },
+        { name: "verbose", type: Boolean, multiple: false }
     ]);
 
     let options = cli.parse();
+
+    if (options.verbose) {
+        winston.level = "verbose";
+    }
 
     if (!options.libraryPath) {
         console.log("You have to pass library path as an argument.");
@@ -43,7 +49,7 @@ import {LaputinConfiguration} from "./laputinconfiguration";
         process.exit(-1);
     }
 
-    console.log("Library path: " + options.libraryPath);
+    winston.info("Library path: " + options.libraryPath);
 
     let configFilePath = path.join(options.libraryPath, ".laputin.json");
     let configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
@@ -54,11 +60,12 @@ import {LaputinConfiguration} from "./laputinconfiguration";
 
     laputin.initializeRoutes();
 
-    console.time("hashing");
+    winston.info("Hashing files...");
+    let timer = winston.startTimer();
     await laputin.loadFiles();
-    console.timeEnd("hashing");
+    timer.done("Hashing");
 
     laputin.app.listen(configuration.port, () => {
-        console.log("Laputin started at http://localhost:" + configuration.port);
+        winston.info("Laputin started at http://localhost:" + configuration.port);
     });
 })();
