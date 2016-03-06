@@ -6,7 +6,7 @@ import sqlite3 = require("sqlite3");
 Promise.promisifyAll(sqlite3);
 
 import path = require("path");
-import _ = require("underscore");
+import _ = require("lodash");
 
 import {Query} from "./query.model";
 import {File} from "./file";

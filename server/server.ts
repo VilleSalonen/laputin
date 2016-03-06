@@ -2,7 +2,7 @@ import Promise = require("bluebird");
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require("path");
-import _ = require("underscore");
+import _ = require("lodash");
 import cors = require("cors");
 
 import {Library} from "./library";

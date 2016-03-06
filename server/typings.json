@@ -13,7 +13,9 @@
     "sqlite3": "github:DefinitelyTyped/DefinitelyTyped/sqlite3/sqlite3.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
     "superagent": "github:DefinitelyTyped/DefinitelyTyped/superagent/superagent.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
     "supertest": "github:DefinitelyTyped/DefinitelyTyped/supertest/supertest.d.ts#95433230a9913054c57c715e6b91a9ae738d0b97",
-    "underscore": "github:DefinitelyTyped/DefinitelyTyped/underscore/underscore.d.ts#aefd8146158b9f17c9eb79bbf158e6d8d3c2a87b",
     "watch": "github:DefinitelyTyped/DefinitelyTyped/watch/watch.d.ts#bd269cad4cb2b495f940c7b6afc5825d568029be"
+  },
+  "dependencies": {
+    "lodash": "github:typed-typings/npm-lodash#65781ee6b25562ee9b5913043a3ba249acfcee17"
   }
 }

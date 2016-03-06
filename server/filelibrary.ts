@@ -1,7 +1,7 @@
 /// <reference path="typings/main.d.ts" />
 /// <reference path="walk.d.ts" />
 
-import _ = require("underscore");
+import _ = require("lodash");
 import walk = require("walk");
 import path = require("path");
 import watch = require("watch");
@@ -95,7 +95,7 @@ export class FileLibrary extends events.EventEmitter {
     
     private identicalFileAlreadyExistsInIdenticalPath(file: File): boolean {
         let files = this._files[file.hash];
-        return _.any(files, (fileForChecking: File): boolean => file.path == fileForChecking.path);
+        return _.some(files, (fileForChecking: File): boolean => file.path == fileForChecking.path);
     }
 
     private removeFileFromPath(path: string): void {
@@ -109,8 +109,12 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     public getDuplicates(): any {
-        return _.pick(this._files, function (file: any) {
-            return file.length > 1;
+        var duplicates: any = {};
+        
+        _.forOwn(this._files, function (file: any, key: string) {
+            duplicates[key] = file;
         });
+        
+        return duplicates;
     }
 }
