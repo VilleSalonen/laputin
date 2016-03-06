@@ -37,7 +37,6 @@ export class Laputin {
     public initializeRoutes(): void {
         this.app = express();
 
-        this.app.use(cors());
         this.app.use(bodyParser.json({}));
 
         this.app.use(express.static(path.join(__dirname, "../client")));
