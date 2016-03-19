@@ -1,4 +1,4 @@
-import {Component, Input, EventEmitter} from "angular2/core";
+import {Component, Input, EventEmitter, Injectable, Inject} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 import * as _ from "lodash";
 
@@ -57,13 +57,14 @@ import {SearchBox} from "./searchbox.component";
     providers: [LaputinService, HTTP_PROVIDERS],
     directives: [TagAutocompleteComponent, SearchBox]
 })
+@Injectable()
 export class FileRowComponent {
     @Input() file: File;
     
     public detailsOpen: boolean = false;
     public tagCreationOpen: boolean = false;
     
-    constructor(private _service: LaputinService) {
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
     
     public toggle(): void {

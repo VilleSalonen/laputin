@@ -1,5 +1,5 @@
 import {Promise} from "es6-promise";
-import {Component} from "angular2/core";
+import {Component, Injectable, Inject} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/toPromise";
@@ -14,10 +14,11 @@ import {Duplicate} from "./../models/duplicate";
 @Component({
     providers: [HTTP_PROVIDERS]
 })
+@Injectable()
 export class LaputinService {
     private _baseUrl: string = "http://localhost:3200"; 
     
-    constructor(private _http: Http) {
+    constructor(@Inject(Http) private _http: Http) {
     }
     
     public queryFiles(query: FileQuery): Promise<File[]> {

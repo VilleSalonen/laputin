@@ -1,4 +1,4 @@
-import {Component, OnInit} from "angular2/core";
+import {Component, OnInit, Injectable, Inject} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 import {Observable} from "rxjs/Rx";
 
@@ -36,11 +36,12 @@ import {FileRowComponent} from "./file.component";
     providers: [LaputinService, HTTP_PROVIDERS],
     directives: [FileSearchComponent, FileRowComponent]
 })
+@Injectable()
 export class FilesComponent implements OnInit {
     public files: File[] = [];
     public query: FileQuery = new FileQuery();
     
-    constructor(private _service: LaputinService) {
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
     
     ngOnInit(): void {

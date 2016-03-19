@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, ElementRef} from "angular2/core";
+import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject} from "angular2/core";
 import {Control} from 'angular2/common';
 import {Observable} from 'rxjs/Rx';
 
@@ -27,8 +27,10 @@ import {LaputinService} from "./../services/laputinservice";
                 </li>
             </ul>
         </div>
-    </div>`
+    </div>`,
+    providers: [LaputinService]
 })
+@Injectable()
 export class TagAutocompleteComponent {
     public title: string = "";
     public selectedIndex: number = -1;
@@ -43,7 +45,7 @@ export class TagAutocompleteComponent {
     @Output()
     public select = new EventEmitter<Tag>();
     
-    constructor(private _service: LaputinService) {
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
         this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
 
         this.term.valueChanges
