@@ -1,6 +1,7 @@
 import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject} from "angular2/core";
 import {Control} from 'angular2/common';
 import {Observable} from 'rxjs/Rx';
+import * as _ from "lodash";
 
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
