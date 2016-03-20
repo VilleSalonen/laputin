@@ -2,4 +2,8 @@ node_modules/
 typings/
 app/**/*.js.map
 app/**/*.js
+components/*.js
+models/*.js
+services/*.js
+main.js
 deploy-tests/
