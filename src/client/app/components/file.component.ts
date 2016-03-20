@@ -43,7 +43,7 @@ import {SearchBox} from "./searchbox.component";
                     </div>
                     
                     <div class="col-md-10">
-                        <p><video src="http://localhost:3200/media/{{file.name}}" controls width="100%"></video></p>
+                        <p><video src="/media/{{file.name}}" controls width="100%"></video></p>
                     
                         <p>
                             <span *ngFor="#tag of file.tags">
