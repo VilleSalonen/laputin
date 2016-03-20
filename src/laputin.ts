@@ -28,17 +28,17 @@ export class Laputin {
         this.app.use("/node_modules", express.static(path.join(__dirname, "../node_modules")));
         this.app.use("/media", express.static(this._libraryPath));
 
-        this.app.route("/files").get(async (req, res) => {
+        this.app.route("/api/files").get(async (req, res) => {
             let files = await this.library.getFiles(req.query);
             res.send(files);
         });
 
-        this.app.route("/tags").get(async (req, res) => {
+        this.app.route("/api/tags").get(async (req, res) => {
             let tags = await this.library.getTags(req.query);
             res.send(tags);
         });
 
-        this.app.route("/tags").post(async (req, res) => {
+        this.app.route("/api/tags").post(async (req, res) => {
             try {
                 let tagName = req.body.tagName;
                 let tag = await this.library.createNewTag(tagName);
@@ -49,7 +49,7 @@ export class Laputin {
             }
         });
 
-        this.app.route("/files/:hash/tags").post((req, res) => {
+        this.app.route("/api/files/:hash/tags").post((req, res) => {
             var selectedTags = req.body.selectedTags;
             _.each(selectedTags, (tag: Tag) => {
                 this.library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
@@ -57,9 +57,13 @@ export class Laputin {
             res.status(200).end();
         });
 
-        this.app.route("/files/:hash/tags/:tagId").delete(async (req, res) => {
+        this.app.route("/api/files/:hash/tags/:tagId").delete(async (req, res) => {
             await this.library.deleteLinkBetweenTagAndFile(req.params.tagId, req.params.hash);
             res.status(200).end();
+        });
+        
+        this.app.route("/api/duplicates").get((req, res) => {
+            res.send(this.fileLibrary.getDuplicates());
         });
     }
     

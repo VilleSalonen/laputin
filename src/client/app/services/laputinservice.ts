@@ -16,7 +16,7 @@ import {Duplicate} from "./../models/duplicate";
 })
 @Injectable()
 export class LaputinService {
-    private _baseUrl: string = ""; 
+    private _baseUrl: string = "/api"; 
     
     constructor(@Inject(Http) private _http: Http) {
     }
