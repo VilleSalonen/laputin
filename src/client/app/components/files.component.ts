@@ -39,24 +39,25 @@ import {FileRowComponent} from "./file.component";
 @Injectable()
 export class FilesComponent implements OnInit {
     public files: File[] = [];
-    public query: FileQuery = new FileQuery();
+    private _query: FileQuery = new FileQuery();
     
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
     
     ngOnInit(): void {
-        this._service.queryFiles(this.query).then((files: File[]) => {
+        this._service.queryFiles(this._query).then((files: File[]) => {
             this.files = files;
         });
     }
     
     filterFiles(query: FileQuery): void {
+        this._query = query;
         this._service.queryFiles(query).then((files: File[]) => {
             this.files = files;
         });
     }
     
     openFiles(): void {
-        this._service.openFiles(this.files);
+        this._service.openFiles(this._query);
     }
 }

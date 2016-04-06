@@ -6,6 +6,7 @@ import {TagContainer} from "./tagcontainer";
 export class FileQuery implements TagContainer {
     public filename: string;
     public status: string;
+    public hash: string;
     
     public andTags: Tag[] = [];
     public orTags: Tag[] = [];
@@ -43,6 +44,7 @@ export class FileQuery implements TagContainer {
     public clear(): void {
         this.filename = "";
         this.status = "both";
+        this.hash = "";
         this.andTags = [];
         this.orTags = [];
         this.notTags = [];

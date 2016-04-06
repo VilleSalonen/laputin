@@ -4,6 +4,7 @@ import * as _ from "lodash";
 
 import {LaputinService} from "./../services/laputinservice";
 import {File} from "./../models/file";
+import {FileQuery} from "./../models/filequery";
 import {Tag} from "./../models/tag";
 import {TagAutocompleteComponent} from "./tagautocomplete.component";
 import {SearchBox} from "./searchbox.component";
@@ -40,6 +41,7 @@ import {SearchBox} from "./searchbox.component";
                         </div>
 
                         <p><small><a (click)="copy()">Copy</a> <a (click)="paste()">Paste</a></small></p>
+                        <p><small><a (click)="openFile()">Open</a></small></p>
                     </div>
                     
                     <div class="col-md-10">
@@ -108,8 +110,11 @@ export class FileRowComponent {
         this.file.tags = sorted;
     }
     
-    public onSelect(file: File): void {
-        this._service.openFile(file);
+    public openFile(): void {
+        var query = new FileQuery();
+        query.hash = this.file.hash;
+        
+        this._service.openFiles(query);
     }
     
     public copy(): void {

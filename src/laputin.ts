@@ -7,18 +7,18 @@ import cors = require("cors");
 
 import {Library} from "./library";
 import {FileLibrary} from "./filelibrary";
-import {IHasher} from "./ihasher";
+import {VLCOpener} from "./vlcopener";
 import {File} from "./file";
 import {Tag} from "./tag";
 
 export class Laputin {
     public app: express.Express;
-    
-    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary) {
+
+    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary, private _opener: VLCOpener) {
         this.fileLibrary.on("found", (file: File) => this.library.addFile(file));
         this.fileLibrary.on("lost", (file: File) => this.library.deactivateFile(file));
     }
-    
+
     public initializeRoutes(): void {
         this.app = express();
 
@@ -65,8 +65,14 @@ export class Laputin {
         this.app.route("/api/duplicates").get((req, res) => {
             res.send(this.fileLibrary.getDuplicates());
         });
+        
+        this.app.route("/api/open/files").get(async (req, res) => {
+            let files = await this.library.getFiles(req.query);
+            await this._opener.open(files);
+            res.status(200).end();
+        });
     }
-    
+
     public async loadFiles(): Promise<void> {
         await this.library.deactivateAll();
         return this.fileLibrary.load();

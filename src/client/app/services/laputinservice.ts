@@ -20,7 +20,7 @@ export class LaputinService {
     
     constructor(@Inject(Http) private _http: Http) {
     }
-    
+
     public queryFiles(query: FileQuery): Promise<File[]> {
         var params = this.compileParams(query);
         return this._http.get(this._baseUrl + "/files" + params)
@@ -32,11 +32,11 @@ export class LaputinService {
                         result.push(this._convertFile(file));
                     });
                 }
-                
+
                 return result;
             }).toPromise();
     }
-    
+
     public getTags(): Promise<Tag[]> {
         return this._http.get(this._baseUrl + "/tags")
             .map(res => res.json())
@@ -50,7 +50,7 @@ export class LaputinService {
                 return result;
             }).toPromise();
     }
-    
+
     public getDuplicates(): Promise<Duplicate[]> {
         return this._http.get(this._baseUrl + "/duplicates")
             .map(res => res.json())
@@ -64,70 +64,59 @@ export class LaputinService {
                 return result;
             }).toPromise();
     }
-    
+
     private _convertTag(tag: any): Tag {
         return new Tag(tag.id, tag.name, tag.associationCount);
     }
-    
+
     private _convertTags(tags: any): Tag[] {
         return tags.map((tag: any) => this._convertTag(tag));
     }
-    
+
     private _convertFile(file: any): File {
         return new File(file.hash, file.path, file.name, this._convertTags(file.tags));
     }
-    
-    public openFile(file: File): void {
-        this.openFiles([file]);
+
+    public openFiles(query: FileQuery): Promise<Response> {
+        const headers = new Headers({ 'Accept': 'application/json', "Content-Type": "application/json" });
+        var params = this.compileParams(query);
+        return this._http.get(this._baseUrl + "/open/files" + params).toPromise();
     }
-    
-    public openFiles(files: File[]): void {
-        let hashes = files.map(file => file.hash);
-        
-        let body = JSON.stringify({ selectedHashes: hashes });
-        const headers = new Headers({"Content-Type": "application/json"});
-        
-        this._http.post(this._baseUrl + "/open/files/", body, { headers: headers })
-                   .subscribe(
-                        data => console.log("Data: " + data),
-                        err => console.log("Error: " + err),
-                        () => console.log("Complete")
-                   );
-    }
-    
+
     public createTag(file: File, newTagName: string): Observable<Tag> {
         let body = JSON.stringify({ tagName: newTagName });
-        const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
-        
+        const headers = new Headers({ 'Accept': 'application/json', "Content-Type": "application/json" });
+
         return this._http
             .post(this._baseUrl + "/tags", body, { headers: headers })
             .map(res => res.json())
             .map(tag => this._convertTag(tag));
     }
-    
+
     public addTags(file: File, tags: Tag[]): Observable<Response> {
         let body = JSON.stringify({
-                selectedTags: tags
-            });
-        const headers = new Headers({'Accept': 'application/json', "Content-Type": "application/json"});
-        
+            selectedTags: tags
+        });
+        const headers = new Headers({ 'Accept': 'application/json', "Content-Type": "application/json" });
+
         return this._http.post(this._baseUrl + "/files/" + file.hash + "/tags", body, { headers: headers });
     }
-    
+
     public addTag(file: File, tag: Tag): Observable<Response> {
         return this.addTags(file, [tag]);
     }
-    
+
     public deleteTagFileAssoc(file: File, tag: Tag): Observable<Response> {
         return this._http.delete(this._baseUrl + "/files/" + file.hash + "/tags/" + tag.id);
     }
-    
+
     private compileParams(query: FileQuery): string {
         var params: string[] = [];
-        
+
         if (query.filename) params.push("filename=" + query.filename);
         if (query.status) params.push("status=" + query.status);
-        
+        if (query.hash) params.push("hash=" + query.hash);
+
         if (query.andTags.length > 0) {
             params.push("and=" + _.map(query.andTags, (tag: Tag) => tag.id).join(","));
         }
@@ -137,11 +126,11 @@ export class LaputinService {
         if (query.notTags.length > 0) {
             params.push("not=" + _.map(query.notTags, (tag: Tag) => tag.id).join(","));
         }
-        
+
         var paramsStr: string = "";
         if (params.length > 0)
             paramsStr = "?" + params.join("&");
-        
+
         return paramsStr;
     }
 }
