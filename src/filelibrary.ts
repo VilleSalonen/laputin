@@ -116,8 +116,10 @@ export class FileLibrary extends events.EventEmitter {
     public getDuplicates(): any {
         var duplicates: any = {};
 
-        _.forOwn(this._files, function(file: any, key: string) {
-            duplicates[key] = file;
+        _.forOwn(this._files, function(files: File[], hash: string) {
+            if (files.length > 1) {
+                duplicates[hash] = files;
+            }
         });
 
         return duplicates;
