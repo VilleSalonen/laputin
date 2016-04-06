@@ -1,4 +1,4 @@
-import {Component, OnInit} from "angular2/core";
+import {Component, OnInit, Injectable, Inject} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 
 import {File} from "./../models/file";
@@ -18,11 +18,12 @@ import {SearchBox} from "./searchbox.component";
     providers: [LaputinService, HTTP_PROVIDERS],
     directives: [SearchBox]
 })
+@Injectable()
 export class TagsComponent implements OnInit {
     public tags: Tag[] = [];
     public term: string = "";
     
-    constructor(private _service: LaputinService) {
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
     
     ngOnInit(): void {
