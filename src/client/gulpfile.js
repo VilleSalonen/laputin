@@ -5,7 +5,12 @@ var gulp = require("gulp"),
     util = require("gulp-util"),
     rimraf = require("rimraf");
 
-var tsOptions = {module: "commonjs", target: "es6", experimentalDecorators: true};
+var tsOptions = ts.createProject("tsconfig.json");
+
+gulp.task("build", function (cb) {
+    return gulp.src(["app/**/*.ts"])
+               .pipe(ts(tsOptions)).pipe(gulp.dest("app"));
+});
 
 gulp.task("clean-tests", function (cb) {
     return rimraf("deploy-tests", cb);
