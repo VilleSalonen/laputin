@@ -1,4 +1,4 @@
-import {Component} from "angular2/core";
+import {Component, Injectable, Inject} from "angular2/core";
 import {HTTP_PROVIDERS, Headers} from "angular2/http";
 
 import {LaputinService} from "./../services/laputinservice";
@@ -20,10 +20,11 @@ import {Duplicate} from "./../models/duplicate";
     `,
     providers: [LaputinService, HTTP_PROVIDERS]
 })
+@Injectable()
 export class DuplicatesComponent {
     public duplicates: Duplicate[];
     
-    constructor(private _service: LaputinService) {
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
         _service.getDuplicates().then((duplicates: Duplicate[]) => this.duplicates = duplicates);
     }
 }
