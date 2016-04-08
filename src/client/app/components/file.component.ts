@@ -16,11 +16,7 @@ import {SearchBox} from "./searchbox.component";
             <div *ngIf="!detailsOpen">
                 <p><a (click)="toggle()">{{file.path}}</a></p>
                 
-                <p>
-                    <span *ngFor="#tag of file.tags">
-                        {{tag.name}}
-                    </span>
-                </p>
+                <p>{{formattedTags()}}</p>
             </div>
         
             <div *ngIf="detailsOpen">
@@ -122,5 +118,9 @@ export class FileRowComponent {
     public paste(): void {
         var tags = JSON.parse(localStorage.getItem("tagClipboard"));
         this.addTags(tags);
+    }
+    
+    public formattedTags(): string {
+        return _.map(this.file.tags, (tag) => tag.name).join(", ");
     }
 }
