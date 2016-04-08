@@ -103,10 +103,8 @@ export class FileRowComponent {
     
     private addTagsToFile(tags: Tag[]): void {
         var currentTags = this.file.tags;
-        var sorted = _.chain(tags)
-            .each((tag: Tag) => currentTags.push(tag))
-            .sortBy((tag: Tag) => tag.name)
-            .value();
+        _.each(tags, (tag: Tag) => currentTags.push(tag));
+        var sorted = _.sortBy(currentTags, (tag: Tag) => tag.name);
         this.file.tags = sorted;
     }
     
