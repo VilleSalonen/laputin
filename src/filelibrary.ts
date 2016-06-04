@@ -102,10 +102,13 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     private removeFileFromPath(path: string): void {
-        var hash = this._hashesByPaths[path];
+        // Ugly fix for different path separators
+        var fixedPath = path.replace(/\\/g, "/");
+        var hash = this._hashesByPaths[fixedPath];
         var files = this._files[hash];
         this._files[hash] = _.filter(files, (file: File) => {
-            return file.path !== path;
+            winston.log("verbose", "File: " + file.path + " compared to " + fixedPath);
+            return file.path !== fixedPath;
         });
 
         this.emit("lost", new File(hash, path, []));
