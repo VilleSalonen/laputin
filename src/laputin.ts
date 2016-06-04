@@ -2,6 +2,7 @@ import Promise = require("bluebird");
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require("path");
+import http = require("http");
 import _ = require("lodash");
 import cors = require("cors");
 
@@ -13,8 +14,9 @@ import {Tag} from "./tag";
 
 export class Laputin {
     public app: express.Express;
+    private _server: http.Server;
 
-    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary, private _opener: VLCOpener) {
+    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary, private _opener: VLCOpener, private _port: number) {
         this.fileLibrary.on("found", (file: File) => this.library.addFile(file));
         this.fileLibrary.on("lost", (file: File) => this.library.deactivateFile(file));
     }
@@ -71,6 +73,24 @@ export class Laputin {
             await this._opener.open(files);
             res.status(200).end();
         });
+    }
+    
+    public startListening(): Promise<void> {
+        var done: Function;
+        var promise = new Promise<void>((resolve, reject) => done = resolve);
+        
+        this._server = this.app.listen(this._port, done);
+        
+        return promise;
+    }
+    
+    public stopListening(): Promise<void> {
+        var done: Function;
+        var promise = new Promise<void>((resolve, reject) => done = resolve);
+        
+        this._server.close(done);
+        
+        return promise;
     }
 
     public async loadFiles(): Promise<void> {

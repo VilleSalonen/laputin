@@ -20,6 +20,10 @@ describe("Laputin API", function() {
         currentPath = this.currentTest.title.toLowerCase().replace(/ /g, "_");
         laputin = await initializeLaputin(currentPath);
     });
+    
+    afterEach(async function() {
+        await laputin.stopListening();
+    });
 
     it("Added file can be found", async () => {
         let file: File = new File("aaaaa11111", "new_funny_pic.jpg", []);
@@ -191,6 +195,9 @@ describe("Laputin API", function() {
         laputin.initializeRoutes();
 
         await laputin.library.createTables();
+        
+        await laputin.startListening();
+        
         return laputin;
     }
 

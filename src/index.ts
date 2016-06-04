@@ -66,7 +66,6 @@ import {compose} from "./compose";
     await laputin.loadFiles();
     timer.done("Hashing");
 
-    laputin.app.listen(configuration.port, () => {
-        winston.info("Laputin started at http://localhost:" + configuration.port);
-    });
+    await laputin.startListening();
+    winston.info("Laputin started at http://localhost:" + configuration.port);
 })();

@@ -28,9 +28,10 @@ describe("File Library", function() {
         currentPath = this.currentTest.title.toLowerCase().replace(/ /g, "_");
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         if (laputin) {
             laputin.fileLibrary.close();
+            await laputin.stopListening();
         }
     });
 
@@ -158,12 +159,42 @@ describe("File Library", function() {
         await copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/" + currentPath + "/jyvasjarvi.jpg");
         await waitForEvent(laputin.fileLibrary, "found", 8000);
 
+        var duplicates = laputin.fileLibrary.getDuplicates();
+        expect(duplicates).to.eql({});
+
+        return await shouldContainFiles(laputin, [landscapeFile]);
+    });
+    
+    it("When a file is renamed, it is not detected as duplicate", async function() {
+        let landscapeFile = new File("44f332dadcd09cc73c14b30a8334c1bf7d615829dd111f47fa9d3ae212933e32cbf59cd700010bd0e950309d64c23b03badcb990170676e003a0b02b63d3e757",
+            "deploy-tests/" + currentPath + "/jyvasjarvi.jpg",
+            []);
+
+        fs.mkdirSync("deploy-tests/" + currentPath + "");
+        await copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/" + currentPath + "/jyvasjarvi.jpg");
+
+        // Start monitoring after initial files have been copied
+        laputin = await initializeLaputin(currentPath);
+
+        await copyFile("tests/test-content/jyvasjarvi.jpg", "deploy-tests/" + currentPath + "/jyvasjarvi.jpg");
+        await waitForEvent(laputin.fileLibrary, "found", 8000);
+
+        var duplicates = laputin.fileLibrary.getDuplicates();
+        expect(duplicates).to.eql({});
+
         return await shouldContainFiles(laputin, [landscapeFile]);
     });
 
     function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
         return request(laputin.app)
             .get("/api/files")
+            .expect(200)
+            .expect(expectedFiles);
+    }
+    
+    function shouldContainDuplicates(laputin: Laputin, expectedFiles: any): request.Test {
+        return request(laputin.app)
+            .get("/api/duplicates")
             .expect(200)
             .expect(expectedFiles);
     }
@@ -193,6 +224,8 @@ describe("File Library", function() {
         await laputin.library.createTables();
         await laputin.loadFiles();
         
+        await laputin.startListening();
+        
         // File monitoring seems to need some time to wake up
         await delay(100);
 
@@ -207,6 +240,12 @@ describe("File Library", function() {
             wr.on('error', reject);
             wr.on('finish', resolve);
             rd.pipe(wr);
+        });
+    }
+    
+    function moveFile(source: string, target: string): Promise<void> {
+        return new Promise<void>(function(resolve, reject) {
+            fs.rename(source, target, () => resolve());
         });
     }
     

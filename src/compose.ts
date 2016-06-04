@@ -15,7 +15,7 @@ export function compose(libraryPath: string, configuration: LaputinConfiguration
     
     let opener = new VLCOpener(libraryPath);
 
-    return new Laputin(libraryPath, library, fileLibrary, opener);
+    return new Laputin(libraryPath, library, fileLibrary, opener, configuration.port);
 }
 
 function composeHasher(configuration: LaputinConfiguration): IHasher {
