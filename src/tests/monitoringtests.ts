@@ -163,7 +163,7 @@ describe("File Library", function() {
 
     function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
         return request(laputin.app)
-            .get("/files")
+            .get("/api/files")
             .expect(200)
             .expect(expectedFiles);
     }

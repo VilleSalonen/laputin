@@ -33,7 +33,7 @@ describe("Laputin API", function() {
         let tag = await laputin.library.createNewTag("Educational");
 
         return request(laputin.app)
-            .get("/tags?unassociated=true")
+            .get("/api/tags?unassociated=true")
             .expect(200)
             .expect([tag]);
     });
@@ -42,7 +42,7 @@ describe("Laputin API", function() {
         let tag = await laputin.library.createNewTag("Hilarious");
 
         return request(laputin.app)
-            .get("/tags")
+            .get("/api/tags")
             .expect(200)
             .expect([]);
     });
@@ -51,14 +51,14 @@ describe("Laputin API", function() {
         let tag = await laputin.library.createNewTag("Seeing double");
 
         return request(laputin.app)
-            .post("/tags")
+            .post("/api/tags")
             .send({ tagName: tag.name })
             .expect(500);
     });
 
     it("Creating tag with empty name returns error", () => {
         return request(laputin.app)
-            .post("/tags")
+            .post("/api/tags")
             .send({ tagName: "" })
             .expect(500);
     });
@@ -70,7 +70,7 @@ describe("Laputin API", function() {
         await laputin.library.addFile(file);
 
         await request(laputin.app)
-            .post("/files/" + file.hash + "/tags")
+            .post("/api/files/" + file.hash + "/tags")
             .send({ selectedTags: [tag] })
             .expect(200);
 
@@ -84,12 +84,12 @@ describe("Laputin API", function() {
         await laputin.library.addFile(file);
 
         await request(laputin.app)
-            .post("/files/" + file.hash + "/tags")
+            .post("/api/files/" + file.hash + "/tags")
             .send({ selectedTags: [tag] })
             .expect(200);
 
         await request(laputin.app)
-            .delete("/files/" + file.hash + "/tags/" + tag.id)
+            .delete("/api/files/" + file.hash + "/tags/" + tag.id)
             .send({ tagId: tag.id })
             .expect(200);
 
@@ -105,12 +105,12 @@ describe("Laputin API", function() {
 
         let tag = await laputin.library.createNewTag("Funnyyyy");
         await request(laputin.app)
-            .post("/files/" + taggedFile.hash + "/tags")
+            .post("/api/files/" + taggedFile.hash + "/tags")
             .send({ selectedTags: [tag] })
             .expect(200);
 
         return request(laputin.app)
-            .get("/files?status=both")
+            .get("/api/files?status=both")
             .expect(200)
             .expect([
                 new File(taggedFile.hash, taggedFile.path, [tag]),
@@ -126,12 +126,12 @@ describe("Laputin API", function() {
 
         let tag = await laputin.library.createNewTag("Funnyyyy");
         await request(laputin.app)
-            .post("/files/" + taggedFile.hash + "/tags")
+            .post("/api/files/" + taggedFile.hash + "/tags")
             .send({ selectedTags: [tag] })
             .expect(200);
 
         return request(laputin.app)
-            .get("/files?status=tagged")
+            .get("/api/files?status=tagged")
             .expect(200)
             .expect([new File(taggedFile.hash, taggedFile.path, [tag])]);
     });
@@ -145,12 +145,12 @@ describe("Laputin API", function() {
 
         let tag = await laputin.library.createNewTag("Funnyyyy");
         await request(laputin.app)
-            .post("/files/" + taggedFile.hash + "/tags")
+            .post("/api/files/" + taggedFile.hash + "/tags")
             .send({ selectedTags: [tag] })
             .expect(200);
 
         return request(laputin.app)
-            .get("/files?status=untagged")
+            .get("/api/files?status=untagged")
             .expect(200)
             .expect([untaggedFile]);
     });
@@ -196,7 +196,7 @@ describe("Laputin API", function() {
 
     function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
         return request(laputin.app)
-            .get("/files")
+            .get("/api/files")
             .expect(200)
             .expect(expectedFiles);
     }
