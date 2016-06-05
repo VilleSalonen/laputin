@@ -56,10 +56,13 @@ export class LaputinService {
             .map(res => res.json())
             .map((duplicates: any[]): any[] => {
                 let result: Duplicate[] = [];
-                for (let dup of _.forOwn(duplicates)) {
-                    var current = duplicates[dup];
+                
+                var hashes = Object.keys(duplicates);
+                
+                for (let hash of hashes) {
+                    var current = duplicates[hash];
                     let files = current.map((file: any) => new File(file.hash, file.path, file.name, []));
-                    result.push(new Duplicate(dup, files));
+                    result.push(new Duplicate(hash, files));
                 }
                 return result;
             }).toPromise();
