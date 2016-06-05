@@ -54,7 +54,7 @@ export class LaputinService {
     public getDuplicates(): Promise<Duplicate[]> {
         return this._http.get(this._baseUrl + "/duplicates")
             .map(res => res.json())
-            .map((duplicates: any[]): any[] => {
+            .map((duplicates: any): any[] => {
                 let result: Duplicate[] = [];
                 
                 var hashes = Object.keys(duplicates);
