@@ -7,6 +7,9 @@ import {Duplicate} from "./../models/duplicate";
 @Component({
     template: `
         <h1>Duplicates</h1>
+        
+        <p ng-show="!duplicates.length">No duplicates found.</p>
+        
         <ul>
             <li *ngFor="#duplicate of duplicates">
                 {{duplicate.hash}}
