@@ -11,7 +11,7 @@ import {DuplicatesComponent} from "./duplicates.component";
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/#/">Laputin</a>
+                    <a class="navbar-brand" [routerLink]="['Files']">Laputin</a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
