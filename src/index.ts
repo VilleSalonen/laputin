@@ -20,6 +20,9 @@ import {compose} from "./compose";
 
     let options = cli.parse();
 
+    // For some reason " is added only to the end of the path if path contains spaces.
+    options.libraryPath = options.libraryPath.replace(/\"/g, '');
+
     if (options.verbose) {
         winston.level = "verbose";
     }
