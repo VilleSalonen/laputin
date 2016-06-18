@@ -41,6 +41,8 @@ import {SearchBox} from "./searchbox.component";
                     </div>
                     
                     <div class="col-md-10">
+                        <p><video src="/media/{{file.path}}" controls width="100%"></video></p>
+                    
                         <p>
                             <span *ngFor="#tag of file.tags">
                                 <button (click)="removeTag(tag)" class="btn btn-success tag">{{tag.name}}</button>
