@@ -15,7 +15,7 @@ export class VLCOpener {
         this._child = undefined;
 
         if (os.platform() === "win32") {
-            this._binaryPath = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
+            this._binaryPath = "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe";
         } else {
             this._binaryPath = "/Applications/VLC.app/Contents/MacOS/VLC";
         }
