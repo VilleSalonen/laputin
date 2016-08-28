@@ -107,7 +107,6 @@ export class FileLibrary extends events.EventEmitter {
         var hash = this._hashesByPaths[fixedPath];
         var files = this._files[hash];
         this._files[hash] = _.filter(files, (file: File) => {
-            winston.log("verbose", "File: " + file.path + " compared to " + fixedPath);
             return file.path !== fixedPath;
         });
 
