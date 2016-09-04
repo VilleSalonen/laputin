@@ -80,6 +80,13 @@ export class FileSearchComponent {
     }
     
     addTag(tag: Tag): void {
+        // For some reason normal Event objects are sometimes passed to this
+        // method. That triggers tag selection.
+        //
+        // To get rid of such problematic selections, check type.
+        if (typeof tag != "Tag")
+            return;
+
         this.query.andTag(tag);
         this.update.emit(this.query);
     }
