@@ -22,6 +22,10 @@ import {LaputinService} from "./../services/laputinservice";
                     </th>
                 </tr>
 
+                <tr [hidden]="!loading" class="loading">
+                    <td><span class="glyphicon glyphicon-time" aria-hidden="true"></span></td>
+                </tr>
+
                 <tr *ngFor="let file of files">
                     <td>
                         <file-row [file]="file"></file-row>
@@ -35,25 +39,31 @@ import {LaputinService} from "./../services/laputinservice";
 @Injectable()
 export class FilesComponent implements OnInit {
     public files: File[] = [];
+    public loading: boolean = false;
     private _query: FileQuery = new FileQuery();
     
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
     
     ngOnInit(): void {
-        this._service.queryFiles(this._query).then((files: File[]) => {
-            this.files = files;
-        });
+        this.loadFiles();
     }
     
     filterFiles(query: FileQuery): void {
         this._query = query;
-        this._service.queryFiles(query).then((files: File[]) => {
-            this.files = files;
-        });
+        this.loadFiles();
     }
     
     openFiles(): void {
         this._service.openFiles(this._query);
+    }
+
+    loadFiles(): void {
+        this.files = [];
+        this.loading = true;
+        this._service.queryFiles(this._query).then((files: File[]) => {
+            this.files = files;
+            this.loading = false;
+        });
     }
 }
