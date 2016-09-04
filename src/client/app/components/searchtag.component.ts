@@ -31,6 +31,7 @@ export class SearchTag {
     }
     
     private and(): void {
+        this.tagClass = "btn-success";
         this.changed.emit(new TagChange(this.tag, TagStatus.And));
     }
 
