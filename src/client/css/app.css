@@ -36,6 +36,7 @@
 
 .extra-padded {
     padding: 15px;
+    padding-bottom: 0px;
 }
 
 .hover {
