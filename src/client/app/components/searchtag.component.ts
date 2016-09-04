@@ -11,8 +11,10 @@ export class TagChange {
     selector: "search-tag",
     template: `
     <div class="btn-group">
-        <button type="button" class="{{tagClass}} btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{tag.name}}
+        <button type="button" class="btn {{tagClass}}" (click)="removeTag()">{{tag.name}}</button>
+        <button type="button" class="btn {{tagClass}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
             <li><a (click)="and()">Must contain</a></li>
@@ -30,8 +32,8 @@ export class SearchTag {
 
     public tagClass: string = "btn-success";
 
-    private removeTag(tag: Tag): void {
-        this.removed.emit(tag);
+    private removeTag(): void {
+        this.removed.emit(this.tag);
     }
     
     private and(): void {
