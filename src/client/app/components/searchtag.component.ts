@@ -10,12 +10,16 @@ export class TagChange {
 @Component({
     selector: "search-tag",
     template: `
-    <button class="dropdown-toggle btn {{tagClass}}" type="button" (click)="removeTag(tag)">
-        <span>{{tag.name}} </span>
-    </button>
-    <button (click)="and()">AND</button>
-    <button (click)="or()">OR</button>
-    <button (click)="not()">NOT</button>
+    <div class="btn-group">
+        <button type="button" class="{{tagClass}} btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{tag.name}}
+        </button>
+        <ul class="dropdown-menu">
+            <li><a (click)="and()">Must contain</a></li>
+            <li><a (click)="or()">Can contain</a></li>
+            <li><a (click)="not()">Does not contain</a></li>
+        </ul>
+    </div>
     `
 })
 export class SearchTag {
