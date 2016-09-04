@@ -47,7 +47,7 @@ import {TagChange} from "./searchtag.component";
                                     </p>
                                 </div>
                             </div>
-                            <input type="submit" (click)="submitClicked($event)" />
+                            <input type="submit" style="display: none;" (click)="submitClicked($event)" />
                         </form>
                     </div>
                     <div class="col-md-7 col-md-offset-1">
