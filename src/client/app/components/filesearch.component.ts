@@ -31,7 +31,7 @@ import {TagChange} from "./searchtag.component";
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Status</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" [(ngModel)]="query.status" name="status">
+                                    <select class="form-control" [ngModel]="query.status" (ngModelChange)="onStatusChanged($event)" name="status">
                                         <option value="both">Both tagged and untagged</option>
                                         <option value="untagged">Only untagged</option>
                                         <option value="tagged">Only tagged</option>
@@ -69,6 +69,11 @@ export class FileSearchComponent {
     constructor() {
     }
     
+    onStatusChanged(newStatus: string): void {
+        this.query.status = newStatus;
+        this.update.emit(this.query);
+    }
+
     submitClicked(event: Event): void {
         event.preventDefault();
         this.update.emit(this.query);
