@@ -1,5 +1,5 @@
-import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject} from "angular2/core";
-import {Control} from 'angular2/common';
+import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject} from "@angular/core";
+import {FormControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs/Rx';
 import * as _ from "lodash";
 
@@ -14,21 +14,23 @@ import {LaputinService} from "./../services/laputinservice";
 @Component({
     selector: "tag-autocomplete",
     template: `
-    <div>
-        <input class="typeahead-input form-control"
-               [(ngModel)]="title"
-               [ngFormControl]="term"
-               (keyup)="onKeyUp($event)" />
-        <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
-            <ul class="typeahead-list" role="menu">
-                <li *ngFor="#tag of matchingTags; #i = index"
-                    [class]="selectedIndex == i ? 'hover' : ''"
-                    (click)="mouseSelection(tag)">
-                    {{tag.name}}
-                </li>
-            </ul>
+        <div>
+            <input class="typeahead-input form-control"
+                    type="text"
+                    [(ngModel)]="title"
+                    [formControl]="termCtrl"
+                    (keyup)="onKeyUp($event)">
+            <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
+                <ul class="typeahead-list" role="menu">
+                    <li *ngFor="let tag of matchingTags; let i = index"
+                        [class]="selectedIndex == i ? 'hover' : ''"
+                        (click)="mouseSelection(tag)">
+                        {{tag.name}}
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>`,
+    `,
     providers: [LaputinService]
 })
 @Injectable()
@@ -38,8 +40,8 @@ export class TagAutocompleteComponent {
     
     public allTags: Tag[] = [];
     public matchingTags: Tag[] = [];
-    
-    public term = new Control();
+
+    public termCtrl = new FormControl();
     
     @Input() tagContainer: TagContainer;
     
@@ -49,7 +51,7 @@ export class TagAutocompleteComponent {
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
 
-        this.term.valueChanges
+        this.termCtrl.valueChanges
             .debounceTime(500)
             .distinctUntilChanged()
             .map((value: any) => <string> value)
@@ -57,7 +59,7 @@ export class TagAutocompleteComponent {
     }
     
     onValueChange(value: string): void {
-        let searchTerm = this.title.toLowerCase();
+        let searchTerm = value.toLowerCase();
 
         if (searchTerm.length == 0) return;
         if (!this.tagContainer) return;

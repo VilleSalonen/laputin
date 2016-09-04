@@ -1,17 +1,14 @@
-import {Component, OnInit, Injectable, Inject} from "angular2/core";
-import {HTTP_PROVIDERS, Headers} from "angular2/http";
+import {Component, OnInit, Injectable, Inject} from "@angular/core";
 import {Observable} from "rxjs/Rx";
 
 import {File} from "./../models/file";
 import {Tag} from "./../models/tag";
 import {FileQuery} from "./../models/filequery";
 import {LaputinService} from "./../services/laputinservice";
-import {FileSearchComponent} from "./filesearch.component";
-import {FileRowComponent} from "./file.component";
 
 @Component({
     template: `
-        <file-search (update)="filterFiles($event)"></file-search>
+        <file-search (update)="filterFiles($event)"></file-search>        
     
         <table class="table table-striped">
             <tbody>
@@ -25,7 +22,7 @@ import {FileRowComponent} from "./file.component";
                     </th>
                 </tr>
 
-                <tr *ngFor="#file of files">
+                <tr *ngFor="let file of files">
                     <td>
                         <file-row [file]="file"></file-row>
                     </td>
@@ -33,8 +30,7 @@ import {FileRowComponent} from "./file.component";
             </tbody>
         </table>
     `,
-    providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [FileSearchComponent, FileRowComponent]
+    providers: [LaputinService]
 })
 @Injectable()
 export class FilesComponent implements OnInit {

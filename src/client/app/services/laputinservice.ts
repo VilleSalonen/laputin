@@ -1,9 +1,9 @@
 import {Promise} from "es6-promise";
-import {Component, Injectable, Inject} from "angular2/core";
+import {Component, Injectable, Inject} from "@angular/core";
 import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/toPromise";
-import {Http, HTTP_PROVIDERS, Headers, Response} from "angular2/http";
+import {Http, HttpModule, Headers, Response} from "@angular/http";
 import * as _ from "lodash";
 
 import {File} from "./../models/file";
@@ -12,7 +12,7 @@ import {FileQuery} from "./../models/filequery";
 import {Duplicate} from "./../models/duplicate";
 
 @Component({
-    providers: [HTTP_PROVIDERS]
+    providers: [HttpModule]
 })
 @Injectable()
 export class LaputinService {

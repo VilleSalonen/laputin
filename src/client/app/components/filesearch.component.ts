@@ -1,11 +1,10 @@
-import {Component, Input, Output, EventEmitter} from "angular2/core";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {Observable} from "rxjs/Rx";
 
 import {File} from "./../models/file";
 import {Tag, TagStatus} from "./../models/tag";
 import {FileQuery} from "./../models/filequery";
-import {TagAutocompleteComponent} from "./tagautocomplete.component";
-import {SearchTag, TagChange} from "./searchtag.component";
+import {TagChange} from "./searchtag.component";
 
 @Component({
     selector: "file-search",
@@ -26,13 +25,13 @@ import {SearchTag, TagChange} from "./searchtag.component";
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Filename</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" [(ngModel)]="query.filename" />
+                                    <input type="text" class="form-control" [(ngModel)]="query.filename" name="filename" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Status</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" [(ngModel)]="query.status">
+                                    <select class="form-control" [(ngModel)]="query.status" name="status">
                                         <option value="both">Both tagged and untagged</option>
                                         <option value="untagged">Only untagged</option>
                                         <option value="tagged">Only tagged</option>
@@ -52,15 +51,14 @@ import {SearchTag, TagChange} from "./searchtag.component";
                         </form>
                     </div>
                     <div class="col-md-7 col-md-offset-1">
-                        <div class="tag btn-group" *ngFor="#tag of query.tags">
+                        <div class="tag btn-group" *ngFor="let tag of query.tags">
                             <search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></search-tag>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    `,
-    directives: [TagAutocompleteComponent, SearchTag]
+    `
 })
 export class FileSearchComponent {
     public query: FileQuery = new FileQuery();

@@ -1,13 +1,10 @@
-import {Component, Input, EventEmitter, Injectable, Inject} from "angular2/core";
-import {HTTP_PROVIDERS, Headers} from "angular2/http";
+import {Component, Input, EventEmitter, Injectable, Inject} from "@angular/core";
 import * as _ from "lodash";
 
 import {LaputinService} from "./../services/laputinservice";
 import {File} from "./../models/file";
 import {FileQuery} from "./../models/filequery";
 import {Tag} from "./../models/tag";
-import {TagAutocompleteComponent} from "./tagautocomplete.component";
-import {SearchBox} from "./searchbox.component";
 
 @Component({
     selector: "file-row",
@@ -18,7 +15,7 @@ import {SearchBox} from "./searchbox.component";
                 
                 <p>{{formattedTags()}}</p>
             </div>
-        
+
             <div *ngIf="detailsOpen">
                 <p><strong><a (click)="toggle()">{{file.path}}</a></strong></p>
             
@@ -44,7 +41,7 @@ import {SearchBox} from "./searchbox.component";
                         <p><video src="/media/{{file.path}}" controls width="100%"></video></p>
                     
                         <p>
-                            <span *ngFor="#tag of file.tags">
+                            <span *ngFor="let tag of file.tags">
                                 <button (click)="removeTag(tag)" class="btn btn-success tag">{{tag.name}}</button>
                             </span>
                         </p>
@@ -52,8 +49,7 @@ import {SearchBox} from "./searchbox.component";
                 </div>
             </div>
         </div>`,
-    providers: [LaputinService, HTTP_PROVIDERS],
-    directives: [TagAutocompleteComponent, SearchBox]
+    providers: [LaputinService]
 })
 @Injectable()
 export class FileRowComponent {
