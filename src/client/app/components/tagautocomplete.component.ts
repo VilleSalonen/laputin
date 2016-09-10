@@ -24,7 +24,8 @@ import {LaputinService} from "./../services/laputinservice";
                 <ul class="typeahead-list" role="menu">
                     <li *ngFor="let tag of matchingTags; let i = index"
                         [class]="selectedIndex == i ? 'hover' : ''"
-                        (click)="mouseSelection(tag)">
+                        (click)="mouseSelection(tag)"
+                        (mouseover)="selectedIndex = i">
                         {{tag.name}}
                     </li>
                 </ul>
