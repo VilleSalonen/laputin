@@ -84,7 +84,7 @@ export class FileSearchComponent {
         // method. That triggers tag selection.
         //
         // To get rid of such problematic selections, check type.
-        if (typeof tag != "Tag")
+        if (tag instanceof Event)
             return;
 
         this.query.andTag(tag);
