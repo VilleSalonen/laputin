@@ -50,6 +50,6 @@
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
     "supertest": "^1.2.0",
-    "typescript": "^1.8.7"
+    "typescript": "^2.0.3"
   }
 }

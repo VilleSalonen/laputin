@@ -1,9 +1,9 @@
 /// <reference path="typings/main.d.ts" />
 
-import Promise = require("bluebird");
+import bluebird = require("bluebird");
 
 import sqlite3 = require("sqlite3");
-Promise.promisifyAll(sqlite3);
+bluebird.promisifyAll(sqlite3);
 
 import path = require("path");
 import _ = require("lodash");

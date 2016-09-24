@@ -1,4 +1,3 @@
-import Promise = require("bluebird");
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require("path");
