@@ -1,4 +1,3 @@
-import {Promise} from "es6-promise";
 import {Component, Injectable, Inject} from "@angular/core";
 import {Observable} from "rxjs/Rx";
 import "rxjs/add/operator/map";
