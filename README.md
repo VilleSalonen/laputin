@@ -39,7 +39,7 @@ When you're creating a new Laputin collection, just start laputin and give it a
 path to your library:
 
     npm install
-    npm run build-server
+    npm run build
     node deploy\index.js --initialize C:\Users\coolbro\Documents\Videos\
     node deploy\index.js C:\Users\coolbro\Documents\Videos\ --verbose
 
