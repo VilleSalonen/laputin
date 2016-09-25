@@ -2,4 +2,3 @@ deploy/
 deploy-tests/
 node_modules/
 test-archive-no-commit/
-.vscode/
