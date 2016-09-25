@@ -57,6 +57,6 @@
     "prebuild-server": "rimraf deploy",
     "build-server": "tsc -p tsconfig.json --outDir deploy",
     "pretest-server": "rimraf deploy-tests && mkdir deploy-tests",
-    "test-server": "tsc -p tsconfig.json --outDir deploy-tests && mocha deploy-tests\\tests\\*.js"
+    "test-server": "tsc -p tsconfig.json --outDir deploy-tests && mocha deploy-tests/tests/*.js"
   }
 }
