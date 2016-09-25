@@ -1,5 +1,4 @@
 node_modules/
-typings/
 app/**/*.js.map
 app/**/*.js
 components/*.js

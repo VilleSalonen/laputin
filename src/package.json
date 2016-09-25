@@ -32,11 +32,22 @@
     "es6-shim": "^0.35.0",
     "express": "4.13.4",
     "lodash": "4.6.1",
+    "rimraf": "^2.5.2",
     "sqlite3": "3.1.1",
-    "typings": "0.7.9",
     "walk": "^2.3.9",
     "watch": "^0.17.1",
-    "winston": "^2.2.0"
+    "winston": "^2.2.0",
+
+    "@types/bluebird": "^3.0.33",
+    "@types/body-parser": "^0.0.33",
+    "@types/cors": "^0.0.33",
+    "@types/express": "^4.0.33",
+    "@types/lodash": "^4.14.36",
+    "@types/node": "^6.0.41",
+    "@types/rimraf": "^0.0.28",
+    "@types/sqlite3": "^2.2.31",
+    "@types/watch": "^0.0.28",
+    "@types/winston": "^0.0.28"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -48,9 +59,12 @@
     "gulp-util": "^3.0.7",
     "lite-server": "^2.1.0",
     "mocha": "^2.4.5",
-    "rimraf": "^2.5.2",
     "supertest": "^1.2.0",
-    "typescript": "^2.0.3"
+    "typescript": "^2.0.3",
+
+    "@types/chai": "^3.4.33",
+    "@types/mocha": "^2.2.32",
+    "@types/supertest": "^1.1.31"
   },
   "scripts": {
     "build-client": "tsc -p client\\tsconfig.json",

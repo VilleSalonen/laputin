@@ -1,6 +1,3 @@
-/// <reference path="typings/main.d.ts" />
-
-import Promise = require("bluebird");
 import crypto = require("crypto");
 import fs = require("fs");
 
@@ -9,7 +6,6 @@ import {IHasher} from "./ihasher";
 var CHUNK_SIZE = 1024;
 
 export class QuickMD5Hasher implements IHasher {
-
     public hash(path: string): Promise<any> {
         var done: Function;
         var promise = new Promise<File>((resolve, reject) => done = resolve);

@@ -1,5 +1,3 @@
-/// <reference path="typings/main.d.ts" />
-
 declare module "walk" {
     import * as fs from "fs";
     

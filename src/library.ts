@@ -1,5 +1,3 @@
-/// <reference path="typings/main.d.ts" />
-
 import bluebird = require("bluebird");
 
 import sqlite3 = require("sqlite3");

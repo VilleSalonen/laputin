@@ -1,4 +1,3 @@
-/// <reference path="typings/main.d.ts" />
 /// <reference path="command-line-args.d.ts" />
 
 import commandLineArgs = require("command-line-args");

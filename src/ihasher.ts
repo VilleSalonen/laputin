@@ -1,5 +1,3 @@
-import Promise = require("bluebird");
-
 import File = require("./file");
 
 export interface IHasher {
