@@ -51,5 +51,12 @@
     "rimraf": "^2.5.2",
     "supertest": "^1.2.0",
     "typescript": "^2.0.3"
+  },
+  "scripts": {
+    "build-client": "tsc -p client\\tsconfig.json",
+    "prebuild-server": "rimraf deploy",
+    "build-server": "tsc -p tsconfig.json --outDir deploy",
+    "pretest-server": "rimraf deploy-tests && mkdir deploy-tests",
+    "test-server": "tsc -p tsconfig.json --outDir deploy-tests && mocha deploy-tests\\tests\\*.js"
   }
 }
