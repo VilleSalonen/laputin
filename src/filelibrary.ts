@@ -16,6 +16,7 @@ import { File } from './file';
 import { Screenshotter } from './screenshotter';
 import { Library } from './library';
 import { Query } from './query.model';
+import {LaputinConfiguration} from './laputinconfiguration';
 
 const probe = require('node-ffprobe');
 const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
@@ -28,7 +29,7 @@ export class FileLibrary extends events.EventEmitter {
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
 
-    constructor(private library: Library, private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter, private skipMetadataExtraction: boolean) {
+    constructor(private library: Library, private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter, private skipMetadataExtraction: boolean, private _configuration: LaputinConfiguration) {
         super();
     }
 
@@ -163,10 +164,16 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     private fileShouldBeIgnored(filePath: string) {
-        return path.basename(filePath).charAt(0) === '.'
-            || filePath.indexOf('.git') !== -1
-            || filePath.indexOf('.laputin') !== -1
-            || filePath.indexOf('Thumbs.db') !== -1;
+        if (path.basename(filePath).startsWith('.') || filePath.indexOf('Thumbs.db') !== -1) {
+            return true;
+        }
+
+        const extension = filePath.substr(filePath.lastIndexOf('.') + 1);
+        if (this._configuration.ignoredExtensions.indexOf(extension) > -1) {
+            return true;
+        }
+
+        return false;
     }
 
     private initializeListForHash(file: File): void {

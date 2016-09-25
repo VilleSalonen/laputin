@@ -264,7 +264,7 @@ describe('Laputin API', function () {
         fs.mkdirSync(archivePath);
 
         const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
-        const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null), fakeScreenshotter);
+        const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null, []), fakeScreenshotter);
         l.initializeRoutes();
 
         await l.library.createTables();

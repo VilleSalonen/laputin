@@ -62,8 +62,7 @@ import { ProxyGenerator } from './proxygenerator';
     const configFilePath = path.join(options.libraryPath, '.laputin.json');
     const configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-        : new LaputinConfiguration(3200, 'accurate', null);
-
+        : new LaputinConfiguration(3200, 'accurate', null, []);
 
     if (options.createProxies) {
         const library = new Library(options.libraryPath);

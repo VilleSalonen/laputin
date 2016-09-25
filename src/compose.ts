@@ -14,7 +14,14 @@ export function compose(libraryPath: string, configuration: LaputinConfiguration
     const screenshotter = new Screenshotter(libraryPath, library);
 
     const hasher: IHasher = composeHasher(configuration);
-    const fileLibrary = new FileLibrary(library, libraryPath, hasher, screenshotter, false);
+    const fileLibrary = new FileLibrary(
+        library,
+        libraryPath,
+        hasher,
+        screenshotter,
+        false,
+        configuration
+    );
 
     const opener = new VLCOpener(libraryPath);
 
@@ -36,7 +43,14 @@ export function composeForTests(
     const library = new Library(libraryPath);
 
     const hasher: IHasher = composeHasher(configuration);
-    const fileLibrary = new FileLibrary(library, libraryPath, hasher, screenshotter, true);
+    const fileLibrary = new FileLibrary(
+        library,
+        libraryPath,
+        hasher,
+        screenshotter,
+        true,
+        configuration
+    );
 
     const opener = new VLCOpener(libraryPath);
 
