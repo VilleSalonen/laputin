@@ -1,8 +1,0 @@
-.idea
-node_modules
-bower_components
-tmp
-bundle.js
-
-# Mac files
-.DS_Store
