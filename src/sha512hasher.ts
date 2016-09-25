@@ -1,5 +1,3 @@
-/// <reference path="typings/main.d.ts" />
-
 import crypto = require("crypto");
 import fs = require("fs");
 
