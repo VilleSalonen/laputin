@@ -7,6 +7,7 @@ import watch = require("watch");
 import events = require("events");
 import winston = require("winston");
 
+import {LaputinConfiguration} from "./laputinconfiguration";
 import {IHasher} from "./ihasher";
 import {Library} from "./library";
 import {File} from "./file";
@@ -14,8 +15,8 @@ import {File} from "./file";
 export class FileLibrary extends events.EventEmitter {
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [path: string]: string } = {};
-
-    constructor(private _libraryPath: string, private _hasher: IHasher) {
+	
+    constructor(private _libraryPath: string, private _hasher: IHasher, private _configuration: LaputinConfiguration) {
         super();
     }
 
@@ -84,9 +85,14 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     private fileShouldBeIgnored(file: File) {
-        return path.basename(file.path).charAt(0) === "."
-            || file.path.indexOf(".git") !== -1
-            || file.path.indexOf("Thumbs.db") !== -1;
+		if (path.basename(file.path).startsWith('.')) {
+			return true;
+		}
+		let extension = file.path.substr(file.path.lastIndexOf('.') + 1);
+		if (this._configuration.ignoredExtensions.indexOf(extension) > -1) {
+			return true
+		}
+		return false;
     }
 
     private initializeListForHash(file: File): void {

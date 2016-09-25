@@ -189,7 +189,7 @@ describe("Laputin API", function() {
         rimraf.sync(archivePath);
         fs.mkdirSync(archivePath);
 
-        var laputin = compose(archivePath, new LaputinConfiguration(1234, "accurate"));
+        var laputin = compose(archivePath, new LaputinConfiguration(null));
         laputin.initializeRoutes();
 
         await laputin.library.createTables();

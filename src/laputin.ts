@@ -7,6 +7,7 @@ import cors = require("cors");
 
 import {Library} from "./library";
 import {FileLibrary} from "./filelibrary";
+import {LaputinConfiguration} from "./laputinconfiguration";
 import {VLCOpener} from "./vlcopener";
 import {File} from "./file";
 import {Tag} from "./tag";
@@ -15,7 +16,7 @@ export class Laputin {
     public app: express.Express;
     private _server: http.Server;
 
-    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary, private _opener: VLCOpener, private _port: number) {
+    constructor(private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary, private _opener: VLCOpener, private _configuration: LaputinConfiguration) {
         this.fileLibrary.on("found", (file: File) => this.library.addFile(file));
         this.fileLibrary.on("lost", (file: File) => this.library.deactivateFile(file));
     }
@@ -39,7 +40,7 @@ export class Laputin {
         var done: Function;
         var promise = new Promise<void>((resolve, reject) => done = resolve);
         
-        this._server = this.app.listen(this._port, done);
+        this._server = this.app.listen(this._configuration.port, done);
         
         return promise;
     }

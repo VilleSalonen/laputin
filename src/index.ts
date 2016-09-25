@@ -55,9 +55,7 @@ import {compose} from "./compose";
     winston.info("Library path: " + options.libraryPath);
 
     let configFilePath = path.join(options.libraryPath, ".laputin.json");
-    let configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
-        ? JSON.parse(fs.readFileSync(configFilePath, "utf8"))
-        : new LaputinConfiguration(3200, "accurate");
+	let configuration: LaputinConfiguration = new LaputinConfiguration(configFilePath)
 
     let laputin = compose(options.libraryPath, configuration);
 

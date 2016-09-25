@@ -11,11 +11,11 @@ export function compose(libraryPath: string, configuration: LaputinConfiguration
     let library = new Library(libraryPath);
     
     let hasher: IHasher = composeHasher(configuration);    
-    let fileLibrary = new FileLibrary(libraryPath, hasher);
+    let fileLibrary = new FileLibrary(libraryPath, hasher, configuration);
     
     let opener = new VLCOpener(libraryPath);
 
-    return new Laputin(libraryPath, library, fileLibrary, opener, configuration.port);
+    return new Laputin(libraryPath, library, fileLibrary, opener, configuration);
 }
 
 function composeHasher(configuration: LaputinConfiguration): IHasher {
