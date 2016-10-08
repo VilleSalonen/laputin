@@ -27,11 +27,14 @@ export class QuickMD5Hasher implements IHasher {
 
                     var input_size: number = stats.size;
                     var offset: number = input_size / 2.0 - CHUNK_SIZE / 2.0;
-                    var buffer: Buffer = new Buffer(CHUNK_SIZE);
+                    var buffer: Buffer = Buffer.alloc(CHUNK_SIZE);
 
 
                     fs.read(fd, buffer, 0, buffer.length, offset, function(e, l, b) {
                         var dataForHashing = b.toString("binary");
+
+                        console.log("dataForHashing: " + dataForHashing);
+
                         var hash = crypto.createHash("md5")
                             .update(dataForHashing)
                             .digest("hex");
