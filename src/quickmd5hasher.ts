@@ -34,6 +34,7 @@ export class QuickMD5Hasher implements IHasher {
                         var dataForHashing = b.toString("binary");
 
                         console.log("dataForHashing: " + dataForHashing);
+                        console.log("dataForHashing length: " + dataForHashing.length);
 
                         var hash = crypto.createHash("md5")
                             .update(dataForHashing)
