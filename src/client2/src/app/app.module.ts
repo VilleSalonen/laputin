@@ -10,11 +10,13 @@ import {
 
 import { AppComponent } from './app.component';
 import { FilesComponent } from './files/files.component';
+import { TagsComponent } from './tags/tags.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FilesComponent
+    FilesComponent,
+    TagsComponent
   ],
   imports: [
     BrowserModule,
