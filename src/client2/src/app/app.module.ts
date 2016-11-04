@@ -11,12 +11,14 @@ import {
 import { AppComponent } from './app.component';
 import { FilesComponent } from './files/files.component';
 import { TagsComponent } from './tags/tags.component';
+import { DuplicatesComponent } from './duplicates/duplicates.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FilesComponent,
-    TagsComponent
+    TagsComponent,
+    DuplicatesComponent
   ],
   imports: [
     BrowserModule,
