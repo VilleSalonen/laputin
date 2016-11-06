@@ -11,9 +11,9 @@ import { Component } from '@angular/core';
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a [routerLink]="['/files']">Files</a></li>
-                    <li><a [routerLink]="['/tags']">Tags</a></li>
-                    <li><a [routerLink]="['/duplicates']">Duplicates</a></li>
+                    <li><a routerLink="/files">Files</a></li>
+                    <li><a routerLink="/tags">Tags</a></li>
+                    <li><a routerLink="/duplicates">Duplicates</a></li>
                 </ul>
             </div>
         </div>
