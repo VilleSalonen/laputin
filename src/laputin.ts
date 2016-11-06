@@ -25,7 +25,7 @@ export class Laputin {
 
         this.app.use(bodyParser.json({}));
 
-        this.app.use(express.static(path.join(__dirname, "../client")));
+        this.app.use(express.static(path.join(__dirname, "../client/dist")));
         this.app.use("/node_modules", express.static(path.join(__dirname, "../node_modules")));
 
         this.app.use("/api", this._createApiRoutes());
