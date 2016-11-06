@@ -5,33 +5,6 @@ import {Tag} from "./../models/tag";
 import {FileQuery} from "./../models/filequery";
 import {LaputinService} from "./../laputin.service";
 
-/*
-        <file-search (update)="filterFiles($event)"></file-search>        
-    
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <th>
-                        Showing {{files.length}} matching files
-
-                        <a class="btn btn-primary pull-right" (click)="openFiles()">
-                            Open files
-                        </a>
-                    </th>
-                </tr>
-
-                <tr [hidden]="!loading" class="loading">
-                    <td><span class="glyphicon glyphicon-time" aria-hidden="true"></span></td>
-                </tr>
-
-                <tr *ngFor="let file of files">
-                    <td>
-                        <file-row [file]="file"></file-row>
-                    </td>
-                </tr>
-            </tbody>
-        </table>*/
-
 @Component({
     template: `
       <file-search (update)="filterFiles($event)"></file-search>
@@ -54,7 +27,7 @@ import {LaputinService} from "./../laputin.service";
 
                 <tr *ngFor="let file of files">
                     <td>
-                        {{file.name}}
+                        <file-row [file]="file"></file-row>
                     </td>
                 </tr>
             </tbody>

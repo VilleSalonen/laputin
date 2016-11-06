@@ -11,6 +11,8 @@ import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { FileSearchComponent } from './file-search/file-search.component';
 import { SearchTagComponent } from './search-tag/search-tag.component';
 import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.component';
+import { FileRowComponent } from './file-row/file-row.component';
+import { SearchBoxComponent } from './search-box/search-box.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.co
     DuplicatesComponent,
     FileSearchComponent,
     SearchTagComponent,
-    TagAutocompleteComponent
+    TagAutocompleteComponent,
+    FileRowComponent,
+    SearchBoxComponent
   ],
   imports: [
     BrowserModule,
