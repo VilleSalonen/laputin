@@ -1,8 +1,0 @@
-node_modules/
-app/**/*.js.map
-app/**/*.js
-components/*.js
-models/*.js
-services/*.js
-main.js
-deploy-tests/
