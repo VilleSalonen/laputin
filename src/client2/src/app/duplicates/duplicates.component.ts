@@ -1,15 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Injectable, Inject} from "@angular/core";
+
+import {LaputinService} from "./../laputin.service";
+import {Duplicate} from "./../models/duplicate";
 
 @Component({
-  selector: 'app-duplicates',
-  templateUrl: './duplicates.component.html',
-  styleUrls: ['./duplicates.component.css']
+    template: `
+        <h1>Duplicates</h1>
+        
+        <p [hidden]="duplicates.length > 0">No duplicates found.</p>
+        
+        <ul>
+            <li *ngFor="let duplicate of duplicates">
+                {{duplicate.hash}}
+                <ul>
+                    <li *ngFor="let file of duplicate.files">
+                        {{file.path}}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    `,
+    providers: [LaputinService]
 })
-export class DuplicatesComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+@Injectable()
+export class DuplicatesComponent {
+    public duplicates: Duplicate[] = [];
+    
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
+        _service.getDuplicates().then((duplicates: Duplicate[]) => this.duplicates = duplicates);
+    }
 }
