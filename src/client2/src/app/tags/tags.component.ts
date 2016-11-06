@@ -1,15 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, Injectable, Inject} from "@angular/core";
+
+import {File} from "./../models/file";
+import {Tag} from "./../models/tag";
+import {LaputinService} from "./../laputin.service";
 
 @Component({
-  selector: 'app-tags',
-  templateUrl: './tags.component.html',
-  styleUrls: ['./tags.component.css']
+    template: `
+        <search-box (update)="term = $event"></search-box>
+        <ul>
+            <li *ngFor="let tag of tags | tagfilter: term">{{tag.name}}</li>
+        </ul>
+    `,
+    providers: [LaputinService]
 })
+@Injectable()
 export class TagsComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+    public tags: Tag[] = [];
+    public term: string = "";
+    
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
+    }
+    
+    ngOnInit(): void {
+        this._service.getTags()
+            .then((tags) => this.tags = tags);
+    }
 }
