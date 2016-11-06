@@ -14,7 +14,8 @@ import {compose} from "./compose";
     let cli = commandLineArgs([
         { name: "libraryPath", type: String, multiple: false, defaultOption: true },
         { name: "initialize", type: Boolean, multiple: false },
-        { name: "verbose", type: Boolean, multiple: false }
+        { name: "verbose", type: Boolean, multiple: false },
+        { name: "bypassHashing", type: Boolean, multiple: false }
     ]);
 
     let options = cli.parse();
@@ -63,10 +64,12 @@ import {compose} from "./compose";
 
     laputin.initializeRoutes();
 
-    winston.info("Hashing files...");
-    let timer = winston.startTimer();
-    await laputin.loadFiles();
-    timer.done("Hashing");
+    if (!options.bypassHashing) {
+        winston.info("Hashing files...");
+        let timer = winston.startTimer();
+        await laputin.loadFiles();
+        timer.done("Hashing");
+    }
 
     await laputin.startListening();
     winston.info("Laputin started at http://localhost:" + configuration.port);
