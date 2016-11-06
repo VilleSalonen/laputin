@@ -34,7 +34,31 @@ import {LaputinService} from "./../laputin.service";
 
 @Component({
     template: `
-      moro
+      <file-search (update)="filterFiles($event)"></file-search>
+
+      <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <th>
+                        Showing {{files.length}} matching files
+
+                        <a class="btn btn-primary pull-right" (click)="openFiles()">
+                            Open files
+                        </a>
+                    </th>
+                </tr>
+
+                <tr [hidden]="!loading" class="loading">
+                    <td><span class="glyphicon glyphicon-time" aria-hidden="true"></span></td>
+                </tr>
+
+                <tr *ngFor="let file of files">
+                    <td>
+                        {{file.name}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     `,
     providers: [LaputinService]
 })
