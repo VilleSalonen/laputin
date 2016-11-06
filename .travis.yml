@@ -10,4 +10,4 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-script: cd src && npm install && npm test
+script: cd src && npm install && npm test-server && cd client && npm install && cd .. && npm test-client
