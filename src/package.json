@@ -64,7 +64,7 @@
     "pretest-server": "rimraf deploy-tests && mkdir deploy-tests",
     "test-server": "tsc -p tsconfig.json --outDir deploy-tests && mocha deploy-tests/tests/*.js",
 
-    "test-client": "cd client && ng test --watch false",
+    "test-client": "cd client && ng test --code-coverage --watch false",
 
     "start": "node deploy/index.js",
     "test": "npm run test-server && npm run test-client"
