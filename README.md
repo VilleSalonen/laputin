@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/VilleSalonen/laputin.svg?branch=master)](https://travis-ci.org/VilleSalonen/laputin) 
+[![Build Status](https://travis-ci.org/VilleSalonen/laputin.svg?branch=master)](https://travis-ci.org/VilleSalonen/laputin)
+[![Code Climate](https://codeclimate.com/github/VilleSalonen/laputin/badges/gpa.svg)](https://codeclimate.com/github/VilleSalonen/laputin)
+[![Issue Count](https://codeclimate.com/github/VilleSalonen/laputin/badges/issue_count.svg)](https://codeclimate.com/github/VilleSalonen/laputin)
 
 Laputin
 =======
