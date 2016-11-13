@@ -36,15 +36,15 @@
 
 .extra-padded {
     padding: 15px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 
 .hover {
     border: 1px dotted;
     background-color: #428bca;
     color: white;
-    margin: 0px -5px 0px -5px;
-    padding: 0px 5px 0px 5px;
+    margin: 0 -5px 0 -5px;
+    padding: 0 5px 0 5px;
 }
 
 .typeahead-input {
