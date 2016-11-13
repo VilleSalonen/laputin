@@ -10,4 +10,4 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-script: cd src && npm install && npm run test-server && cd client && npm install && cd .. && npm run test-client && CODECLIMATE_REPO_TOKEN=8408e3ae35572e855bcfd12ce8a81cff338a0ca39009f0b00527f03a34eca6ca codeclimate-test-reporter < client\coverage\coverage.lcov
+script: cd src && npm install && npm run test-server && cd client && npm install && cd .. && npm run test-client && CODECLIMATE_REPO_TOKEN=8408e3ae35572e855bcfd12ce8a81cff338a0ca39009f0b00527f03a34eca6ca codeclimate-test-reporter < client/coverage/coverage.lcov
