@@ -1,6 +1,6 @@
 {
-  "name": "ng-playground",
-  "version": "0.0.0",
+  "name": "laputin-client",
+  "version": "1.0.0",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
