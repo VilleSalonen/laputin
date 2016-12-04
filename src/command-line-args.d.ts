@@ -1,9 +1,9 @@
 declare module "command-line-args" {
-    function commandLineArgs(arguments: any[]): CommandLineArgs;
+    function commandLineArgs(arguments: any[]): any;
     export = commandLineArgs;
-    
-    class CommandLineArgs {
-        public parse(): any;
-        public getUsage(): any;
-    }
+}
+
+declare module "command-line-usage" {
+    function commandLineUsage(arguments: any[]): any;
+    export = commandLineUsage;
 }

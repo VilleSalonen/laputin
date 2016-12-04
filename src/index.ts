@@ -1,6 +1,7 @@
 /// <reference path="command-line-args.d.ts" />
 
 import commandLineArgs = require("command-line-args");
+import commandLineUsage = require("command-line-usage");
 import fs = require("fs");
 import path = require("path");
 import winston = require("winston");
@@ -11,14 +12,15 @@ import {LaputinConfiguration} from "./laputinconfiguration";
 import {compose} from "./compose";
 
 (async function() {
-    let cli = commandLineArgs([
+    let argumentDefinitions = [
         { name: "libraryPath", type: String, multiple: false, defaultOption: true },
         { name: "initialize", type: Boolean, multiple: false },
         { name: "verbose", type: Boolean, multiple: false },
         { name: "bypassHashing", type: Boolean, multiple: false }
-    ]);
+    ];
+    const usage = commandLineUsage(argumentDefinitions);
 
-    let options = cli.parse();
+    let options: any = commandLineArgs(argumentDefinitions);
 
     // For some reason " is added only to the end of the path if path contains spaces.
     options.libraryPath = options.libraryPath.replace(/\"/g, '');
@@ -29,7 +31,7 @@ import {compose} from "./compose";
 
     if (!options.libraryPath) {
         console.log("You have to pass library path as an argument.");
-        console.log(cli.getUsage());
+        console.log(usage);
         process.exit(-1);
     }
 
@@ -49,7 +51,7 @@ import {compose} from "./compose";
     let dbFilePath = path.join(options.libraryPath, ".laputin.db");
     if (!fs.existsSync(dbFilePath)) {
         console.log(options.libraryPath + " has not been initialized as Laputin library.");
-        console.log(cli.getUsage());
+        console.log(usage);
         process.exit(-1);
     }
 
