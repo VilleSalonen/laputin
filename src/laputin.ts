@@ -82,6 +82,11 @@ export class Laputin {
             }
         });
 
+        api.route("/tags/:tagId").put(async (req, res) => {
+            let tag = await this.library.renameTag(req.params.tagId, req.body.name);
+            res.send(tag);
+        });
+
         api.route("/files/:hash/tags").post((req, res) => {
             var selectedTags = req.body.selectedTags;
             _.each(selectedTags, (tag: Tag) => {

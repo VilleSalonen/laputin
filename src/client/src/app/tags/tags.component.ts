@@ -8,7 +8,9 @@ import {LaputinService} from "./../laputin.service";
     template: `
         <search-box (update)="term = $event"></search-box>
         <ul>
-            <li *ngFor="let tag of tags | tagfilter: term">{{tag.name}}</li>
+            <li *ngFor="let tag of tags | tagfilter: term">
+                <tag-row [tag]="tag"></tag-row>
+            </li>
         </ul>
     `,
     providers: [LaputinService]
