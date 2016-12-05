@@ -6,30 +6,30 @@ bluebird.promisifyAll(sqlite3);
 import path = require("path");
 import _ = require("lodash");
 
-import {Query} from "./query.model";
-import {File} from "./file";
-import {Tag} from "./tag";
-import {TagQuery} from "./tagquery.model";
-import {FileLibrary} from "./filelibrary";
+import { Query } from "./query.model";
+import { File } from "./file";
+import { Tag } from "./tag";
+import { TagQuery } from "./tagquery.model";
+import { FileLibrary } from "./filelibrary";
 
 export class Library {
     private _db: any;
-    
+
     constructor(private _libraryPath: string) {
         this._db = new sqlite3.Database(path.join(this._libraryPath, ".laputin.db"));
     }
-    
+
     public async createTables(): Promise<void> {
         await this._db.runAsync("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);");
         await this._db.runAsync("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));");
         await this._db.runAsync("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);");
     }
-    
+
     public addFile(file: File): Promise<void> {
         var stmt = this._db.prepare("INSERT OR REPLACE INTO files (hash, path, active) VALUES (?, ?, 1)");
         return stmt.runAsync(file.hash, file.path);
     }
-    
+
     public deactivateFile(file: File): Promise<void> {
         var stmt = this._db.prepare("UPDATE files SET active = 0 WHERE path = ?");
         return stmt.runAsync(file.path);
@@ -43,7 +43,7 @@ export class Library {
     public async getFiles(query: Query): Promise<File[]> {
         var done: Function;
         var promise = new Promise<File[]>((resolve, reject) => done = resolve);
-        
+
         var files: { [hash: string]: File } = {};
 
         var params: any[] = [];
@@ -77,7 +77,7 @@ export class Library {
         var each1 = (err: any, row: any) => {
             files[row.hash] = new File(row.hash, row.path, []);
         };
-        
+
         var stmt = this._db.prepare(sql1);
         await stmt.eachAsync(params, each1)
 
@@ -95,8 +95,8 @@ export class Library {
 
         return promise;
     }
-    
-    private _generateTagFilterQuery (ids: string, params: string[], opr1: string, opr2: string): string {
+
+    private _generateTagFilterQuery(ids: string, params: string[], opr1: string, opr2: string): string {
         if (ids) {
             var splitIds = ids.split(",");
             splitIds.forEach((id) => {
@@ -111,17 +111,30 @@ export class Library {
 
         return "";
     }
-    
+
     public async createNewTag(tagName: string): Promise<Tag> {
         if (!tagName) {
             return Promise.reject<Tag>(new Error("Tag name is required"));
         }
-        
+
         var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
         await stmt.runAsync(tagName);
         return new Tag(stmt.lastID, tagName, 0);
     }
-    
+
+    public async renameTag(tagId: number, tagName: string): Promise<Tag> {
+        if (!tagId) {
+            return Promise.reject<Tag>(new Error("Tag ID is required"));
+        }
+        if (!tagName) {
+            return Promise.reject<Tag>(new Error("Tag name is required"));
+        }
+
+        var stmt = this._db.prepare("UPDATE tags SET name = ? WHERE id = ?");
+        await stmt.runAsync(tagName, tagId);
+        return new Tag(tagId, tagName, 0);
+    }
+
     public async getTags(query: TagQuery): Promise<Tag[]> {
         var tags: Tag[] = [];
 
@@ -164,11 +177,10 @@ export class Library {
         return tags;
     }
 
-    public async createNewLinkBetweenTagAndFile (inputTag: Tag, hash: string): Promise<void> {
+    public async createNewLinkBetweenTagAndFile(inputTag: Tag, hash: string): Promise<void> {
         var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
-        
-        try
-        {
+
+        try {
             await stmt.runAsync(inputTag.id, hash);
         }
         catch (err) {
@@ -180,7 +192,7 @@ export class Library {
             }
         }
     }
-    
+
     public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
         var stmt = this._db.prepare("DELETE FROM tags_files WHERE id = ? AND hash = ?");
         return stmt.runAsync(inputTag, inputFile);

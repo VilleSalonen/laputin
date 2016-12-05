@@ -14,6 +14,7 @@ import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.co
 import { FileRowComponent } from './file-row/file-row.component';
 import { SearchBoxComponent } from './search-box/search-box.component';
 import { TagFilterPipe } from './tag-filter.pipe';
+import { TagRowComponent } from './tag-row/tag-row.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { TagFilterPipe } from './tag-filter.pipe';
     TagAutocompleteComponent,
     FileRowComponent,
     SearchBoxComponent,
-    TagFilterPipe
+    TagFilterPipe,
+    TagRowComponent
   ],
   imports: [
     BrowserModule,

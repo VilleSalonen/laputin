@@ -42,6 +42,22 @@ describe("Laputin API", function () {
             .expect([tag]);
     });
 
+    it("Tag can be renamed", async () => {
+        let tag = await laputin.library.createNewTag("Educational");
+        let expectedTag = new Tag(tag.id, "Very educational", 0);
+
+        await request(laputin.app)
+            .put("/api/tags/" + tag.id)
+            .send({ name: "Very educational" })
+            .expect(200)
+            .expect(expectedTag);
+
+        return request(laputin.app)
+            .get("/api/tags?unassociated=true")
+            .expect(200)
+            .expect([expectedTag]);
+    });
+
     it("Added tag can _not_ be found from associated tags", async () => {
         let tag = await laputin.library.createNewTag("Hilarious");
 

@@ -95,6 +95,17 @@ export class LaputinService {
             .map(tag => this._convertTag(tag));
     }
 
+    public renameTag(tag: Tag, newTagName: string): Promise<Tag> {
+        let body = JSON.stringify({ name: newTagName });
+        const headers = new Headers({ 'Accept': 'application/json', "Content-Type": "application/json" });
+
+        return this._http
+            .put(this._baseUrl + "/tags/" + tag.id, body, { headers: headers })
+            .map(res => res.json())
+            .map(tag => this._convertTag(tag))
+            .toPromise();
+    }
+
     public addTags(file: File, tags: Tag[]): Observable<Response> {
         let body = JSON.stringify({
             selectedTags: tags
