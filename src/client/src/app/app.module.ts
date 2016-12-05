@@ -3,6 +3,10 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import {
+  LocationStrategy,
+  HashLocationStrategy
+} from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { FilesComponent } from './files/files.component';
@@ -42,7 +46,7 @@ import { TagRowComponent } from './tag-row/tag-row.component';
       { path: 'duplicates', component: DuplicatesComponent },
     ])
   ],
-  providers: [],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
