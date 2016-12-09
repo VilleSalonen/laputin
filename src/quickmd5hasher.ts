@@ -34,9 +34,9 @@ export class QuickMD5Hasher implements IHasher {
                             .update(buffer)
                             .digest("hex");
 
-                        fs.close(fd);
-
-                        done({ path: path, hash: hash });
+                        fs.close(fd, () => {
+                            done({ path: path, hash: hash });
+                        });
                     });
                 });
             });
