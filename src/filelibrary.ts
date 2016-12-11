@@ -34,7 +34,7 @@ export class FileLibrary extends events.EventEmitter {
         watch.unwatchTree(this._libraryPath);
     }
 
-    private startMonitoring(): void {
+    public startMonitoring(): void {
         // Start monitoring after library has been hashed. Otherwise changes
         // done to database file cause changed events to be emitted and thus
         // slow down the initial processing.

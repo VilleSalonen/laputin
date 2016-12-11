@@ -58,6 +58,10 @@ export class Laputin {
         return this.fileLibrary.load();
     }
 
+    public startMonitoring(): void {
+        this.fileLibrary.startMonitoring();
+    }
+
     private _createApiRoutes(): express.Express {
         var api = express();
 

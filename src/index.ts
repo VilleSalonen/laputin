@@ -71,6 +71,9 @@ import {compose} from "./compose";
         let timer = winston.startTimer();
         await laputin.loadFiles();
         timer.done("Hashing");
+    } else {
+        winston.info("Skipped hashing, starting monitoring.")
+        laputin.startMonitoring();
     }
 
     await laputin.startListening();
