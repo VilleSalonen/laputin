@@ -1,4 +1,3 @@
 deploy/
 deploy-tests/
 node_modules/
-yarn.lock
