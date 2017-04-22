@@ -24,7 +24,7 @@
     "@types/chai": "~3.4.34",
     "@types/cors": "~0.0.33",
     "@types/express": "~4.0.34",
-    "@types/lodash": "~4.14.43",
+    "@types/lodash": "4.14.63",
     "@types/mocha": "~2.2.33",
     "@types/node": "~6.0.41",
     "@types/rimraf": "~0.0.28",
@@ -35,7 +35,7 @@
     "chai": "~3.5.0",
     "mocha": "~3.2.0",
     "supertest": "~2.0.1",
-    "typescript": "~2.1.4"
+    "typescript": "2.2.2"
   },
   "scripts": {
     "build": "npm run build-server && npm run build-client",
