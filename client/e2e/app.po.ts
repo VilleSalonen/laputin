@@ -1,6 +1,6 @@
-import { browser, element, by } from 'protractor';
+import { browser, by, element } from 'protractor';
 
-export class NgPlaygroundPage {
+export class LaputinPage {
   navigateTo() {
     return browser.get('/');
   }

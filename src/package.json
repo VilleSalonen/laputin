@@ -39,12 +39,12 @@
   },
   "scripts": {
     "build": "npm run build-server && npm run build-client",
-    "build-client": "cd client && ng build",
+    "build-client": "cd ..\\client && ng build --output-path ..\\src\\client\\dist\\",
     "prebuild-server": "rimraf deploy",
     "build-server": "tsc -p tsconfig.json --outDir deploy",
     "pretest-server": "rimraf deploy-tests && mkdir deploy-tests",
     "test-server": "tsc -p tsconfig.json --outDir deploy-tests && mocha deploy-tests/tests/*.js",
-    "test-client": "cd client && ng test --code-coverage --watch false",
+    "test-client": "cd ..\\client && ng test --code-coverage --watch false",
     "start": "node deploy/index.js",
     "test": "npm run test-server && npm run test-client"
   }

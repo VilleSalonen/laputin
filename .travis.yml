@@ -10,7 +10,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-script: cd src && yarn && npm run test-server && cd client && yarn && cd .. && npm run test-client
+script: cd src && yarn && npm run test-server && cd ..\client && yarn && cd ..\src && npm run test-client
 before_install:
   # Repo for newer Node.js versions
   - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
