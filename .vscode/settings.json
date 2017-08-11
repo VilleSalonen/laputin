@@ -9,7 +9,9 @@
     
     "search.exclude": {
 		"**/node_modules": true,
-		"**/bower_components": true,
+        "**/bower_components": true,
+        "**/dist": true,
+        "**/deploy": true,
         "**/*.js.map": true,
         "**/*.js": {"when": "$(basename).ts"}
 	}

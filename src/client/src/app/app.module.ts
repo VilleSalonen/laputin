@@ -11,7 +11,6 @@ import {
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { FilesComponent } from './files/files.component';
-import { FileRowComponent } from './file-row/file-row.component';
 import { FileSearchComponent } from './file-search/file-search.component';
 import { SearchBoxComponent } from './search-box/search-box.component';
 import { SearchTagComponent } from './search-tag/search-tag.component';
@@ -19,20 +18,21 @@ import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.co
 import { TagsComponent } from './tags/tags.component';
 import { TagFilterPipe } from './tag-filter.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DuplicatesComponent,
     FilesComponent,
-    FileRowComponent,
     FileSearchComponent,
     SearchBoxComponent,
     SearchTagComponent,
     TagAutocompleteComponent,
     TagFilterPipe,
     TagRowComponent,
-    TagsComponent
+    TagsComponent,
+    VideoPlayerComponent
   ],
   imports: [
     BrowserModule,

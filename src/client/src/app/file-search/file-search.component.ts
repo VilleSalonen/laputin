@@ -12,9 +12,9 @@ import {TagChange} from "./../search-tag/search-tag.component";
         <div class="filter-controls">
             <div class="extra-padded">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <form class="form-horizontal">
-                            <div class="form-group">
+                            <div class="form-group col-md-4">
                                 <label class="col-sm-2 control-label">Tags</label>
                                 <div class="col-sm-10">
                                     <div>
@@ -22,13 +22,13 @@ import {TagChange} from "./../search-tag/search-tag.component";
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-md-4 col-md-offset-4">
                                 <label class="col-sm-2 control-label">Filename</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" [(ngModel)]="query.filename" name="filename" />
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-md-3 col-md-offset-8">
                                 <label class="col-sm-2 control-label">Status</label>
                                 <div class="col-sm-10">
                                     <select class="form-control" [ngModel]="query.status" (ngModelChange)="onStatusChanged($event)" name="status">
@@ -38,7 +38,7 @@ import {TagChange} from "./../search-tag/search-tag.component";
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-md-1 col-md-offset-11">
                                 <div class="col-sm-10 col-sm-offset-2">
                                     <p>
                                         <small>
@@ -50,7 +50,7 @@ import {TagChange} from "./../search-tag/search-tag.component";
                             <input type="submit" style="display: none;" (click)="submitClicked($event)" />
                         </form>
                     </div>
-                    <div class="col-md-7 col-md-offset-1">
+                    <div class="col-md-12">
                         <div class="tag btn-group" *ngFor="let tag of query.tags">
                             <search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></search-tag>
                         </div>
