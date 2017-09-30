@@ -7,7 +7,7 @@ import {Tag} from './tag';
 describe('File Query', function() {
     it('Filename defaults to empty string', () => {
         const query = new FileQuery();
-        expect(query.filename).to.be('');
+        expect(query.filename).to.be.eql('');
     });
 
     it('Filename is cleared', () => {
@@ -16,7 +16,7 @@ describe('File Query', function() {
         query.filename = 'moses.jpg';
         query.clear();
 
-        expect(query.filename).to.be('');
+        expect(query.filename).to.eql('');
     });
 
     it('Status defaults to \'both\'', () => {
