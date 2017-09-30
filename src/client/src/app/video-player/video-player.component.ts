@@ -10,6 +10,7 @@ import {LaputinService} from './../laputin.service';
 
 @Component({
     selector: 'app-video-player',
+    styleUrls: ['./video-player.component.css'],
     template: `
         <div class="row" *ngIf="file" style="width: 99%">
             <div class="col-md-4">
