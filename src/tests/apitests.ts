@@ -1,23 +1,23 @@
-import _ = require("lodash");
-import chai = require("chai");
-var expect = chai.expect;
-import fs = require("fs");
-import rimraf = require("rimraf");
-import request = require("supertest");
+import _ = require('lodash');
+import chai = require('chai');
+const expect = chai.expect;
+import fs = require('fs');
+import rimraf = require('rimraf');
+import request = require('supertest');
 
-import { File } from "./../file";
-import { Tag } from "./../tag";
-import { TagQuery } from "./../tagquery.model";
-import { compose } from "./../compose";
-import { Laputin } from "./../laputin";
-import { LaputinConfiguration } from "./../laputinconfiguration";
+import { File } from './../file';
+import { Tag } from './../tag';
+import { TagQuery } from './../tagquery.model';
+import { compose } from './../compose';
+import { Laputin } from './../laputin';
+import { LaputinConfiguration } from './../laputinconfiguration';
 
-describe("Laputin API", function () {
+describe('Laputin API', function () {
     let currentPath: string;
     let laputin: Laputin;
 
     beforeEach(async function () {
-        currentPath = this.currentTest.title.toLowerCase().replace(/ /g, "_");
+        currentPath = this.currentTest.title.toLowerCase().replace(/ /g, '_');
         laputin = await initializeLaputin(currentPath);
     });
 
@@ -25,90 +25,90 @@ describe("Laputin API", function () {
         await laputin.stopListening();
     });
 
-    it("Added file can be found", async () => {
-        let file: File = new File("aaaaa11111", "new_funny_pic.jpg", []);
+    it('Added file can be found', async () => {
+        const file: File = new File('aaaaa11111', 'new_funny_pic.jpg', []);
 
         await laputin.library.addFile(file);
 
         return shouldContainFiles(laputin, [file]);
     });
 
-    it("Added tag can be found from unassociated tags", async () => {
-        let tag = await laputin.library.createNewTag("Educational");
+    it('Added tag can be found from unassociated tags', async () => {
+        const tag = await laputin.library.createNewTag('Educational');
 
         return request(laputin.app)
-            .get("/api/tags?unassociated=true")
+            .get('/api/tags?unassociated=true')
             .expect(200)
             .expect([tag]);
     });
 
-    it("Tag can be renamed", async () => {
-        let tag = await laputin.library.createNewTag("Educational");
-        let expectedTag = new Tag(tag.id, "Very educational", 0);
+    it('Tag can be renamed', async () => {
+        const tag = await laputin.library.createNewTag('Educational');
+        const expectedTag = new Tag(tag.id, 'Very educational', 0);
 
         await request(laputin.app)
-            .put("/api/tags/" + tag.id)
-            .send({ name: "Very educational" })
+            .put('/api/tags/' + tag.id)
+            .send({ name: 'Very educational' })
             .expect(200)
             .expect(expectedTag);
 
         return request(laputin.app)
-            .get("/api/tags?unassociated=true")
+            .get('/api/tags?unassociated=true')
             .expect(200)
             .expect([expectedTag]);
     });
 
-    it("Added tag can _not_ be found from associated tags", async () => {
-        let tag = await laputin.library.createNewTag("Hilarious");
+    it('Added tag can _not_ be found from associated tags', async () => {
+        const tag = await laputin.library.createNewTag('Hilarious');
 
         return request(laputin.app)
-            .get("/api/tags")
+            .get('/api/tags')
             .expect(200)
             .expect([]);
     });
 
-    it("Creating duplicate tag returns error", async () => {
-        let tag = await laputin.library.createNewTag("Seeing double");
+    it('Creating duplicate tag returns error', async () => {
+        const tag = await laputin.library.createNewTag('Seeing double');
 
         return request(laputin.app)
-            .post("/api/tags")
+            .post('/api/tags')
             .send({ tagName: tag.name })
             .expect(500);
     });
 
-    it("Creating tag with empty name returns error", () => {
+    it('Creating tag with empty name returns error', () => {
         return request(laputin.app)
-            .post("/api/tags")
-            .send({ tagName: "" })
+            .post('/api/tags')
+            .send({ tagName: '' })
             .expect(500);
     });
 
-    describe("Tagging", () => {
-        let file: File = new File("aaaaa", "funny.jpg", []);
+    describe('Tagging', () => {
+        const file: File = new File('aaaaa', 'funny.jpg', []);
         let tag: Tag;
 
         beforeEach(async () => {
-            tag = await laputin.library.createNewTag("Funny");
+            tag = await laputin.library.createNewTag('Funny');
             await laputin.library.addFile(file);
         });
 
-        it("File can be tagged", async () => {
+        it('File can be tagged', async () => {
             await request(laputin.app)
-                .post("/api/files/" + file.hash + "/tags")
+                .post('/api/files/' + file.hash + '/tags')
                 .send({ selectedTags: [tag] })
                 .expect(200);
 
             await shouldContainFiles(laputin, [new File(file.hash, file.path, [tag])]);
         });
 
-        it("File tagging can be removed", async () => {
+        it('File tagging can be removed', async () => {
             await request(laputin.app)
-                .post("/api/files/" + file.hash + "/tags")
+                .post('/api/files/' + file.hash + '/tags')
                 .send({ selectedTags: [tag] })
                 .expect(200);
 
             await request(laputin.app)
-                .delete("/api/files/" + file.hash + "/tags/" + tag.id)
+                .delete('/api/files/' + file.hash + '/tags/' + tag.id)
                 .send({ tagId: tag.id })
                 .expect(200);
 
@@ -116,9 +116,9 @@ describe("Laputin API", function () {
         });
     });
 
-    describe("Querying files by tagged status", async () => {
-        let taggedFile: File = new File("aaaaa", "funny.jpg", []);
-        let untaggedFile: File = new File("bbbbb", "untagged.jpg", []);
+    describe('Querying files by tagged status', async () => {
+        const taggedFile: File = new File('aaaaa', 'funny.jpg', []);
+        const untaggedFile: File = new File('bbbbb', 'untagged.jpg', []);
 
         let tag: Tag;
 
@@ -126,54 +126,54 @@ describe("Laputin API", function () {
             await laputin.library.addFile(taggedFile);
             await laputin.library.addFile(untaggedFile);
 
-            tag = await laputin.library.createNewTag("Funnyyyy");
+            tag = await laputin.library.createNewTag('Funnyyyy');
             await request(laputin.app)
-                .post("/api/files/" + taggedFile.hash + "/tags")
+                .post('/api/files/' + taggedFile.hash + '/tags')
                 .send({ selectedTags: [tag] })
                 .expect(200);
         });
 
-        it("Querying both tagged and untagged files", async () => {
+        it('Querying both tagged and untagged files', async () => {
             return request(laputin.app)
-                .get("/api/files?status=both")
+                .get('/api/files?status=both')
                 .expect(200)
                 .expect([
                     new File(taggedFile.hash, taggedFile.path, [tag]),
                     untaggedFile]);
         });
 
-        it("Querying only tagged", async () => {
+        it('Querying only tagged', async () => {
             return request(laputin.app)
-                .get("/api/files?status=tagged")
+                .get('/api/files?status=tagged')
                 .expect(200)
                 .expect([new File(taggedFile.hash, taggedFile.path, [tag])]);
         });
 
-        it("Querying only untagged", async () => {
+        it('Querying only untagged', async () => {
             return request(laputin.app)
-                .get("/api/files?status=untagged")
+                .get('/api/files?status=untagged')
                 .expect(200)
                 .expect([untaggedFile]);
         });
     });
 
-    describe("Querying files by tags", () => {
+    describe('Querying files by tags', () => {
         beforeEach(async () => {
-            let file1: File = new File("aaaaa", "funny.jpg", []);
-            let file2: File = new File("bbbbb", "educational.jpg", []);
-            let file3: File = new File("ccccc", "serious.jpg", []);
+            const file1: File = new File('aaaaa', 'funny.jpg', []);
+            const file2: File = new File('bbbbb', 'educational.jpg', []);
+            const file3: File = new File('ccccc', 'serious.jpg', []);
 
             await laputin.library.addFile(file1);
             await laputin.library.addFile(file2);
             await laputin.library.addFile(file3);
 
-            let tag1 = await laputin.library.createNewTag("1");
-            let tag2 = await laputin.library.createNewTag("2");
-            let tag3 = await laputin.library.createNewTag("3");
-            let tag4 = await laputin.library.createNewTag("4");
-            let tag5 = await laputin.library.createNewTag("5");
-            let tag6 = await laputin.library.createNewTag("6");
-            let tag7 = await laputin.library.createNewTag("7");
+            const tag1 = await laputin.library.createNewTag('1');
+            const tag2 = await laputin.library.createNewTag('2');
+            const tag3 = await laputin.library.createNewTag('3');
+            const tag4 = await laputin.library.createNewTag('4');
+            const tag5 = await laputin.library.createNewTag('5');
+            const tag6 = await laputin.library.createNewTag('6');
+            const tag7 = await laputin.library.createNewTag('7');
 
             await laputin.library.createNewLinkBetweenTagAndFile(tag1, file1.hash);
             await laputin.library.createNewLinkBetweenTagAndFile(tag2, file1.hash);
@@ -188,59 +188,59 @@ describe("Laputin API", function () {
             await laputin.library.createNewLinkBetweenTagAndFile(tag7, file3.hash);
         });
 
-        it("A single AND tag", async () => {
+        it('A single AND tag', async () => {
             return request(laputin.app)
-                .get("/api/files?and=1")
+                .get('/api/files?and=1')
                 .expect((res: any) => {
                     resultShouldContainFileHashes(res, ['aaaaa']);
                 });
         });
 
-        it("Multiple AND tags", async () => {
+        it('Multiple AND tags', async () => {
             return request(laputin.app)
-                .get("/api/files?and=2,3")
+                .get('/api/files?and=2,3')
                 .expect((res: any) => {
                     resultShouldContainFileHashes(res, ['aaaaa', 'bbbbb']);
                 });
         });
 
-        it("A single OR tag", async () => {
+        it('A single OR tag', async () => {
             return request(laputin.app)
-                .get("/api/files?or=1")
+                .get('/api/files?or=1')
                 .expect((res: any) => {
                     resultShouldContainFileHashes(res, ['aaaaa']);
                 });
         });
 
-        it("Multiple OR tags", async () => {
+        it('Multiple OR tags', async () => {
             return request(laputin.app)
-                .get("/api/files?or=1,7")
+                .get('/api/files?or=1,7')
                 .expect((res: any) => {
                     resultShouldContainFileHashes(res, ['aaaaa', 'ccccc']);
                 });
         });
 
-        it("A single NOT tag", async () => {
+        it('A single NOT tag', async () => {
             return request(laputin.app)
-                .get("/api/files?not=2")
+                .get('/api/files?not=2')
                 .expect((res: any) => {
                     resultShouldContainFileHashes(res, ['ccccc']);
                 });
         });
 
-        it("Multiple NOT tags", async () => {
+        it('Multiple NOT tags', async () => {
             return request(laputin.app)
-                .get("/api/files?not=1,6")
+                .get('/api/files?not=1,6')
                 .expect((res: any) => {
                     resultShouldContainFileHashes(res, ['bbbbb']);
                 });
         });
     });
 
-    describe("Deactivation", () => {
-        let file1: File = new File("aaaaa", "funny.jpg", []);
-        let file2: File = new File("bbbbb", "educational.jpg", []);
-        let file3: File = new File("ccccc", "serious.jpg", []);
+    describe('Deactivation', () => {
+        const file1: File = new File('aaaaa', 'funny.jpg', []);
+        const file2: File = new File('bbbbb', 'educational.jpg', []);
+        const file3: File = new File('ccccc', 'serious.jpg', []);
 
         beforeEach(async () => {
             await laputin.library.addFile(file1);
@@ -248,42 +248,42 @@ describe("Laputin API", function () {
             await laputin.library.addFile(file3);
         });
 
-        it("A single file can be deactivated", async () => {
+        it('A single file can be deactivated', async () => {
             laputin.library.deactivateFile(file1);
             return shouldContainFiles(laputin, [file2, file3]);
         });
 
-        it("All files can be deactivated", async () => {
+        it('All files can be deactivated', async () => {
             laputin.library.deactivateAll();
             return shouldContainFiles(laputin, []);
         });
     });
 
     async function initializeLaputin(path: string): Promise<Laputin> {
-        var archivePath = "deploy-tests/" + path;
+        const archivePath = 'deploy-tests/' + path;
 
         rimraf.sync(archivePath);
         fs.mkdirSync(archivePath);
 
-        var laputin = compose(archivePath, new LaputinConfiguration(1234, "accurate"));
-        laputin.initializeRoutes();
+        const l = compose(archivePath, new LaputinConfiguration(1234, 'accurate'));
+        l.initializeRoutes();
 
-        await laputin.library.createTables();
+        await l.library.createTables();
 
-        await laputin.startListening();
+        await l.startListening();
 
-        return laputin;
+        return l;
     }
 
-    function shouldContainFiles(laputin: Laputin, expectedFiles: File[]): request.Test {
-        return request(laputin.app)
-            .get("/api/files")
+    function shouldContainFiles(l: Laputin, expectedFiles: File[]): request.Test {
+        return request(l.app)
+            .get('/api/files')
             .expect(200)
             .expect(expectedFiles);
     }
 
     function resultShouldContainFileHashes(res: { body: any }, expectedHashes: string[]) {
-        let hashes = _.map(res.body, 'hash').sort();
+        const hashes = _.map(res.body, 'hash').sort();
         expect(hashes).to.eql(expectedHashes);
     }
 });

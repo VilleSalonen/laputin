@@ -1,13 +1,13 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
-import {Observable} from "rxjs/Rx";
+import {Component, Input, Output, EventEmitter} from '@angular/core';
+import {Observable} from 'rxjs/Rx';
 
-import {File} from "./../models/file";
-import {Tag, TagStatus} from "./../models/tag";
-import {FileQuery} from "./../models/filequery";
-import {TagChange} from "./../search-tag/search-tag.component";
+import {File} from './../models/file';
+import {Tag, TagStatus} from './../models/tag';
+import {FileQuery} from './../models/filequery';
+import {TagChange} from './../search-tag/search-tag.component';
 
 @Component({
-    selector: "file-search",
+    selector: 'app-file-search',
     template: `
         <div class="filter-controls">
             <div class="extra-padded">
@@ -18,7 +18,7 @@ import {TagChange} from "./../search-tag/search-tag.component";
                                 <label class="col-sm-2 control-label">Tags</label>
                                 <div class="col-sm-10">
                                     <div>
-                                        <tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></tag-autocomplete>
+                                        <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
                                     </div>
                                 </div>
                             </div>
@@ -31,7 +31,8 @@ import {TagChange} from "./../search-tag/search-tag.component";
                             <div class="form-group col-md-3 col-md-offset-8">
                                 <label class="col-sm-2 control-label">Status</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" [ngModel]="query.status" (ngModelChange)="onStatusChanged($event)" name="status">
+                                    <select class="form-control" [ngModel]="query.status"
+                                        (ngModelChange)="onStatusChanged($event)" name="status">
                                         <option value="both">Both tagged and untagged</option>
                                         <option value="untagged">Only untagged</option>
                                         <option value="tagged">Only tagged</option>
@@ -52,7 +53,7 @@ import {TagChange} from "./../search-tag/search-tag.component";
                     </div>
                     <div class="col-md-12">
                         <div class="tag btn-group" *ngFor="let tag of query.tags">
-                            <search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></search-tag>
+                            <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
                         </div>
                     </div>
                 </div>
@@ -62,13 +63,13 @@ import {TagChange} from "./../search-tag/search-tag.component";
 })
 export class FileSearchComponent {
     public query: FileQuery = new FileQuery();
-    
+
     @Output()
-    public update: EventEmitter<FileQuery> = new EventEmitter<FileQuery>(); 
-    
+    public update: EventEmitter<FileQuery> = new EventEmitter<FileQuery>();
+
     constructor() {
     }
-    
+
     onStatusChanged(newStatus: string): void {
         this.query.status = newStatus;
         this.update.emit(this.query);
@@ -78,35 +79,34 @@ export class FileSearchComponent {
         event.preventDefault();
         this.update.emit(this.query);
     }
-    
+
     addTag(tag: Tag): void {
         // For some reason normal Event objects are sometimes passed to this
         // method. That triggers tag selection.
         //
         // To get rid of such problematic selections, check type.
-        if (tag instanceof Event)
-            return;
+        if (tag instanceof Event) { return; }
 
         this.query.andTag(tag);
         this.update.emit(this.query);
     }
 
     changeTag(tagChange: TagChange): void {
-        if (tagChange.tagStatus == TagStatus.And) {
+        if (tagChange.tagStatus === TagStatus.And) {
             this.query.andTag(tagChange.tag);
-        } else if (tagChange.tagStatus == TagStatus.Or) {
+        } else if (tagChange.tagStatus === TagStatus.Or) {
             this.query.orTag(tagChange.tag);
-        } else if (tagChange.tagStatus == TagStatus.Not) {
+        } else if (tagChange.tagStatus === TagStatus.Not) {
             this.query.notTag(tagChange.tag);
         }
         this.update.emit(this.query);
     }
-    
+
     removeTag(tag: Tag): void {
         this.query.removeTag(tag);
         this.update.emit(this.query);
     }
-    
+
     clear(): void {
         this.query.clear();
         this.update.emit(this.query);

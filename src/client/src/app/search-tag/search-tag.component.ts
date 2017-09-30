@@ -1,6 +1,6 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 
-import {Tag, TagStatus} from "../models/tag";
+import {Tag, TagStatus} from '../models/tag';
 
 export class TagChange {
     constructor(public tag: Tag, public tagStatus: TagStatus) {
@@ -8,7 +8,7 @@ export class TagChange {
 }
 
 @Component({
-    selector: "search-tag",
+    selector: 'app-search-tag',
     template: `
     <div class="btn-group">
         <button type="button" class="btn {{tagClass}}" (click)="removeTag()">{{tag.name}}</button>
@@ -30,24 +30,24 @@ export class SearchTagComponent {
     @Output() public removed: EventEmitter<Tag> = new EventEmitter<Tag>();
     @Output() public changed: EventEmitter<TagChange> = new EventEmitter<TagChange>();
 
-    public tagClass: string = "btn-success";
+    public tagClass = 'btn-success';
 
     private removeTag(): void {
         this.removed.emit(this.tag);
     }
-    
+
     private and(): void {
-        this.tagClass = "btn-success";
+        this.tagClass = 'btn-success';
         this.changed.emit(new TagChange(this.tag, TagStatus.And));
     }
 
     private or(): void {
-        this.tagClass = "btn-warning";
+        this.tagClass = 'btn-warning';
         this.changed.emit(new TagChange(this.tag, TagStatus.Or));
     }
 
     private not(): void {
-        this.tagClass = "btn-danger";
+        this.tagClass = 'btn-danger';
         this.changed.emit(new TagChange(this.tag, TagStatus.Not));
     }
 }

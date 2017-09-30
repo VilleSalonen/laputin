@@ -1,15 +1,15 @@
-import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef} from "@angular/core";
-import * as _ from "lodash";
-import * as moment from "moment";
+import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef} from '@angular/core';
+import * as _ from 'lodash';
+import * as moment from 'moment';
 
-import {File} from "./../models/file";
-import {FileQuery} from "./../models/filequery";
-import {FileChange, ChangeDirection} from "./../models/filechange";
-import {Tag} from "./../models/tag";
-import {LaputinService} from "./../laputin.service";
+import {File} from './../models/file';
+import {FileQuery} from './../models/filequery';
+import {FileChange, ChangeDirection} from './../models/filechange';
+import {Tag} from './../models/tag';
+import {LaputinService} from './../laputin.service';
 
 @Component({
-    selector: "video-player",
+    selector: 'app-video-player',
     template: `
         <div class="row" *ngIf="file" style="width: 99%">
             <div class="col-md-4">
@@ -17,7 +17,8 @@ import {LaputinService} from "./../laputin.service";
                 <div>
                     <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                     <span class="glyphicon glyphicon-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
-                    <span class="glyphicon glyphicon-random" aria-hidden="true" (click)="random = !random" [ngClass]="{'active-button': random}"></span>
+                    <span class="glyphicon glyphicon-random" aria-hidden="true" (click)="random = !random"
+                        [ngClass]="{'active-button': random}"></span>
                     <span class="glyphicon glyphicon-step-backward" aria-hidden="true" (click)="goToPrevious()"></span>
                     <span class="glyphicon glyphicon-step-forward" aria-hidden="true" (click)="goToNext()"></span>
                     <span class="glyphicon glyphicon-fullscreen" aria-hidden="true" (click)="fullScreen()"></span>
@@ -33,7 +34,9 @@ import {LaputinService} from "./../laputin.service";
                 <p>
                     <strong>{{file.path}}</strong>
                     <small>
-                        <a (click)="openFile()" title="Open in external player"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+                        <a (click)="openFile()" title="Open in external player">
+                            <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                        </a>
                         <a (click)="copy()" title="Copy tags"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></a>
                         <a (click)="paste()" title="Paste tags"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span></a>
                     </small>
@@ -42,7 +45,7 @@ import {LaputinService} from "./../laputin.service";
                 <div class="row">
                     <div class="col-md-2">
                         <p>
-                            <tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></tag-autocomplete>
+                            <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></app-tag-autocomplete>
                         </p>
 
                         <p>
@@ -50,7 +53,7 @@ import {LaputinService} from "./../laputin.service";
                         </p>
 
                         <div *ngIf="tagCreationOpen">
-                            <search-box (update)="addNewTag($event)" clearOnEnter="1"></search-box>
+                            <app-search-box (update)="addNewTag($event)" clearOnEnter="1"></app-search-box>
                         </div>
                     </div>
 
@@ -73,7 +76,7 @@ export class VideoPlayerComponent {
     public progress: number;
     public progressText: string;
 
-    public tagCreationOpen: boolean = false;
+    public tagCreationOpen = false;
 
     private player: HTMLVideoElement;
 
@@ -94,20 +97,20 @@ export class VideoPlayerComponent {
 
         this.player = content.nativeElement;
 
-        this.player.addEventListener("playing", () => { this.playing = true; });
-        this.player.addEventListener("pause", () => { this.playing = false; });
-        this.player.addEventListener("ended", () => { this.playing = false; });
+        this.player.addEventListener('playing', () => { this.playing = true; });
+        this.player.addEventListener('pause', () => { this.playing = false; });
+        this.player.addEventListener('ended', () => { this.playing = false; });
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
-        this.player.addEventListener("durationchange", () => {
+        this.player.addEventListener('durationchange', () => {
             this.playing = false;
             this._progressUpdate();
         });
-        this.player.addEventListener("seeked", () => this._progressUpdate());
+        this.player.addEventListener('seeked', () => this._progressUpdate());
         // Normal playback progress updates can be optimized.
-        this.player.addEventListener("timeupdate", () => this._optimizedProgressUpdate());
+        this.player.addEventListener('timeupdate', () => this._optimizedProgressUpdate());
     }
 
     @Input() file: File;
@@ -181,37 +184,37 @@ export class VideoPlayerComponent {
     }
 
     public removeTag(tag: Tag): void {
-        var tags = this.file.tags;
+        const tags = this.file.tags;
         this.file.tags = _.filter(this.file.tags, (t: Tag): boolean => t.id !== tag.id);
         this._service.deleteTagFileAssoc(this.file, tag)
             .subscribe(() => {});
     }
 
     private addTagsToFile(tags: Tag[]): void {
-        var currentTags = this.file.tags;
+        const currentTags = this.file.tags;
         _.each(tags, (tag: Tag) => currentTags.push(tag));
-        var sorted = _.sortBy(currentTags, (tag: Tag) => tag.name);
+        const sorted = _.sortBy(currentTags, (tag: Tag) => tag.name);
         this.file.tags = sorted;
     }
 
     public openFile(): void {
-        var query = new FileQuery();
+        const query = new FileQuery();
         query.hash = this.file.hash;
 
         this._service.openFiles(query);
     }
 
     public copy(): void {
-        localStorage.setItem("tagClipboard", JSON.stringify(this.file.tags));
+        localStorage.setItem('tagClipboard', JSON.stringify(this.file.tags));
     }
 
     public paste(): void {
-        var tags = JSON.parse(localStorage.getItem("tagClipboard"));
+        const tags = JSON.parse(localStorage.getItem('tagClipboard'));
         this.addTags(tags);
     }
 
     private _optimizedProgressUpdate(): void {
-        let current = moment();
+        const current = moment();
         if (this._previousUpdate && current.diff(this._previousUpdate) < 1000) {
             return;
         }
@@ -222,34 +225,34 @@ export class VideoPlayerComponent {
     }
 
     private _progressUpdate(): void {
-        let currentTime = this.formatDuration(this.player.currentTime);
-        let duration = this.formatDuration(this.player.duration);
+        const currentTime = this.formatDuration(this.player.currentTime);
+        const duration = this.formatDuration(this.player.duration);
 
-        if (currentTime.indexOf("NaN") == -1 && duration.indexOf("NaN") == -1) {
-            this.progressText = currentTime + "/" + duration;
+        if (currentTime.indexOf('NaN') === -1 && duration.indexOf('NaN') === -1) {
+            this.progressText = currentTime + '/' + duration;
             this.progress = (this.player.currentTime / this.player.duration) * 100;
         } else {
-            this.progressText = "00:00/00:00";
+            this.progressText = '00:00/00:00';
             this.progress = 0;
         }
     }
 
     private formatDuration(durationInSeconds: number): string {
-        let duration = moment.duration(durationInSeconds, "seconds")
+        const duration = moment.duration(durationInSeconds, 'seconds');
 
-        let result = "";
+        let result = '';
 
-        let hours = duration.hours();
-        let minutes = duration.minutes();
-        let seconds = duration.seconds();
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
 
         if (hours) {
-            result += ((hours >= 10) ? hours : "0" + hours) + ":";
+            result += ((hours >= 10) ? hours : '0' + hours) + ':';
         }
 
-        result += (minutes >= 10) ? minutes : "0" + minutes;
-        result += ":";
-        result += (seconds >= 10) ? seconds : "0" + seconds;
+        result += (minutes >= 10) ? minutes : '0' + minutes;
+        result += ':';
+        result += (seconds >= 10) ? seconds : '0' + seconds;
 
         return result;
     }

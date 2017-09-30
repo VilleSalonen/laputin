@@ -6,4 +6,4 @@ export class FileChange {
 export enum ChangeDirection {
     Previous,
     Next
-} 
+}

@@ -1,9 +1,9 @@
-import {Component, OnInit, Injectable, Inject} from "@angular/core";
-import * as _ from "lodash";
+import {Component, OnInit, Injectable, Inject} from '@angular/core';
+import * as _ from 'lodash';
 
-import {File} from "./../models/file";
-import {Tag} from "./../models/tag";
-import {LaputinService} from "./../laputin.service";
+import {File} from './../models/file';
+import {Tag} from './../models/tag';
+import {LaputinService} from './../laputin.service';
 
 @Component({
     template: `
@@ -16,7 +16,7 @@ import {LaputinService} from "./../laputin.service";
                                 <label class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10">
                                     <div>
-                                        <search-box (update)="filter($event)"></search-box>
+                                        <app-search-box (update)="filter($event)"></app-search-box>
                                     </div>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@ import {LaputinService} from "./../laputin.service";
 
                 <tr *ngFor="let tag of filteredTags">
                     <td>
-                        <tag-row [tag]="tag"></tag-row>
+                        <app-tag-row [tag]="tag"></app-tag-row>
                     </td>
                 </tr>
             </tbody>
@@ -48,20 +48,20 @@ import {LaputinService} from "./../laputin.service";
 export class TagsComponent implements OnInit {
     public tags: Tag[] = [];
     public filteredTags: Tag[] = [];
-    
+
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
-    
+
     ngOnInit(): void {
         this._service.getTags()
             .then((tags) => {
                 this.tags = tags;
-                this.filteredTags = tags;                
+                this.filteredTags = tags;
             });
     }
 
     filter(term: string) {
-        let termUpperCase = term.toUpperCase();
+        const termUpperCase = term.toUpperCase();
         this.filteredTags = _.filter(this.tags, (tag) => tag.name.toUpperCase().indexOf(termUpperCase) >= 0);
     }
 }

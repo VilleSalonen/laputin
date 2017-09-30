@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Injectable, Inject } from '@angular/core';
 
-import {LaputinService} from "./../laputin.service";
-import { Tag } from "../models/tag";
+import {LaputinService} from './../laputin.service';
+import { Tag } from '../models/tag';
 
 @Component({
-    selector: 'tag-row',
+    selector: 'app-tag-row',
     template: `
         <div>
             <div *ngIf="!isEditing" (click)="edit()">{{tag.name}}</div>
@@ -18,8 +18,8 @@ import { Tag } from "../models/tag";
 @Injectable()
 export class TagRowComponent implements OnInit {
     @Input() tag: Tag;
-    public isEditing: boolean = false;
-    public name: string = "";
+    public isEditing = false;
+    public name = '';
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
@@ -28,14 +28,14 @@ export class TagRowComponent implements OnInit {
     }
 
     public onKeyUp($event: KeyboardEvent): void {
-        const ENTER: number = 13;
-        const ESC: number = 27;
+        const ENTER = 13;
+        const ESC = 27;
 
-        if ($event.which == ENTER) {
+        if ($event.which === ENTER) {
             this.save();
         }
-        
-        if ($event.which == ESC) {
+
+        if ($event.which === ESC) {
             this.cancelEdit();
         }
     }

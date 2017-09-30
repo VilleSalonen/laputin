@@ -1,17 +1,17 @@
-import {Component, OnInit, Injectable, Inject} from "@angular/core";
-import * as _ from "lodash";
+import {Component, OnInit, Injectable, Inject} from '@angular/core';
+import * as _ from 'lodash';
 
-import {File} from "./../models/file";
-import {FileChange, ChangeDirection} from "./../models/filechange";
-import {Tag} from "./../models/tag";
-import {FileQuery} from "./../models/filequery";
-import {LaputinService} from "./../laputin.service";
+import {File} from './../models/file';
+import {FileChange, ChangeDirection} from './../models/filechange';
+import {Tag} from './../models/tag';
+import {FileQuery} from './../models/filequery';
+import {LaputinService} from './../laputin.service';
 
 @Component({
     template: `
-        <video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></video-player>
-        
-        <file-search (update)="filterFiles($event)"></file-search>
+        <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
+
+        <app-file-search (update)="filterFiles($event)"></app-file-search>
 
         <table class="table table-striped">
             <tbody>
@@ -54,30 +54,30 @@ import {LaputinService} from "./../laputin.service";
 export class FilesComponent implements OnInit {
     public activeFile: File;
     public files: File[] = [];
-    public loading: boolean = false;
+    public loading = false;
     private _query: FileQuery = new FileQuery();
-    
+
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
-    
+
     ngOnInit(): void {
         this.loadFiles();
     }
-    
+
     changeActiveFile(fileChange: FileChange): void {
-        let activeIndex = this.files.indexOf(this.activeFile);
+        const activeIndex = this.files.indexOf(this.activeFile);
 
         let newIndex: number;
         if (fileChange.random) {
             newIndex = _.random(0, this.files.length - 1);
         } else {
-            if (fileChange.direction == ChangeDirection.Previous) {
+            if (fileChange.direction === ChangeDirection.Previous) {
                 newIndex = activeIndex - 1;
             } else {
                 newIndex = activeIndex + 1;
             }
         }
-        
+
         if (newIndex < 0 || newIndex >= this.files.length) {
             this.activeFile = this.files[0];
         } else {
@@ -89,7 +89,7 @@ export class FilesComponent implements OnInit {
         this._query = query;
         this.loadFiles();
     }
-    
+
     openFiles(): void {
         this._service.openFiles(this._query);
     }
@@ -99,7 +99,7 @@ export class FilesComponent implements OnInit {
         this.loading = true;
         this._service.queryFiles(this._query).then((files: File[]) => {
             this.files = files;
-            
+
             if (this.files) {
                 this.activeFile = files[0];
             }
@@ -109,6 +109,6 @@ export class FilesComponent implements OnInit {
     }
 
     public formattedTags(file: File): string {
-        return _.map(file.tags, (tag) => tag.name).join(", ");
+        return _.map(file.tags, (tag) => tag.name).join(', ');
     }
 }

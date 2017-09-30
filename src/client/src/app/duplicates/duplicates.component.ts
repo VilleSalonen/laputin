@@ -1,8 +1,8 @@
-import {Component, Injectable, Inject} from "@angular/core";
-import * as _ from "lodash";
+import {Component, Injectable, Inject} from '@angular/core';
+import * as _ from 'lodash';
 
-import {LaputinService} from "./../laputin.service";
-import {Duplicate} from "./../models/duplicate";
+import {LaputinService} from './../laputin.service';
+import {Duplicate} from './../models/duplicate';
 
 @Component({
     template: `
@@ -15,7 +15,7 @@ import {Duplicate} from "./../models/duplicate";
                                 <label class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10">
                                     <div>
-                                        <search-box (update)="filter($event)"></search-box>
+                                        <app-search-box (update)="filter($event)"></app-search-box>
                                     </div>
                                 </div>
                             </div>
@@ -53,7 +53,7 @@ import {Duplicate} from "./../models/duplicate";
 export class DuplicatesComponent {
     public duplicates: Duplicate[] = [];
     public filteredDuplicates: Duplicate[] = [];
-    
+
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         _service.getDuplicates().then((duplicates: Duplicate[]) => {
             this.duplicates = duplicates;
@@ -62,7 +62,10 @@ export class DuplicatesComponent {
     }
 
     filter(term: string) {
-        let termUpperCase = term.toUpperCase();
-        this.filteredDuplicates = _.filter(this.duplicates, (duplicate) => _.some(duplicate.files, (file) => file.name.toUpperCase().indexOf(termUpperCase) >= 0));
+        const termUpperCase = term.toUpperCase();
+        this.filteredDuplicates = _.filter(
+            this.duplicates,
+            (duplicate) =>
+                _.some(duplicate.files, (file) => file.name.toUpperCase().indexOf(termUpperCase) >= 0));
     }
 }

@@ -1,91 +1,91 @@
-import bluebird = require("bluebird");
+import bluebird = require('bluebird');
 
-import sqlite3 = require("sqlite3");
+import sqlite3 = require('sqlite3');
 bluebird.promisifyAll(sqlite3);
 
-import path = require("path");
-import _ = require("lodash");
+import path = require('path');
+import _ = require('lodash');
 
-import { Query } from "./query.model";
-import { File } from "./file";
-import { Tag } from "./tag";
-import { TagQuery } from "./tagquery.model";
-import { FileLibrary } from "./filelibrary";
+import { Query } from './query.model';
+import { File } from './file';
+import { Tag } from './tag';
+import { TagQuery } from './tagquery.model';
+import { FileLibrary } from './filelibrary';
 
 export class Library {
     private _db: any;
 
     constructor(private _libraryPath: string) {
-        this._db = new sqlite3.Database(path.join(this._libraryPath, ".laputin.db"));
+        this._db = new sqlite3.Database(path.join(this._libraryPath, '.laputin.db'));
     }
 
     public async createTables(): Promise<void> {
-        await this._db.runAsync("CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);");
-        await this._db.runAsync("CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));");
-        await this._db.runAsync("CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);");
+        await this._db.runAsync('CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);');
+        await this._db.runAsync('CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));');
+        await this._db.runAsync('CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);');
     }
 
     public addFile(file: File): Promise<void> {
-        var stmt = this._db.prepare("INSERT OR REPLACE INTO files (hash, path, active) VALUES (?, ?, 1)");
+        const stmt = this._db.prepare('INSERT OR REPLACE INTO files (hash, path, active) VALUES (?, ?, 1)');
         return stmt.runAsync(file.hash, file.path);
     }
 
     public deactivateFile(file: File): Promise<void> {
-        var stmt = this._db.prepare("UPDATE files SET active = 0 WHERE path = ?");
+        const stmt = this._db.prepare('UPDATE files SET active = 0 WHERE path = ?');
         return stmt.runAsync(file.path);
     }
 
     public deactivateAll(): Promise<void> {
-        var stmt = this._db.prepare("UPDATE files SET active = 0");
+        const stmt = this._db.prepare('UPDATE files SET active = 0');
         return stmt.runAsync();
     }
 
     public async getFiles(query: Query): Promise<File[]> {
-        var done: Function;
-        var promise = new Promise<File[]>((resolve, reject) => done = resolve);
+        let done: Function;
+        const promise = new Promise<File[]>((resolve, reject) => done = resolve);
 
-        var files: { [hash: string]: File } = {};
+        const files: { [hash: string]: File } = {};
 
-        var params: any[] = [];
+        const params: any[] = [];
 
-        var sql1 = "SELECT files.hash, files.path FROM files WHERE active = 1";
+        let sql1 = 'SELECT files.hash, files.path FROM files WHERE active = 1';
         if (query.filename) {
-            sql1 += " AND path LIKE ? COLLATE NOCASE";
-            params.push("%" + query.filename + "%");
+            sql1 += ' AND path LIKE ? COLLATE NOCASE';
+            params.push('%' + query.filename + '%');
         }
         if (query.status) {
-            if (query.status === "tagged" || query.status === "untagged") {
-                var operator = (query.status === "tagged") ? ">" : "=";
-                sql1 += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) " + operator + " 0";
+            if (query.status === 'tagged' || query.status === 'untagged') {
+                const operator = (query.status === 'tagged') ? '>' : '=';
+                sql1 += ' AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) ' + operator + ' 0';
             }
         }
 
         if (query.hash) {
-            sql1 += " AND hash = ? ";
+            sql1 += ' AND hash = ? ';
             params.push(query.hash);
         }
 
         if (query.and || query.or || query.not) {
-            sql1 += " AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) > 0";
+            sql1 += ' AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) > 0';
         }
-        sql1 += this._generateTagFilterQuery(query.and, params, "IN", "AND");
-        sql1 += this._generateTagFilterQuery(query.or, params, "IN", "OR");
-        sql1 += this._generateTagFilterQuery(query.not, params, "NOT IN", "AND");
+        sql1 += this._generateTagFilterQuery(query.and, params, 'IN', 'AND');
+        sql1 += this._generateTagFilterQuery(query.or, params, 'IN', 'OR');
+        sql1 += this._generateTagFilterQuery(query.not, params, 'NOT IN', 'AND');
 
-        sql1 += " ORDER BY path ";
+        sql1 += ' ORDER BY path ';
 
-        var each1 = (err: any, row: any) => {
+        const each1 = (err: any, row: any) => {
             files[row.hash] = new File(row.hash, row.path, []);
         };
 
-        var stmt = this._db.prepare(sql1);
-        await stmt.eachAsync(params, each1)
+        const stmt = this._db.prepare(sql1);
+        await stmt.eachAsync(params, each1);
 
-        var sql2 = "SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name";
-        var each2 = function (err: Error, row: any) {
+        const sql2 = 'SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name';
+        const each2 = function (err: Error, row: any) {
             // Tag associations exist for inactive files but inactive files are
             // not in files list.
-            if (typeof files[row.hash] !== "undefined") {
+            if (typeof files[row.hash] !== 'undefined') {
                 files[row.hash].tags.push(new Tag(row.id, row.name, 0));
             }
         };
@@ -98,103 +98,123 @@ export class Library {
 
     private _generateTagFilterQuery(ids: string, params: string[], opr1: string, opr2: string): string {
         if (ids) {
-            var splitIds = ids.split(",");
+            const splitIds = ids.split(',');
             splitIds.forEach((id) => {
                 params.push(id);
             });
-            var wheres = _.map(splitIds, () => {
-                return " files.hash " + opr1 + " (SELECT hash FROM tags_files WHERE id=?) "
+            const wheres = _.map(splitIds, () => {
+                return ' files.hash ' + opr1 + ' (SELECT hash FROM tags_files WHERE id=?) ';
             });
 
-            return " AND ( " + wheres.join(" " + opr2 + " ") + " ) ";
+            return ' AND ( ' + wheres.join(' ' + opr2 + ' ') + ' ) ';
         }
 
-        return "";
+        return '';
     }
 
     public async createNewTag(tagName: string): Promise<Tag> {
         if (!tagName) {
-            return Promise.reject<Tag>(new Error("Tag name is required"));
+            return Promise.reject<Tag>(new Error('Tag name is required'));
         }
 
-        var stmt = this._db.prepare("INSERT INTO tags VALUES (null, ?)");
+        const stmt = this._db.prepare('INSERT INTO tags VALUES (null, ?)');
         await stmt.runAsync(tagName);
         return new Tag(stmt.lastID, tagName, 0);
     }
 
     public async renameTag(tagId: number, tagName: string): Promise<Tag> {
         if (!tagId) {
-            return Promise.reject<Tag>(new Error("Tag ID is required"));
+            return Promise.reject<Tag>(new Error('Tag ID is required'));
         }
         if (!tagName) {
-            return Promise.reject<Tag>(new Error("Tag name is required"));
+            return Promise.reject<Tag>(new Error('Tag name is required'));
         }
 
-        var stmt = this._db.prepare("UPDATE tags SET name = ? WHERE id = ?");
+        const stmt = this._db.prepare('UPDATE tags SET name = ? WHERE id = ?');
         await stmt.runAsync(tagName, tagId);
         return new Tag(tagId, tagName, 0);
     }
 
     public async getTags(query: TagQuery): Promise<Tag[]> {
-        var tags: Tag[] = [];
+        const tags: Tag[] = [];
 
-        var params: any[] = [];
-        var sql = "SELECT id, name, (SELECT COUNT(*) FROM tags_files JOIN files ON tags_files.hash = files.hash WHERE tags_files.id = tags.id AND files.active = 1) AS count FROM tags WHERE ";
+        const params: any[] = [];
+        let sql = `
+            SELECT id, name, (
+                SELECT COUNT(*)
+                FROM tags_files
+                JOIN files ON tags_files.hash = files.hash
+                WHERE
+                    tags_files.id = tags.id AND
+                    files.active = 1
+            ) AS count
+            FROM tags
+            WHERE
+        `;
 
         if (query && query.unassociated) {
-            sql += " count >= 0 ";
+            sql += ' count >= 0 ';
         } else {
-            sql += " count > 0 ";
+            sql += ' count > 0 ';
         }
 
         if (query && query.selectedTags) {
-            var wheres: string[] = [];
+            const wheres: string[] = [];
             query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
-                wheres.push(" id = ? ");
+                wheres.push(' id = ? ');
             });
 
-            var wheresJoined = wheres.join(" OR ");
-            sql += " AND id IN (SELECT DISTINCT id FROM tags_files WHERE hash IN (SELECT DISTINCT hash FROM tags_files WHERE " + wheresJoined + "))";
+            const wheresJoined = wheres.join(' OR ');
+            sql += ` AND id IN (
+                SELECT DISTINCT id
+                FROM tags_files
+                WHERE hash IN (
+                    SELECT DISTINCT hash
+                    FROM tags_files
+                    WHERE ` + wheresJoined + `
+                )
+            )`;
 
-            var selectedIds: string[] = [];
+            const selectedIds: string[] = [];
             query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
-                selectedIds.push(" ? ");
+                selectedIds.push(' ? ');
             });
 
-            sql += " AND id NOT IN (" + selectedIds.join(",") + ")";
+            sql += ' AND id NOT IN (' + selectedIds.join(',') + ')';
         }
 
-        sql += " ORDER BY name ";
+        sql += ' ORDER BY name ';
 
-        var each = (err: Error, row: any) => {
+        const each = (err: Error, row: any) => {
             tags.push(new Tag(row.id, row.name, row.count));
         };
 
-        var stmt = this._db.prepare(sql);
-        await stmt.eachAsync(params, each)
+        const stmt = this._db.prepare(sql);
+        await stmt.eachAsync(params, each);
         return tags;
     }
 
     public async createNewLinkBetweenTagAndFile(inputTag: Tag, hash: string): Promise<void> {
-        var stmt = this._db.prepare("INSERT INTO tags_files VALUES (?, ?)");
+        const stmt = this._db.prepare('INSERT INTO tags_files VALUES (?, ?)');
 
         try {
             await stmt.runAsync(inputTag.id, hash);
-        }
-        catch (err) {
-            if (err.code !== "SQLITE_CONSTRAINT") {
+        } catch (err) {
+            if (err.code !== 'SQLITE_CONSTRAINT') {
                 console.log(err);
                 return;
             } else {
-                console.log("File and tag association already exists with tag ID " + inputTag.id + " and file hash " + hash + ". Refusing to add a duplicate association.");
+                const error = 'File and tag association already exists with tag ID ' + inputTag.id +
+                    ' and file hash ' + hash + '. Refusing to add a duplicate association.';
+                console.log();
             }
         }
     }
 
     public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
-        var stmt = this._db.prepare("DELETE FROM tags_files WHERE id = ? AND hash = ?");
+        const stmt = this._db.prepare('DELETE FROM tags_files WHERE id = ? AND hash = ?');
         return stmt.runAsync(inputTag, inputFile);
     }
 }
