@@ -14,5 +14,7 @@
         "**/deploy": true,
         "**/*.js.map": true,
         "**/*.js": {"when": "$(basename).ts"}
-	}
+    },
+    
+    "editor.tabSize": 4
 }
