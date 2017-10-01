@@ -1,0 +1,24 @@
+@import './../styles/styles.scss';
+
+.nav {
+    @include g-layout__row;
+
+    background: $color-primary-4;
+
+    padding: calc(#{$standard-margin} * 0.5);
+}
+
+a {
+    color: $color-primary-1;
+    text-decoration: none;
+}
+
+ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+li {
+    list-style: none;
+    margin-right: 1em;
+}
