@@ -16,5 +16,7 @@
         "**/*.js": {"when": "$(basename).ts"}
     },
     
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": false
 }
