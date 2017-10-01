@@ -12,8 +12,8 @@ import {LaputinService} from './../laputin.service';
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
     template: `
-        <div class="row" *ngIf="file" style="width: 99%">
-            <div class="col-md-4">
+        <div class="row" *ngIf="file">
+            <div>
                 <video style="width: 100%" src="/media/{{file.escapedUrl()}}" controls #player></video>
                 <div>
                     <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
@@ -31,7 +31,7 @@ import {LaputinService} from './../laputin.service';
                     <progress value="{{progress}}" max="100"></progress> {{progressText}}
                 </div>
             </div>
-            <div class="col-md-8">
+            <div>
                 <p>
                     <strong>{{file.path}}</strong>
                     <small>
@@ -44,7 +44,7 @@ import {LaputinService} from './../laputin.service';
                 </p>
 
                 <div class="row">
-                    <div class="col-md-2">
+                    <div>
                         <p>
                             <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></app-tag-autocomplete>
                         </p>
@@ -58,7 +58,7 @@ import {LaputinService} from './../laputin.service';
                         </div>
                     </div>
 
-                    <div class="col-md-10">
+                    <div>
                         <p>
                             <span *ngFor="let tag of file.tags">
                                 <button (click)="removeTag(tag)" class="btn btn-success tag">{{tag.name}}</button>
