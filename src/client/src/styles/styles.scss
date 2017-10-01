@@ -34,3 +34,8 @@ $rgba-primary-4: rgba( 20, 20, 37,1);
     display: flex;
     flex-direction: row;
 }
+
+@mixin g-layout__column {
+    display: flex;
+    flex-direction: column;
+}

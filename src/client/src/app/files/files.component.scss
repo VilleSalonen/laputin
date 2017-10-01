@@ -1,0 +1,16 @@
+@import './../../styles/styles.scss';
+
+:host {
+    @include g-layout__column;
+    flex: 2;
+}
+
+.container {
+    @include g-layout__column;
+    flex: 2;
+}
+
+.files {
+    flex: 2;
+    overflow-y: scroll;
+}

@@ -1,5 +1,18 @@
 @import './../styles/styles.scss';
 
+.maincontainer {
+    @include g-layout__column;
+
+    min-height: 100vh;
+    max-height: 100vh;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+}
+
 .nav {
     @include g-layout__row;
 
