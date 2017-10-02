@@ -39,3 +39,9 @@ $rgba-primary-4: rgba( 20, 20, 37,1);
     display: flex;
     flex-direction: column;
 }
+
+@mixin rounded-borders {
+    border: 1px solid black;
+    border-radius: calc(0.25 * #{$standard-margin});
+    padding: calc(0.25 * #{$standard-margin});
+}

@@ -13,9 +13,10 @@ import {LaputinService} from './../laputin.service';
 
 @Component({
     selector: 'app-tag-autocomplete',
+    styleUrls: ['./tag-autocomplete.component.scss'],
     template: `
         <div>
-            <input class="typeahead-input form-control"
+            <input
                     type="text"
                     [(ngModel)]="title"
                     [formControl]="termCtrl"
