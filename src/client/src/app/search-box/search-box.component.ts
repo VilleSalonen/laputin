@@ -2,6 +2,7 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 
 @Component({
     selector: 'app-search-box',
+    styleUrls: ['./search-box.component.scss'],
     template: `
     <div>
         <input

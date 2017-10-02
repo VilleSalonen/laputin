@@ -1,9 +1,8 @@
-@import '../../styles/styles.scss';
+@import './../../styles/styles.scss';
 
 input {
     @include rounded-borders;
 
     background: inherit;
     color: inherit;
-    font-size: 1.2em;
 }
