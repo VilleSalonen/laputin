@@ -11,17 +11,19 @@ import {LaputinService} from './../laputin.service';
     styleUrls: ['./files.component.scss'],
     template: `
         <div class="container">
-            <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
-
-            <app-file-search (update)="filterFiles($event)"></app-file-search>
-
-            <h2>                                Showing {{files.length}} matching files
-                                                            <a class="pull-right" (click)="openFiles()" title="Open in external player">
-                                                                <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
-                                                            </a>
-            </h2>
+            <div class="player">
+                <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
+            </div>
 
             <div class="files">
+                <app-file-search (update)="filterFiles($event)"></app-file-search>
+
+                <h2>                                Showing {{files.length}} matching files
+                                                                <a class="pull-right" (click)="openFiles()" title="Open in external player">
+                                                                    <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                                                                </a>
+                </h2>
+
                 <table class="files-table">
                     <tbody>
                         <tr>
@@ -37,7 +39,10 @@ import {LaputinService} from './../laputin.service';
                             <td (click)="activeFile = file" [ngClass]="{'active-file': file == activeFile}">
                                 <div *ngIf="file == activeFile">
                                     <div>
-                                        <p><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span> {{file.path}}</p>
+                                        <p>
+                                            <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+                                            {{file.path}}
+                                        </p>
                                         <p>{{formattedTags(file)}}</p>
                                     </div>
                                 </div>

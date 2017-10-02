@@ -10,7 +10,15 @@
     flex: 2;
 }
 
+.player {
+    background: $color-primary-1;
+}
+
 .files {
+    background: $color-primary-2;
+}
+
+.files-table {
     flex: 2;
     overflow-y: scroll;
 }
