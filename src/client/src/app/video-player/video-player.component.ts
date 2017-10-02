@@ -13,25 +13,7 @@ import {LaputinService} from './../laputin.service';
     styleUrls: ['./video-player.component.scss'],
     template: `
         <div class="row" *ngIf="file">
-            <div>
-                <video style="width: 100%" src="/media/{{file.escapedUrl()}}" controls #player></video>
-                <div>
-                    <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
-                    <span class="glyphicon glyphicon-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
-                    <span class="glyphicon glyphicon-random" aria-hidden="true" (click)="random = !random"
-                        [ngClass]="{'active-button': random}"></span>
-                    <span class="glyphicon glyphicon-step-backward" aria-hidden="true" (click)="goToPrevious()"></span>
-                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true" (click)="goToNext()"></span>
-                    <span class="glyphicon glyphicon-fullscreen" aria-hidden="true" (click)="fullScreen()"></span>
-                    <a (click)="largeStepBackward()">&lt;&lt;</a>
-                    <a (click)="smallStepBackward()">&lt;</a>
-                    <a (click)="smallStepForward()">&gt;</a>
-                    <a (click)="largeStepForward()">&gt;&gt;</a>
-
-                    <progress value="{{progress}}" max="100"></progress> {{progressText}}
-                </div>
-            </div>
-            <div>
+            <div class="tagging">
                 <p>
                     <strong>{{file.path}}</strong>
                     <small>
@@ -67,6 +49,25 @@ import {LaputinService} from './../laputin.service';
                     </div>
                 </div>
             </div>
+
+            <div class="player">
+                <video style="width: 100%" src="/media/{{file.escapedUrl()}}" controls #player></video>
+                <div>
+                    <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
+                    <span class="glyphicon glyphicon-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
+                    <span class="glyphicon glyphicon-random" aria-hidden="true" (click)="random = !random"
+                        [ngClass]="{'active-button': random}"></span>
+                    <span class="glyphicon glyphicon-step-backward" aria-hidden="true" (click)="goToPrevious()"></span>
+                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true" (click)="goToNext()"></span>
+                    <span class="glyphicon glyphicon-fullscreen" aria-hidden="true" (click)="fullScreen()"></span>
+                    <a (click)="largeStepBackward()">&lt;&lt;</a>
+                    <a (click)="smallStepBackward()">&lt;</a>
+                    <a (click)="smallStepForward()">&gt;</a>
+                    <a (click)="largeStepForward()">&gt;&gt;</a>
+
+                    <progress value="{{progress}}" max="100"></progress> {{progressText}} {{resolution}}
+                </div>
+            </div>
         </div>`,
     providers: []
 })
@@ -76,6 +77,7 @@ export class VideoPlayerComponent {
     public random: boolean;
     public progress: number;
     public progressText: string;
+    public resolution: string;
 
     public tagCreationOpen = false;
 
@@ -108,6 +110,10 @@ export class VideoPlayerComponent {
         this.player.addEventListener('durationchange', () => {
             this.playing = false;
             this._progressUpdate();
+
+            if (this.player.videoWidth && this.player.videoHeight) {
+                this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
+            }
         });
         this.player.addEventListener('seeked', () => this._progressUpdate());
         // Normal playback progress updates can be optimized.
