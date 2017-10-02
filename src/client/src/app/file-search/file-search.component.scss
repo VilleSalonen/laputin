@@ -1,0 +1,22 @@
+@import './../../styles/styles.scss';
+
+:host {
+    padding: $standard-margin;
+}
+
+.row {
+    @include g-layout__row;
+    align-items: center;
+}
+
+.control {
+    margin-right: $standard-margin;
+}
+
+label {
+    margin-right: calc(0.5 * #{$standard-margin});
+}
+
+input, select {
+    @include rounded-borders;
+}

@@ -8,56 +8,38 @@ import {TagChange} from './../search-tag/search-tag.component';
 
 @Component({
     selector: 'app-file-search',
+    styleUrls: ['./file-search.component.scss'],
     template: `
-        <div class="filter-controls">
-            <div class="extra-padded">
-                <div class="row">
-                    <div class="col-md-12">
-                        <form class="form-horizontal">
-                            <div class="form-group col-md-4">
-                                <label class="col-sm-2 control-label">Tags</label>
-                                <div class="col-sm-10">
-                                    <div>
-                                        <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4 col-md-offset-4">
-                                <label class="col-sm-2 control-label">Filename</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" [(ngModel)]="query.filename" name="filename" />
-                                </div>
-                            </div>
-                            <div class="form-group col-md-3 col-md-offset-8">
-                                <label class="col-sm-2 control-label">Status</label>
-                                <div class="col-sm-10">
-                                    <select class="form-control" [ngModel]="query.status"
-                                        (ngModelChange)="onStatusChanged($event)" name="status">
-                                        <option value="both">Both tagged and untagged</option>
-                                        <option value="untagged">Only untagged</option>
-                                        <option value="tagged">Only tagged</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-1 col-md-offset-11">
-                                <div class="col-sm-10 col-sm-offset-2">
-                                    <p>
-                                        <small>
-                                            <a (click)="clear()">Clear search filters</a>
-                                        </small>
-                                    </p>
-                                </div>
-                            </div>
-                            <input type="submit" style="display: none;" (click)="submitClicked($event)" />
-                        </form>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="tag btn-group" *ngFor="let tag of query.tags">
-                            <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
-                        </div>
-                    </div>
-                </div>
+        <form class="row">
+            <div class="row control">
+                <label>Tags</label>
+                <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
             </div>
+
+            <div class="row control">
+                <label>Filename</label>
+                <input type="text" class="form-control" [(ngModel)]="query.filename" name="filename" />
+            </div>
+
+            <div class="row control">
+                <label>Status</label>
+                <select class="form-control" [ngModel]="query.status"
+                    (ngModelChange)="onStatusChanged($event)" name="status">
+                    <option value="both">Both tagged and untagged</option>
+                    <option value="untagged">Only untagged</option>
+                    <option value="tagged">Only tagged</option>
+                </select>
+            </div>
+
+            <div class="control">
+                <button (click)="clear()">Clear search filters</button>
+            </div>
+
+            <input type="submit" style="display: none;" (click)="submitClicked($event)" />
+        </form>
+
+        <div class="tag btn-group" *ngFor="let tag of query.tags">
+            <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
         </div>
     `
 })
