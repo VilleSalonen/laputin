@@ -10,18 +10,18 @@ import {TagChange} from './../search-tag/search-tag.component';
     selector: 'app-file-search',
     styleUrls: ['./file-search.component.scss'],
     template: `
-        <form class="row">
+        <form>
             <div class="row control">
                 <label>Tags</label>
                 <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
             </div>
 
-            <div class="row control">
+            <div class="control">
                 <label>Filename</label>
                 <input type="text" class="form-control" [(ngModel)]="query.filename" name="filename" />
             </div>
 
-            <div class="row control">
+            <div class="control">
                 <label>Status</label>
                 <select class="form-control" [ngModel]="query.status"
                     (ngModelChange)="onStatusChanged($event)" name="status">

@@ -22,3 +22,7 @@
     flex: 2;
     overflow-y: scroll;
 }
+
+.row {
+    @include g-layout__row;
+}

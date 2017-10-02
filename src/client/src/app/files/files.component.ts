@@ -16,46 +16,53 @@ import {LaputinService} from './../laputin.service';
             </div>
 
             <div class="files">
-                <app-file-search (update)="filterFiles($event)"></app-file-search>
+                <div class="row">
+                    <div style="flex-basis: 50%">
+                        <app-file-search (update)="filterFiles($event)"></app-file-search>
+                    </div>
 
-                <h2>                                Showing {{files.length}} matching files
-                                                                <a class="pull-right" (click)="openFiles()" title="Open in external player">
-                                                                    <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
-                                                                </a>
-                </h2>
+                    <div style="flex-basis: 50%">
+                        <h2>
+                            Showing {{files.length}} matching files
+                            <a class="pull-right" (click)="openFiles()" title="Open in external player">
+                                <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                            </a>
+                        </h2>
 
-                <table class="files-table">
-                    <tbody>
-                        <tr>
-                            <th>
-                            </th>
-                        </tr>
+                        <table class="files-table">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                    </th>
+                                </tr>
 
-                        <tr [hidden]="!loading" class="loading">
-                            <td><span class="glyphicon glyphicon-time" aria-hidden="true"></span></td>
-                        </tr>
+                                <tr [hidden]="!loading" class="loading">
+                                    <td><span class="glyphicon glyphicon-time" aria-hidden="true"></span></td>
+                                </tr>
 
-                        <tr *ngFor="let file of files">
-                            <td (click)="activeFile = file" [ngClass]="{'active-file': file == activeFile}">
-                                <div *ngIf="file == activeFile">
-                                    <div>
-                                        <p>
-                                            <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
-                                            {{file.path}}
-                                        </p>
-                                        <p>{{formattedTags(file)}}</p>
-                                    </div>
-                                </div>
-                                <div *ngIf="file != activeFile">
-                                    <div>
-                                        <p>{{file.path}}</p>
-                                        <p>{{formattedTags(file)}}</p>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <tr *ngFor="let file of files">
+                                    <td (click)="activeFile = file" [ngClass]="{'active-file': file == activeFile}">
+                                        <div *ngIf="file == activeFile">
+                                            <div>
+                                                <p>
+                                                    <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+                                                    {{file.path}}
+                                                </p>
+                                                <p>{{formattedTags(file)}}</p>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="file != activeFile">
+                                            <div>
+                                                <p>{{file.path}}</p>
+                                                <p>{{formattedTags(file)}}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     `,
