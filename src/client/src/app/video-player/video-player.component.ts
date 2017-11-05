@@ -14,7 +14,10 @@ import {LaputinService} from './../laputin.service';
     template: `
         <div class="column" *ngIf="file">
             <div class="player">
+                <h2 style="margin-top: 0; margin-bottom: 24px;">{{file.path}}</h2>
+
                 <video style="width: 100%" src="/media/{{file.escapedUrl()}}" controls #player></video>
+                
                 <div>
                     <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                     <span class="glyphicon glyphicon-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
@@ -34,7 +37,6 @@ import {LaputinService} from './../laputin.service';
 
             <div class="tagging">
                 <p>
-                    <strong>{{file.path}}</strong>
                     <small>
                         <a (click)="openFile()" title="Open in external player">
                             <span class="glyphicon glyphicon-film" aria-hidden="true"></span>

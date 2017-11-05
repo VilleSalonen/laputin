@@ -13,12 +13,12 @@ import {LaputinService} from './../laputin.service';
         <div class="container">
             <div class="files">
                 <div class="row" style="min-height: 100%; max-height: 100%;">
-                    <div style="flex-basis: 50%; min-height: 100%; max-height: 100%; overflow-y: auto;">
+                    <div style="min-height: 100%; max-height: 100%; overflow-y: auto; padding: 24px;">
                         <app-file-search (update)="filterFiles($event)"></app-file-search>
                     </div>
 
-                    <div style="flex-basis: 50%; min-height: 100%; max-height: 100%; overflow-y: auto;">
-                        <h2>
+                    <div style="flex: 1; min-height: 100%; max-height: 100%; overflow-y: auto; padding: 24px;">
+                        <h2 style="margin-top: 0; margin-bottom: 24px;">
                             Showing {{files.length}} matching files
                             <a class="pull-right" (click)="openFiles()" title="Open in external player">
                                 <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
