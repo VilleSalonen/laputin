@@ -14,7 +14,8 @@ import {LaputinService} from './../laputin.service';
     template: `
         <div class="column" *ngIf="file">
             <div class="player">
-                <h2 style="margin-top: 0; margin-bottom: 24px;">{{file.path}}</h2>
+                <h3 style="margin: 0;">{{directory()}}</h3>
+                <h2 style="margin-top: 0; margin-bottom: 24px;">{{file.name}}</h2>
 
                 <video style="width: 100%" src="/media/{{file.escapedUrl()}}" controls #player></video>
                 
@@ -128,6 +129,10 @@ export class VideoPlayerComponent {
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
+    }
+
+    public directory(): string {
+        return this.file.path.replace(this.file.name, '').replace(/\//g, '\\');
     }
 
     public play(): void {
