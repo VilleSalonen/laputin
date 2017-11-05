@@ -13,9 +13,9 @@ import {LaputinService} from './../laputin.service';
     styleUrls: ['./video-player.component.scss'],
     template: `
         <div class="column" *ngIf="file" style="display: flex; flex-direction: column; max-height: 100%; min-height: 100%;">
-            <div style="padding: 24px; padding-bottom: 0;">
-                <h3 style="margin: 0;">{{directory()}}</h3>
-                <h2 style="margin-top: 0; margin-bottom: 0;">{{file.name}}</h2>
+            <div style="padding: 24px; padding-bottom: 0; font-weight: bold;">
+                <span style="margin: 0; font-size: 14px;">{{directory()}}</span><br />
+                <span style="margin-top: 0; margin-bottom: 0; font-size: 20px;">{{nameSansSuffix()}}</span><span style="font-size: 14px;">{{suffix()}}</span>
             </div>
 
             <div class="player">
@@ -135,6 +135,14 @@ export class VideoPlayerComponent {
 
     public directory(): string {
         return this.file.path.replace(this.file.name, '').replace(/\//g, '\\');
+    }
+
+    public nameSansSuffix(): string {
+        return this.file.name.substr(0, this.file.name.lastIndexOf('.'));
+    }
+
+    public suffix(): string {
+        return this.file.name.substr(this.file.name.lastIndexOf('.'));
     }
 
     public play(): void {
