@@ -12,13 +12,17 @@ import {LaputinService} from './../laputin.service';
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
     template: `
-        <div class="column" *ngIf="file">
-            <div class="player">
+        <div class="column" *ngIf="file" style="display: flex; flex-direction: column; max-height: 100%; min-height: 100%;">
+            <div style="padding: 24px; padding-bottom: 0;">
                 <h3 style="margin: 0;">{{directory()}}</h3>
-                <h2 style="margin-top: 0; margin-bottom: 24px;">{{file.name}}</h2>
+                <h2 style="margin-top: 0; margin-bottom: 0;">{{file.name}}</h2>
+            </div>
 
-                <video style="width: 100%" src="/media/{{file.escapedUrl()}}" controls #player></video>
-                
+            <div class="player">
+                <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" controls #player></video>
+            </div>
+
+            <div class="tagging">
                 <div>
                     <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                     <span class="glyphicon glyphicon-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
@@ -34,9 +38,7 @@ import {LaputinService} from './../laputin.service';
 
                     <progress value="{{progress}}" max="100"></progress> {{progressText}} {{resolution}}
                 </div>
-            </div>
 
-            <div class="tagging">
                 <p>
                     <small>
                         <a (click)="openFile()" title="Open in external player">
