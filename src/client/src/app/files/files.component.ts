@@ -20,8 +20,8 @@ import {LaputinService} from './../laputin.service';
                     <div style="flex: 1; min-height: 100%; max-height: 100%; overflow-y: auto; padding: 24px;">
                         <h2 style="margin-top: 0; margin-bottom: 24px;">
                             Showing {{files.length}} matching files
-                            <a class="pull-right" (click)="openFiles()" title="Open in external player">
-                                <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                            <a (click)="openFiles()" title="Open in external player">
+                                <i class="fa fa-film" aria-hidden="true"></i>
                             </a>
                         </h2>
 
@@ -33,7 +33,7 @@ import {LaputinService} from './../laputin.service';
                                 </tr>
 
                                 <tr [hidden]="!loading" class="loading">
-                                    <td><span class="glyphicon glyphicon-time" aria-hidden="true"></span></td>
+                                    <td><span class="fa fa-spinner" aria-hidden="true"></span></td>
                                 </tr>
 
                                 <tr *ngFor="let file of files">
@@ -41,7 +41,7 @@ import {LaputinService} from './../laputin.service';
                                         <div *ngIf="file == activeFile">
                                             <div>
                                                 <p>
-                                                    <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+                                                    <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
                                                     {{file.path}}
                                                 </p>
                                                 <p>{{formattedTags(file)}}</p>

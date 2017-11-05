@@ -24,17 +24,17 @@ import {LaputinService} from './../laputin.service';
 
             <div class="tagging">
                 <div>
-                    <span class="glyphicon glyphicon-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
-                    <span class="glyphicon glyphicon-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
-                    <span class="glyphicon glyphicon-random" aria-hidden="true" (click)="random = !random"
+                    <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
+                    <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
+                    <span class="fa fa-random" aria-hidden="true" (click)="random = !random"
                         [ngClass]="{'active-button': random}"></span>
-                    <span class="glyphicon glyphicon-step-backward" aria-hidden="true" (click)="goToPrevious()"></span>
-                    <span class="glyphicon glyphicon-step-forward" aria-hidden="true" (click)="goToNext()"></span>
-                    <span class="glyphicon glyphicon-fullscreen" aria-hidden="true" (click)="fullScreen()"></span>
-                    <a (click)="largeStepBackward()">&lt;&lt;</a>
-                    <a (click)="smallStepBackward()">&lt;</a>
-                    <a (click)="smallStepForward()">&gt;</a>
-                    <a (click)="largeStepForward()">&gt;&gt;</a>
+                    <span class="fa fa-fast-backward" aria-hidden="true" (click)="goToPrevious()"></span>
+                    <span class="fa fa-fast-forward" aria-hidden="true" (click)="goToNext()"></span>
+                    <span class="fa fa-arrows-alt" aria-hidden="true" (click)="fullScreen()"></span>
+                    <span class="fa fa-backward" aria-hidden="true" (click)="largeStepBackward()"></span>
+                    <span class="fa fa-step-backward" aria-hidden="true" (click)="smallStepBackward()"></span>
+                    <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
+                    <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
 
                     <progress value="{{progress}}" max="100"></progress> {{progressText}} {{resolution}}
                 </div>
@@ -42,10 +42,10 @@ import {LaputinService} from './../laputin.service';
                 <p>
                     <small>
                         <a (click)="openFile()" title="Open in external player">
-                            <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                            <span class="fa fa-film" aria-hidden="true"></span>
                         </a>
-                        <a (click)="copy()" title="Copy tags"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></a>
-                        <a (click)="paste()" title="Paste tags"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span></a>
+                        <a (click)="copy()" title="Copy tags">Copy tags</a>
+                        <a (click)="paste()" title="Paste tags">Paste tags</a>
                     </small>
                 </p>
 
