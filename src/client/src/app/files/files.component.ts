@@ -11,10 +11,6 @@ import {LaputinService} from './../laputin.service';
     styleUrls: ['./files.component.scss'],
     template: `
         <div class="container">
-            <div class="player">
-                <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
-            </div>
-
             <div class="files">
                 <div class="row">
                     <div style="flex-basis: 50%">
@@ -63,6 +59,10 @@ import {LaputinService} from './../laputin.service';
                         </table>
                     </div>
                 </div>
+            </div>
+
+            <div class="player">
+                <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
             </div>
         </div>
     `,

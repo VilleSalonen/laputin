@@ -1,21 +1,23 @@
 @import './../../styles/styles.scss';
 
 :host {
-    @include g-layout__column;
+    @include g-layout__row;
     flex: 2;
 }
 
 .container {
-    @include g-layout__column;
+    @include g-layout__row;
     flex: 2;
 }
 
 .player {
     background: $color-primary-1;
+    flex-basis: 50%;
 }
 
 .files {
     background: $color-primary-2;
+    flex-basis: 50%;
 }
 
 .files-table {
