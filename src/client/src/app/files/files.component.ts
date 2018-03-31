@@ -40,7 +40,7 @@ import {LaputinService} from './../laputin.service';
                                     <td (click)="activeFile = file" [ngClass]="{'active-file': file == activeFile}">
                                         <div *ngIf="file == activeFile">
                                             <div>
-                                                <p>
+                                                <p style="font-weight: 600; color: #e0e0e0;">
                                                     <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
                                                     {{file.path}}
                                                 </p>
@@ -49,7 +49,7 @@ import {LaputinService} from './../laputin.service';
                                         </div>
                                         <div *ngIf="file != activeFile">
                                             <div>
-                                                <p>{{file.path}}</p>
+                                                <p style="color: #e0e0e0;">{{file.path}}</p>
                                                 <p>{{formattedTags(file)}}</p>
                                             </div>
                                         </div>
