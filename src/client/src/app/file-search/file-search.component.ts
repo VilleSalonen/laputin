@@ -5,24 +5,23 @@ import {File} from './../models/file';
 import {Tag, TagStatus} from './../models/tag';
 import {FileQuery} from './../models/filequery';
 import {TagChange} from './../search-tag/search-tag.component';
+import { Subject } from "rxjs/Subject";
 
 @Component({
     selector: 'app-file-search',
     styleUrls: ['./file-search.component.scss'],
     template: `
-        <form>
-            <div class="row control">
-                <label>Tags</label>
+        <form (ngSubmit)="submitClicked($event)">
+            <div>
                 <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
             </div>
 
-            <div class="control">
-                <label>Filename</label>
-                <input type="text" class="form-control" [(ngModel)]="query.filename" name="filename" />
+            <div>
+                <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)"
+                    name="filename" placeholder="Filename" />
             </div>
 
             <div class="control">
-                <label>Status</label>
                 <select class="form-control" [ngModel]="query.status"
                     (ngModelChange)="onStatusChanged($event)" name="status">
                     <option value="both">Both tagged and untagged</option>
@@ -45,11 +44,23 @@ import {TagChange} from './../search-tag/search-tag.component';
 })
 export class FileSearchComponent {
     public query: FileQuery = new FileQuery();
+    private filenameChanged: Subject<string> = new Subject<string>();
 
     @Output()
     public update: EventEmitter<FileQuery> = new EventEmitter<FileQuery>();
 
     constructor() {
+        this.filenameChanged
+            .debounceTime(300)
+            .distinctUntilChanged()
+            .subscribe(model => {
+                this.query.filename = model;
+                this.update.emit(this.query);
+            });
+    }
+
+    onFilenameChanged(newFilename: string): void {
+        this.filenameChanged.next(newFilename);
     }
 
     onStatusChanged(newStatus: string): void {
