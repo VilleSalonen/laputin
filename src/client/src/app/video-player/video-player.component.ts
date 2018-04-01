@@ -19,26 +19,33 @@ import {LaputinService} from './../laputin.service';
             </div>
 
             <div class="player">
-                <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" controls #player></video>
+                <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" #player></video>
             </div>
 
             <div class="tagging">
-                <div>
-                    <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
-                    <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
-                    <span class="fa fa-random" aria-hidden="true" (click)="random = !random"
-                        [ngClass]="{'active-button': random}"></span>
-                    <span class="fa fa-fast-backward" aria-hidden="true" (click)="goToPrevious()"></span>
-                    <span class="fa fa-fast-forward" aria-hidden="true" (click)="goToNext()"></span>
-                    <span class="fa fa-arrows-alt" aria-hidden="true" (click)="fullScreen()"></span>
-                    <span class="fa fa-backward" aria-hidden="true" (click)="largeStepBackward()"></span>
-                    <span class="fa fa-step-backward" aria-hidden="true" (click)="smallStepBackward()"></span>
-                    <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
-                    <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
+                <div style="display: flex; flex-direction: row;">
+                    <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-right: 12px;">
+                        <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
+                        <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
+                    </div>
 
-                    <div id="timeline" #timeline (click)="foo($event)">
-		                <div id="playhead" #playhead (mousedown)="mouseDown()"></div>
-	                </div>
+                    <div>
+                        <div id="timeline" #timeline (click)="foo($event)">
+                            <div id="playhead" #playhead (mousedown)="mouseDown()"></div>
+                        </div>
+
+                        <div>
+                            <span class="fa fa-random" aria-hidden="true" (click)="random = !random"
+                                [ngClass]="{'active-button': random}"></span>
+                            <span class="fa fa-fast-backward" aria-hidden="true" (click)="goToPrevious()"></span>
+                            <span class="fa fa-fast-forward" aria-hidden="true" (click)="goToNext()"></span>
+                            <span class="fa fa-arrows-alt" aria-hidden="true" (click)="fullScreen()"></span>
+                            <span class="fa fa-backward" aria-hidden="true" (click)="largeStepBackward()"></span>
+                            <span class="fa fa-step-backward" aria-hidden="true" (click)="smallStepBackward()"></span>
+                            <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
+                            <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <p>
