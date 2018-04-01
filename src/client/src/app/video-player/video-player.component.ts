@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -37,7 +37,7 @@ import {LaputinService} from './../laputin.service';
                     <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
 
                     <div id="timeline" #timeline (click)="foo($event)">
-		                <div id="playhead" #playhead></div>
+		                <div id="playhead" #playhead (mousedown)="mouseDown()"></div>
 	                </div>
                 </div>
 
@@ -86,6 +86,7 @@ export class VideoPlayerComponent {
 
     private _previousUpdate: moment.Moment;
     private timelineWidth: number;
+    private onplayhead: boolean;
 
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
@@ -122,10 +123,7 @@ export class VideoPlayerComponent {
         }, false);
         // this.player.addEventListener('seeked', () => this._progressUpdate(), false);
         // Normal playback progress updates can be optimized.
-        this.player.addEventListener('timeupdate', () => {
-            const playPercent = (this.player.currentTime / this.player.duration) * 100;
-            this.playhead.nativeElement.style.marginLeft = playPercent + '%';
-        }, false);
+        this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
 
         this.timelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
     }
@@ -148,6 +146,11 @@ export class VideoPlayerComponent {
         console.log('current time ' + currentTime);
     }
 
+    private timeupdate() {
+        const playPercent = (this.player.currentTime / this.player.duration) * 100;
+        this.playhead.nativeElement.style.marginLeft = playPercent + '%';
+    }
+
     private getPosition(el) {
         return el.nativeElement.getBoundingClientRect().left;
     }
@@ -157,6 +160,8 @@ export class VideoPlayerComponent {
     }
 
     private moveplayhead(event) {
+        console.log(event);
+
         const newMargLeft = event.clientX - this.getPosition(this.timeline);
 
         if (newMargLeft >= 0 && newMargLeft <= this.timelineWidth) {
@@ -168,6 +173,30 @@ export class VideoPlayerComponent {
         if (newMargLeft > this.timelineWidth) {
             this.playhead.nativeElement.style.marginLeft = this.timelineWidth + 'px';
         }
+    }
+
+    @HostListener('document:mousemove', ['$event'])
+    onMouseMove(e) {
+        if (this.onplayhead) {
+            this.moveplayhead(event);
+            window.removeEventListener('mousemove', (dragEvent) => this.moveplayhead(dragEvent), true);
+            // change current time
+            this.player.currentTime = this.player.duration * this.clickPercent(event);
+        }
+    }
+
+    @HostListener('document:mouseup', ['$event'])
+    onMouseUp(e) {
+        if (this.onplayhead) {
+            this.onplayhead = false;
+            this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
+        }
+    }
+
+    // mouseDown EventListener
+    public mouseDown() {
+        this.onplayhead = true;
+        this.player.removeEventListener('timeupdate', () => this.timeupdate(), false);
     }
 
     public directory(): string {
