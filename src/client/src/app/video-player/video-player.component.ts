@@ -139,11 +139,8 @@ export class VideoPlayerComponent {
     public foo(event) {
         this.moveplayhead(event);
 
-        console.log('click percent ' + this.clickPercent(event));
-        console.log('duration ' + this.player.duration);
         const currentTime = this.player.duration * this.clickPercent(event);
         this.player.currentTime = currentTime;
-        console.log('current time ' + currentTime);
     }
 
     private timeupdate() {
@@ -156,7 +153,7 @@ export class VideoPlayerComponent {
     }
 
     private clickPercent(event) {
-        return ((event.clientX - this.getPosition(this.timeline)) / this.timelineWidth) - 0.03;
+        return ((event.clientX - this.getPosition(this.timeline)) / this.timelineWidth);
     }
 
     private moveplayhead(event) {
