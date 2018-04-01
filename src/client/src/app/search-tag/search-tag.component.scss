@@ -6,6 +6,22 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    position: relative;
+}
+
+span.must-contain {
+    background: inherit;
+    color: #5ac72e;
+}
+
+span.can-contain {
+    background: inherit;
+    color: yellow;
+}
+
+span.does-not-contain {
+    background: inherit;
+    color: red;
 }
 
 .must-contain {
@@ -24,7 +40,15 @@
 }
 
 .open {
+    @include rounded-borders;
+
     position: absolute;
+    top: 32px;
+    background: $color-complement-1;
+}
+
+.open {
+    list-style: none;   
 }
 
 .closed {
