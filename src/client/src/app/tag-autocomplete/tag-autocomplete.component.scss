@@ -1,9 +1,9 @@
 @import '../../styles/styles.scss';
 
-input {
+input, select {
     @include rounded-borders;
 
-    background: inherit;
-    color: inherit;
+    background: $color-complement-1;
+    color: $rgba-primary-4;
     font-size: 1.2em;
 }

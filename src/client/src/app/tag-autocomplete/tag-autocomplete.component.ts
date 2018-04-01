@@ -20,7 +20,8 @@ import {LaputinService} from './../laputin.service';
                     type="text"
                     [(ngModel)]="title"
                     [formControl]="termCtrl"
-                    (keyup)="onKeyUp($event)">
+                    (keyup)="onKeyUp($event)"
+                    placeholder="Tags">
             <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
                 <ul class="typeahead-list" role="menu">
                     <li *ngFor="let tag of matchingTags; let i = index"
