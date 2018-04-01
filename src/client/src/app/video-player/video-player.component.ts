@@ -170,8 +170,6 @@ export class VideoPlayerComponent {
     }
 
     private moveplayhead(event) {
-        console.log(event);
-
         const newMargLeft = event.clientX - this.getPosition(this.timeline);
 
         if (newMargLeft >= 0 && newMargLeft <= this.timelineWidth) {
