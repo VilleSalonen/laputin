@@ -36,7 +36,9 @@ import {LaputinService} from './../laputin.service';
                     <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
                     <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
 
-                    <progress value="{{progress}}" max="100"></progress> {{progressText}} {{resolution}}
+                    <div id="timeline" #timeline (click)="foo($event)">
+		                <div id="playhead" #playhead></div>
+	                </div>
                 </div>
 
                 <p>
@@ -83,6 +85,10 @@ export class VideoPlayerComponent {
     private player: HTMLVideoElement;
 
     private _previousUpdate: moment.Moment;
+    private timelineWidth: number;
+
+    @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
+    @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
 
     @ViewChild('player') set content(content: ElementRef) {
         // Player element is never changed so if we already have a player, there
@@ -113,10 +119,15 @@ export class VideoPlayerComponent {
             if (this.player.videoWidth && this.player.videoHeight) {
                 this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
             }
-        });
-        this.player.addEventListener('seeked', () => this._progressUpdate());
+        }, false);
+        // this.player.addEventListener('seeked', () => this._progressUpdate(), false);
         // Normal playback progress updates can be optimized.
-        this.player.addEventListener('timeupdate', () => this._optimizedProgressUpdate());
+        this.player.addEventListener('timeupdate', () => {
+            const playPercent = (this.player.currentTime / this.player.duration) * 100;
+            this.playhead.nativeElement.style.marginLeft = playPercent + '%';
+        }, false);
+
+        this.timelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
     }
 
     @Input() file: File;
@@ -125,6 +136,38 @@ export class VideoPlayerComponent {
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
+    }
+
+    public foo(event) {
+        this.moveplayhead(event);
+
+        console.log('click percent ' + this.clickPercent(event));
+        console.log('duration ' + this.player.duration);
+        const currentTime = this.player.duration * this.clickPercent(event);
+        this.player.currentTime = currentTime;
+        console.log('current time ' + currentTime);
+    }
+
+    private getPosition(el) {
+        return el.nativeElement.getBoundingClientRect().left;
+    }
+
+    private clickPercent(event) {
+        return ((event.clientX - this.getPosition(this.timeline)) / this.timelineWidth) - 0.03;
+    }
+
+    private moveplayhead(event) {
+        const newMargLeft = event.clientX - this.getPosition(this.timeline);
+
+        if (newMargLeft >= 0 && newMargLeft <= this.timelineWidth) {
+            this.playhead.nativeElement.style.marginLeft = newMargLeft + 'px';
+        }
+        if (newMargLeft < 0) {
+            this.playhead.nativeElement.style.marginLeft = '0px';
+        }
+        if (newMargLeft > this.timelineWidth) {
+            this.playhead.nativeElement.style.marginLeft = this.timelineWidth + 'px';
+        }
     }
 
     public directory(): string {
