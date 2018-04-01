@@ -9,6 +9,10 @@
     padding: $standard-margin;
 }
 
+.tag-tools {
+    margin-right: $standard-margin;
+}
+
 .tag {
     @include rounded-borders;
 

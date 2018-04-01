@@ -51,14 +51,10 @@ import {LaputinService} from './../laputin.service';
                 </p>
 
                 <div class="row">
-                    <div>
-                        <p>
-                            <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></app-tag-autocomplete>
-                        </p>
+                    <div class="tag-tools">
+                        <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></app-tag-autocomplete>
 
-                        <p>
-                            <small><a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a></small>
-                        </p>
+                        <small><a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a></small>
 
                         <div *ngIf="tagCreationOpen">
                             <app-search-box (update)="addNewTag($event)" clearOnEnter="1"></app-search-box>
