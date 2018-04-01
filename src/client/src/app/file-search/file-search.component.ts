@@ -12,11 +12,11 @@ import { Subject } from "rxjs/Subject";
     styleUrls: ['./file-search.component.scss'],
     template: `
         <form (ngSubmit)="submitClicked($event)">
-            <div>
+            <div class="control">
                 <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
             </div>
 
-            <div>
+            <div class="control">
                 <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)"
                     name="filename" placeholder="Filename" />
             </div>
@@ -34,7 +34,9 @@ import { Subject } from "rxjs/Subject";
                 <a (click)="clear()">Clear search filters</a>
             </div>
 
-            <input type="submit" style="display: none;" (click)="submitClicked($event)" />
+            <div class="control">
+                <input type="submit" style="display: none;" (click)="submitClicked($event)" />
+            </div>
         </form>
 
         <div class="tag btn-group" *ngFor="let tag of query.tags">
