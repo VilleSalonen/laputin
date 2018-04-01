@@ -4,6 +4,33 @@ input, select {
     @include rounded-borders;
 
     background: $color-complement-1;
-    color: $rgba-primary-4;
+    color: $color-primary-4;
     font-size: 1.2em;
+}
+
+input::placeholder {
+    color: $color-complement-2;
+    opacity: 1;
+}
+
+.typeahead-list-container {
+    position: absolute;
+    background: $color-complement-1;
+    color: $color-primary-4;
+}
+
+.typeahead-list {
+    @include rounded-borders;
+
+    list-style: none;
+    margin: 0;
+}
+
+.typeahead-list li {
+    padding: 0.5 * $standard-margin;
+}
+
+.hover {
+    background: $color-complement-2;
+    color: $color-primary-4;
 }

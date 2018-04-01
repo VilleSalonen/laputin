@@ -1,0 +1,32 @@
+@import '../../styles/styles.scss';
+
+.btn-group {
+    @include rounded-borders;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.must-contain {
+    background: #5ac72e;
+    color: $color-primary-4;
+}
+
+.can-contain {
+    background: yellow;
+    color: $color-primary-4;
+}
+
+.does-not-contain {
+    background: red;
+    color: $color-primary-4;
+}
+
+.open {
+    position: absolute;
+}
+
+.closed {
+    display: none;
+}

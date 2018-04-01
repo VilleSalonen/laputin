@@ -17,10 +17,15 @@ label {
     margin-right: calc(0.5 * #{$standard-margin});
 }
 
-input, select {
+input, select, button {
     @include rounded-borders;
 
     background: $color-complement-1;
-    color: $rgba-primary-4;
+    color: $color-primary-4;
     font-size: 1.2em;
+}
+
+input::placeholder {
+    color: $color-complement-2;
+    opacity: 1;
 }

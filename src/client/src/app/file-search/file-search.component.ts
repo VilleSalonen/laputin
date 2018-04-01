@@ -24,14 +24,14 @@ import { Subject } from "rxjs/Subject";
             <div class="control">
                 <select class="form-control" [ngModel]="query.status"
                     (ngModelChange)="onStatusChanged($event)" name="status">
-                    <option value="both">Both tagged and untagged</option>
+                    <option value="both">All</option>
                     <option value="untagged">Only untagged</option>
                     <option value="tagged">Only tagged</option>
                 </select>
             </div>
 
             <div class="control">
-                <button (click)="clear()">Clear search filters</button>
+                <a (click)="clear()">Clear search filters</a>
             </div>
 
             <input type="submit" style="display: none;" (click)="submitClicked($event)" />

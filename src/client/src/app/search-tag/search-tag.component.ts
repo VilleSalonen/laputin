@@ -9,14 +9,15 @@ export class TagChange {
 
 @Component({
     selector: 'app-search-tag',
+    styleUrls: ['./search-tag.component.scss'],
     template: `
-    <div class="btn-group">
-        <button type="button" class="btn {{tagClass}}" (click)="removeTag()">{{tag.name}}</button>
-        <button type="button" class="btn {{tagClass}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
+    <div class="btn-group {{tagClass}}">
+        <a class="btn" (click)="removeTag()">{{tag.name}}</a>
+        <a class="btn" (click)="toggle()">
+            V
+        </a>
+
+        <ul class="dropdown-menu" [ngClass]="{ 'open': isOpen, 'closed': !isOpen }">
             <li><a (click)="and()">Must contain</a></li>
             <li><a (click)="or()">Can contain</a></li>
             <li><a (click)="not()">Does not contain</a></li>
@@ -30,24 +31,29 @@ export class SearchTagComponent {
     @Output() public removed: EventEmitter<Tag> = new EventEmitter<Tag>();
     @Output() public changed: EventEmitter<TagChange> = new EventEmitter<TagChange>();
 
-    public tagClass = 'btn-success';
+    public tagClass = 'must-contain';
+    public isOpen = false;
+
+    public toggle(): void {
+        this.isOpen = !this.isOpen;
+    }
 
     private removeTag(): void {
         this.removed.emit(this.tag);
     }
 
     private and(): void {
-        this.tagClass = 'btn-success';
+        this.tagClass = 'must-contain';
         this.changed.emit(new TagChange(this.tag, TagStatus.And));
     }
 
     private or(): void {
-        this.tagClass = 'btn-warning';
+        this.tagClass = 'can-contain';
         this.changed.emit(new TagChange(this.tag, TagStatus.Or));
     }
 
     private not(): void {
-        this.tagClass = 'btn-danger';
+        this.tagClass = 'does-not-contain';
         this.changed.emit(new TagChange(this.tag, TagStatus.Not));
     }
 }
