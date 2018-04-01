@@ -21,7 +21,7 @@ import {LaputinService} from './../laputin.service';
             <div class="player">
                 <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" #player></video>
                 <div style="display: flex; flex-direction: row; background: #0F1937; padding: 6px; width: 1220px; margin-top: -5px;">
-                    <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-right: 12px;">
+                    <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-left: 12px; margin-right: 12px;">
                         <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                         <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
                     </div>
@@ -36,7 +36,6 @@ import {LaputinService} from './../laputin.service';
                                 [ngClass]="{'active-button': random}"></span>
                             <span class="fa fa-fast-backward" aria-hidden="true" (click)="goToPrevious()"></span>
                             <span class="fa fa-fast-forward" aria-hidden="true" (click)="goToNext()"></span>
-                            <span class="fa fa-arrows-alt" aria-hidden="true" (click)="fullScreen()"></span>
                             <span class="fa fa-backward" aria-hidden="true" (click)="largeStepBackward()"></span>
                             <span class="fa fa-step-backward" aria-hidden="true" (click)="smallStepBackward()"></span>
                             <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
@@ -44,6 +43,10 @@ import {LaputinService} from './../laputin.service';
 
                             <span>{{progressText}}</span>
                         </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-left: 12px; margin-right: 12px;">
+                        <span class="fa fa-arrows-alt" aria-hidden="true" (click)="fullScreen()"></span>
                     </div>
                 </div>
             </div>
