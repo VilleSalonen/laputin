@@ -152,13 +152,14 @@ export class VideoPlayerComponent {
     }
 
     private timeupdate() {
-        const playPercent = (this.player.currentTime / this.player.duration) * 100;
-        this.playhead.nativeElement.style.marginLeft = playPercent + '%';
+        const playPercent = (this.player.currentTime / this.player.duration);
+        this.playhead.nativeElement.style.marginLeft = this.timelineWidth * playPercent + 'px';
         this._optimizedProgressUpdate();
     }
 
     private getPosition(el) {
-        return el.nativeElement.getBoundingClientRect().left;
+        // This constant 9 must match playhead width;
+        return el.nativeElement.getBoundingClientRect().left + 9;
     }
 
     private clickPercent(event) {
