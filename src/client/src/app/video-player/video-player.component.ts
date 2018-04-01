@@ -44,6 +44,8 @@ import {LaputinService} from './../laputin.service';
                             <span class="fa fa-step-backward" aria-hidden="true" (click)="smallStepBackward()"></span>
                             <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
                             <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
+
+                            <span>{{progressText}}</span>
                         </div>
                     </div>
                 </div>
@@ -83,7 +85,6 @@ import {LaputinService} from './../laputin.service';
 export class VideoPlayerComponent {
     public playing: boolean;
     public random: boolean;
-    public progress: number;
     public progressText: string;
     public resolution: string;
 
@@ -148,11 +149,13 @@ export class VideoPlayerComponent {
 
         const currentTime = this.player.duration * this.clickPercent(event);
         this.player.currentTime = currentTime;
+        this._progressUpdate();
     }
 
     private timeupdate() {
         const playPercent = (this.player.currentTime / this.player.duration) * 100;
         this.playhead.nativeElement.style.marginLeft = playPercent + '%';
+        this._optimizedProgressUpdate();
     }
 
     private getPosition(el) {
@@ -186,6 +189,7 @@ export class VideoPlayerComponent {
             window.removeEventListener('mousemove', (dragEvent) => this.moveplayhead(dragEvent), true);
             // change current time
             this.player.currentTime = this.player.duration * this.clickPercent(event);
+            this._progressUpdate();
         }
     }
 
@@ -324,10 +328,8 @@ export class VideoPlayerComponent {
 
         if (currentTime.indexOf('NaN') === -1 && duration.indexOf('NaN') === -1) {
             this.progressText = currentTime + '/' + duration;
-            this.progress = (this.player.currentTime / this.player.duration) * 100;
         } else {
             this.progressText = '00:00/00:00';
-            this.progress = 0;
         }
     }
 
