@@ -13,10 +13,9 @@ import {LaputinService} from './../laputin.service';
     styleUrls: ['./video-player.component.scss'],
     template: `
         <div class="column" *ngIf="file" style="display: flex; flex-direction: column; max-height: 100%; min-height: 100%;">
-            <div style="padding: 24px; padding-bottom: 0; font-weight: bold;">
-                <span style="margin: 0; font-size: 14px;">{{directory()}}</span><br />
-                <span style="margin-top: 0; margin-bottom: 0; font-size: 20px;">{{nameSansSuffix()}}</span>
-                <span style="font-size: 14px;">{{suffix()}}</span>
+            <div class="filename">
+                <span class="filename-small">{{directory()}}</span><br />
+                <span style="filename-bigg">{{nameSansSuffix()}}</span><span class="filename-small">{{suffix()}}</span>
             </div>
 
             <div class="player">

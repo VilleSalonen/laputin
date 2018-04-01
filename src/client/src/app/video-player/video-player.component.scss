@@ -20,5 +20,22 @@
     color: #e0e0e0;
     margin-bottom: 0.25 * $standard-margin;
     margin-right: 0.25 * $standard-margin;
-    display: inline-block
+    display: inline-block;
+}
+
+.filename {
+    padding: 24px;
+    padding-bottom: 0;
+    font-weight: bold;
+}
+
+.filename-small {
+    margin: 0;
+    font-size: 14px;
+}
+
+.filename-big {
+    margin-top: 0;
+    margin-bottom: 0; 
+    font-size: 20px;
 }
