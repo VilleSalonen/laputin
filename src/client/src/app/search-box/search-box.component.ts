@@ -9,7 +9,8 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
             class="form-control"
             type="text"
             [(ngModel)]="term"
-            (keyup)="onKeyUp($event)" />
+            (keyup)="onKeyUp($event)"
+            placeholder="Create a new tag" />
     </div>`
 })
 export class SearchBoxComponent {
