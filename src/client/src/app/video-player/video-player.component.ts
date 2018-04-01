@@ -20,17 +20,14 @@ import {LaputinService} from './../laputin.service';
 
             <div class="player">
                 <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" #player></video>
-            </div>
-
-            <div class="tagging">
-                <div style="display: flex; flex-direction: row;">
+                <div style="display: flex; flex-direction: row; background: #0F1937; padding: 6px; width: 1220px; margin-top: -5px;">
                     <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-right: 12px;">
                         <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                         <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
                     </div>
 
-                    <div>
-                        <div id="timeline" #timeline (click)="foo($event)">
+                    <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                        <div id="timeline" #timeline (click)="foo($event)" style="width: 100%;">
                             <div id="playhead" #playhead (mousedown)="mouseDown()"></div>
                         </div>
 
@@ -49,7 +46,9 @@ import {LaputinService} from './../laputin.service';
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="tagging">
                 <p>
                     <small>
                         <a (click)="openFile()" title="Open in external player">
