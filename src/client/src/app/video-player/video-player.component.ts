@@ -12,7 +12,7 @@ import {LaputinService} from './../laputin.service';
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
     template: `
-        <div class="column" *ngIf="file" style="display: flex; flex-direction: column; max-height: 100%; min-height: 100%;">
+        <div #fooobar class="column" *ngIf="file" style="display: flex; flex-direction: column; max-height: 100%; min-height: 100%;">
             <div class="filename">
                 <span class="filename-small">{{directory()}}</span><br />
                 <span style="filename-bigg">{{nameSansSuffix()}}</span><span class="filename-small">{{suffix()}}</span>
@@ -100,6 +100,7 @@ export class VideoPlayerComponent {
 
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
+    @ViewChild('fooobar', { read: ElementRef }) fooobar: ElementRef;
 
     @ViewChild('player') set content(content: ElementRef) {
         // Player element is never changed so if we already have a player, there
@@ -253,7 +254,7 @@ export class VideoPlayerComponent {
     }
 
     public fullScreen(): void {
-        this.player.webkitRequestFullScreen();
+        this.fooobar.nativeElement.webkitRequestFullScreen();
     }
 
     private emitChange(direction: ChangeDirection): void {
