@@ -8,3 +8,13 @@
     flex-basis: 50%;
     padding: $standard-margin;
 }
+
+.tag {
+    @include rounded-borders;
+
+    background: #0F1937;
+    color: #e0e0e0;
+    margin-bottom: 0.25 * $standard-margin;
+    margin-right: 0.25 * $standard-margin;
+    display: inline-block
+}
