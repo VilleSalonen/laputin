@@ -46,7 +46,7 @@ import {LaputinService} from './../laputin.service';
                     </div>
 
                     <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-left: 12px; margin-right: 12px;">
-                        <span class="fa fa-arrows-alt" aria-hidden="true" (click)="fullScreen()"></span>
+                        <span class="fa fa-arrows-alt" aria-hidden="true" (click)="toggleFullScreen()"></span>
                     </div>
                 </div>
             </div>
@@ -151,6 +151,43 @@ export class VideoPlayerComponent implements OnInit {
     ngOnInit() {
         window.addEventListener('webkitfullscreenchange', (event) => {
             this.isFullScreen = !this.isFullScreen;
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (event.srcElement.nodeName === 'INPUT') {
+                if (event.code === 'Escape') {
+                    (<any>event.srcElement).blur();
+                }
+
+                return;
+            }
+
+            switch (event.code) {
+                case 'ArrowLeft':
+                    this.smallStepBackward();
+                    break;
+                case 'ArrowRight':
+                    this.smallStepForward();
+                    break;
+                case 'ArrowUp':
+                    this.largeStepForward();
+                    break;
+                case 'ArrowDown':
+                    this.largeStepBackward();
+                    break;
+                case 'Enter':
+                    if (event.altKey) {
+                        this.toggleFullScreen();
+                    }
+                    break;
+                case 'Space':
+                    if (this.playing) {
+                        this.pause();
+                    } else {
+                        this.play();
+                    }
+                    break;
+            }
         });
     }
 
@@ -260,7 +297,7 @@ export class VideoPlayerComponent implements OnInit {
         this.emitChange(ChangeDirection.Next);
     }
 
-    public fullScreen(): void {
+    public toggleFullScreen(): void {
         if (this.isFullScreen) {
             document.webkitExitFullscreen();
         } else {
