@@ -128,6 +128,8 @@ export class VideoPlayerComponent implements OnInit {
         // Without forced update, these changes will be seen with a
         // delay.
         this.player.addEventListener('durationchange', () => {
+            this.player.currentTime = 0;
+
             this.playing = false;
             this._progressUpdate();
 
@@ -135,7 +137,7 @@ export class VideoPlayerComponent implements OnInit {
                 this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
             }
         }, false);
-        // this.player.addEventListener('seeked', () => this._progressUpdate(), false);
+
         // Normal playback progress updates can be optimized.
         this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
 
