@@ -164,10 +164,18 @@ export class VideoPlayerComponent implements OnInit {
 
             switch (event.code) {
                 case 'ArrowLeft':
-                    this.smallStepBackward();
+                    if (event.shiftKey) {
+                        this.tinyStepBackward();
+                    } else {
+                        this.smallStepBackward();
+                    }
                     break;
                 case 'ArrowRight':
-                    this.smallStepForward();
+                    if (event.shiftKey) {
+                        this.tinyStepForward();
+                    } else {
+                        this.smallStepForward();
+                    }
                     break;
                 case 'ArrowUp':
                     this.largeStepForward();
@@ -273,12 +281,20 @@ export class VideoPlayerComponent implements OnInit {
         this.player.pause();
     }
 
+    public tinyStepBackward(): void {
+        this.player.currentTime -= 1;
+    }
+
     public smallStepBackward(): void {
         this.player.currentTime -= 10;
     }
 
     public largeStepBackward(): void {
         this.player.currentTime -= 60;
+    }
+
+    public tinyStepForward(): void {
+        this.player.currentTime += 1;
     }
 
     public smallStepForward(): void {
