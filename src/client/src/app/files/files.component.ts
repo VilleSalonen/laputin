@@ -12,12 +12,12 @@ import {LaputinService} from './../laputin.service';
     template: `
         <div class="container">
             <div class="files">
-                <div class="row" style="min-height: 100%; max-height: 100%;">
-                    <div style="min-height: 100%; max-height: 100%; overflow-y: auto; padding: 24px;">
+                <div class="row full-height">
+                    <div class="files-search full-height">
                         <app-file-search (update)="filterFiles($event)"></app-file-search>
                     </div>
 
-                    <div style="flex: 1; min-height: 100%; max-height: 100%; overflow-y: auto; padding: 24px;">
+                    <div class="files-list full-height">
                         <h2 style="margin-top: 0; margin-bottom: 24px;">
                             Showing {{files.length}} matching files
                             <a (click)="openFiles()" title="Open in external player">
