@@ -204,6 +204,12 @@ export class VideoPlayerComponent implements OnInit {
                         this.play();
                     }
                     break;
+                case 'KeyW':
+                    this.goToPrevious();
+                    break;
+                case 'KeyS':
+                    this.goToNext();
+                    break;
             }
         });
     }
