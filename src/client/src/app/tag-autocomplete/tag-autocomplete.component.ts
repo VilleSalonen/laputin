@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject} from '@angular/core';
+import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs/Rx';
 import * as _ from 'lodash';
@@ -37,7 +37,7 @@ import {LaputinService} from './../laputin.service';
     providers: [LaputinService]
 })
 @Injectable()
-export class TagAutocompleteComponent {
+export class TagAutocompleteComponent implements OnInit {
     public title = '';
     public selectedIndex: number = -1;
 
@@ -52,13 +52,15 @@ export class TagAutocompleteComponent {
     public select = new EventEmitter<Tag>();
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
-        this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
-
         this.termCtrl.valueChanges
             .debounceTime(500)
             .distinctUntilChanged()
             .map((value: any) => <string> value)
             .subscribe((value: string) => this.onValueChange(value));
+    }
+
+    ngOnInit() {
+        this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
     }
 
     onValueChange(value: string): void {
