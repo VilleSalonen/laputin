@@ -100,6 +100,7 @@ export class VideoPlayerComponent implements OnInit {
     private timelineWidth: number;
     private onplayhead: boolean;
     private isFullScreen: boolean;
+    private duration: string;
 
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
@@ -131,6 +132,7 @@ export class VideoPlayerComponent implements OnInit {
             this.player.currentTime = 0;
 
             this.playing = false;
+            this.duration = this.formatDuration(this.player.duration);
             this._progressUpdate();
 
             if (this.player.videoWidth && this.player.videoHeight) {
@@ -393,10 +395,9 @@ export class VideoPlayerComponent implements OnInit {
 
     private _progressUpdate(): void {
         const currentTime = this.formatDuration(this.player.currentTime);
-        const duration = this.formatDuration(this.player.duration);
 
-        if (currentTime.indexOf('NaN') === -1 && duration.indexOf('NaN') === -1) {
-            this.progressText = currentTime + '/' + duration;
+        if (currentTime.indexOf('NaN') === -1 && this.duration.indexOf('NaN') === -1) {
+            this.progressText = currentTime + '/' + this.duration;
         } else {
             this.progressText = '00:00/00:00';
         }
