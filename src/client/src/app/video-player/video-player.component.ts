@@ -102,6 +102,8 @@ export class VideoPlayerComponent implements OnInit {
     private isFullScreen: boolean;
     private duration: string;
 
+    private cachedBoundingClientRect: any;
+
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
     @ViewChild('playerView', { read: ElementRef }) playerView: ElementRef;
@@ -157,6 +159,7 @@ export class VideoPlayerComponent implements OnInit {
     ngOnInit() {
         window.addEventListener('webkitfullscreenchange', (event) => {
             this.isFullScreen = !this.isFullScreen;
+            this.resetCache();
         });
 
         window.addEventListener('keydown', (event) => {
@@ -220,8 +223,16 @@ export class VideoPlayerComponent implements OnInit {
     }
 
     private getPosition(el) {
+        if (!this.cachedBoundingClientRect) {
+            this.cachedBoundingClientRect = el.nativeElement.getBoundingClientRect();
+        }
+
         // This constant 9 must match playhead width;
-        return el.nativeElement.getBoundingClientRect().left + 9;
+        return this.cachedBoundingClientRect.left + 9;
+    }
+
+    private resetCache() {
+        this.cachedBoundingClientRect = null;
     }
 
     private clickPercent(event) {
@@ -247,7 +258,6 @@ export class VideoPlayerComponent implements OnInit {
         if (this.onplayhead) {
             this.moveplayhead(event);
             window.removeEventListener('mousemove', (dragEvent) => this.moveplayhead(dragEvent), true);
-            // change current time
             this.player.currentTime = this.player.duration * this.clickPercent(event);
             this._progressUpdate();
         }
