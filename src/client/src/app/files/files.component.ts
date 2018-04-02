@@ -15,16 +15,16 @@ import {LaputinService} from './../laputin.service';
                 <div class="row full-height">
                     <div class="files-search full-height">
                         <app-file-search (update)="filterFiles($event)"></app-file-search>
-                    </div>
 
-                    <div class="files-list full-height">
                         <h2 style="margin-top: 0; margin-bottom: 24px;">
                             Showing {{files.length}} matching files
                             <a (click)="openFiles()" title="Open in external player">
                                 <i class="fa fa-film" aria-hidden="true"></i>
                             </a>
                         </h2>
+                    </div>
 
+                    <div class="files-list full-height">
                         <table class="files-table">
                             <tbody>
                                 <tr>

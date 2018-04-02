@@ -19,15 +19,23 @@
 }
 
 .files {
-    background: $color-primary-2;
+    background: $color-primary-1;
     flex-basis: 50%;
     overflow: auto;
 }
 
 .files-list {
     flex: 1;
-    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
     padding: $standard-margin;
+
+    overflow: auto;
+
+    margin-top: 2 * $standard-margin;
+    margin-bottom: 2 * $standard-margin;
 }
 
 .files-search {
