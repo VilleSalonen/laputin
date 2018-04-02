@@ -12,23 +12,23 @@ import {LaputinService} from './../laputin.service';
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
     template: `
-        <div #fooobar class="column" *ngIf="file" style="display: flex; flex-direction: column; max-height: 100%; min-height: 100%;">
+        <div #playerView class="column player-view" *ngIf="file">
             <div class="filename">
                 <span class="filename-small">{{directory()}}</span><br />
                 <span style="filename-bigg">{{nameSansSuffix()}}</span><span class="filename-small">{{suffix()}}</span>
             </div>
 
             <div class="player">
-                <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" #player></video>
-                <div style="display: flex; flex-direction: row; background: #0F1937; padding: 6px; max-width: 100%; margin-top: -5px;">
-                    <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-left: 12px; margin-right: 12px;">
+                <video src="/media/{{file.escapedUrl()}}" #player></video>
+                <div class="player-controls">
+                    <div class="player-main-button">
                         <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                         <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
                     </div>
 
-                    <div style="flex-grow: 1; display: flex; flex-direction: column;">
-                        <div id="timeline" #timeline (click)="foo($event)" style="width: 100%;">
-                            <div id="playhead" #playhead (mousedown)="mouseDown()"></div>
+                    <div class="timeline-and-buttons">
+                        <div class="timeline" (click)="foo($event)" #timeline>
+                            <div class="playhead" (mousedown)="mouseDown()" #playhead></div>
                         </div>
 
                         <div>
@@ -45,7 +45,7 @@ import {LaputinService} from './../laputin.service';
                         </div>
                     </div>
 
-                    <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-left: 12px; margin-right: 12px;">
+                    <div class="player-main-button">
                         <span class="fa fa-arrows-alt" aria-hidden="true" (click)="toggleFullScreen()"></span>
                     </div>
                 </div>
@@ -101,7 +101,7 @@ export class VideoPlayerComponent implements OnInit {
 
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
-    @ViewChild('fooobar', { read: ElementRef }) fooobar: ElementRef;
+    @ViewChild('playerView', { read: ElementRef }) playerView: ElementRef;
 
     @ViewChild('player') set content(content: ElementRef) {
         // Player element is never changed so if we already have a player, there
@@ -317,7 +317,7 @@ export class VideoPlayerComponent implements OnInit {
         if (this.isFullScreen) {
             document.webkitExitFullscreen();
         } else {
-            this.fooobar.nativeElement.webkitRequestFullScreen();
+            this.playerView.nativeElement.webkitRequestFullScreen();
         }
     }
 
