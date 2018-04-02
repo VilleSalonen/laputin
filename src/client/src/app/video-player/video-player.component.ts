@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -20,7 +20,7 @@ import {LaputinService} from './../laputin.service';
 
             <div class="player">
                 <video style="max-height: 100%; max-width: 100%;" src="/media/{{file.escapedUrl()}}" #player></video>
-                <div style="display: flex; flex-direction: row; background: #0F1937; padding: 6px; width: 1220px; margin-top: -5px;">
+                <div style="display: flex; flex-direction: row; background: #0F1937; padding: 6px; max-width: 100%; margin-top: -5px;">
                     <div style="display: flex; flex-direction: column; justify-content: center; font-size: 180%; margin-left: 12px; margin-right: 12px;">
                         <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
                         <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
@@ -84,7 +84,7 @@ import {LaputinService} from './../laputin.service';
     providers: []
 })
 @Injectable()
-export class VideoPlayerComponent {
+export class VideoPlayerComponent implements OnInit {
     public playing: boolean;
     public random: boolean;
     public progressText: string;
@@ -97,6 +97,7 @@ export class VideoPlayerComponent {
     private _previousUpdate: moment.Moment;
     private timelineWidth: number;
     private onplayhead: boolean;
+    private isFullScreen: boolean;
 
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
@@ -145,6 +146,12 @@ export class VideoPlayerComponent {
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
+    }
+
+    ngOnInit() {
+        window.addEventListener('webkitfullscreenchange', (event) => {
+            this.isFullScreen = !this.isFullScreen;
+        });
     }
 
     public foo(event) {
@@ -254,7 +261,11 @@ export class VideoPlayerComponent {
     }
 
     public fullScreen(): void {
-        this.fooobar.nativeElement.webkitRequestFullScreen();
+        if (this.isFullScreen) {
+            document.webkitExitFullscreen();
+        } else {
+            this.fooobar.nativeElement.webkitRequestFullScreen();
+        }
     }
 
     private emitChange(direction: ChangeDirection): void {
