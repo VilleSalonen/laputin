@@ -28,8 +28,8 @@ import {LaputinService} from './../laputin.service';
                         </div>
 
                         <div class="timeline-and-buttons">
-                            <div class="timeline" (click)="foo($event)" #timeline>
-                                <div class="playhead" (mousedown)="mouseDown()" #playhead></div>
+                            <div class="timeline" (click)="skipToPosition($event)" #timeline>
+                                <div class="playhead" (mousedown)="dragToPosition()" #playhead></div>
                             </div>
 
                             <div>
@@ -203,7 +203,7 @@ export class VideoPlayerComponent implements OnInit {
         });
     }
 
-    public foo(event) {
+    public skipToPosition(event) {
         this.moveplayhead(event);
 
         const currentTime = this.player.duration * this.clickPercent(event);
@@ -259,8 +259,7 @@ export class VideoPlayerComponent implements OnInit {
         }
     }
 
-    // mouseDown EventListener
-    public mouseDown() {
+    public dragToPosition() {
         this.onplayhead = true;
         this.player.removeEventListener('timeupdate', () => this.timeupdate(), false);
     }
