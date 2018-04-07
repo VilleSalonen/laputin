@@ -1,8 +1,7 @@
 language: node_js
 node_js:
+- '9'
 - '8'
-- '7'
-- '6'
 env:
   - CXX=g++-4.8
 addons:
@@ -11,15 +10,4 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-script: cd src && yarn && npm run test-server && cd client && yarn && cd .. && npm run test-client
-before_install:
-  # Repo for newer Node.js versions
-  - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-  # Repo for Yarn
-  - sudo apt-key adv --keyserver pgp.mit.edu --recv D101F7899D41F3C3
-  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  - sudo apt-get update -qq
-  - sudo apt-get install -y -qq yarn
-cache:
-  directories:
-  - $HOME/.yarn-cache
+script: cd src && npm install && npm run test-server && cd client && npm install && cd .. && npm run test-client
