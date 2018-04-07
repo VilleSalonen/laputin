@@ -40,7 +40,7 @@ import {LaputinService} from './../laputin.service';
 @Injectable()
 export class TagAutocompleteComponent implements OnInit {
     public title = '';
-    public selectedIndex: number = -1;
+    public selectedIndex = -1;
 
     public allTags: Tag[] = [];
     public matchingTags: Tag[] = [];

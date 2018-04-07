@@ -1,13 +1,10 @@
-import * as chai from 'chai';
-const expect = chai.expect;
-
 import {FileQuery} from './filequery';
 import {Tag} from './tag';
 
 describe('File Query', function() {
     it('Filename defaults to empty string', () => {
         const query = new FileQuery();
-        expect(query.filename).to.be.eql('');
+        expect(query.filename).toEqual('');
     });
 
     it('Filename is cleared', () => {
@@ -16,12 +13,12 @@ describe('File Query', function() {
         query.filename = 'moses.jpg';
         query.clear();
 
-        expect(query.filename).to.eql('');
+        expect(query.filename).toEqual('');
     });
 
     it('Status defaults to \'both\'', () => {
         const query = new FileQuery();
-        expect(query.status).to.eql('both');
+        expect(query.status).toEqual('both');
     });
 
     it('Status is cleared', () => {
@@ -30,7 +27,7 @@ describe('File Query', function() {
         query.status = 'tagged';
         query.clear();
 
-        expect(query.status).to.eql('both');
+        expect(query.status).toEqual('both');
     });
 
     it('All tags are combined into tags property', () => {
@@ -41,7 +38,7 @@ describe('File Query', function() {
         query.andTag(andTag);
         query.orTag(orTag);
 
-        expect(query.tags).to.eql([andTag, orTag]);
+        expect(query.tags).toEqual([andTag, orTag]);
     });
 
     it('AND tags can be added', () => {
@@ -50,7 +47,7 @@ describe('File Query', function() {
 
         query.andTag(tag);
 
-        expect(query.andTags).to.eql([tag]);
+        expect(query.andTags).toEqual([tag]);
     });
 
     it('AND tags can be removed', () => {
@@ -63,7 +60,7 @@ describe('File Query', function() {
 
         query.removeTag(funny);
 
-        expect(query.andTags).to.eql([hilarious]);
+        expect(query.andTags).toEqual([hilarious]);
     });
 
     it('AND tags are cleared', () => {
@@ -73,7 +70,7 @@ describe('File Query', function() {
         query.andTag(tag);
         query.clear();
 
-        expect(query.andTags).to.eql([]);
+        expect(query.andTags).toEqual([]);
     });
 
     it('OR tags can be added', () => {
@@ -82,7 +79,7 @@ describe('File Query', function() {
 
         query.orTag(tag);
 
-        expect(query.orTags).to.eql([tag]);
+        expect(query.orTags).toEqual([tag]);
     });
 
     it('OR tags can be removed', () => {
@@ -95,7 +92,7 @@ describe('File Query', function() {
 
         query.removeTag(funny);
 
-        expect(query.orTags).to.eql([hilarious]);
+        expect(query.orTags).toEqual([hilarious]);
     });
 
     it('OR tags are cleared', () => {
@@ -105,7 +102,7 @@ describe('File Query', function() {
         query.orTag(tag);
         query.clear();
 
-        expect(query.orTags).to.eql([]);
+        expect(query.orTags).toEqual([]);
     });
 
     it('NOT tags can be added', () => {
@@ -114,7 +111,7 @@ describe('File Query', function() {
 
         query.notTag(tag);
 
-        expect(query.notTags).to.eql([tag]);
+        expect(query.notTags).toEqual([tag]);
     });
 
     it('NOT tags can be removed', () => {
@@ -127,7 +124,7 @@ describe('File Query', function() {
 
         query.removeTag(funny);
 
-        expect(query.notTags).to.eql([hilarious]);
+        expect(query.notTags).toEqual([hilarious]);
     });
 
     it('NOT tags are cleared', () => {
@@ -137,7 +134,7 @@ describe('File Query', function() {
         query.notTag(tag);
         query.clear();
 
-        expect(query.notTags).to.eql([]);
+        expect(query.notTags).toEqual([]);
     });
 
     it('Tag status can be changed', () => {
@@ -145,18 +142,18 @@ describe('File Query', function() {
         const tag = new Tag(23, 'Funny', 0);
 
         query.andTag(tag);
-        expect(query.andTags).to.eql([tag]);
-        expect(query.orTags).to.eql([]);
-        expect(query.notTags).to.eql([]);
+        expect(query.andTags).toEqual([tag]);
+        expect(query.orTags).toEqual([]);
+        expect(query.notTags).toEqual([]);
 
         query.orTag(tag);
-        expect(query.andTags).to.eql([]);
-        expect(query.orTags).to.eql([tag]);
-        expect(query.notTags).to.eql([]);
+        expect(query.andTags).toEqual([]);
+        expect(query.orTags).toEqual([tag]);
+        expect(query.notTags).toEqual([]);
 
         query.notTag(tag);
-        expect(query.andTags).to.eql([]);
-        expect(query.orTags).to.eql([]);
-        expect(query.notTags).to.eql([tag]);
+        expect(query.andTags).toEqual([]);
+        expect(query.orTags).toEqual([]);
+        expect(query.notTags).toEqual([tag]);
     });
 });
