@@ -97,12 +97,12 @@ export class VideoPlayerComponent implements OnInit {
     private player: HTMLVideoElement;
 
     private _previousUpdate: moment.Moment;
-    private timelineWidth: number;
+    private cachedTimelineWidth: number;
     private onplayhead: boolean;
     private isFullScreen: boolean;
     private duration: string;
 
-    private cachedBoundingClientRect: any;
+    private cachedTimelineBoundingClientRect: any;
 
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
@@ -145,7 +145,7 @@ export class VideoPlayerComponent implements OnInit {
         // Normal playback progress updates can be optimized.
         this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
 
-        this.timelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
+        this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
     }
 
     @Input() file: File;
@@ -234,38 +234,38 @@ export class VideoPlayerComponent implements OnInit {
 
     private timeupdate() {
         const playPercent = (this.player.currentTime / this.player.duration);
-        this.playhead.nativeElement.style.marginLeft = this.timelineWidth * playPercent + 'px';
+        this.playhead.nativeElement.style.marginLeft = this.cachedTimelineWidth * playPercent + 'px';
         this._optimizedProgressUpdate();
     }
 
-    private getPosition(el) {
-        if (!this.cachedBoundingClientRect) {
-            this.cachedBoundingClientRect = el.nativeElement.getBoundingClientRect();
+    private getTimelineClickPosition() {
+        if (!this.cachedTimelineBoundingClientRect) {
+            this.cachedTimelineBoundingClientRect = this.timeline.nativeElement.getBoundingClientRect();
         }
 
         // This constant 9 must match playhead width;
-        return this.cachedBoundingClientRect.left + 9;
+        return this.cachedTimelineBoundingClientRect.left + 9;
     }
 
     private resetCache() {
-        this.cachedBoundingClientRect = null;
+        this.cachedTimelineBoundingClientRect = null;
     }
 
     private clickPercent(event) {
-        return ((event.clientX - this.getPosition(this.timeline)) / this.timelineWidth);
+        return ((event.clientX - this.getTimelineClickPosition()) / this.cachedTimelineWidth);
     }
 
     private moveplayhead(event) {
-        const newMargLeft = event.clientX - this.getPosition(this.timeline);
+        const newMargLeft = event.clientX - this.getTimelineClickPosition();
 
-        if (newMargLeft >= 0 && newMargLeft <= this.timelineWidth) {
+        if (newMargLeft >= 0 && newMargLeft <= this.cachedTimelineWidth) {
             this.playhead.nativeElement.style.marginLeft = newMargLeft + 'px';
         }
         if (newMargLeft < 0) {
             this.playhead.nativeElement.style.marginLeft = '0px';
         }
-        if (newMargLeft > this.timelineWidth) {
-            this.playhead.nativeElement.style.marginLeft = this.timelineWidth + 'px';
+        if (newMargLeft > this.cachedTimelineWidth) {
+            this.playhead.nativeElement.style.marginLeft = this.cachedTimelineWidth + 'px';
         }
     }
 
