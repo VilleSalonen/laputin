@@ -5,7 +5,7 @@ import {File} from './../models/file';
 import {Tag, TagStatus} from './../models/tag';
 import {FileQuery} from './../models/filequery';
 import {TagChange} from './../search-tag/search-tag.component';
-import { Subject } from "rxjs/Subject";
+import { Subject } from 'rxjs/Subject';
 
 @Component({
     selector: 'app-file-search',
