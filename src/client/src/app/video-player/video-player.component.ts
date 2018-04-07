@@ -210,6 +210,16 @@ export class VideoPlayerComponent implements OnInit {
                 case 'KeyS':
                     this.goToNext();
                     break;
+                case 'KeyC':
+                    if (event.ctrlKey) {
+                        this.copy();
+                    }
+                    break;
+                case 'KeyV':
+                    if (event.ctrlKey) {
+                        this.paste();
+                    }
+                    break;
             }
         });
     }
