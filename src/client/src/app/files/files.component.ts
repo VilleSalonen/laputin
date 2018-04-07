@@ -25,38 +25,23 @@ import {LaputinService} from './../laputin.service';
                     </div>
 
                     <div class="files-list full-height">
-                        <table class="files-table">
-                            <tbody>
-                                <tr>
-                                    <th>
-                                    </th>
-                                </tr>
+                        <span [ngClass]="{'hidden': !loading}" class="fa fa-spinner" aria-hidden="true"></span>
 
-                                <tr [hidden]="!loading" class="loading">
-                                    <td><span class="fa fa-spinner" aria-hidden="true"></span></td>
-                                </tr>
-
-                                <tr *ngFor="let file of files">
-                                    <td (click)="activeFile = file" [ngClass]="{'active-file': file == activeFile}">
-                                        <div *ngIf="file == activeFile">
-                                            <div>
-                                                <p style="font-weight: 600; color: #e0e0e0;">
-                                                    <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
-                                                    {{file.path}}
-                                                </p>
-                                                <p>{{formattedTags(file)}}</p>
-                                            </div>
-                                        </div>
-                                        <div *ngIf="file != activeFile">
-                                            <div>
-                                                <p style="color: #e0e0e0;">{{file.path}}</p>
-                                                <p>{{formattedTags(file)}}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div *ngFor="let file of files">
+                            <div>
+                                <div *ngIf="file == activeFile">
+                                    <p class="active-file">
+                                        <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
+                                        {{file.path}}
+                                    </p>
+                                    <p>{{formattedTags(file)}}</p>
+                                </div>
+                                <div *ngIf="file != activeFile">
+                                    <p (click)="activeFile = file" class="inactive-file">{{file.path}}</p>
+                                    <p>{{formattedTags(file)}}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -56,3 +56,19 @@
 .row {
     @include g-layout__row;
 }
+
+.inactive-file, .active-file {
+    color: #e0e0e0;
+}
+
+.active-file {
+    font-weight: 600;
+}
+
+.inactive-file {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
