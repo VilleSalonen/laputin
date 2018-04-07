@@ -91,6 +91,7 @@ export class VideoPlayerComponent implements OnInit {
     public random: boolean;
     public progressText: string;
     public resolution: string;
+    public isFullScreen: boolean;
 
     public tagCreationOpen = false;
 
@@ -100,7 +101,6 @@ export class VideoPlayerComponent implements OnInit {
     private cachedTimelineWidth: number;
     private cachedPlayheadWidth: number;
     private onplayhead: boolean;
-    private isFullScreen: boolean;
     private duration: string;
 
     private cachedTimelineBoundingClientRect: any;

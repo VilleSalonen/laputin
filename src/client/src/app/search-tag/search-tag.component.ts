@@ -38,23 +38,23 @@ export class SearchTagComponent {
         this.isOpen = !this.isOpen;
     }
 
-    private removeTag(): void {
+    public removeTag(): void {
         this.removed.emit(this.tag);
     }
 
-    private and(): void {
+    public and(): void {
         this.tagClass = 'must-contain';
         this.changed.emit(new TagChange(this.tag, TagStatus.And));
         this.toggle();
     }
 
-    private or(): void {
+    public or(): void {
         this.tagClass = 'can-contain';
         this.changed.emit(new TagChange(this.tag, TagStatus.Or));
         this.toggle();
     }
 
-    private not(): void {
+    public not(): void {
         this.tagClass = 'does-not-contain';
         this.changed.emit(new TagChange(this.tag, TagStatus.Not));
         this.toggle();

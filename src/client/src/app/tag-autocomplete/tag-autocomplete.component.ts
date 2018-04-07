@@ -108,7 +108,7 @@ export class TagAutocompleteComponent implements OnInit {
         }
     }
 
-    private clear(): void {
+    public clear(): void {
         this.title = '';
         this.matchingTags = [];
         this.selectedIndex = -1;
