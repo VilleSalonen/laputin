@@ -98,6 +98,7 @@ export class VideoPlayerComponent implements OnInit {
 
     private _previousUpdate: moment.Moment;
     private cachedTimelineWidth: number;
+    private cachedPlayheadWidth: number;
     private onplayhead: boolean;
     private isFullScreen: boolean;
     private duration: string;
@@ -145,7 +146,8 @@ export class VideoPlayerComponent implements OnInit {
         // Normal playback progress updates can be optimized.
         this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
 
-        this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
+        this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
+        this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
     }
 
     @Input() file: File;
@@ -164,7 +166,7 @@ export class VideoPlayerComponent implements OnInit {
             // the new timeline width allows.
             this.setPlayheadTo(0);
             this.resetCache();
-            this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
+            this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
             this.timeupdate();
         });
 
@@ -249,8 +251,7 @@ export class VideoPlayerComponent implements OnInit {
             this.cachedTimelineBoundingClientRect = this.timeline.nativeElement.getBoundingClientRect();
         }
 
-        // This constant 9 must match playhead width;
-        return this.cachedTimelineBoundingClientRect.left + 9;
+        return this.cachedTimelineBoundingClientRect.left + (this.cachedPlayheadWidth / 2);
     }
 
     private resetCache() {
