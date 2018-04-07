@@ -37,10 +37,6 @@ import {LaputinService} from './../laputin.service';
                                     [ngClass]="{'active-button': random}"></span>
                                 <span class="fa fa-fast-backward" aria-hidden="true" (click)="goToPrevious()"></span>
                                 <span class="fa fa-fast-forward" aria-hidden="true" (click)="goToNext()"></span>
-                                <span class="fa fa-backward" aria-hidden="true" (click)="largeStepBackward()"></span>
-                                <span class="fa fa-step-backward" aria-hidden="true" (click)="smallStepBackward()"></span>
-                                <span class="fa fa-step-forward" aria-hidden="true" (click)="smallStepForward()"></span>
-                                <span class="fa fa-forward" aria-hidden="true" (click)="largeStepForward()"></span>
 
                                 <span>{{progressText}}</span>
                             </div>
