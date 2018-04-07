@@ -159,7 +159,13 @@ export class VideoPlayerComponent implements OnInit {
     ngOnInit() {
         window.addEventListener('webkitfullscreenchange', (event) => {
             this.isFullScreen = !this.isFullScreen;
+
+            // We have to reset playhead because it might be further right than
+            // the new timeline width allows.
+            this.setPlayheadTo(0);
             this.resetCache();
+            this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.playhead.nativeElement.offsetWidth;
+            this.timeupdate();
         });
 
         window.addEventListener('keydown', (event) => {
@@ -225,7 +231,7 @@ export class VideoPlayerComponent implements OnInit {
     }
 
     public skipToPosition(event) {
-        this.moveplayhead(event);
+        this.movePlayheadTo(event);
 
         const currentTime = this.player.duration * this.clickPercent(event);
         this.player.currentTime = currentTime;
@@ -255,25 +261,29 @@ export class VideoPlayerComponent implements OnInit {
         return ((event.clientX - this.getTimelineClickPosition()) / this.cachedTimelineWidth);
     }
 
-    private moveplayhead(event) {
+    private movePlayheadTo(event) {
         const newMargLeft = event.clientX - this.getTimelineClickPosition();
 
         if (newMargLeft >= 0 && newMargLeft <= this.cachedTimelineWidth) {
-            this.playhead.nativeElement.style.marginLeft = newMargLeft + 'px';
+            this.setPlayheadTo(newMargLeft);
         }
         if (newMargLeft < 0) {
-            this.playhead.nativeElement.style.marginLeft = '0px';
+            this.setPlayheadTo(0);
         }
         if (newMargLeft > this.cachedTimelineWidth) {
-            this.playhead.nativeElement.style.marginLeft = this.cachedTimelineWidth + 'px';
+            this.setPlayheadTo(this.cachedTimelineWidth);
         }
+    }
+
+    private setPlayheadTo(leftMargin) {
+        this.playhead.nativeElement.style.marginLeft = leftMargin + 'px';
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(e) {
         if (this.onplayhead) {
-            this.moveplayhead(event);
-            window.removeEventListener('mousemove', (dragEvent) => this.moveplayhead(dragEvent), true);
+            this.movePlayheadTo(event);
+            window.removeEventListener('mousemove', (dragEvent) => this.movePlayheadTo(dragEvent), true);
             this.player.currentTime = this.player.duration * this.clickPercent(event);
             this._progressUpdate();
         }
