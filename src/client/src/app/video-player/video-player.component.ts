@@ -1,6 +1,7 @@
 import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { Observable } from 'rxjs/Rx';
 
 import {File} from './../models/file';
 import {FileQuery} from './../models/filequery';
@@ -82,7 +83,7 @@ import {LaputinService} from './../laputin.service';
     providers: []
 })
 @Injectable()
-export class VideoPlayerComponent implements OnInit {
+export class VideoPlayerComponent {
     public playing: boolean;
     public random: boolean;
     public progressText: string;
@@ -93,7 +94,6 @@ export class VideoPlayerComponent implements OnInit {
 
     private player: HTMLVideoElement;
 
-    private _previousUpdate: moment.Moment;
     private cachedTimelineWidth: number;
     private cachedPlayheadWidth: number;
     private onplayhead: boolean;
@@ -120,14 +120,19 @@ export class VideoPlayerComponent implements OnInit {
 
         this.player = content.nativeElement;
 
-        this.player.addEventListener('playing', () => { this.playing = true; });
-        this.player.addEventListener('pause', () => { this.playing = false; });
-        this.player.addEventListener('ended', () => { this.playing = false; });
+        Observable.fromEvent(this.player, 'playing').subscribe(() => this.playing = true);
+        Observable.fromEvent(this.player, 'pause').subscribe(() => this.playing = false);
+        Observable.fromEvent(this.player, 'ended').subscribe(() => this.playing = false);
+
+        // Normal playback progress updates can be optimized.
+        Observable.fromEvent(this.player, 'timeupdate')
+            .throttleTime(500)
+            .subscribe(() => this.timeupdate());
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
-        this.player.addEventListener('durationchange', () => {
+        Observable.fromEvent(this.player, 'durationchange').subscribe(() => {
             this.player.currentTime = 0;
 
             this.playing = false;
@@ -137,25 +142,9 @@ export class VideoPlayerComponent implements OnInit {
             if (this.player.videoWidth && this.player.videoHeight) {
                 this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
             }
-        }, false);
+        });
 
-        // Normal playback progress updates can be optimized.
-        this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
-
-        this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
-        this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-    }
-
-    @Input() file: File;
-
-    @Output()
-    public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
-
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
-    }
-
-    ngOnInit() {
-        window.addEventListener('webkitfullscreenchange', (event) => {
+        Observable.fromEvent(window, 'webkitfullscreenchange').subscribe((event) => {
             this.isFullScreen = !this.isFullScreen;
 
             // We have to reset playhead because it might be further right than
@@ -166,7 +155,7 @@ export class VideoPlayerComponent implements OnInit {
             this.timeupdate();
         });
 
-        window.addEventListener('keydown', (event) => {
+        Observable.fromEvent(window, 'webkitfullscreenchange').subscribe((event: KeyboardEvent) => {
             if (event.srcElement.nodeName === 'INPUT') {
                 if (event.code === 'Escape') {
                     (<any>event.srcElement).blur();
@@ -226,6 +215,17 @@ export class VideoPlayerComponent implements OnInit {
                     break;
             }
         });
+
+        this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
+        this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+    }
+
+    @Input() file: File;
+
+    @Output()
+    public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
+
+    constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
 
     public skipToPosition(event) {
@@ -239,7 +239,7 @@ export class VideoPlayerComponent implements OnInit {
     private timeupdate() {
         const playPercent = (this.player.currentTime / this.player.duration);
         this.playhead.nativeElement.style.marginLeft = this.cachedTimelineWidth * playPercent + 'px';
-        this._optimizedProgressUpdate();
+        this._progressUpdate();
     }
 
     private getTimelineClickPosition() {
@@ -413,17 +413,6 @@ export class VideoPlayerComponent implements OnInit {
     public paste(): void {
         const tags = JSON.parse(localStorage.getItem('tagClipboard'));
         this.addTags(tags);
-    }
-
-    private _optimizedProgressUpdate(): void {
-        const current = moment();
-        if (this._previousUpdate && current.diff(this._previousUpdate) < 1000) {
-            return;
-        }
-
-        this._previousUpdate = current;
-
-        this._progressUpdate();
     }
 
     private _progressUpdate(): void {
