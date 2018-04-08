@@ -16,74 +16,7 @@ class MappedMouseEvent {
 @Component({
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
-    template: `
-        <div [ngClass]="{'full-screen': isFullScreen}">
-            <div #playerView class="column player-view" *ngIf="file">
-                <div class="filename">
-                    <span class="filename-small">{{directory()}}</span><br />
-                    <span style="filename-bigg">{{nameSansSuffix()}}</span><span class="filename-small">{{suffix()}}</span>
-                </div>
-
-                <div class="player">
-                    <video src="/media/{{file.escapedUrl()}}" #player></video>
-                    <div class="player-controls">
-                        <div class="player-main-button">
-                            <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
-                            <span class="fa fa-pause" aria-hidden="true" (click)="pause()" *ngIf="playing"></span>
-                        </div>
-
-                        <div class="timeline-and-buttons">
-                            <div class="timeline" #timeline>
-                                <div class="playhead" #playhead></div>
-                            </div>
-
-                            <div>
-                                <span class="fa fa-random" aria-hidden="true" (click)="random = !random"
-                                    [ngClass]="{'active-button': random}"></span>
-                                <span class="fa fa-fast-backward" aria-hidden="true" (click)="goToPrevious()"></span>
-                                <span class="fa fa-fast-forward" aria-hidden="true" (click)="goToNext()"></span>
-
-                                <span>{{progressText}}</span>
-                            </div>
-                        </div>
-
-                        <div class="player-main-button">
-                            <span class="fa fa-arrows-alt" aria-hidden="true" (click)="toggleFullScreen()"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tagging">
-                    <p>
-                        <small>
-                            <a (click)="openFile()" title="Open in external player">
-                                <span class="fa fa-film" aria-hidden="true"></span>
-                            </a>
-                            <a (click)="copy()" title="Copy tags">Copy tags</a>
-                            <a (click)="paste()" title="Paste tags">Paste tags</a>
-                        </small>
-                    </p>
-
-                    <div class="row">
-                        <div class="tag-tools">
-                            <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></app-tag-autocomplete>
-
-                            <small><a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a></small>
-
-                            <div *ngIf="tagCreationOpen">
-                                <app-search-box (update)="addNewTag($event)" clearOnEnter="1"></app-search-box>
-                            </div>
-                        </div>
-
-                        <div class="tags">
-                            <div *ngFor="let tag of file.tags" class="tag" (click)="removeTag(tag)">
-                                {{tag.name}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`,
+    templateUrl: './video-player.component.html',
     providers: []
 })
 @Injectable()
