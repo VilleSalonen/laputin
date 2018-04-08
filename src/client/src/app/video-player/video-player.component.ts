@@ -9,6 +9,10 @@ import {FileChange, ChangeDirection} from './../models/filechange';
 import {Tag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 
+class MappedMouseEvent {
+    constructor(public x: number, public y: number) {}
+}
+
 @Component({
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
@@ -29,8 +33,8 @@ import {LaputinService} from './../laputin.service';
                         </div>
 
                         <div class="timeline-and-buttons">
-                            <div class="timeline" (click)="skipToPosition($event)" #timeline>
-                                <div class="playhead" (mousedown)="dragToPosition()" #playhead></div>
+                            <div class="timeline" #timeline>
+                                <div class="playhead" #playhead></div>
                             </div>
 
                             <div>
@@ -96,7 +100,6 @@ export class VideoPlayerComponent {
 
     private cachedTimelineWidth: number;
     private cachedPlayheadWidth: number;
-    private onplayhead: boolean;
     private duration: string;
 
     private cachedTimelineBoundingClientRect: any;
@@ -123,6 +126,24 @@ export class VideoPlayerComponent {
         Observable.fromEvent(this.player, 'playing').subscribe(() => this.playing = true);
         Observable.fromEvent(this.player, 'pause').subscribe(() => this.playing = false);
         Observable.fromEvent(this.player, 'ended').subscribe(() => this.playing = false);
+
+        const mouseEventToCoordinate = (mouseEvent: MouseEvent): MappedMouseEvent => {
+            mouseEvent.preventDefault();
+            return new MappedMouseEvent(mouseEvent.clientX, mouseEvent.clientY);
+          };
+
+        const mouseDowns = Observable.fromEvent(this.playhead.nativeElement, 'mousedown');
+        const mouseMoves = Observable.fromEvent(window, 'mousemove');
+        const mouseUps = Observable.fromEvent(window, 'mouseup');
+
+        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click');
+
+        const drags = mouseDowns.concatMap(() =>
+            mouseMoves.takeUntil(mouseUps)
+        );
+
+        clicks.subscribe(event => this.skipToPosition(event));
+        drags.subscribe(event => this.movePlayheadTo(event));
 
         // Normal playback progress updates can be optimized.
         Observable.fromEvent(this.player, 'timeupdate')
@@ -155,7 +176,7 @@ export class VideoPlayerComponent {
             this.timeupdate();
         });
 
-        Observable.fromEvent(window, 'webkitfullscreenchange').subscribe((event: KeyboardEvent) => {
+        Observable.fromEvent(window, 'keyup').subscribe((event: KeyboardEvent) => {
             if (event.srcElement.nodeName === 'INPUT') {
                 if (event.code === 'Escape') {
                     (<any>event.srcElement).blur();
@@ -228,14 +249,6 @@ export class VideoPlayerComponent {
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
 
-    public skipToPosition(event) {
-        this.movePlayheadTo(event);
-
-        const currentTime = this.player.duration * this.clickPercent(event);
-        this.player.currentTime = currentTime;
-        this._progressUpdate();
-    }
-
     private timeupdate() {
         const playPercent = (this.player.currentTime / this.player.duration);
         this.playhead.nativeElement.style.marginLeft = this.cachedTimelineWidth * playPercent + 'px';
@@ -258,6 +271,14 @@ export class VideoPlayerComponent {
         return ((event.clientX - this.getTimelineClickPosition()) / this.cachedTimelineWidth);
     }
 
+    public skipToPosition(event) {
+        this.movePlayheadTo(event);
+
+        const currentTime = this.player.duration * this.clickPercent(event);
+        this.player.currentTime = currentTime;
+        this._progressUpdate();
+    }
+
     private movePlayheadTo(event) {
         const newMargLeft = event.clientX - this.getTimelineClickPosition();
 
@@ -270,33 +291,13 @@ export class VideoPlayerComponent {
         if (newMargLeft > this.cachedTimelineWidth) {
             this.setPlayheadTo(this.cachedTimelineWidth);
         }
+
+        this.player.currentTime = this.player.duration * this.clickPercent(event);
+        this._progressUpdate();
     }
 
     private setPlayheadTo(leftMargin) {
         this.playhead.nativeElement.style.marginLeft = leftMargin + 'px';
-    }
-
-    @HostListener('document:mousemove', ['$event'])
-    onMouseMove(e) {
-        if (this.onplayhead) {
-            this.movePlayheadTo(event);
-            window.removeEventListener('mousemove', (dragEvent) => this.movePlayheadTo(dragEvent), true);
-            this.player.currentTime = this.player.duration * this.clickPercent(event);
-            this._progressUpdate();
-        }
-    }
-
-    @HostListener('document:mouseup', ['$event'])
-    onMouseUp(e) {
-        if (this.onplayhead) {
-            this.onplayhead = false;
-            this.player.addEventListener('timeupdate', () => this.timeupdate(), false);
-        }
-    }
-
-    public dragToPosition() {
-        this.onplayhead = true;
-        this.player.removeEventListener('timeupdate', () => this.timeupdate(), false);
     }
 
     public directory(): string {
