@@ -7,6 +7,7 @@ import {
   LocationStrategy,
   HashLocationStrategy
 } from '@angular/common';
+import { VirtualScrollModule } from 'angular2-virtual-scroll';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
@@ -44,7 +45,8 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
       { path: 'files', component: FilesComponent },
       { path: 'tags', component: TagsComponent },
       { path: 'duplicates', component: DuplicatesComponent }
-    ])
+    ]),
+    VirtualScrollModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]

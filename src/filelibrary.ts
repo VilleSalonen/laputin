@@ -1,6 +1,7 @@
 /// <reference path="walk.d.ts" />
 
 import _ = require('lodash');
+import fs = require('fs');
 import walk = require('walk');
 import path = require('path');
 import watch = require('watch');
@@ -10,12 +11,13 @@ import winston = require('winston');
 import {IHasher} from './ihasher';
 import {Library} from './library';
 import {File} from './file';
+import { Screenshotter } from './screenshotter';
 
 export class FileLibrary extends events.EventEmitter {
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
 
-    constructor(private _libraryPath: string, private _hasher: IHasher) {
+    constructor(private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter) {
         super();
     }
 
@@ -69,6 +71,11 @@ export class FileLibrary extends events.EventEmitter {
         if (this.fileShouldBeIgnored(file)) { return; }
 
         this.addFileToBookkeeping(file);
+
+        if (!this._screenshotter.exists(file)) {
+            await this._screenshotter.screenshot(file, 180);
+        }
+
         this.emit('found', file);
 
         winston.log('verbose', 'Found file: ' + filePath);
@@ -86,6 +93,7 @@ export class FileLibrary extends events.EventEmitter {
     private fileShouldBeIgnored(file: File) {
         return path.basename(file.path).charAt(0) === '.'
             || file.path.indexOf('.git') !== -1
+            || file.path.indexOf('.laputin') !== -1
             || file.path.indexOf('Thumbs.db') !== -1;
     }
 

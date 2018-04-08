@@ -19,6 +19,8 @@
 }
 
 .files {
+    @include g-layout__column;
+
     background: $color-primary-1;
     flex-basis: 50%;
     overflow: auto;
@@ -34,8 +36,8 @@
 
     overflow: auto;
 
-    margin-top: 2 * $standard-margin;
-    margin-bottom: 2 * $standard-margin;
+    margin-top: 0;
+    margin-bottom: $standard-margin;
 }
 
 .files-search {
@@ -71,4 +73,9 @@
 
 .hidden {
     display: none;
+}
+
+virtual-scroll {
+    height: 100%;
+    direction: rtl;
 }

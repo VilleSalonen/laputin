@@ -6,7 +6,16 @@
         </div>
 
         <div class="player">
-            <video src="/media/{{file.escapedUrl()}}" #player></video>
+            <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-shot">
+                <img (click)="play()" src="/laputin/thumbs/{{file.hash}}.jpg" />
+
+                <div class="video-hero-play">
+                    <span class="fa fa-play-circle-o" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
+                </div>
+            </div>
+            
+            <video [ngClass]="{ 'hidden': !playbackHasBeenStarted }" src="/media/{{file.escapedUrl()}}" #player></video>
+
             <div class="player-controls">
                 <div class="player-main-button">
                     <span class="fa fa-play" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>
@@ -37,6 +46,9 @@
         <div class="tagging">
             <p>
                 <small>
+                    <a (click)="screenshot()" title="Set screenshot">
+                        <span class="fa fa-camera" aria-hidden="true"></span>
+                    </a>
                     <a (click)="openFile()" title="Open in external player">
                         <span class="fa fa-film" aria-hidden="true"></span>
                     </a>

@@ -11,42 +11,42 @@ import {LaputinService} from './../laputin.service';
     styleUrls: ['./files.component.scss'],
     template: `
         <div class="container">
-            <div class="files">
-                <div class="row full-height">
-                    <div class="files-search full-height">
-                        <app-file-search (update)="filterFiles($event)"></app-file-search>
+            <div class="files full-height">
+                <div class="files-search">
+                    <app-file-search (update)="filterFiles($event)"></app-file-search>
 
-                        <h2 style="margin-top: 0; margin-bottom: 24px;">
-                            Showing {{files.length}} matching files
-                            <a (click)="openFiles()" title="Open in external player">
-                                <i class="fa fa-film" aria-hidden="true"></i>
-                            </a>
-                        </h2>
-                    </div>
+                    <h2 style="margin-top: 0; margin-bottom: 0;">
+                        Showing {{files.length}} matching files
+                        <a (click)="openFiles()" title="Open in external player">
+                            <i class="fa fa-film" aria-hidden="true"></i>
+                        </a>
+                    </h2>
+                </div>
 
-                    <div class="files-list full-height">
-                        <span [ngClass]="{'hidden': !loading}" class="fa fa-spinner" aria-hidden="true"></span>
+                <div class="files-list" style="flex-grow: 1;">
+                    <span [ngClass]="{'hidden': !loading}" class="fa fa-spinner" aria-hidden="true"></span>
 
-                        <div *ngFor="let file of files">
-                            <div>
-                                <div *ngIf="file == activeFile">
-                                    <p class="active-file">
+                    <virtual-scroll [items]="files" (update)="viewPortItems = $event">
+                        <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px; direction: ltr;">
+                            <div style="display: flex;">
+                                <div style="width: 200px; max-width: 200px; margin-right: 12px; margin-top: auto; margin-bottom: auto;">
+                                    <img src="/laputin/thumbs-small/{{file.hash}}.jpg" style="max-width: 200px;" />
+                                </div>
+                                <div>
+                                    <p *ngIf="file == activeFile" class="active-file">
                                         <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
                                         {{file.path}}
                                     </p>
-                                    <p>{{formattedTags(file)}}</p>
-                                </div>
-                                <div *ngIf="file != activeFile">
-                                    <p (click)="activeFile = file" class="inactive-file">{{file.path}}</p>
+                                    <p *ngIf="file != activeFile" (click)="activeFile = file" class="inactive-file">{{file.path}}</p>
                                     <p>{{formattedTags(file)}}</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </virtual-scroll>
                 </div>
             </div>
 
-            <div class="player">
+            <div class="player full-height">
                 <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
             </div>
         </div>
@@ -57,6 +57,7 @@ import {LaputinService} from './../laputin.service';
 export class FilesComponent implements OnInit {
     public activeFile: File;
     public files: File[] = [];
+    public viewPortItems: File[] = [];
     public loading = false;
     private _query: FileQuery = new FileQuery();
 

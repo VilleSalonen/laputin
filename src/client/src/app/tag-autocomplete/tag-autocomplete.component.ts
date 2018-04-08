@@ -14,27 +14,7 @@ import {LaputinService} from './../laputin.service';
 @Component({
     selector: 'app-tag-autocomplete',
     styleUrls: ['./tag-autocomplete.component.scss'],
-    template: `
-        <div>
-            <input
-                    type="text"
-                    [(ngModel)]="title"
-                    [formControl]="termCtrl"
-                    (keyup)="onKeyUp($event)"
-                    (blur)="clear()"
-                    placeholder="Tags">
-            <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
-                <ul class="typeahead-list" role="menu">
-                    <li *ngFor="let tag of matchingTags; let i = index"
-                        (click)="mouseSelection(tag)"
-                        (mouseover)="selectedIndex = i"
-                        [class]="selectedIndex == i ? 'hover' : ''">
-                        {{tag.name}}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    `,
+    templateUrl: './tag-autocomplete.component.html',
     providers: [LaputinService]
 })
 @Injectable()

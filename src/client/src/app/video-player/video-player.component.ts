@@ -21,6 +21,7 @@ class MappedMouseEvent {
 })
 @Injectable()
 export class VideoPlayerComponent {
+    public playbackHasBeenStarted: boolean;
     public playing: boolean;
     public random: boolean;
     public progressText: string;
@@ -91,12 +92,22 @@ export class VideoPlayerComponent {
         timeUpdates
             .merge(clicks)
             .merge(drags)
-            .subscribe((playPercent: number) => this.setPlayPercentage(playPercent));
+            .subscribe((playPercent: number) =>
+                this.setPlayPercentage(playPercent)
+            );
+
+        playStart
+            .merge(clicks)
+            .merge(drags)
+            .subscribe(() =>
+                this.playbackHasBeenStarted = true
+            );
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
         Observable.fromEvent(this.player, 'durationchange').subscribe(() => {
+            this.playbackHasBeenStarted = false;
             this.playing = false;
             this.duration = this.formatDuration(this.player.duration);
             this.setPlayPercentage(0);
@@ -192,8 +203,12 @@ export class VideoPlayerComponent {
 
     private setPlayPercentage(playPercent: number) {
         this.setPlayheadTo(this.cachedTimelineWidth * playPercent);
-        this.player.currentTime = this.player.duration * playPercent;
-        this.progressUpdate();
+
+        const newTime = this.player.duration * playPercent;
+        if (!isNaN(newTime) && 0 <= newTime && newTime <= this.player.duration) {
+            this.player.currentTime = newTime;
+            this.progressUpdate();
+        }
     }
 
     private progressUpdate(): void {
@@ -352,6 +367,10 @@ export class VideoPlayerComponent {
         query.hash = this.file.hash;
 
         this._service.openFiles(query);
+    }
+
+    public screenshot(): void {
+        this._service.screenshotFile(this.file, this.player.currentTime);
     }
 
     public copy(): void {

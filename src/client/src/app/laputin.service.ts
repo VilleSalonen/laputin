@@ -72,6 +72,16 @@ export class LaputinService {
         return new File(file.hash, file.path, file.name, this._convertTags(file.tags));
     }
 
+    public screenshotFile(file: File, timeInSeconds: number): Promise<Response> {
+        const body = JSON.stringify({ hash: file.hash, time: timeInSeconds });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        return this._http
+            .post(this._baseUrl + '/screenshot', body, { headers: headers })
+            .map(res => res.json())
+            .toPromise();
+    }
+
     public openFiles(query: FileQuery): Promise<Response> {
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
         const params = this.compileParams(query);

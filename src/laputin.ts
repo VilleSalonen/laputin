@@ -10,6 +10,8 @@ import {FileLibrary} from './filelibrary';
 import {VLCOpener} from './vlcopener';
 import {File} from './file';
 import {Tag} from './tag';
+import { Screenshotter } from './screenshotter';
+import { Query } from './query.model';
 
 export class Laputin {
     public app: express.Express;
@@ -32,6 +34,8 @@ export class Laputin {
 
         this.app.use('/api', this._createApiRoutes());
         this.app.use('/media', this._createMediaRoutes());
+
+        this.app.use('/laputin', express.static(path.join(this._libraryPath, '/.laputin')));
 
         const mediaCatchAll = express();
         this.app.use('/media/', mediaCatchAll);
@@ -113,6 +117,22 @@ export class Laputin {
             const files = await this.library.getFiles(req.query);
             await this._opener.open(files);
             res.status(200).end();
+        });
+
+        api.route('/screenshot').post(async (req, res) => {
+            try {
+                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined);
+                const files = await this.library.getFiles(query);
+
+                if (files.length > 0) {
+                    const screenshotter = new Screenshotter(this._libraryPath);
+                    await screenshotter.screenshot(files[0], req.body.time);
+                }
+
+                res.status(200).end();
+            } catch (error) {
+                res.status(500).end();
+            }
         });
 
         return api;
