@@ -128,13 +128,16 @@ export class VideoPlayerComponent {
         const ended = Observable.fromEvent(this.player, 'ended');
         const playEnd = paused.merge(ended);
 
-        const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
-            .throttleTime(500)
-            .map(() => this.player.currentTime / this.player.duration);
+        playStart.subscribe(() => this.playing = true);
+        playEnd.subscribe(() => this.playing = false);
 
         const mouseDowns = Observable.fromEvent(this.playhead.nativeElement, 'mousedown');
         const mouseMoves = Observable.fromEvent(window, 'mousemove');
         const mouseUps = Observable.fromEvent(window, 'mouseup');
+
+        const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
+            .throttleTime(500)
+            .map(() => this.player.currentTime / this.player.duration);
 
         const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
             const timelineBoundingRect = this.getTimelineBoundingRect();
@@ -152,10 +155,10 @@ export class VideoPlayerComponent {
             });
         });
 
-        playStart.subscribe(() => this.playing = true);
-        playEnd.subscribe(() => this.playing = false);
-
-        timeUpdates.merge(clicks).merge(drags).subscribe((playPercent: number) => this.setPlayPercentage(playPercent));
+        timeUpdates
+            .merge(clicks)
+            .merge(drags)
+            .subscribe((playPercent: number) => this.setPlayPercentage(playPercent));
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
