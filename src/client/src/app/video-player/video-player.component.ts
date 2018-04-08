@@ -123,42 +123,47 @@ export class VideoPlayerComponent {
 
         this.player = content.nativeElement;
 
-        Observable.fromEvent(this.player, 'playing').subscribe(() => this.playing = true);
-        Observable.fromEvent(this.player, 'pause').subscribe(() => this.playing = false);
-        Observable.fromEvent(this.player, 'ended').subscribe(() => this.playing = false);
+        const playStart = Observable.fromEvent(this.player, 'playing');
+        const paused = Observable.fromEvent(this.player, 'pause');
+        const ended = Observable.fromEvent(this.player, 'ended');
+        const playEnd = paused.merge(ended);
 
-        const mouseEventToCoordinate = (mouseEvent: MouseEvent): MappedMouseEvent => {
-            mouseEvent.preventDefault();
-            return new MappedMouseEvent(mouseEvent.clientX, mouseEvent.clientY);
-          };
+        const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
+            .throttleTime(500)
+            .map(() => this.player.currentTime / this.player.duration);
 
         const mouseDowns = Observable.fromEvent(this.playhead.nativeElement, 'mousedown');
         const mouseMoves = Observable.fromEvent(window, 'mousemove');
         const mouseUps = Observable.fromEvent(window, 'mouseup');
 
-        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click');
+        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
+            const timelineBoundingRect = this.getTimelineBoundingRect();
+            const timelineWidth = this.cachedTimelineWidth;
 
-        const drags = mouseDowns.concatMap(() =>
-            mouseMoves.takeUntil(mouseUps)
-        );
+            return this.clickPercent(event.clientX, timelineBoundingRect, timelineWidth);
+        });
 
-        clicks.subscribe(event => this.skipToPosition(event));
-        drags.subscribe(event => this.movePlayheadTo(event));
+        const drags = mouseDowns.concatMap(() => {
+            const timelineBoundingRect = this.getTimelineBoundingRect();
+            const timelineWidth = this.cachedTimelineWidth;
 
-        // Normal playback progress updates can be optimized.
-        Observable.fromEvent(this.player, 'timeupdate')
-            .throttleTime(500)
-            .subscribe(() => this.timeupdate());
+            return mouseMoves.takeUntil(mouseUps).map((dragEvent: MouseEvent) => {
+                return this.clickPercent(dragEvent.clientX, timelineBoundingRect, timelineWidth);
+            });
+        });
+
+        playStart.subscribe(() => this.playing = true);
+        playEnd.subscribe(() => this.playing = false);
+
+        timeUpdates.merge(clicks).merge(drags).subscribe((playPercent: number) => this.setPlayPercentage(playPercent));
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
         Observable.fromEvent(this.player, 'durationchange').subscribe(() => {
-            this.player.currentTime = 0;
-
             this.playing = false;
             this.duration = this.formatDuration(this.player.duration);
-            this._progressUpdate();
+            this.setPlayPercentage(0);
 
             if (this.player.videoWidth && this.player.videoHeight) {
                 this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
@@ -173,7 +178,7 @@ export class VideoPlayerComponent {
             this.setPlayheadTo(0);
             this.resetCache();
             this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-            this.timeupdate();
+            this.setPlayPercentage(this.player.currentTime / this.player.duration);
         });
 
         Observable.fromEvent(window, 'keyup').subscribe((event: KeyboardEvent) => {
@@ -249,13 +254,43 @@ export class VideoPlayerComponent {
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
 
-    private timeupdate() {
-        const playPercent = (this.player.currentTime / this.player.duration);
-        this.playhead.nativeElement.style.marginLeft = this.cachedTimelineWidth * playPercent + 'px';
-        this._progressUpdate();
+    private setPlayPercentage(playPercent: number) {
+        this.setPlayheadTo(this.cachedTimelineWidth * playPercent);
+        this.player.currentTime = this.player.duration * playPercent;
+        this.progressUpdate();
     }
 
-    private getTimelineClickPosition() {
+    private progressUpdate(): void {
+        const currentTime = this.formatDuration(this.player.currentTime);
+
+        if (currentTime.indexOf('NaN') === -1 && this.duration.indexOf('NaN') === -1) {
+            this.progressText = currentTime + '/' + this.duration;
+        } else {
+            this.progressText = '00:00/00:00';
+        }
+    }
+
+    private formatDuration(durationInSeconds: number): string {
+        const duration = moment.duration(durationInSeconds, 'seconds');
+
+        let result = '';
+
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
+
+        if (hours) {
+            result += ((hours >= 10) ? hours : '0' + hours) + ':';
+        }
+
+        result += (minutes >= 10) ? minutes : '0' + minutes;
+        result += ':';
+        result += (seconds >= 10) ? seconds : '0' + seconds;
+
+        return result;
+    }
+
+    private getTimelineBoundingRect() {
         if (!this.cachedTimelineBoundingClientRect) {
             this.cachedTimelineBoundingClientRect = this.timeline.nativeElement.getBoundingClientRect();
         }
@@ -267,33 +302,9 @@ export class VideoPlayerComponent {
         this.cachedTimelineBoundingClientRect = null;
     }
 
-    private clickPercent(event) {
-        return ((event.clientX - this.getTimelineClickPosition()) / this.cachedTimelineWidth);
-    }
-
-    public skipToPosition(event) {
-        this.movePlayheadTo(event);
-
-        const currentTime = this.player.duration * this.clickPercent(event);
-        this.player.currentTime = currentTime;
-        this._progressUpdate();
-    }
-
-    private movePlayheadTo(event) {
-        const newMargLeft = event.clientX - this.getTimelineClickPosition();
-
-        if (newMargLeft >= 0 && newMargLeft <= this.cachedTimelineWidth) {
-            this.setPlayheadTo(newMargLeft);
-        }
-        if (newMargLeft < 0) {
-            this.setPlayheadTo(0);
-        }
-        if (newMargLeft > this.cachedTimelineWidth) {
-            this.setPlayheadTo(this.cachedTimelineWidth);
-        }
-
-        this.player.currentTime = this.player.duration * this.clickPercent(event);
-        this._progressUpdate();
+    private clickPercent(x, boundingRect, width) {
+        const position = ((x - boundingRect) / width);
+        return Math.max(0.0, Math.min(position, 1.0));
     }
 
     private setPlayheadTo(leftMargin) {
@@ -414,35 +425,5 @@ export class VideoPlayerComponent {
     public paste(): void {
         const tags = JSON.parse(localStorage.getItem('tagClipboard'));
         this.addTags(tags);
-    }
-
-    private _progressUpdate(): void {
-        const currentTime = this.formatDuration(this.player.currentTime);
-
-        if (currentTime.indexOf('NaN') === -1 && this.duration.indexOf('NaN') === -1) {
-            this.progressText = currentTime + '/' + this.duration;
-        } else {
-            this.progressText = '00:00/00:00';
-        }
-    }
-
-    private formatDuration(durationInSeconds: number): string {
-        const duration = moment.duration(durationInSeconds, 'seconds');
-
-        let result = '';
-
-        const hours = duration.hours();
-        const minutes = duration.minutes();
-        const seconds = duration.seconds();
-
-        if (hours) {
-            result += ((hours >= 10) ? hours : '0' + hours) + ':';
-        }
-
-        result += (minutes >= 10) ? minutes : '0' + minutes;
-        result += ':';
-        result += (seconds >= 10) ? seconds : '0' + seconds;
-
-        return result;
     }
 }
