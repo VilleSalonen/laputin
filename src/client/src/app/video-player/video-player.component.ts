@@ -90,10 +90,16 @@ export class VideoPlayerComponent {
         });
 
         clicks
-            .merge(drags)
-            .subscribe((playPercent: number) =>
-                this.setProgress(playPercent)
-            );
+            .subscribe((playPercent: number) => {
+                this.setPlayheadTo(playPercent);
+                this.setProgress(playPercent);
+            });
+
+        drags
+            .subscribe((playPercent: number) => this.setPlayheadTo(playPercent));
+        drags
+            .throttleTime(50)
+            .subscribe((playPercent: number) => this.setProgress(playPercent));
 
         timeUpdates
             .subscribe((playPercent: number) =>
