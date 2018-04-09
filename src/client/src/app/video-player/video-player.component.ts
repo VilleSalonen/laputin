@@ -138,65 +138,69 @@ export class VideoPlayerComponent {
             this.updateProgress(this.player.currentTime / this.player.duration);
         });
 
-        Observable.fromEvent(window, 'keyup').subscribe((event: KeyboardEvent) => {
-            if (event.srcElement.nodeName === 'INPUT') {
-                if (event.code === 'Escape') {
-                    (<any>event.srcElement).blur();
+        const windowKeyups = Observable.fromEvent(window, 'keyup');
+
+        windowKeyups
+            .subscribe((event: KeyboardEvent) => {
+                if (event.srcElement.nodeName === 'INPUT') {
+                    if (event.key === 'Escape') {
+                        (<any>event.srcElement).blur();
+                    }
+
+                    return;
                 }
 
-                return;
-            }
-
-            switch (event.code) {
-                case 'ArrowLeft':
-                    if (event.shiftKey) {
-                        this.tinyStepBackward();
-                    } else {
-                        this.smallStepBackward();
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (event.shiftKey) {
-                        this.tinyStepForward();
-                    } else {
-                        this.smallStepForward();
-                    }
-                    break;
-                case 'ArrowUp':
-                    this.largeStepForward();
-                    break;
-                case 'ArrowDown':
-                    this.largeStepBackward();
-                    break;
-                case 'Enter':
-                    if (event.altKey) {
-                        this.toggleFullScreen();
-                    }
-                    break;
-                case 'Space':
-                    if (this.playing) {
-                        this.pause();
-                    } else {
-                        this.play();
-                    }
-                    break;
-                case 'KeyW':
-                    this.goToPrevious();
-                    break;
-                case 'KeyS':
-                    this.goToNext();
-                    break;
-                case 'KeyC':
-                    if (event.ctrlKey) {
-                        this.copy();
-                    }
-                    break;
-                case 'KeyV':
-                    if (event.ctrlKey) {
-                        this.paste();
-                    }
-                    break;
-            }
+                switch (event.key) {
+                    case 'ArrowLeft':
+                        if (event.shiftKey) {
+                            this.tinyStepBackward();
+                        } else {
+                            this.smallStepBackward();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (event.shiftKey) {
+                            this.tinyStepForward();
+                        } else {
+                            this.smallStepForward();
+                        }
+                        break;
+                    case 'ArrowUp':
+                        this.largeStepForward();
+                        break;
+                    case 'ArrowDown':
+                        this.largeStepBackward();
+                        break;
+                    case 'Enter':
+                        if (event.altKey) {
+                            console.log('jes2');
+                            this.toggleFullScreen();
+                        }
+                        break;
+                    case ' ':
+                        if (this.playing) {
+                            this.pause();
+                        } else {
+                            this.play();
+                        }
+                        break;
+                    case 'w':
+                        this.goToPrevious();
+                        break;
+                    case 's':
+                        this.goToNext();
+                        break;
+                    case 'c':
+                        if (event.ctrlKey) {
+                            this.copy();
+                        }
+                        break;
+                    case 'v':
+                        if (event.ctrlKey) {
+                            this.paste();
+                        }
+                        break;
+                }
         });
 
         this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
