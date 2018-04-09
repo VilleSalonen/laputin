@@ -62,6 +62,9 @@ export class VideoPlayerComponent {
         const ended = Observable.fromEvent(this.player, 'ended');
         const playEnd = paused.merge(ended);
 
+        const playerDoubleClicked = Observable.fromEvent(this.player, 'dblclick');
+        playerDoubleClicked.subscribe(() => this.toggleFullScreen());
+
         playStart.subscribe(() => this.playing = true);
         playEnd.subscribe(() => this.playing = false);
 
