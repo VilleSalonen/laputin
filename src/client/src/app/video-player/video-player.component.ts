@@ -89,11 +89,15 @@ export class VideoPlayerComponent {
             });
         });
 
-        timeUpdates
-            .merge(clicks)
+        clicks
             .merge(drags)
             .subscribe((playPercent: number) =>
-                this.setPlayPercentage(playPercent)
+                this.setProgress(playPercent)
+            );
+
+        timeUpdates
+            .subscribe((playPercent: number) =>
+                this.updateProgress(playPercent)
             );
 
         playStart
@@ -110,7 +114,7 @@ export class VideoPlayerComponent {
             this.playbackHasBeenStarted = false;
             this.playing = false;
             this.duration = this.formatDuration(this.player.duration);
-            this.setPlayPercentage(0);
+            this.updateProgress(0);
 
             if (this.player.videoWidth && this.player.videoHeight) {
                 this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
@@ -125,7 +129,7 @@ export class VideoPlayerComponent {
             this.setPlayheadTo(0);
             this.resetCache();
             this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-            this.setPlayPercentage(this.player.currentTime / this.player.duration);
+            this.updateProgress(this.player.currentTime / this.player.duration);
         });
 
         Observable.fromEvent(window, 'keyup').subscribe((event: KeyboardEvent) => {
@@ -201,17 +205,19 @@ export class VideoPlayerComponent {
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
 
-    private setPlayPercentage(playPercent: number) {
-        this.setPlayheadTo(this.cachedTimelineWidth * playPercent);
-
+    private setProgress(playPercent: number) {
         const newTime = this.player.duration * playPercent;
         if (!isNaN(newTime) && 0 <= newTime && newTime <= this.player.duration) {
             this.player.currentTime = newTime;
-            this.progressUpdate();
         }
     }
 
-    private progressUpdate(): void {
+    private updateProgress(playPercent: number) {
+        this.setPlayheadTo(playPercent);
+        this.updateTime();
+    }
+
+    private updateTime(): void {
         const currentTime = this.formatDuration(this.player.currentTime);
 
         if (currentTime.indexOf('NaN') === -1 && this.duration.indexOf('NaN') === -1) {
@@ -258,7 +264,8 @@ export class VideoPlayerComponent {
         return Math.max(0.0, Math.min(position, 1.0));
     }
 
-    private setPlayheadTo(leftMargin) {
+    private setPlayheadTo(playPercent: number) {
+        const leftMargin = this.cachedTimelineWidth * playPercent;
         this.playhead.nativeElement.style.marginLeft = leftMargin + 'px';
     }
 
