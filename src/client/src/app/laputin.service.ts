@@ -81,7 +81,6 @@ export class LaputinService {
         this._http
             .post(this._baseUrl + '/screenshot', body, { headers: headers })
             .subscribe(() => {
-                console.log('emit ' + file.hash);
                 this.thumbnailChanged.next(file);
             });
     }

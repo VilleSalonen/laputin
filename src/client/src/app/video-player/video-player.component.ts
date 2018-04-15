@@ -175,7 +175,6 @@ export class VideoPlayerComponent {
                         break;
                     case 'Enter':
                         if (event.altKey) {
-                            console.log('jes2');
                             this.toggleFullScreen();
                         }
                         break;

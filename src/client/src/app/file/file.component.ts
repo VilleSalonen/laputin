@@ -26,9 +26,7 @@ export class FileComponent {
     public cacheBuster: string;
 
     constructor(private _service: LaputinService) {
-        console.log(_service);
         _service.thumbnailChanged.subscribe((changed: File) => {
-            console.log(changed);
             if (changed.hash === this.file.hash) {
                 this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
             }
