@@ -28,19 +28,7 @@ import {LaputinService} from './../laputin.service';
 
                     <virtual-scroll [items]="files" (update)="viewPortItems = $event">
                         <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px; direction: ltr;">
-                            <div style="display: flex;">
-                                <div style="width: 200px; max-width: 200px; margin-right: 12px; margin-top: auto; margin-bottom: auto;">
-                                    <img src="/laputin/thumbs-small/{{file.hash}}.jpg" style="max-width: 200px;" />
-                                </div>
-                                <div>
-                                    <p *ngIf="file == activeFile" class="active-file">
-                                        <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
-                                        {{file.path}}
-                                    </p>
-                                    <p *ngIf="file != activeFile" (click)="activeFile = file" class="inactive-file">{{file.path}}</p>
-                                    <p>{{formattedTags(file)}}</p>
-                                </div>
-                            </div>
+                            <app-file [file]="file" [active]="activeFile === file" (selected)="selectFile($event)"></app-file>
                         </div>
                     </virtual-scroll>
                 </div>
@@ -50,8 +38,7 @@ import {LaputinService} from './../laputin.service';
                 <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
             </div>
         </div>
-    `,
-    providers: [LaputinService]
+    `
 })
 @Injectable()
 export class FilesComponent implements OnInit {
@@ -61,7 +48,7 @@ export class FilesComponent implements OnInit {
     public loading = false;
     private _query: FileQuery = new FileQuery();
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
+    constructor(private _service: LaputinService) {
     }
 
     ngOnInit(): void {
@@ -112,7 +99,7 @@ export class FilesComponent implements OnInit {
         });
     }
 
-    public formattedTags(file: File): string {
-        return _.map(file.tags, (tag) => tag.name).join(', ');
+    selectFile(file: File): void {
+        this.activeFile = file;
     }
 }

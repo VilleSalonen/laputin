@@ -1,5 +1,5 @@
-import {Component, Injectable, Inject} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import {Component, Injectable, Inject, EventEmitter} from '@angular/core';
+import {Observable, Subject} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Http, HttpModule, Headers, Response} from '@angular/http';
@@ -13,6 +13,8 @@ import {Duplicate} from './models/duplicate';
 @Injectable()
 export class LaputinService {
     private _baseUrl = '/api';
+
+    public thumbnailChanged: Subject<File> = new Subject<File>();
 
     constructor(@Inject(Http) private _http: Http) {
     }
@@ -72,14 +74,16 @@ export class LaputinService {
         return new File(file.hash, file.path, file.name, this._convertTags(file.tags));
     }
 
-    public screenshotFile(file: File, timeInSeconds: number): Promise<Response> {
+    public screenshotFile(file: File, timeInSeconds: number): void {
         const body = JSON.stringify({ hash: file.hash, time: timeInSeconds });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
-        return this._http
+        this._http
             .post(this._baseUrl + '/screenshot', body, { headers: headers })
-            .map(res => res.json())
-            .toPromise();
+            .subscribe(() => {
+                console.log('emit ' + file.hash);
+                this.thumbnailChanged.next(file);
+            });
     }
 
     public openFiles(query: FileQuery): Promise<Response> {

@@ -11,6 +11,7 @@ import { VirtualScrollModule } from 'angular2-virtual-scroll';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
+import { FileComponent } from './file/file.component';
 import { FilesComponent } from './files/files.component';
 import { FileSearchComponent } from './file-search/file-search.component';
 import { SearchBoxComponent } from './search-box/search-box.component';
@@ -20,11 +21,13 @@ import { TagsComponent } from './tags/tags.component';
 import { TagFilterPipe } from './tag-filter.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
+import { LaputinService } from './laputin.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     DuplicatesComponent,
+    FileComponent,
     FilesComponent,
     FileSearchComponent,
     SearchBoxComponent,
@@ -48,7 +51,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
     ]),
     VirtualScrollModule
   ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

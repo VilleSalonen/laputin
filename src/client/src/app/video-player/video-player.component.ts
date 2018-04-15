@@ -16,8 +16,7 @@ class MappedMouseEvent {
 @Component({
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
-    templateUrl: './video-player.component.html',
-    providers: []
+    templateUrl: './video-player.component.html'
 })
 @Injectable()
 export class VideoPlayerComponent {
@@ -215,7 +214,7 @@ export class VideoPlayerComponent {
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
+    constructor(private _service: LaputinService) {
     }
 
     private setProgress(playPercent: number) {
