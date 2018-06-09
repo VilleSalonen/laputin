@@ -78,6 +78,8 @@ export class VideoPlayerComponent {
             .map(() => this.player.currentTime / this.player.duration);
 
         const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
+            event.preventDefault();
+
             const timelineBoundingRect = this.getTimelineBoundingRect();
             const timelineWidth = this.cachedTimelineWidth;
 
