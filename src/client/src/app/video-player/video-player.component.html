@@ -7,7 +7,7 @@
 
         <div class="player">
             <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-shot">
-                <img (click)="play()" src="/laputin/thumbs/{{file.hash}}.jpg" />
+                <img (click)="play()" src="/laputin/thumbs/{{file.hash}}.jpg{{cacheBuster}}" />
 
                 <div class="video-hero-play">
                     <span class="fa fa-play-circle-o" aria-hidden="true" (click)="play()" *ngIf="!playing"></span>

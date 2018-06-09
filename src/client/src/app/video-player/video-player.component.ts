@@ -26,6 +26,7 @@ export class VideoPlayerComponent {
     public progressText: string;
     public resolution: string;
     public isFullScreen: boolean;
+    public cacheBuster: string;
 
     public tagCreationOpen = false;
 
@@ -55,6 +56,7 @@ export class VideoPlayerComponent {
         }
 
         this.player = content.nativeElement;
+        this.cacheBuster = null;
 
         const playStart = Observable.fromEvent(this.player, 'playing');
         const paused = Observable.fromEvent(this.player, 'pause');
@@ -389,6 +391,10 @@ export class VideoPlayerComponent {
 
     public screenshot(): void {
         this._service.screenshotFile(this.file, this.player.currentTime);
+        // Allow for a some delay because user only see this thumbnail when she changes to another file and then back.
+        setTimeout(() => {
+            this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+        }, 1000);
     }
 
     public copy(): void {
