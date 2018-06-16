@@ -24,7 +24,9 @@ import {LaputinService} from './../laputin.service';
                 </div>
 
                 <div class="files-list" style="flex-grow: 1;">
-                    <span [ngClass]="{'hidden': !loading}" class="fa fa-spinner" aria-hidden="true"></span>
+                    <div [ngClass]="{'hidden': !loading}">
+                        <i class="fa fa-spinner"></i>
+                    </div>
 
                     <virtual-scroll [items]="files" (update)="viewPortItems = $event">
                         <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px; direction: ltr;">
