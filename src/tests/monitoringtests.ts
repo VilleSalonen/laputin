@@ -166,6 +166,17 @@ describe('File Library', function() {
         return await shouldContainFiles(laputin, [landscapeFile]);
     });
 
+    it('When a directory is created in library directory, it is not detected as a file', async function() {
+        fs.mkdirSync('deploy-tests/' + currentPath + '');
+
+        laputin = await initializeLaputin(currentPath);
+
+        fs.mkdirSync('deploy-tests/' + currentPath + '/foobar');
+        await delay(1000);
+
+        return await shouldContainFiles(laputin, []);
+    });
+
     function shouldContainFiles(l: Laputin, expectedFiles: File[]): request.Test {
         return request(l.app)
             .get('/api/files')

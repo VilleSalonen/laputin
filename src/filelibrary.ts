@@ -1,15 +1,17 @@
 /// <reference path="walk.d.ts" />
 
 import _ = require('lodash');
-import fs = require('fs');
 import walk = require('walk');
 import path = require('path');
 import watch = require('watch');
 import events = require('events');
 import winston = require('winston');
 
+import fs = require('fs');
+import {promisify} from 'util';
+const stat = promisify(fs.stat);
+
 import {IHasher} from './ihasher';
-import {Library} from './library';
 import {File} from './file';
 import { Screenshotter } from './screenshotter';
 
@@ -24,7 +26,7 @@ export class FileLibrary extends events.EventEmitter {
     public load(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const walker = walk.walk(this._libraryPath, { followLinks: false });
-            walker.on('file', (root, stat, callback) => { this.processFile(root, stat, callback); });
+            walker.on('file', (root, walkStat, callback) => { this.processFile(root, walkStat, callback); });
             walker.on('end', () => {
                 this.startMonitoring();
                 resolve();
@@ -58,13 +60,16 @@ export class FileLibrary extends events.EventEmitter {
         });
     }
 
-    private async processFile(root: string, stat: walk.WalkStat, next: (() => void)): Promise<void> {
-        const filePath = path.normalize(path.join(root, stat.name));
+    private async processFile(root: string, walkStat: walk.WalkStat, next: (() => void)): Promise<void> {
+        const filePath = path.normalize(path.join(root, walkStat.name));
         await this.addFileFromPath(filePath);
         next();
     }
 
     private async addFileFromPath(filePath: string): Promise<void> {
+        const stats = await stat(filePath);
+        if (stats.isDirectory()) { return; }
+
         const result = await this._hasher.hash(filePath);
         const file = new File(result.hash, result.path, []);
 
