@@ -354,7 +354,7 @@ export class VideoPlayerComponent {
     }
 
     public addNewTag(newTag: string): void {
-        this._service.createTag(this.file, newTag)
+        this._service.createTag(newTag)
                      .subscribe(tag => {
                         this._service.addTag(this.file, tag)
                             .subscribe(() => this.addTagsToFile([tag]));

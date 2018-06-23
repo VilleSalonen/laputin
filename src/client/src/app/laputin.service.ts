@@ -91,7 +91,7 @@ export class LaputinService {
         return this._http.get(this._baseUrl + '/open/files' + params).toPromise();
     }
 
-    public createTag(file: File, newTagName: string): Observable<Tag> {
+    public createTag(newTagName: string): Observable<Tag> {
         const body = JSON.stringify({ tagName: newTagName });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
