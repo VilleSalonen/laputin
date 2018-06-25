@@ -19,7 +19,6 @@ import {LaputinService} from './../laputin.service';
 })
 @Injectable()
 export class TagAutocompleteComponent implements OnInit {
-    public title = '';
     public selectedIndex = -1;
 
     public allTags: Tag[] = [];
@@ -89,7 +88,7 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     public clear(): void {
-        this.title = '';
+        this.termCtrl.setValue('');
         this.matchingTags = [];
         this.selectedIndex = -1;
     }

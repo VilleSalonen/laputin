@@ -1,7 +1,6 @@
 <div>
     <input
             type="text"
-            [(ngModel)]="title"
             [formControl]="termCtrl"
             (keyup)="onKeyUp($event)"
             (blur)="clear()"
