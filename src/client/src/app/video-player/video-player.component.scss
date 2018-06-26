@@ -81,6 +81,8 @@ video, .video-hero-shot, img {
     margin-bottom: 0.25 * $standard-margin;
     margin-right: 0.25 * $standard-margin;
     display: inline-block;
+
+    cursor: pointer;
 }
 
 .filename {

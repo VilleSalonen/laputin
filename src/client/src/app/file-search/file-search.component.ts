@@ -31,7 +31,7 @@ import { Subject } from 'rxjs/Subject';
             </div>
 
             <div class="control">
-                <a (click)="clear()">Clear search filters</a>
+                <a style="cursor: pointer;" (click)="clear()">Clear search filters</a>
             </div>
 
             <div class="control">

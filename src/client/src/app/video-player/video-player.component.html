@@ -56,16 +56,16 @@
 
         <div class="tagging" style="padding-top: 0;">
             <div style="display: flex; flex-direction: row;" style="margin-right: 0.5em;">
-                <a (click)="playbackHasBeenStarted && screenshot()" title="Set screenshot">
+                <a (click)="playbackHasBeenStarted && screenshot()" title="Set screenshot" style="cursor: pointer;">
                     <i class="fa fa-camera" aria-hidden="true"></i>
                 </a>
-                <a (click)="openFile()" title="Open in external player" style="margin-right: 0.5em;">
+                <a (click)="openFile()" title="Open in external player" style="margin-right: 0.5em;" style="cursor: pointer;">
                     <i class="fa fa-film" aria-hidden="true"></i>
                 </a>
-                <a (click)="copy()" title="Copy tags" style="margin-right: 0.5em;">
+                <a (click)="copy()" title="Copy tags" style="margin-right: 0.5em;" style="cursor: pointer;">
                     <i class="fa fa-copy" aria-hidden="true"></i>
                 </a>
-                <a (click)="paste()" title="Paste tags" style="margin-right: 0.5em;">
+                <a (click)="paste()" title="Paste tags" style="margin-right: 0.5em;" style="cursor: pointer;">
                     <i class="fa fa-paste" aria-hidden="true"></i>
                 </a>
             </div>
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="tags">
-                    <div *ngFor="let tag of file.tags" class="tag" (click)="removeTag(tag)">
+                    <div *ngFor="let tag of file.tags" class="tag" (click)="removeTag(tag)" title="Click to remove {{tag.name}}">
                         {{tag.name}}
                     </div>
                 </div>

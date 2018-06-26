@@ -17,6 +17,7 @@ input::placeholder {
     position: absolute;
     background: $color-complement-1;
     color: $color-primary-4;
+    z-index: 10;
 }
 
 .typeahead-list {
