@@ -6,47 +6,18 @@ import {Tag, TagStatus} from './../models/tag';
 import {FileQuery} from './../models/filequery';
 import {TagChange} from './../search-tag/search-tag.component';
 import { Subject } from 'rxjs/Subject';
+import { AutocompleteType } from '../models/autocompletetype';
 
 @Component({
     selector: 'app-file-search',
     styleUrls: ['./file-search.component.scss'],
-    template: `
-        <form (ngSubmit)="submitClicked($event)">
-            <div class="control">
-                <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)"></app-tag-autocomplete>
-            </div>
-
-            <div class="control">
-                <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)"
-                    name="filename" placeholder="Filename" />
-            </div>
-
-            <div class="control">
-                <select class="form-control" [ngModel]="query.status"
-                    (ngModelChange)="onStatusChanged($event)" name="status">
-                    <option value="both">All</option>
-                    <option value="untagged">Only untagged</option>
-                    <option value="tagged">Only tagged</option>
-                </select>
-            </div>
-
-            <div class="control">
-                <a style="cursor: pointer;" (click)="clear()">Clear search filters</a>
-            </div>
-
-            <div class="control">
-                <input type="submit" style="display: none;" (click)="submitClicked($event)" />
-            </div>
-        </form>
-
-        <div class="tag btn-group" *ngFor="let tag of query.tags">
-            <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
-        </div>
-    `
+    templateUrl: './file-search.component.html',
 })
 export class FileSearchComponent {
     public query: FileQuery = new FileQuery();
     private filenameChanged: Subject<string> = new Subject<string>();
+
+    public AutocompleteType = AutocompleteType;
 
     @Output()
     public update: EventEmitter<FileQuery> = new EventEmitter<FileQuery>();

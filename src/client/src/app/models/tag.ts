@@ -3,6 +3,11 @@ export class Tag {
     }
 }
 
+export class TagTimecode {
+    constructor(public timecodeId: number, public tagId: number, public name: string, public start: number, public end: number) {
+    }
+}
+
 export enum TagStatus {
     And,
     Or,

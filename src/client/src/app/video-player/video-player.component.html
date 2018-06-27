@@ -42,7 +42,7 @@
                             <i class="fa fa-fast-forward" aria-hidden="true"></i>
                         </div>
 
-                        <span>{{progressText}}</span>
+                        <span>{{progressText}} {{player.currentTime}}</span>
                     </div>
                 </div>
 
@@ -72,7 +72,7 @@
 
             <div class="row">
                 <div class="tag-tools">
-                    <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)"></app-tag-autocomplete>
+                    <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
 
                     <small><a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a></small>
 
@@ -85,7 +85,35 @@
                     <div *ngFor="let tag of file.tags" class="tag" (click)="removeTag(tag)" title="Click to remove {{tag.name}}">
                         {{tag.name}}
                     </div>
+
+                    <div *ngFor="let tagTimecode of tagTimecodes" (click)="goToTimecode(tagTimecode)" style="display: flex;">
+                        <div style="flex-grow: 1; margin-right: 1em;">{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>
+                        <div style="flex-grow: 4;">{{tagTimecode.name}}</div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <app-tag-autocomplete [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+
+                <span *ngIf="tagTimecode">
+                    {{ tagTimecode.name }}
+                </span>
+
+                <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <i class="fas fa-stopwatch"></i>
+                </a>
+                
+                <input type="text" [(ngModel)]="tagStart" />
+
+                <a (click)="setTagEnd()" title="Set tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <i class="fas fa-stopwatch"></i>
+                </a>
+
+                <input type="text" [(ngModel)]="tagEnd" />
+                {{formatPreciseDuration(tagStart)}}-{{formatPreciseDuration(tagEnd)}}
+
+                <button (click)="saveTagTimecode()">Tallennapa</button>
             </div>
         </div>
     </div>

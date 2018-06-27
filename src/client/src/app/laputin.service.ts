@@ -6,7 +6,7 @@ import {Http, HttpModule, Headers, Response} from '@angular/http';
 import * as _ from 'lodash';
 
 import {File} from './models/file';
-import {Tag} from './models/tag';
+import {Tag, TagTimecode} from './models/tag';
 import {FileQuery} from './models/filequery';
 import {Duplicate} from './models/duplicate';
 
@@ -45,6 +45,27 @@ export class LaputinService {
             }).toPromise();
     }
 
+    public getTagTimecodes(file: File): Promise<TagTimecode[]> {
+        return this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
+            .map(res => res.json())
+            .map((tags: any[]): TagTimecode[] => {
+                const result: TagTimecode[] = [];
+                if (tags) {
+                    tags.forEach((tag: any) => result.push(this._convertTagTimecode(tag)));
+                }
+                return result;
+            }).toPromise();
+    }
+
+    public async createTagTimecode(file: File, tagTimecode: TagTimecode): Promise<void> {
+        const body = JSON.stringify({ tagTimecode: tagTimecode });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        await this._http
+            .post(this._baseUrl + '/files/' + file.hash + '/timecodes', body, { headers: headers })
+            .toPromise();
+    }
+
     public getDuplicates(): Promise<Duplicate[]> {
         return this._http.get(this._baseUrl + '/duplicates')
             .map(res => res.json())
@@ -64,6 +85,10 @@ export class LaputinService {
 
     private _convertTag(tag: any): Tag {
         return new Tag(tag.id, tag.name, tag.associationCount);
+    }
+
+    private _convertTagTimecode(tag: any): TagTimecode {
+        return new TagTimecode(tag.timecodeId, tag.tagId, tag.name, tag.start, tag.end);
     }
 
     private _convertTags(tags: any): Tag[] {

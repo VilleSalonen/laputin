@@ -8,9 +8,8 @@ import _ = require('lodash');
 
 import { Query } from './query.model';
 import { File } from './file';
-import { Tag } from './tag';
+import { Tag, TagTimecode } from './tag';
 import { TagQuery } from './tagquery.model';
-import { FileLibrary } from './filelibrary';
 
 export class Library {
     private _db: any;
@@ -23,6 +22,13 @@ export class Library {
         await this._db.runAsync('CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);');
         await this._db.runAsync('CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));');
         await this._db.runAsync('CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER);');
+        await this._db.runAsync(`CREATE TABLE tags_files_timecodes (
+            id INTEGER PRIMARY KEY autoincrement,
+            tag_id INTEGER,
+            hash TEXT,
+            start REAL,
+            end REAL
+        );`);
     }
 
     public addFile(file: File): Promise<void> {
@@ -208,9 +214,51 @@ export class Library {
             } else {
                 const error = 'File and tag association already exists with tag ID ' + inputTag.id +
                     ' and file hash ' + hash + '. Refusing to add a duplicate association.';
-                console.log();
+                console.log(error);
             }
         }
+    }
+
+    public async addTimecodeToTagAssociation(inputTag: Tag, hash: string, start: number, end: number): Promise<void> {
+        const stmt = this._db.prepare(`INSERT INTO tags_files_timecodes
+            VALUES (
+                null,
+                ?,
+                ?,
+                ?,
+                ?
+            )`);
+
+        await stmt.runAsync(inputTag.id, hash, start, end);
+    }
+
+    public async getTagTimecodesForFile(hash: string): Promise<TagTimecode[]> {
+        const tags: TagTimecode[] = [];
+
+        const params: any[] = [];
+        params.push(hash);
+
+        const sql = `
+            SELECT
+                tags_files_timecodes.id AS id,
+                tags.id AS tag_id,
+                tags.name AS tag_name,
+                tags_files_timecodes.start,
+                tags_files_timecodes.end
+            FROM tags_files_timecodes
+            JOIN tags ON tags.id = tags_files_timecodes.tag_id
+            WHERE hash = ?
+            ORDER BY tags_files_timecodes.start
+        `;
+
+        const each = (err: Error, row: any) => {
+            tags.push(new TagTimecode(row.id, row.tag_id, row.tag_name, row.start, row.end));
+        };
+
+        const stmt = this._db.prepare(sql);
+        await stmt.eachAsync(params, each);
+
+        return tags;
     }
 
     public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {

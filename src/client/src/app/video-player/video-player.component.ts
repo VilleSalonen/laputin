@@ -6,8 +6,9 @@ import { Observable } from 'rxjs/Rx';
 import {File} from './../models/file';
 import {FileQuery} from './../models/filequery';
 import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag} from './../models/tag';
+import {Tag, TagTimecode} from './../models/tag';
 import {LaputinService} from './../laputin.service';
+import { AutocompleteType } from '../models/autocompletetype';
 
 class MappedMouseEvent {
     constructor(public x: number, public y: number) {}
@@ -29,6 +30,7 @@ export class VideoPlayerComponent {
     public cacheBuster: string;
 
     public tagCreationOpen = false;
+    public AutocompleteType = AutocompleteType;
 
     private player: HTMLVideoElement;
 
@@ -123,6 +125,8 @@ export class VideoPlayerComponent {
         // Without forced update, these changes will be seen with a
         // delay.
         Observable.fromEvent(this.player, 'durationchange').subscribe(() => {
+            this._service.getTagTimecodes(this.file).then((tagTimecodes) => this.tagTimecodes = tagTimecodes);
+
             this.playbackHasBeenStarted = false;
             this.playing = false;
             this.duration = this.formatDuration(this.player.duration);
@@ -214,6 +218,11 @@ export class VideoPlayerComponent {
 
     @Input() file: File;
 
+    public tagTimecodes: TagTimecode[];
+    public tagTimecode: Tag;
+    public tagStart: number;
+    public tagEnd: number;
+
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
 
@@ -258,6 +267,29 @@ export class VideoPlayerComponent {
         result += (minutes >= 10) ? minutes : '0' + minutes;
         result += ':';
         result += (seconds >= 10) ? seconds : '0' + seconds;
+
+        return result;
+    }
+
+    private formatPreciseDuration(durationInSeconds: number): string {
+        const duration = moment.duration(durationInSeconds, 'seconds');
+
+        let result = '';
+
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
+        const milliseconds = duration.seconds();
+
+        if (hours) {
+            result += ((hours >= 10) ? hours : '0' + hours) + ':';
+        }
+
+        result += (minutes >= 10) ? minutes : '0' + minutes;
+        result += ':';
+        result += (seconds >= 10) ? seconds : '0' + seconds;
+        result += '.';
+        result += (milliseconds >= 10) ? milliseconds : '0' + milliseconds;
 
         return result;
     }
@@ -406,5 +438,27 @@ export class VideoPlayerComponent {
     public paste(): void {
         const tags = JSON.parse(localStorage.getItem('tagClipboard'));
         this.addTags(tags);
+    }
+
+    public goToTimecode(timecode: TagTimecode): void {
+        this.player.currentTime = timecode.start;
+        this.play();
+    }
+
+    public setTimecodeTag(tag: Tag): void {
+        this.tagTimecode = tag;
+    }
+
+    public setTagStart(): void {
+        this.tagStart = this.player.currentTime;
+    }
+
+    public setTagEnd(): void {
+        this.tagEnd = this.player.currentTime;
+    }
+
+    public async saveTagTimecode(): Promise<void> {
+        const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, this.tagStart, this.tagEnd);
+        await this._service.createTagTimecode(this.file, tagTimecode);
     }
 }

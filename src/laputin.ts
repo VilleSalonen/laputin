@@ -9,7 +9,7 @@ import {Library} from './library';
 import {FileLibrary} from './filelibrary';
 import {VLCOpener} from './vlcopener';
 import {File} from './file';
-import {Tag} from './tag';
+import {Tag, TagTimecode} from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
 
@@ -101,6 +101,19 @@ export class Laputin {
             _.each(selectedTags, (tag: Tag) => {
                 this.library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
             });
+            res.status(200).end();
+        });
+
+        api.route('/files/:hash/timecodes').get(async (req, res) => {
+            const tags = await this.library.getTagTimecodesForFile(req.params.hash);
+            res.send(tags);
+        });
+
+        api.route('/files/:hash/timecodes').post(async (req, res) => {
+            const tagTimecode: TagTimecode = req.body.tagTimecode;
+
+            await this.library.addTimecodeToTagAssociation(
+                new Tag(tagTimecode.tagId, tagTimecode.name, 0), req.params.hash, tagTimecode.start, tagTimecode.end);
             res.status(200).end();
         });
 

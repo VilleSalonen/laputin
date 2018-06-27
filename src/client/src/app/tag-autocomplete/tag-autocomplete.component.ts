@@ -8,8 +8,8 @@ import 'rxjs/add/operator/distinctUntilChanged';
 
 import {Tag} from './../models/tag';
 import {TagContainer} from './../models/tagcontainer';
-import {FileQuery} from './../models/filequery';
 import {LaputinService} from './../laputin.service';
+import { AutocompleteType } from '../models/autocompletetype';
 
 @Component({
     selector: 'app-tag-autocomplete',
@@ -27,6 +27,7 @@ export class TagAutocompleteComponent implements OnInit {
     public termCtrl = new FormControl();
 
     @Input() tagContainer: TagContainer;
+    @Input() type: AutocompleteType;
 
     @Output()
     public select = new EventEmitter<Tag>();
@@ -46,16 +47,30 @@ export class TagAutocompleteComponent implements OnInit {
     onValueChange(value: string): void {
         const searchTerm = value.toLowerCase();
 
-        if (searchTerm.length === 0) { return; }
         if (!this.tagContainer) { return; }
+        if (searchTerm.length === 0) {
+            this.matchingTags = [];
+            return;
+        }
 
-        const alreadyAdded = _.map(this.tagContainer.tags, (tag: Tag) => tag.id);
+        switch (this.type) {
+            case AutocompleteType.FileSearch:
+            case AutocompleteType.FileTagging:
+                const alreadyAdded = _.map(this.tagContainer.tags, (tag: Tag) => tag.id);
 
-        this.matchingTags =
-            this.allTags
-                .filter((tag: Tag) => _.indexOf(alreadyAdded, tag.id) === -1)
-                .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
-                .slice(0, 10);
+                this.matchingTags =
+                    this.allTags
+                        .filter((tag: Tag) => _.indexOf(alreadyAdded, tag.id) === -1)
+                        .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
+                        .slice(0, 10);
+                break;
+            case AutocompleteType.FileTimecodeTagging:
+                this.matchingTags =
+                    this.tagContainer.tags
+                        .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
+                        .slice(0, 10);
+                break;
+        }
     }
 
     mouseSelection(tag: Tag): void {
