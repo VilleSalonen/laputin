@@ -225,6 +225,8 @@ export class VideoPlayerComponent {
 
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
+    @Output()
+    public fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private _service: LaputinService) {
     }
@@ -326,6 +328,10 @@ export class VideoPlayerComponent {
 
     public suffix(): string {
         return this.file.name.substr(this.file.name.lastIndexOf('.'));
+    }
+
+    public close(): void {
+        this.fileClosed.emit();
     }
 
     public play(): void {

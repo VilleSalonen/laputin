@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="files full-height" [ngClass]="{'hidden': activeFile}">
+        <div class="files-search">
+            <app-file-search (update)="filterFiles($event)"></app-file-search>
+
+            <h2 style="margin-top: 0; margin-bottom: 0;">
+                Showing {{files.length}} matching files
+                <a (click)="openFiles()" title="Open in external player">
+                    <i class="fa fa-film" aria-hidden="true"></i>
+                </a>
+            </h2>
+        </div>
+
+        <div class="files-list" style="flex-grow: 1;">
+            <div [ngClass]="{'hidden': !loading}">
+                <i class="fa fa-spinner"></i>
+            </div>
+
+            <virtual-scroll [items]="files" (update)="viewPortItems = $event">
+                <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px; direction: ltr;">
+                    <app-file [file]="file" [active]="activeFile === file" (selected)="selectFile($event)"></app-file>
+                </div>
+            </virtual-scroll>
+        </div>
+    </div>
+
+    <div class="player full-height" *ngIf="activeFile">
+        <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)" (fileClosed)="activeFile = null"></app-video-player>
+    </div>
+</div>

@@ -9,38 +9,7 @@ import {LaputinService} from './../laputin.service';
 
 @Component({
     styleUrls: ['./files.component.scss'],
-    template: `
-        <div class="container">
-            <div class="files full-height">
-                <div class="files-search">
-                    <app-file-search (update)="filterFiles($event)"></app-file-search>
-
-                    <h2 style="margin-top: 0; margin-bottom: 0;">
-                        Showing {{files.length}} matching files
-                        <a (click)="openFiles()" title="Open in external player">
-                            <i class="fa fa-film" aria-hidden="true"></i>
-                        </a>
-                    </h2>
-                </div>
-
-                <div class="files-list" style="flex-grow: 1;">
-                    <div [ngClass]="{'hidden': !loading}">
-                        <i class="fa fa-spinner"></i>
-                    </div>
-
-                    <virtual-scroll [items]="files" (update)="viewPortItems = $event">
-                        <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px; direction: ltr;">
-                            <app-file [file]="file" [active]="activeFile === file" (selected)="selectFile($event)"></app-file>
-                        </div>
-                    </virtual-scroll>
-                </div>
-            </div>
-
-            <div class="player full-height">
-                <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
-            </div>
-        </div>
-    `
+    templateUrl: './files.component.html'
 })
 @Injectable()
 export class FilesComponent implements OnInit {
@@ -92,11 +61,6 @@ export class FilesComponent implements OnInit {
         this.loading = true;
         this._service.queryFiles(this._query).then((files: File[]) => {
             this.files = files;
-
-            if (this.files) {
-                this.activeFile = files[0];
-            }
-
             this.loading = false;
         });
     }

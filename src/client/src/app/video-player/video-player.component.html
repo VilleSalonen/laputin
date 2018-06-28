@@ -1,4 +1,5 @@
 <div [ngClass]="{'full-screen': isFullScreen}">
+    <button (click)="close()">X</button>
     <div #playerView class="column player-view" *ngIf="file">
         <div class="filename">
             <span class="filename-small">{{directory()}}</span><br />
