@@ -76,7 +76,7 @@ export class VideoPlayerComponent {
         const mouseUps = Observable.fromEvent(window, 'mouseup');
 
         const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
-            .throttleTime(500)
+            .debounceTime(500)
             .map(() => this.player.currentTime / this.player.duration);
 
         const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
@@ -106,7 +106,7 @@ export class VideoPlayerComponent {
         drags
             .subscribe((playPercent: number) => this.setPlayheadTo(playPercent));
         drags
-            .throttleTime(50)
+            .debounceTime(50)
             .subscribe((playPercent: number) => this.setProgress(playPercent));
 
         timeUpdates
@@ -460,5 +460,6 @@ export class VideoPlayerComponent {
     public async saveTagTimecode(): Promise<void> {
         const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, this.tagStart, this.tagEnd);
         await this._service.createTagTimecode(this.file, tagTimecode);
+        this.tagTimecodes.push(tagTimecode);
     }
 }
