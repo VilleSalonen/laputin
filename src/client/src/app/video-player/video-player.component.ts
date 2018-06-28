@@ -76,7 +76,7 @@ export class VideoPlayerComponent {
         const mouseUps = Observable.fromEvent(window, 'mouseup');
 
         const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
-            .debounceTime(500)
+            .throttleTime(500)
             .map(() => this.player.currentTime / this.player.duration);
 
         const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
