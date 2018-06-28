@@ -50,6 +50,10 @@ video, .video-hero-shot, img {
     padding: $standard-margin;
 }
 
+.player {
+    width: 1000px;
+}
+
 .player-controls {
     display: flex;
     flex-direction: row;

@@ -466,6 +466,21 @@ export class VideoPlayerComponent {
     public async saveTagTimecode(): Promise<void> {
         const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, this.tagStart, this.tagEnd);
         await this._service.createTagTimecode(this.file, tagTimecode);
-        this.tagTimecodes.push(tagTimecode);
+        this.addTagTimecode(tagTimecode);
+    }
+
+    private addTagTimecode(tagTimecode: TagTimecode): void {
+        const tagTimecodes = this.tagTimecodes.slice();
+        tagTimecodes.push(tagTimecode);
+        tagTimecodes.sort((a, b) => {
+            if (a.start < b.start) {
+                return -1;
+            } else if (a.start > b.start) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        this.tagTimecodes = tagTimecodes;
     }
 }
