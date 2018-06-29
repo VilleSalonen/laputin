@@ -220,8 +220,8 @@ export class VideoPlayerComponent {
 
     public tagTimecodes: TagTimecode[];
     public tagTimecode: Tag;
-    public tagStart: number;
-    public tagEnd: number;
+    public tagStart: string;
+    public tagEnd: string;
 
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
@@ -283,10 +283,8 @@ export class VideoPlayerComponent {
         const seconds = duration.seconds();
         const milliseconds = duration.seconds();
 
-        if (hours) {
-            result += ((hours >= 10) ? hours : '0' + hours) + ':';
-        }
-
+        result += ((hours >= 10) ? hours : '0' + hours);
+        result += ':';
         result += (minutes >= 10) ? minutes : '0' + minutes;
         result += ':';
         result += (seconds >= 10) ? seconds : '0' + seconds;
@@ -456,17 +454,24 @@ export class VideoPlayerComponent {
     }
 
     public setTagStart(): void {
-        this.tagStart = this.player.currentTime;
+        this.tagStart = this.formatPreciseDuration(this.player.currentTime);
     }
 
     public setTagEnd(): void {
-        this.tagEnd = this.player.currentTime;
+        this.tagEnd = this.formatPreciseDuration(this.player.currentTime);
     }
 
     public async saveTagTimecode(): Promise<void> {
-        const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, this.tagStart, this.tagEnd);
+        const tagStart = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
+        const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
+
+        const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, tagStart, tagEnd);
         await this._service.createTagTimecode(this.file, tagTimecode);
         this.addTagTimecode(tagTimecode);
+    }
+
+    private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {
+        return moment.duration(separatedTimecode).asSeconds();
     }
 
     private addTagTimecode(tagTimecode: TagTimecode): void {
