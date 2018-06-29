@@ -110,6 +110,17 @@ export class LaputinService {
             });
     }
 
+    public screenshotTagTimecode(file: File, tagTimecode: TagTimecode, timeInSeconds: number): void {
+        const body = JSON.stringify({ hash: file.hash, tagTimecode: tagTimecode, time: timeInSeconds });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        this._http
+            .post(this._baseUrl + '/screenshotTagTimecode', body, { headers: headers })
+            .subscribe(() => {
+                console.log('thumbnail created');
+            });
+    }
+
     public openFiles(query: FileQuery): Promise<Response> {
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
         const params = this.compileParams(query);

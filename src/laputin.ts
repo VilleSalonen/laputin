@@ -148,6 +148,22 @@ export class Laputin {
             }
         });
 
+        api.route('/screenshotTagTimecode').post(async (req, res) => {
+            try {
+                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined);
+                const files = await this.library.getFiles(query);
+
+                if (files.length > 0) {
+                    const screenshotter = new Screenshotter(this._libraryPath);
+                    await screenshotter.screenshotTagTimecode(files[0], req.body.tagTimecode, req.body.time);
+                }
+
+                res.status(200).end();
+            } catch (error) {
+                res.status(500).end();
+            }
+        });
+
         return api;
     }
 

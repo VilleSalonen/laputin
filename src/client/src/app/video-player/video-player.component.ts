@@ -435,6 +435,10 @@ export class VideoPlayerComponent {
         }, 1000);
     }
 
+    public screenshotTagTimecode(tagTimecode: TagTimecode): void {
+        this._service.screenshotTagTimecode(this.file, tagTimecode, this.player.currentTime);
+    }
+
     public copy(): void {
         localStorage.setItem('tagClipboard', JSON.stringify(this.file.tags));
     }
@@ -461,6 +465,28 @@ export class VideoPlayerComponent {
         this.tagEnd = this.formatPreciseDuration(this.player.currentTime);
     }
 
+    public goToTagStart(): void {
+        if (!this.tagStart) {
+            return;
+        }
+
+        this.player.currentTime = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
+        if (!this.playing) {
+            this.play();
+        }
+    }
+
+    public goToTagEnd(): void {
+        if (!this.tagEnd) {
+            return;
+        }
+
+        this.player.currentTime = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
+        if (!this.playing) {
+            this.play();
+        }
+    }
+
     public async saveTagTimecode(): Promise<void> {
         const tagStart = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
         const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
@@ -468,6 +494,10 @@ export class VideoPlayerComponent {
         const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, tagStart, tagEnd);
         await this._service.createTagTimecode(this.file, tagTimecode);
         this.addTagTimecode(tagTimecode);
+
+        this.tagTimecode = null;
+        this.tagStart = null;
+        this.tagEnd = null;
     }
 
     private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {
