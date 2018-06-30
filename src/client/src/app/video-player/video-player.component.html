@@ -1,13 +1,15 @@
 <div [ngClass]="{'full-screen': isFullScreen}">
     <button (click)="close()">X</button>
 
-    <div class="filename">
-        <span class="filename-small">{{directory()}}</span><br />
-        <span class="filename-big">{{nameSansSuffix()}}</span><span class="filename-small">{{suffix()}}</span>
-    </div>
-
     <div class="row">
         <div #playerView class="column player-view" *ngIf="file">
+            <div class="filename">
+                <span class="filename-small">{{directory()}}</span>
+                <br />
+                <span class="filename-big">{{nameSansSuffix()}}</span>
+                <span class="filename-small">{{suffix()}}</span>
+            </div>
+
             <div class="player">
                 <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-shot">
                     <img (click)="play()" src="/laputin/thumbs/{{file.hash}}.jpg{{cacheBuster}}" />
@@ -16,7 +18,7 @@
                         <i class="far fa-play-circle" aria-hidden="true"></i>
                     </div>
                 </div>
-                
+
                 <video [ngClass]="{ 'hidden': !playbackHasBeenStarted }" src="/media/{{file.escapedUrl()}}" #player></video>
 
                 <div class="player-controls">
@@ -77,7 +79,9 @@
                     <div class="tag-tools">
                         <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
 
-                        <small><a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a></small>
+                        <small>
+                            <a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a>
+                        </small>
 
                         <div *ngIf="tagCreationOpen">
                             <app-search-box (update)="addNewTag($event)" clearOnEnter="1"></app-search-box>
@@ -91,51 +95,53 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <app-tag-autocomplete [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
-
-                    <span *ngIf="tagTimecode">
-                        {{ tagTimecode.name }}
-                    </span>
-
-                    <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="fas fa-stopwatch"></i>
-                    </a>
-                    <a (click)="goToTagStart()" title="Go to tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="far fa-dot-circle"></i>
-                    </a>
-
-                    <input type="text" [(ngModel)]="tagStart" />
-
-                    <a (click)="setTagEnd()" title="Set tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="fas fa-stopwatch"></i>
-                    </a>
-                    <a (click)="goToTagEnd()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="far fa-dot-circle"></i>
-                    </a>
-
-                    <input type="text" [(ngModel)]="tagEnd" />
-
-                    <button (click)="saveTagTimecode()">Tallennapa</button>
-                </div>
             </div>
         </div>
 
         <div class="column sidebar">
             <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex;">
-                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;" />
+                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;"
+                />
 
                 <div class="column">
                     <div class="tag" (click)="goToTimecode(tagTimecode)">
                         {{tagTimecode.name}}
                     </div>
-    
+
                     <div>{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>
 
                     <a (click)="playbackHasBeenStarted && screenshotTagTimecode(tagTimecode)" title="Set screenshot" style="cursor: pointer;">
                         <i class="fa fa-camera" aria-hidden="true"></i>
-                    </a>        
+                    </a>
                 </div>
+            </div>
+
+            <div class="row">
+                <app-tag-autocomplete [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+
+                <span *ngIf="tagTimecode">
+                    {{ tagTimecode.name }}
+                </span>
+
+                <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <i class="fas fa-stopwatch"></i>
+                </a>
+                <a (click)="goToTagStart()" title="Go to tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <i class="far fa-dot-circle"></i>
+                </a>
+
+                <input type="text" [(ngModel)]="tagStart" />
+
+                <a (click)="setTagEnd()" title="Set tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <i class="fas fa-stopwatch"></i>
+                </a>
+                <a (click)="goToTagEnd()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <i class="far fa-dot-circle"></i>
+                </a>
+
+                <input type="text" [(ngModel)]="tagEnd" />
+
+                <button (click)="saveTagTimecode()">Tallennapa</button>
             </div>
         </div>
     </div>
