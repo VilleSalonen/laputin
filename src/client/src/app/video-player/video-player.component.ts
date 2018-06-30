@@ -60,33 +60,51 @@ export class VideoPlayerComponent {
         this.player = content.nativeElement;
         this.cacheBuster = null;
 
-        const playStart = Observable.fromEvent(this.player, 'playing');
-        const paused = Observable.fromEvent(this.player, 'pause');
-        const ended = Observable.fromEvent(this.player, 'ended');
+        const playStart = Observable
+            .fromEvent(this.player, 'playing')
+            .takeUntil(this.fileClosed);
+        const paused = Observable
+            .fromEvent(this.player, 'pause')
+            .takeUntil(this.fileClosed);
+        const ended = Observable
+            .fromEvent(this.player, 'ended')
+            .takeUntil(this.fileClosed);
         const playEnd = paused.merge(ended);
 
-        const playerDoubleClicked = Observable.fromEvent(this.player, 'dblclick');
+        const playerDoubleClicked = Observable
+            .fromEvent(this.player, 'dblclick')
+            .takeUntil(this.fileClosed);
         playerDoubleClicked.subscribe(() => this.toggleFullScreen());
 
         playStart.subscribe(() => this.playing = true);
         playEnd.subscribe(() => this.playing = false);
 
-        const mouseDowns = Observable.fromEvent(this.playhead.nativeElement, 'mousedown');
-        const mouseMoves = Observable.fromEvent(window, 'mousemove');
-        const mouseUps = Observable.fromEvent(window, 'mouseup');
+        const mouseDowns = Observable
+            .fromEvent(this.playhead.nativeElement, 'mousedown')
+            .takeUntil(this.fileClosed);
+        const mouseMoves = Observable
+            .fromEvent(window, 'mousemove')
+            .takeUntil(this.fileClosed);
+        const mouseUps = Observable
+            .fromEvent(window, 'mouseup')
+            .takeUntil(this.fileClosed);
 
-        const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
+        const timeUpdates = Observable
+            .fromEvent(this.player, 'timeupdate')
+            .takeUntil(this.fileClosed)
             .throttleTime(500)
             .map(() => this.player.currentTime / this.player.duration);
 
-        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
-            event.preventDefault();
+        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click')
+            .takeUntil(this.fileClosed)
+            .map((event: MouseEvent) => {
+                event.preventDefault();
 
-            const timelineBoundingRect = this.getTimelineBoundingRect();
-            const timelineWidth = this.cachedTimelineWidth;
+                const timelineBoundingRect = this.getTimelineBoundingRect();
+                const timelineWidth = this.cachedTimelineWidth;
 
-            return this.clickPercent(event.clientX, timelineBoundingRect, timelineWidth);
-        });
+                return this.clickPercent(event.clientX, timelineBoundingRect, timelineWidth);
+            });
 
         const drags = mouseDowns.concatMap(() => {
             const timelineBoundingRect = this.getTimelineBoundingRect();
@@ -124,31 +142,37 @@ export class VideoPlayerComponent {
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
-        Observable.fromEvent(this.player, 'durationchange').subscribe(() => {
-            this._service.getTagTimecodes(this.file).then((tagTimecodes) => this.tagTimecodes = tagTimecodes);
+        Observable.fromEvent(this.player, 'durationchange')
+            .takeUntil(this.fileClosed)
+            .subscribe(() => {
+                this._service.getTagTimecodes(this.file).then((tagTimecodes) => this.tagTimecodes = tagTimecodes);
 
-            this.playbackHasBeenStarted = false;
-            this.playing = false;
-            this.duration = this.formatDuration(this.player.duration);
-            this.updateProgress(0);
+                this.playbackHasBeenStarted = false;
+                this.playing = false;
+                this.duration = this.formatDuration(this.player.duration);
+                this.updateProgress(0);
 
-            if (this.player.videoWidth && this.player.videoHeight) {
-                this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
-            }
-        });
+                if (this.player.videoWidth && this.player.videoHeight) {
+                    this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
+                }
+            });
 
-        Observable.fromEvent(window, 'webkitfullscreenchange').subscribe((event) => {
-            this.isFullScreen = !this.isFullScreen;
+        Observable.fromEvent(window, 'webkitfullscreenchange')
+            .takeUntil(this.fileClosed)
+            .subscribe((event) => {
+                this.isFullScreen = !this.isFullScreen;
 
-            // We have to reset playhead because it might be further right than
-            // the new timeline width allows.
-            this.setPlayheadTo(0);
-            this.resetCache();
-            this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-            this.updateProgress(this.player.currentTime / this.player.duration);
-        });
+                // We have to reset playhead because it might be further right than
+                // the new timeline width allows.
+                this.setPlayheadTo(0);
+                this.resetCache();
+                this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+                this.updateProgress(this.player.currentTime / this.player.duration);
+            });
 
-        const windowKeyups = Observable.fromEvent(window, 'keyup');
+        const windowKeyups = Observable
+            .fromEvent(window, 'keyup')
+            .takeUntil(this.fileClosed);
 
         windowKeyups
             .subscribe((event: KeyboardEvent) => {
