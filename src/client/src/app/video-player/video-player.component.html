@@ -126,8 +126,8 @@
                 <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{cacheBuster}}" style="margin-right: 12px;" />
 
                 <div class="column">
-                    <div *ngFor="let tag of file.tags" class="tag" (click)="goToTimecode(tagTimecode)">
-                        {{tag.name}}
+                    <div class="tag" (click)="goToTimecode(tagTimecode)">
+                        {{tagTimecode.name}}
                     </div>
     
                     <div>{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>
