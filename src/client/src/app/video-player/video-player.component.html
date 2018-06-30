@@ -92,29 +92,12 @@
         </div>
 
         <div class="column sidebar">
-            <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex;">
-                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;"
-                />
-
-                <div class="column">
-                    <div class="tag" (click)="goToTimecode(tagTimecode)">
-                        {{tagTimecode.name}}
-                    </div>
-
-                    <div>{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>
-
-                    <a (click)="playbackHasBeenStarted && screenshotTagTimecode(tagTimecode)" title="Set screenshot" style="cursor: pointer;">
-                        <i class="fa fa-camera" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </div>
-
             <div class="row">
-                <app-tag-autocomplete [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                <app-tag-autocomplete *ngIf="!tagTimecode" [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
 
-                <span *ngIf="tagTimecode">
+                <div class="tag" *ngIf="tagTimecode" (click)="tagTimecode = null" title="Click to reset tag selection">
                     {{ tagTimecode.name }}
-                </span>
+                </div>
 
                 <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
                     <i class="fas fa-stopwatch"></i>
@@ -135,6 +118,23 @@
                 <input type="text" [(ngModel)]="tagEnd" />
 
                 <button (click)="saveTagTimecode()">Tallennapa</button>
+            </div>
+
+            <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex;">
+                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;"
+                />
+
+                <div class="column">
+                    <div class="tag" (click)="goToTimecode(tagTimecode)">
+                        {{tagTimecode.name}}
+                    </div>
+
+                    <div>{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>
+
+                    <a (click)="playbackHasBeenStarted && screenshotTagTimecode(tagTimecode)" title="Set screenshot" style="cursor: pointer;">
+                        <i class="fa fa-camera" aria-hidden="true"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
