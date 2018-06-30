@@ -1,11 +1,12 @@
-import {Component, OnInit, Injectable, Inject} from '@angular/core';
+import { Component, OnInit, Injectable, Inject } from '@angular/core';
 import * as _ from 'lodash';
 
-import {File} from './../models/file';
-import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag} from './../models/tag';
-import {FileQuery} from './../models/filequery';
-import {LaputinService} from './../laputin.service';
+import { File } from './../models/file';
+import { FileChange, ChangeDirection } from './../models/filechange';
+import { Tag } from './../models/tag';
+import { FileQuery } from './../models/filequery';
+import { LaputinService } from './../laputin.service';
+import { PlayerService } from '../player.service';
 
 @Component({
     styleUrls: ['./files.component.scss'],
@@ -19,8 +20,10 @@ export class FilesComponent implements OnInit {
     public loading = false;
     private _query: FileQuery = new FileQuery();
 
-    constructor(private _service: LaputinService) {
-    }
+    constructor(
+        private _service: LaputinService,
+        private _playerService: PlayerService
+    ) {}
 
     ngOnInit(): void {
         this.loadFiles();
@@ -41,9 +44,9 @@ export class FilesComponent implements OnInit {
         }
 
         if (newIndex < 0 || newIndex >= this.files.length) {
-            this.activeFile = this.files[0];
+            this.selectFile(this.files[0]);
         } else {
-            this.activeFile = this.files[newIndex];
+            this.selectFile(this.files[newIndex]);
         }
     }
 
@@ -67,5 +70,11 @@ export class FilesComponent implements OnInit {
 
     selectFile(file: File): void {
         this.activeFile = file;
+        this._playerService.setPlayingFile(file);
+    }
+
+    closeFile(): void {
+        this.activeFile = null;
+        this._playerService.setPlayingFile(null);
     }
 }

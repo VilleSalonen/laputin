@@ -25,6 +25,6 @@
     </div>
 
     <div class="player full-height" *ngIf="activeFile">
-        <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)" (fileClosed)="activeFile = null"></app-video-player>
+        <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)" (fileClosed)="closeFile()"></app-video-player>
     </div>
 </div>

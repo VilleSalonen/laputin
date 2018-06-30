@@ -340,18 +340,6 @@ export class VideoPlayerComponent {
         this.playhead.nativeElement.style.marginLeft = leftMargin + 'px';
     }
 
-    public directory(): string {
-        return this.file.path.replace(this.file.name, '').replace(/\//g, '\\');
-    }
-
-    public nameSansSuffix(): string {
-        return this.file.name.substr(0, this.file.name.lastIndexOf('.'));
-    }
-
-    public suffix(): string {
-        return this.file.name.substr(this.file.name.lastIndexOf('.'));
-    }
-
     public close(): void {
         this.fileClosed.emit();
     }

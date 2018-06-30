@@ -8,4 +8,16 @@ export class File implements TagContainer {
     public escapedUrl() {
         return this.path.replace('#', '%23');
     }
+
+    public directory(): string {
+        return this.path.replace(this.name, '').replace(/\//g, '\\');
+    }
+
+    public nameSansSuffix(): string {
+        return this.name.substr(0, this.name.lastIndexOf('.'));
+    }
+
+    public suffix(): string {
+        return this.name.substr(this.name.lastIndexOf('.'));
+    }
 }

@@ -3,13 +3,6 @@
 
     <div class="row">
         <div #playerView class="column player-view" *ngIf="file">
-            <div class="filename">
-                <span class="filename-small">{{directory()}}</span>
-                <br />
-                <span class="filename-big">{{nameSansSuffix()}}</span>
-                <span class="filename-small">{{suffix()}}</span>
-            </div>
-
             <div class="player">
                 <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-shot">
                     <img (click)="play()" src="/laputin/thumbs/{{file.hash}}.jpg{{cacheBuster}}" />

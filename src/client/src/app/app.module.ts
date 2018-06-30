@@ -22,6 +22,7 @@ import { TagFilterPipe } from './tag-filter.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { LaputinService } from './laputin.service';
+import { PlayerService } from './player.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,7 @@ import { LaputinService } from './laputin.service';
     ]),
     VirtualScrollModule
   ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService, PlayerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
