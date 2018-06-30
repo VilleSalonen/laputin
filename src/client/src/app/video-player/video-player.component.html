@@ -120,7 +120,7 @@
                 <button (click)="saveTagTimecode()">Tallennapa</button>
             </div>
 
-            <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex;">
+            <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex; margin-bottom: 12px;">
                 <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;"
                 />
 
