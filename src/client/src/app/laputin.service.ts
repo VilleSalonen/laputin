@@ -57,12 +57,13 @@ export class LaputinService {
             }).toPromise();
     }
 
-    public async createTagTimecode(file: File, tagTimecode: TagTimecode): Promise<void> {
+    public async createTagTimecode(file: File, tagTimecode: TagTimecode): Promise<TagTimecode> {
         const body = JSON.stringify({ tagTimecode: tagTimecode });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
-        await this._http
+        return await this._http
             .post(this._baseUrl + '/files/' + file.hash + '/timecodes', body, { headers: headers })
+            .map(res => res.json())
             .toPromise();
     }
 
@@ -110,15 +111,13 @@ export class LaputinService {
             });
     }
 
-    public screenshotTagTimecode(file: File, tagTimecode: TagTimecode, timeInSeconds: number): void {
+    public screenshotTagTimecode(file: File, tagTimecode: TagTimecode, timeInSeconds: number): Promise<Response> {
         const body = JSON.stringify({ hash: file.hash, tagTimecode: tagTimecode, time: timeInSeconds });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
-        this._http
+        return this._http
             .post(this._baseUrl + '/screenshotTagTimecode', body, { headers: headers })
-            .subscribe(() => {
-                console.log('thumbnail created');
-            });
+            .toPromise();
     }
 
     public openFiles(query: FileQuery): Promise<Response> {

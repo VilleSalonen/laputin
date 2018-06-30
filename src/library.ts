@@ -219,7 +219,7 @@ export class Library {
         }
     }
 
-    public async addTimecodeToTagAssociation(inputTag: Tag, hash: string, start: number, end: number): Promise<void> {
+    public async addTimecodeToTagAssociation(inputTag: Tag, hash: string, start: number, end: number): Promise<TagTimecode> {
         const stmt = this._db.prepare(`INSERT INTO tags_files_timecodes
             VALUES (
                 null,
@@ -230,6 +230,7 @@ export class Library {
             )`);
 
         await stmt.runAsync(inputTag.id, hash, start, end);
+        return new TagTimecode(stmt.lastID, inputTag.id, inputTag.name, start, end);
     }
 
     public async getTagTimecodesForFile(hash: string): Promise<TagTimecode[]> {

@@ -492,8 +492,8 @@ export class VideoPlayerComponent {
         const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
 
         const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, tagStart, tagEnd);
-        await this._service.createTagTimecode(this.file, tagTimecode);
-        this.addTagTimecode(tagTimecode);
+        const result = await this._service.createTagTimecode(this.file, tagTimecode);
+        this.addTagTimecode(result);
 
         this.tagTimecode = null;
         this.tagStart = null;

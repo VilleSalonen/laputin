@@ -112,9 +112,20 @@ export class Laputin {
         api.route('/files/:hash/timecodes').post(async (req, res) => {
             const tagTimecode: TagTimecode = req.body.tagTimecode;
 
-            await this.library.addTimecodeToTagAssociation(
+            const result = await this.library.addTimecodeToTagAssociation(
                 new Tag(tagTimecode.tagId, tagTimecode.name, 0), req.params.hash, tagTimecode.start, tagTimecode.end);
-            res.status(200).end();
+
+            const query = new Query(undefined, undefined, req.params.hash, undefined, undefined, undefined);
+            const files = await this.library.getFiles(query);
+
+            if (files.length > 0) {
+                const screenshotTime = tagTimecode.start + (tagTimecode.end - tagTimecode.start) * 0.66;
+
+                const screenshotter = new Screenshotter(this._libraryPath);
+                await screenshotter.screenshotTagTimecode(files[0], result, screenshotTime);
+            }
+
+            res.send(result);
         });
 
         api.route('/files/:hash/tags/:tagId').delete(async (req, res) => {
