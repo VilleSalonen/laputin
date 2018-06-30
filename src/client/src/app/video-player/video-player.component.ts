@@ -435,8 +435,9 @@ export class VideoPlayerComponent {
         }, 1000);
     }
 
-    public screenshotTagTimecode(tagTimecode: TagTimecode): void {
-        this._service.screenshotTagTimecode(this.file, tagTimecode, this.player.currentTime);
+    public async screenshotTagTimecode(tagTimecode: TagTimecode): Promise<void> {
+        await this._service.screenshotTagTimecode(this.file, tagTimecode, this.player.currentTime);
+        tagTimecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
     }
 
     public copy(): void {

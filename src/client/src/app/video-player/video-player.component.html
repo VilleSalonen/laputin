@@ -123,7 +123,7 @@
 
         <div class="column sidebar">
             <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex;">
-                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{cacheBuster}}" style="margin-right: 12px;" />
+                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;" />
 
                 <div class="column">
                     <div class="tag" (click)="goToTimecode(tagTimecode)">

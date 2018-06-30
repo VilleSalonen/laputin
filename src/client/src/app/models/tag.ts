@@ -4,6 +4,8 @@ export class Tag {
 }
 
 export class TagTimecode {
+    public cacheBuster = '';
+
     constructor(public timecodeId: number, public tagId: number, public name: string, public start: number, public end: number) {
     }
 }
