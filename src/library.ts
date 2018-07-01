@@ -224,8 +224,6 @@ export class Library {
     }
 
     public async addTimecodeToTagAssociation(inputTag: Tag, hash: string, start: number, end: number): Promise<Timecode> {
-        console.log('saving');
-
         const stmt1 = this._db.prepare(`INSERT INTO files_timecodes
             VALUES (
                 null,
