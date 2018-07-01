@@ -105,7 +105,7 @@ export class Laputin {
         });
 
         api.route('/files/:hash/timecodes').get(async (req, res) => {
-            const tags = await this.library.getTagTimecodesForFile(req.params.hash);
+            const tags = await this.library.getTimecodesForFile(req.params.hash);
             res.send(tags);
         });
 

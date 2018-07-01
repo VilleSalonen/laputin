@@ -246,7 +246,7 @@ export class Library {
         return new Timecode(stmt1.lastID, hash, [new TimecodeTag(stmt1.lastID, stmt2.lastID, inputTag)], start, end);
     }
 
-    public async getTagTimecodesForFile(hash: string): Promise<Timecode[]> {
+    public async getTimecodesForFile(hash: string): Promise<Timecode[]> {
         const timecodes: Timecode[] = [];
 
         const params1: any[] = [];
