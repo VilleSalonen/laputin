@@ -3,10 +3,20 @@ export class Tag {
     }
 }
 
-export class TagTimecode {
+export class Timecode {
     public cacheBuster = '';
 
-    constructor(public timecodeId: number, public tagId: number, public name: string, public start: number, public end: number) {
+    constructor(
+        public timecodeId: number,
+        public hash: string,
+        public timecodeTags: TimecodeTag[],
+        public start: number,
+        public end: number) {
+    }
+}
+
+export class TimecodeTag {
+    constructor(public timecodeId: number, public timecodeTagId: number, public tag: Tag) {
     }
 }
 

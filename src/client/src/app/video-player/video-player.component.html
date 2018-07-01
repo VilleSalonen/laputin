@@ -127,8 +127,8 @@
                 />
 
                 <div class="column">
-                    <div class="tag" (click)="goToTimecode(tagTimecode)">
-                        {{tagTimecode.name}}
+                    <div *ngFor="let timecodeTag of tagTimecode.timecodeTags" class="tag" (click)="goToTimecode(tagTimecode)">
+                        {{timecodeTag.tag.name}}
                     </div>
 
                     <div>{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>

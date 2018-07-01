@@ -3,7 +3,17 @@ export class Tag {
     }
 }
 
-export class TagTimecode {
-    constructor(public timecodeId: number, public tagId: number, public name: string, public start: number, public end: number) {
+export class Timecode {
+    constructor(
+        public timecodeId: number,
+        public hash: string,
+        public timecodeTags: TimecodeTag[],
+        public start: number,
+        public end: number) {
+    }
+}
+
+export class TimecodeTag {
+    constructor(public timecodeId: number, public timecodeTagId: number, public tag: Tag) {
     }
 }

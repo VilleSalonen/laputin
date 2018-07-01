@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import {File} from './../models/file';
 import {FileQuery} from './../models/filequery';
 import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag, TagTimecode} from './../models/tag';
+import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 
@@ -242,7 +242,7 @@ export class VideoPlayerComponent {
 
     @Input() file: File;
 
-    public tagTimecodes: TagTimecode[];
+    public tagTimecodes: Timecode[];
     public tagTimecode: Tag;
     public tagStart: string;
     public tagEnd: string;
@@ -305,7 +305,7 @@ export class VideoPlayerComponent {
         const hours = duration.hours();
         const minutes = duration.minutes();
         const seconds = duration.seconds();
-        const milliseconds = duration.seconds();
+        const milliseconds = duration.milliseconds();
 
         result += ((hours >= 10) ? hours : '0' + hours);
         result += ':';
@@ -447,9 +447,9 @@ export class VideoPlayerComponent {
         }, 1000);
     }
 
-    public async screenshotTagTimecode(tagTimecode: TagTimecode): Promise<void> {
-        await this._service.screenshotTagTimecode(this.file, tagTimecode, this.player.currentTime);
-        tagTimecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+    public async screenshotTagTimecode(timecode: Timecode): Promise<void> {
+        await this._service.screenshotTagTimecode(this.file, timecode, this.player.currentTime);
+        timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
     }
 
     public copy(): void {
@@ -461,7 +461,7 @@ export class VideoPlayerComponent {
         this.addTags(tags);
     }
 
-    public goToTimecode(timecode: TagTimecode): void {
+    public goToTimecode(timecode: Timecode): void {
         this.player.currentTime = timecode.start;
         this.play();
     }
@@ -504,7 +504,17 @@ export class VideoPlayerComponent {
         const tagStart = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
         const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
 
-        const tagTimecode = new TagTimecode(null, this.tagTimecode.id, this.tagTimecode.name, tagStart, tagEnd);
+        const tagTimecode = new Timecode(
+            null,
+            this.file.hash,
+            [
+                new TimecodeTag(
+                    null,
+                    null,
+                    new Tag(this.tagTimecode.id, this.tagTimecode.name, 0))
+            ],
+            tagStart,
+            tagEnd);
         const result = await this._service.createTagTimecode(this.file, tagTimecode);
         this.addTagTimecode(result);
 
@@ -517,9 +527,9 @@ export class VideoPlayerComponent {
         return moment.duration(separatedTimecode).asSeconds();
     }
 
-    private addTagTimecode(tagTimecode: TagTimecode): void {
+    private addTagTimecode(timecode: Timecode): void {
         const tagTimecodes = this.tagTimecodes.slice();
-        tagTimecodes.push(tagTimecode);
+        tagTimecodes.push(timecode);
         tagTimecodes.sort((a, b) => {
             if (a.start < b.start) {
                 return -1;

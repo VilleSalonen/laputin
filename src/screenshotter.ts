@@ -6,7 +6,7 @@ import os = require('os');
 import winston = require('winston');
 
 import {File} from './file';
-import { TagTimecode } from './tag';
+import { Timecode } from './tag';
 
 export class Screenshotter {
     private _thumbsPath: string;
@@ -50,23 +50,23 @@ export class Screenshotter {
         }
     }
 
-    public async screenshotTagTimecode(file: File, tagTimecode: TagTimecode, timeInSeconds: number): Promise<void> {
+    public async screenshotTagTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<void> {
         this.initialize();
 
         const command = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 ' +
-            '"' + this.getTagTimecodeThumbPath(tagTimecode) + '"';
+            '"' + this.getTagTimecodeThumbPath(timecode) + '"';
 
         const commandSmall = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 -vf scale=200:-1 ' +
-            '"' + this.getTagTimecodeThumbSmallPath(tagTimecode) + '"';
+            '"' + this.getTagTimecodeThumbSmallPath(timecode) + '"';
 
         try {
             child_process.execSync(command);
             child_process.execSync(commandSmall);
-            winston.log('verbose', 'Created screenshot for ' + file.path + ' and tag timecode ' + tagTimecode.name + '.');
+            winston.log('verbose', 'Created screenshot for ' + file.path + ' and timecode ID ' + timecode.timecodeId + '.');
         } catch (err) {
             winston.log('error', 'Could not create screenshot for ' + file.path + '!');
         }
@@ -115,11 +115,11 @@ export class Screenshotter {
         return path.join(this._thumbsSmallPath, file.hash + '.jpg');
     }
 
-    private getTagTimecodeThumbPath(tagTimecode: TagTimecode) {
-        return path.join(this._tagTimecodeThumbsPath, tagTimecode.timecodeId + '.jpg');
+    private getTagTimecodeThumbPath(timecode: Timecode) {
+        return path.join(this._tagTimecodeThumbsPath, timecode.timecodeId + '.jpg');
     }
 
-    private getTagTimecodeThumbSmallPath(tagTimecode: TagTimecode) {
-        return path.join(this._tagTimecodeThumbsSmallPath, tagTimecode.timecodeId + '.jpg');
+    private getTagTimecodeThumbSmallPath(timecode: Timecode) {
+        return path.join(this._tagTimecodeThumbsSmallPath, timecode.timecodeId + '.jpg');
     }
 }

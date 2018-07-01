@@ -9,7 +9,7 @@ import {Library} from './library';
 import {FileLibrary} from './filelibrary';
 import {VLCOpener} from './vlcopener';
 import {File} from './file';
-import {Tag, TagTimecode} from './tag';
+import {Tag, Timecode} from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
 
@@ -110,16 +110,19 @@ export class Laputin {
         });
 
         api.route('/files/:hash/timecodes').post(async (req, res) => {
-            const tagTimecode: TagTimecode = req.body.tagTimecode;
+            const timecode: Timecode = req.body.timecode;
 
             const result = await this.library.addTimecodeToTagAssociation(
-                new Tag(tagTimecode.tagId, tagTimecode.name, 0), req.params.hash, tagTimecode.start, tagTimecode.end);
+                new Tag(timecode.timecodeTags[0].tag.id, timecode.timecodeTags[0].tag.name, 0),
+                req.params.hash,
+                timecode.start,
+                timecode.end);
 
             const query = new Query(undefined, undefined, req.params.hash, undefined, undefined, undefined);
             const files = await this.library.getFiles(query);
 
             if (files.length > 0) {
-                const screenshotTime = tagTimecode.start + (tagTimecode.end - tagTimecode.start) * 0.66;
+                const screenshotTime = timecode.start + (timecode.end - timecode.start) * 0.66;
 
                 const screenshotter = new Screenshotter(this._libraryPath);
                 await screenshotter.screenshotTagTimecode(files[0], result, screenshotTime);
@@ -166,7 +169,7 @@ export class Laputin {
 
                 if (files.length > 0) {
                     const screenshotter = new Screenshotter(this._libraryPath);
-                    await screenshotter.screenshotTagTimecode(files[0], req.body.tagTimecode, req.body.time);
+                    await screenshotter.screenshotTagTimecode(files[0], req.body.timecode, req.body.time);
                 }
 
                 res.status(200).end();

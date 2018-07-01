@@ -6,7 +6,7 @@ import {Http, HttpModule, Headers, Response} from '@angular/http';
 import * as _ from 'lodash';
 
 import {File} from './models/file';
-import {Tag, TagTimecode} from './models/tag';
+import {Tag, Timecode, TimecodeTag} from './models/tag';
 import {FileQuery} from './models/filequery';
 import {Duplicate} from './models/duplicate';
 
@@ -45,20 +45,14 @@ export class LaputinService {
             }).toPromise();
     }
 
-    public getTagTimecodes(file: File): Promise<TagTimecode[]> {
+    public getTagTimecodes(file: File): Promise<Timecode[]> {
         return this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
             .map(res => res.json())
-            .map((tags: any[]): TagTimecode[] => {
-                const result: TagTimecode[] = [];
-                if (tags) {
-                    tags.forEach((tag: any) => result.push(this._convertTagTimecode(tag)));
-                }
-                return result;
-            }).toPromise();
+            .toPromise();
     }
 
-    public async createTagTimecode(file: File, tagTimecode: TagTimecode): Promise<TagTimecode> {
-        const body = JSON.stringify({ tagTimecode: tagTimecode });
+    public async createTagTimecode(file: File, timecode: Timecode): Promise<Timecode> {
+        const body = JSON.stringify({ timecode: timecode });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return await this._http
@@ -88,10 +82,6 @@ export class LaputinService {
         return new Tag(tag.id, tag.name, tag.associationCount);
     }
 
-    private _convertTagTimecode(tag: any): TagTimecode {
-        return new TagTimecode(tag.timecodeId, tag.tagId, tag.name, tag.start, tag.end);
-    }
-
     private _convertTags(tags: any): Tag[] {
         return tags.map((tag: any) => this._convertTag(tag));
     }
@@ -111,8 +101,8 @@ export class LaputinService {
             });
     }
 
-    public screenshotTagTimecode(file: File, tagTimecode: TagTimecode, timeInSeconds: number): Promise<Response> {
-        const body = JSON.stringify({ hash: file.hash, tagTimecode: tagTimecode, time: timeInSeconds });
+    public screenshotTagTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<Response> {
+        const body = JSON.stringify({ hash: file.hash, timecode: timecode, time: timeInSeconds });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
