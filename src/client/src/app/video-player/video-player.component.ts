@@ -447,8 +447,8 @@ export class VideoPlayerComponent {
         }, 1000);
     }
 
-    public async screenshotTagTimecode(timecode: Timecode): Promise<void> {
-        await this._service.screenshotTagTimecode(this.file, timecode, this.player.currentTime);
+    public async screenshotTimecode(timecode: Timecode): Promise<void> {
+        await this._service.screenshotTimecode(this.file, timecode, this.player.currentTime);
         timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
     }
 

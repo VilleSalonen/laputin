@@ -101,12 +101,12 @@ export class LaputinService {
             });
     }
 
-    public screenshotTagTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<Response> {
+    public screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<Response> {
         const body = JSON.stringify({ hash: file.hash, timecode: timecode, time: timeInSeconds });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
-            .post(this._baseUrl + '/screenshotTagTimecode', body, { headers: headers })
+            .post(this._baseUrl + '/screenshotTimecode', body, { headers: headers })
             .toPromise();
     }
 

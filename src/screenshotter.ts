@@ -50,7 +50,7 @@ export class Screenshotter {
         }
     }
 
-    public async screenshotTagTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<void> {
+    public async screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<void> {
         this.initialize();
 
         const command = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
