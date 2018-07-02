@@ -223,15 +223,21 @@ export class Library {
         }
     }
 
-    public async addTimecodeToTagAssociation(inputTag: Tag, hash: string, start: number, end: number): Promise<Timecode> {
-        const stmt1 = this._db.prepare(`INSERT INTO files_timecodes
+    public async addTimecodeToFile(timecode: Timecode, hash: string): Promise<Timecode> {
+        let timecodeId: number;
+        if (!timecode.timecodeId) {
+            const stmt1 = this._db.prepare(`INSERT INTO files_timecodes
             VALUES (
                 null,
                 ?,
                 ?,
                 ?
             )`);
-        await stmt1.runAsync(hash, start, end);
+            await stmt1.runAsync(hash, timecode.start, timecode.end);
+            timecodeId = stmt1.lastID;
+        } else {
+            timecodeId = timecode.timecodeId;
+        }
 
         const stmt2 = this._db.prepare(`INSERT INTO files_timecodes_tags
             VALUES (
@@ -239,9 +245,10 @@ export class Library {
                 ?,
                 ?
             )`);
-        await stmt2.runAsync(stmt1.lastID, inputTag.id);
+        await stmt2.runAsync(timecodeId, timecode.timecodeTags[0].tag.id);
 
-        return new Timecode(stmt1.lastID, hash, [new TimecodeTag(stmt1.lastID, stmt2.lastID, inputTag)], start, end);
+        return new Timecode(timecodeId, hash, [
+            new TimecodeTag(timecodeId, stmt2.lastID, timecode.timecodeTags[0].tag)], timecode.start, timecode.end);
     }
 
     public async getTimecodesForFile(hash: string): Promise<Timecode[]> {

@@ -523,6 +523,17 @@ export class VideoPlayerComponent {
         this.tagEnd = null;
     }
 
+    public async addTagToExistingTimecode(timecode: Timecode): Promise<void> {
+        const clonedTimecode = _.cloneDeep(timecode);
+        const newTag = new Tag(this.tagTimecode.id, this.tagTimecode.name, 0);
+        clonedTimecode.timecodeTags = [
+            new TimecodeTag(null, timecode.timecodeId, newTag)
+        ];
+        await this._service.createTagTimecode(this.file, timecode);
+        timecode.timecodeTags.push(new TimecodeTag(null, null, newTag));
+        this.tagTimecode = null;
+    }
+
     private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {
         return moment.duration(separatedTimecode).asSeconds();
     }
