@@ -305,7 +305,7 @@ export class VideoPlayerComponent {
         const hours = duration.hours();
         const minutes = duration.minutes();
         const seconds = duration.seconds();
-        const milliseconds = duration.milliseconds();
+        const milliseconds = parseInt(duration.milliseconds().toFixed(0), 10);
 
         result += ((hours >= 10) ? hours : '0' + hours);
         result += ':';
@@ -313,7 +313,7 @@ export class VideoPlayerComponent {
         result += ':';
         result += (seconds >= 10) ? seconds : '0' + seconds;
         result += '.';
-        result += (milliseconds >= 10) ? milliseconds : '0' + milliseconds;
+        result += (milliseconds > 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
 
         return result;
     }
