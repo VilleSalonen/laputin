@@ -530,7 +530,20 @@ export class VideoPlayerComponent {
             new TimecodeTag(null, timecode.timecodeId, newTag)
         ];
         await this._service.createTagTimecode(this.file, timecode);
-        timecode.timecodeTags.push(new TimecodeTag(null, null, newTag));
+
+        const timecodeTags = timecode.timecodeTags.slice();
+        timecodeTags.push(new TimecodeTag(null, null, newTag));
+        timecodeTags.sort((a, b) => {
+            if (a.tag.name < b.tag.name) {
+                return -1;
+            } else if (a.tag.name > b.tag.name) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        timecode.timecodeTags = timecodeTags;
+
         this.tagTimecode = null;
     }
 
