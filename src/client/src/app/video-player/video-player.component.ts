@@ -243,7 +243,7 @@ export class VideoPlayerComponent {
     @Input() file: File;
 
     public timecodes: Timecode[];
-    public tagTimecode: Tag;
+    public selectedTagForTimecode: Tag;
     public tagStart: string;
     public tagEnd: string;
 
@@ -467,7 +467,7 @@ export class VideoPlayerComponent {
     }
 
     public setTimecodeTag(tag: Tag): void {
-        this.tagTimecode = tag;
+        this.selectedTagForTimecode = tag;
     }
 
     public setTagStart(): void {
@@ -511,28 +511,27 @@ export class VideoPlayerComponent {
                 new TimecodeTag(
                     null,
                     null,
-                    new Tag(this.tagTimecode.id, this.tagTimecode.name, 0))
+                    this.selectedTagForTimecode)
             ],
             tagStart,
             tagEnd);
         const result = await this._service.createTagTimecode(this.file, tagTimecode);
         this.addTagTimecode(result);
 
-        this.tagTimecode = null;
+        this.selectedTagForTimecode = null;
         this.tagStart = null;
         this.tagEnd = null;
     }
 
     public async addTagToExistingTimecode(timecode: Timecode): Promise<void> {
         const clonedTimecode = _.cloneDeep(timecode);
-        const newTag = new Tag(this.tagTimecode.id, this.tagTimecode.name, 0);
         clonedTimecode.timecodeTags = [
-            new TimecodeTag(null, timecode.timecodeId, newTag)
+            new TimecodeTag(null, timecode.timecodeId, this.selectedTagForTimecode)
         ];
-        await this._service.createTagTimecode(this.file, timecode);
+        await this._service.createTagTimecode(this.file, clonedTimecode);
 
         const timecodeTags = timecode.timecodeTags.slice();
-        timecodeTags.push(new TimecodeTag(null, null, newTag));
+        timecodeTags.push(new TimecodeTag(null, null, this.selectedTagForTimecode));
         timecodeTags.sort((a, b) => {
             if (a.tag.name < b.tag.name) {
                 return -1;
@@ -544,7 +543,7 @@ export class VideoPlayerComponent {
         });
         timecode.timecodeTags = timecodeTags;
 
-        this.tagTimecode = null;
+        this.selectedTagForTimecode = null;
     }
 
     private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {

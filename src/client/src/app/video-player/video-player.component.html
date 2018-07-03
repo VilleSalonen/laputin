@@ -95,10 +95,10 @@
 
         <div class="column sidebar">
             <div class="row">
-                <app-tag-autocomplete *ngIf="!tagTimecode" [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                <app-tag-autocomplete *ngIf="!selectedTagForTimecode" [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
 
-                <div class="tag" *ngIf="tagTimecode" (click)="tagTimecode = null" title="Click to reset tag selection">
-                    {{ tagTimecode.name }}
+                <div class="tag" *ngIf="selectedTagForTimecode" (click)="selectedTagForTimecode = null" title="Click to reset tag selection">
+                    {{ selectedTagForTimecode.name }}
                 </div>
 
                 <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
@@ -137,7 +137,7 @@
                         <i class="fa fa-camera" aria-hidden="true"></i>
                     </a>
 
-                    <a (click)="addTagToExistingTimecode(tagTimecode)" title="Add another tag to timecode" style="cursor: pointer;">
+                    <a (click)="addTagToExistingTimecode(timecode)" title="Add another tag to timecode" style="cursor: pointer;">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </a>
                 </div>
