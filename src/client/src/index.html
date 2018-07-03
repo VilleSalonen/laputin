@@ -7,9 +7,12 @@
     <base href="/">
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js" integrity="sha384-xymdQtn1n3lH2wcu0qhcdaOpQwyoarkgLVxC/wZ5q7h9gHtxICrpcaSUfygqZGOe" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js" integrity="sha384-xymdQtn1n3lH2wcu0qhcdaOpQwyoarkgLVxC/wZ5q7h9gHtxICrpcaSUfygqZGOe"
+        crossorigin="anonymous"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <style>
         body {
@@ -19,7 +22,11 @@
         }
 
         /* Ugly fix for unwanted text and image selection when clicking and dragging on timeline */
-        p, div, span, img {
+
+        p,
+        div,
+        span,
+        img {
             -ms-user-select: none;
             user-select: none;
         }
@@ -34,6 +41,7 @@
             }
 
             /* Source: http://tobiasahlin.com/spinkit/ */
+
             .spinner-container {
                 display: flex;
                 justify-content: center;
@@ -47,7 +55,7 @@
                 text-align: center;
             }
 
-            .spinner > div {
+            .spinner>div {
                 width: 18px;
                 height: 18px;
                 background-color: #485476;
@@ -69,15 +77,24 @@
             }
 
             @-webkit-keyframes sk-bouncedelay {
-                0%, 80%, 100% { -webkit-transform: scale(0) }
-                40% { -webkit-transform: scale(1.0) }
+                0%,
+                80%,
+                100% {
+                    -webkit-transform: scale(0)
+                }
+                40% {
+                    -webkit-transform: scale(1.0)
+                }
             }
 
             @keyframes sk-bouncedelay {
-                0%, 80%, 100% {
+                0%,
+                80%,
+                100% {
                     -webkit-transform: scale(0);
                     transform: scale(0);
-                } 40% {
+                }
+                40% {
                     -webkit-transform: scale(1.0);
                     transform: scale(1.0);
                 }
