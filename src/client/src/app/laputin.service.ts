@@ -61,6 +61,15 @@ export class LaputinService {
             .toPromise();
     }
 
+    public async deleteTimecodeTag(timecode: Timecode, timecodeTag: TimecodeTag): Promise<Response> {
+        const body = JSON.stringify({ timecode: timecode });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        return await this._http.delete(
+            this._baseUrl + '/files/' + timecode.hash + '/timecodes/' + timecode.timecodeId + '/tags/' + timecodeTag.timecodeTagId)
+            .toPromise();
+    }
+
     public getDuplicates(): Promise<Duplicate[]> {
         return this._http.get(this._baseUrl + '/duplicates')
             .map(res => res.json())

@@ -251,6 +251,26 @@ export class Library {
             new TimecodeTag(timecodeId, stmt2.lastID, timecode.timecodeTags[0].tag)], timecode.start, timecode.end);
     }
 
+    public async removeTagFromTimecode(hash: string, timecodeId: string, timecodeTagId: string) {
+        const stmt1 = this._db.prepare(`DELETE FROM files_timecodes_tags
+            WHERE
+                id = ?
+        `);
+        await stmt1.runAsync(timecodeTagId);
+
+        const stmt2 = this._db.prepare(`DELETE FROM files_timecodes
+            WHERE
+                id = ? AND
+                (
+                    SELECT COUNT(*)
+                    FROM files_timecodes_tags
+                    WHERE timecode_id = ?
+                )
+                = 0
+        `);
+        await stmt2.runAsync(timecodeId, timecodeId);
+    }
+
     public async getTimecodesForFile(hash: string): Promise<Timecode[]> {
         const timecodes: Timecode[] = [];
 
@@ -296,7 +316,7 @@ export class Library {
         const each2 = (err: Error, row: any) => {
             const timecode = timecodes.find(t => t.timecodeId === row.timecode_id);
 
-            timecode.timecodeTags.push(new TimecodeTag(row.id, row.timecode_id, new Tag(row.tag_id, row.tag_name, 0)));
+            timecode.timecodeTags.push(new TimecodeTag(row.timecode_id, row.id, new Tag(row.tag_id, row.tag_name, 0)));
         };
 
         const stmt2 = this._db.prepare(sql2);

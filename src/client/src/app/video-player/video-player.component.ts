@@ -528,10 +528,10 @@ export class VideoPlayerComponent {
         clonedTimecode.timecodeTags = [
             new TimecodeTag(null, timecode.timecodeId, this.selectedTagForTimecode)
         ];
-        await this._service.createTagTimecode(this.file, clonedTimecode);
+        const result = await this._service.createTagTimecode(this.file, clonedTimecode);
 
         const timecodeTags = timecode.timecodeTags.slice();
-        timecodeTags.push(new TimecodeTag(null, null, this.selectedTagForTimecode));
+        timecodeTags.push(result.timecodeTags[0]);
         timecodeTags.sort((a, b) => {
             if (a.tag.name < b.tag.name) {
                 return -1;
@@ -544,6 +544,17 @@ export class VideoPlayerComponent {
         timecode.timecodeTags = timecodeTags;
 
         this.selectedTagForTimecode = null;
+    }
+
+    public async removeTagFromExistingTimecode(timecode: Timecode, timecodeTag: TimecodeTag): Promise<void> {
+        await this._service.deleteTimecodeTag(timecode, timecodeTag);
+
+        const timecodeTagsAfterDeletion = timecode.timecodeTags.filter(t => t.timecodeTagId !== timecodeTag.timecodeTagId);
+        if (timecodeTagsAfterDeletion.length === 0) {
+            this.timecodes = this.timecodes.filter(t => t.timecodeId !== timecode.timecodeId);
+        } else {
+            timecode.timecodeTags = timecodeTagsAfterDeletion;
+        }
     }
 
     private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {
