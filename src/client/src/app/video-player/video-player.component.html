@@ -122,18 +122,18 @@
                 <button (click)="saveTagTimecode()">Tallennapa</button>
             </div>
 
-            <div *ngFor="let tagTimecode of tagTimecodes" style="display: flex; margin-bottom: 12px;">
-                <img src="/laputin/tag-timecode-thumbs-small/{{tagTimecode.timecodeId}}.jpg{{tagTimecode.cacheBuster}}" style="margin-right: 12px;"
+            <div *ngFor="let timecode of timecodes" style="display: flex; margin-bottom: 12px;">
+                <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px;"
                 />
 
                 <div class="column">
-                    <div *ngFor="let timecodeTag of tagTimecode.timecodeTags" class="tag" (click)="goToTimecode(tagTimecode)">
+                    <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="goToTimecode(timecode)">
                         {{timecodeTag.tag.name}}
                     </div>
 
-                    <div>{{formatPreciseDuration(tagTimecode.start)}}-{{formatPreciseDuration(tagTimecode.end)}}</div>
+                    <div>{{formatPreciseDuration(timecode.start)}}-{{formatPreciseDuration(timecode.end)}}</div>
 
-                    <a (click)="playbackHasBeenStarted && screenshotTimecode(tagTimecode)" title="Set screenshot" style="cursor: pointer;">
+                    <a (click)="playbackHasBeenStarted && screenshotTimecode(timecode)" title="Set screenshot" style="cursor: pointer;">
                         <i class="fa fa-camera" aria-hidden="true"></i>
                     </a>
 

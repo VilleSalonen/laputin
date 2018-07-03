@@ -145,7 +145,7 @@ export class VideoPlayerComponent {
         Observable.fromEvent(this.player, 'durationchange')
             .takeUntil(this.fileClosed)
             .subscribe(() => {
-                this._service.getTagTimecodes(this.file).then((tagTimecodes) => this.tagTimecodes = tagTimecodes);
+                this._service.getTimecodes(this.file).then((timecodes) => this.timecodes = timecodes);
 
                 this.playbackHasBeenStarted = false;
                 this.playing = false;
@@ -242,7 +242,7 @@ export class VideoPlayerComponent {
 
     @Input() file: File;
 
-    public tagTimecodes: Timecode[];
+    public timecodes: Timecode[];
     public tagTimecode: Tag;
     public tagStart: string;
     public tagEnd: string;
@@ -552,9 +552,9 @@ export class VideoPlayerComponent {
     }
 
     private addTagTimecode(timecode: Timecode): void {
-        const tagTimecodes = this.tagTimecodes.slice();
-        tagTimecodes.push(timecode);
-        tagTimecodes.sort((a, b) => {
+        const timecodes = this.timecodes.slice();
+        timecodes.push(timecode);
+        timecodes.sort((a, b) => {
             if (a.start < b.start) {
                 return -1;
             } else if (a.start > b.start) {
@@ -563,6 +563,6 @@ export class VideoPlayerComponent {
                 return 0;
             }
         });
-        this.tagTimecodes = tagTimecodes;
+        this.timecodes = timecodes;
     }
 }

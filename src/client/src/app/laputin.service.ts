@@ -45,7 +45,7 @@ export class LaputinService {
             }).toPromise();
     }
 
-    public getTagTimecodes(file: File): Promise<Timecode[]> {
+    public getTimecodes(file: File): Promise<Timecode[]> {
         return this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
             .map(res => res.json())
             .toPromise();
