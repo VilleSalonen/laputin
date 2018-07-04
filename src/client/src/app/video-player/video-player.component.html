@@ -95,11 +95,11 @@
 
         <div class="column sidebar">
             <div class="row">
-                <app-tag-autocomplete *ngIf="!selectedTagForTimecode" [tagContainer]="file" (select)="setTimecodeTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
-
-                <div class="tag" *ngIf="selectedTagForTimecode" (click)="selectedTagForTimecode = null" title="Click to reset tag selection">
-                    {{ selectedTagForTimecode.name }}
+                <div class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)" title="Click to reset tag selection">
+                    {{ tag.name }}
                 </div>
+
+                <app-tag-autocomplete [tagContainer]="file" (select)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
 
                 <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
                     <i class="fas fa-stopwatch"></i>
@@ -123,7 +123,7 @@
             </div>
 
             <div *ngFor="let timecode of timecodes" style="display: flex; margin-bottom: 12px;">
-                <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px;"
+                <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px; cursor: pointer;"
                     (click)="goToTimecode(timecode)" />
 
                 <div class="column">

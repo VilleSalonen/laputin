@@ -239,16 +239,19 @@ export class Library {
             timecodeId = timecode.timecodeId;
         }
 
-        const stmt2 = this._db.prepare(`INSERT INTO files_timecodes_tags
+        const timecodeTags: TimecodeTag[] = [];
+        for (const timecodeTag of timecode.timecodeTags) {
+            const stmt2 = this._db.prepare(`INSERT INTO files_timecodes_tags
             VALUES (
                 null,
                 ?,
                 ?
             )`);
-        await stmt2.runAsync(timecodeId, timecode.timecodeTags[0].tag.id);
+            await stmt2.runAsync(timecodeId, timecodeTag.tag.id);
+            timecodeTags.push(new TimecodeTag(timecodeId, stmt2.lastID, timecodeTag.tag));
+        }
 
-        return new Timecode(timecodeId, hash, [
-            new TimecodeTag(timecodeId, stmt2.lastID, timecode.timecodeTags[0].tag)], timecode.start, timecode.end);
+        return new Timecode(timecodeId, hash, timecodeTags, timecode.start, timecode.end);
     }
 
     public async removeTagFromTimecode(hash: string, timecodeId: string, timecodeTagId: string) {

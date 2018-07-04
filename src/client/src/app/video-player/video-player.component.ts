@@ -243,7 +243,7 @@ export class VideoPlayerComponent {
     @Input() file: File;
 
     public timecodes: Timecode[];
-    public selectedTagForTimecode: Tag;
+    public selectedTagsForTimecode: Tag[] = [];
     public tagStart: string;
     public tagEnd: string;
 
@@ -466,8 +466,12 @@ export class VideoPlayerComponent {
         this.play();
     }
 
-    public setTimecodeTag(tag: Tag): void {
-        this.selectedTagForTimecode = tag;
+    public addTagSelectionToTimecode(tag: Tag): void {
+        this.selectedTagsForTimecode.push(tag);
+    }
+
+    public removeTagSelectionFromTimecode(tag: Tag): void {
+        this.selectedTagsForTimecode = this.selectedTagsForTimecode.filter(t => t.id !== tag.id);
     }
 
     public setTagStart(): void {
@@ -504,34 +508,37 @@ export class VideoPlayerComponent {
         const tagStart = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
         const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
 
+        const selectedTimecodeTags = this.selectedTagsForTimecode.map(t => new TimecodeTag(null, null, t));
+
         const tagTimecode = new Timecode(
             null,
             this.file.hash,
-            [
-                new TimecodeTag(
-                    null,
-                    null,
-                    this.selectedTagForTimecode)
-            ],
+            selectedTimecodeTags,
             tagStart,
             tagEnd);
         const result = await this._service.createTagTimecode(this.file, tagTimecode);
         this.addTagTimecode(result);
 
-        this.selectedTagForTimecode = null;
+        this.selectedTagsForTimecode = [];
         this.tagStart = null;
         this.tagEnd = null;
     }
 
     public async addTagToExistingTimecode(timecode: Timecode): Promise<void> {
-        const clonedTimecode = _.cloneDeep(timecode);
-        clonedTimecode.timecodeTags = [
-            new TimecodeTag(null, timecode.timecodeId, this.selectedTagForTimecode)
-        ];
-        const result = await this._service.createTagTimecode(this.file, clonedTimecode);
+        const results: Timecode[] = [];
+        for (const tag of this.selectedTagsForTimecode) {
+            const clonedTimecode = _.cloneDeep(timecode);
+            clonedTimecode.timecodeTags = [
+                new TimecodeTag(null, timecode.timecodeId, tag)
+            ];
+            results.push(await this._service.createTagTimecode(this.file, clonedTimecode));
+        }
 
         const timecodeTags = timecode.timecodeTags.slice();
-        timecodeTags.push(result.timecodeTags[0]);
+        for (const result of results) {
+            timecodeTags.push(result.timecodeTags[0]);
+        }
+
         timecodeTags.sort((a, b) => {
             if (a.tag.name < b.tag.name) {
                 return -1;
@@ -543,7 +550,7 @@ export class VideoPlayerComponent {
         });
         timecode.timecodeTags = timecodeTags;
 
-        this.selectedTagForTimecode = null;
+        this.selectedTagsForTimecode = [];
     }
 
     public async removeTagFromExistingTimecode(timecode: Timecode, timecodeTag: TimecodeTag): Promise<void> {
