@@ -1,6 +1,6 @@
 @import '../../styles/styles.scss';
 
-.btn-group {
+.tag {
     @include rounded-borders;
 
     display: flex;
@@ -53,4 +53,8 @@ span.does-not-contain {
 
 .closed {
     display: none;
+}
+
+.dropdown-btn {
+    margin-left: calc(0.5 * #{$standard-margin});
 }

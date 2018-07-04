@@ -5,13 +5,12 @@
     </div>
 
     <div class="control">
-        <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)"
-            name="filename" placeholder="Filename" />
+        <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)" name="filename"
+            placeholder="Filename" />
     </div>
 
     <div class="control">
-        <select class="form-control" [ngModel]="query.status"
-            (ngModelChange)="onStatusChanged($event)" name="status">
+        <select class="form-control" [ngModel]="query.status" (ngModelChange)="onStatusChanged($event)" name="status">
             <option value="both">All</option>
             <option value="untagged">Only untagged</option>
             <option value="tagged">Only tagged</option>
@@ -27,6 +26,8 @@
     </div>
 </form>
 
-<div class="tag btn-group" *ngFor="let tag of query.tags">
-    <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
+<div class="row">
+    <div class="tag btn-group" *ngFor="let tag of query.tags">
+        <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
+    </div>
 </div>
