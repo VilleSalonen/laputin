@@ -25,10 +25,10 @@ export class TimecodesComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.loadFiles();
+        this.loadTimecodes();
     }
 
-    loadFiles(): void {
+    loadTimecodes(): void {
         this.filesWithTimecodes = [];
         this.loading = true;
         this._service.queryTimecodes(this._query).then((timecodes: Timecode[]) => {
@@ -42,6 +42,11 @@ export class TimecodesComponent implements OnInit {
             this.filesWithTimecodes = bar;
             this.loading = false;
         });
+    }
+
+    filterFiles(query: FileQuery): void {
+        this._query = query;
+        this.loadTimecodes();
     }
 }
 

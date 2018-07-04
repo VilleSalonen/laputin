@@ -378,7 +378,24 @@ export class Library {
         const stmt2 = this._db.prepare(sql2);
         await stmt2.eachAsync([], each2);
 
-        const timecodesWithTags = timecodes.filter(t => t.timecodeTags.length > 0);
+        let timecodesWithTags = timecodes.filter(t => t.timecodeTags.length > 0);
+
+        if (query.and && query.and.length > 0) {
+            const queryTagIds = query.and.split(',').map(id => parseInt(id, 10));
+            timecodesWithTags = timecodesWithTags.filter(
+                t => queryTagIds.every(queryTagId => t.timecodeTags.map(t2 => t2.tag.id).indexOf(queryTagId) >= 0));
+        }
+        if (query.or && query.or.length > 0) {
+            const queryTagIds = query.or.split(',').map(id => parseInt(id, 10));
+            timecodesWithTags = timecodesWithTags.filter(
+                t => queryTagIds.some(queryTagId => t.timecodeTags.map(t2 => t2.tag.id).indexOf(queryTagId) >= 0));
+        }
+        if (query.not && query.not.length > 0) {
+            const queryTagIds = query.not.split(',').map(id => parseInt(id, 10));
+            timecodesWithTags = timecodesWithTags.filter(
+                t => queryTagIds.every(queryTagId => t.timecodeTags.map(t2 => t2.tag.id).indexOf(queryTagId) < 0));
+        }
+
         return timecodesWithTags;
     }
 

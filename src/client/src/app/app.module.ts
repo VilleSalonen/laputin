@@ -26,6 +26,7 @@ import { PlayerService } from './player.service';
 import { TimecodeComponent } from './timecode/timecode.component';
 import { TimecodesComponent } from './timecodes/timecodes.component';
 import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly.component';
+import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly
     TimecodeComponent,
     TimecodeReadonlyComponent,
     TimecodesComponent,
+    TimecodeSearchComponent,
     VideoPlayerComponent
   ],
   imports: [

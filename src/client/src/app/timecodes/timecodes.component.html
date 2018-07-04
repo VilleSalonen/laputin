@@ -1,5 +1,7 @@
 <div class="container">
     <div class="column">
+        <app-timecode-search (update)="filterFiles($event)"></app-timecode-search>
+
         <div *ngFor="let fileWithTimecodes of filesWithTimecodes">
             <span>{{ fileWithTimecodes.path }}</span>
             <app-timecode-readonly *ngFor="let timecode of fileWithTimecodes.timecodes" [timecode]="timecode" style="display: flex; margin-bottom: 12px;"></app-timecode-readonly>
