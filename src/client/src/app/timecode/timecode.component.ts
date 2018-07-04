@@ -95,4 +95,9 @@ export class TimecodeComponent {
             this.removed.next(this.timecode);
         }
     }
+
+    public goToTimecode(timecode: Timecode): void {
+        this._playerService.setCurrentTime(timecode.start);
+        this._playerService.play();
+    }
 }

@@ -122,13 +122,8 @@
                 <button (click)="saveTagTimecode()">Tallennapa</button>
             </div>
 
-            <div *ngFor="let timecode of timecodes" style="display: flex; margin-bottom: 12px;">
-                <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px; cursor: pointer;"
-                    (click)="goToTimecode(timecode)" />
-
-                <div class="column">
-                    <app-timecode [file]="file" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
-                </div>
+            <div style="margin-top: 12px;">
+                <app-timecode *ngFor="let timecode of timecodes" [file]="file" [timecode]="timecode" (removed)="removeTimecode($event)" style="display: flex; margin-bottom: 12px;"></app-timecode>
             </div>
         </div>
     </div>

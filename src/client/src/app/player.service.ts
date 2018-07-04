@@ -8,7 +8,7 @@ export class PlayerService {
     public filePlaying: Subject<File> = new Subject<File>();
     public player: HTMLVideoElement = null;
 
-    public setPlayingFile(file: File) {
+    public setPlayingFile(file: File): void {
         this.filePlaying.next(file);
 
         if (!file) {
@@ -16,7 +16,15 @@ export class PlayerService {
         }
     }
 
-    public setPlayer(player: HTMLVideoElement) {
+    public setPlayer(player: HTMLVideoElement): void {
         this.player = player;
+    }
+
+    public setCurrentTime(currentTime: number): void {
+        this.player.currentTime = currentTime;
+    }
+
+    public play(): void {
+        this.player.play();
     }
 }
