@@ -127,20 +127,7 @@
                     (click)="goToTimecode(timecode)" />
 
                 <div class="column">
-                    <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecode, timecodeTag)"
-                        title="Remove {{timecodeTag.tag.name}} tag from timecode">
-                        {{timecodeTag.tag.name}}
-                    </div>
-
-                    <div>{{formatPreciseDuration(timecode.start)}}-{{formatPreciseDuration(timecode.end)}}</div>
-
-                    <a (click)="playbackHasBeenStarted && screenshotTimecode(timecode)" title="Set screenshot" style="cursor: pointer;">
-                        <i class="fa fa-camera" aria-hidden="true"></i>
-                    </a>
-
-                    <a (click)="addTagToExistingTimecode(timecode)" title="Add another tag to timecode" style="cursor: pointer;">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                    </a>
+                    <app-timecode [file]="file" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
                 </div>
             </div>
         </div>

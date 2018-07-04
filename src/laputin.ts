@@ -120,10 +120,12 @@ export class Laputin {
                     timecode,
                     req.params.hash);
 
-                const screenshotTime = timecode.start + (timecode.end - timecode.start) * 0.66;
+                if (!timecode.timecodeId) {
+                    const screenshotTime = timecode.start + (timecode.end - timecode.start) * 0.66;
 
-                const screenshotter = new Screenshotter(this._libraryPath);
-                await screenshotter.screenshotTimecode(files[0], result, screenshotTime);
+                    const screenshotter = new Screenshotter(this._libraryPath);
+                    await screenshotter.screenshotTimecode(files[0], result, screenshotTime);
+                }
 
                 res.send(result);
             } else {

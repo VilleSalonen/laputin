@@ -1,0 +1,18 @@
+<div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecode, timecodeTag)"
+    title="Remove {{timecodeTag.tag.name}} tag from timecode">
+    {{timecodeTag.tag.name}}
+</div>
+
+<div>{{formatPreciseDuration(timecode.start)}}-{{formatPreciseDuration(timecode.end)}}</div>
+
+<a (click)="screenshotTimecode(timecode)" title="Set screenshot" style="cursor: pointer;">
+    <i class="fa fa-camera" aria-hidden="true"></i>
+</a>
+
+<a (click)="addingTags = true" title="Add another tag to timecode" style="cursor: pointer;">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+</a>
+
+<div *ngIf="addingTags">
+    <app-tag-autocomplete [tagContainer]="file" (select)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+</div>

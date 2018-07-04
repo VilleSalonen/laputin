@@ -9,6 +9,7 @@ import {FileChange, ChangeDirection} from './../models/filechange';
 import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
+import { PlayerService } from '../player.service';
 
 class MappedMouseEvent {
     constructor(public x: number, public y: number) {}
@@ -58,6 +59,7 @@ export class VideoPlayerComponent {
         }
 
         this.player = content.nativeElement;
+        this._playerService.setPlayer(this.player);
         this.cacheBuster = null;
 
         const playStart = Observable
@@ -252,7 +254,7 @@ export class VideoPlayerComponent {
     @Output()
     public fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
-    constructor(private _service: LaputinService) {
+    constructor(private _service: LaputinService, private _playerService: PlayerService) {
     }
 
     private setProgress(playPercent: number) {
@@ -524,44 +526,8 @@ export class VideoPlayerComponent {
         this.tagEnd = null;
     }
 
-    public async addTagToExistingTimecode(timecode: Timecode): Promise<void> {
-        const results: Timecode[] = [];
-        for (const tag of this.selectedTagsForTimecode) {
-            const clonedTimecode = _.cloneDeep(timecode);
-            clonedTimecode.timecodeTags = [
-                new TimecodeTag(null, timecode.timecodeId, tag)
-            ];
-            results.push(await this._service.createTagTimecode(this.file, clonedTimecode));
-        }
-
-        const timecodeTags = timecode.timecodeTags.slice();
-        for (const result of results) {
-            timecodeTags.push(result.timecodeTags[0]);
-        }
-
-        timecodeTags.sort((a, b) => {
-            if (a.tag.name < b.tag.name) {
-                return -1;
-            } else if (a.tag.name > b.tag.name) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        timecode.timecodeTags = timecodeTags;
-
-        this.selectedTagsForTimecode = [];
-    }
-
-    public async removeTagFromExistingTimecode(timecode: Timecode, timecodeTag: TimecodeTag): Promise<void> {
-        await this._service.deleteTimecodeTag(timecode, timecodeTag);
-
-        const timecodeTagsAfterDeletion = timecode.timecodeTags.filter(t => t.timecodeTagId !== timecodeTag.timecodeTagId);
-        if (timecodeTagsAfterDeletion.length === 0) {
-            this.timecodes = this.timecodes.filter(t => t.timecodeId !== timecode.timecodeId);
-        } else {
-            timecode.timecodeTags = timecodeTagsAfterDeletion;
-        }
+    public removeTimecode(timecode: Timecode): void {
+        this.timecodes = this.timecodes.filter(t => t.timecodeId !== timecode.timecodeId);
     }
 
     private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {

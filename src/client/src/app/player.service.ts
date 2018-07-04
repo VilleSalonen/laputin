@@ -6,8 +6,17 @@ import { Subject } from 'rxjs-compat/Subject';
 @Injectable()
 export class PlayerService {
     public filePlaying: Subject<File> = new Subject<File>();
+    public player: HTMLVideoElement = null;
 
     public setPlayingFile(file: File) {
         this.filePlaying.next(file);
+
+        if (!file) {
+            this.player = null;
+        }
+    }
+
+    public setPlayer(player: HTMLVideoElement) {
+        this.player = player;
     }
 }

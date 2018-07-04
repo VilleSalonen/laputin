@@ -23,6 +23,7 @@ import { TagRowComponent } from './tag-row/tag-row.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { LaputinService } from './laputin.service';
 import { PlayerService } from './player.service';
+import { TimecodeComponent } from './timecode/timecode.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { PlayerService } from './player.service';
     TagFilterPipe,
     TagRowComponent,
     TagsComponent,
+    TimecodeComponent,
     VideoPlayerComponent
   ],
   imports: [
