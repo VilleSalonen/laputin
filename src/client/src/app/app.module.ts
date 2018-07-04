@@ -24,6 +24,8 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { LaputinService } from './laputin.service';
 import { PlayerService } from './player.service';
 import { TimecodeComponent } from './timecode/timecode.component';
+import { TimecodesComponent } from './timecodes/timecodes.component';
+import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { TimecodeComponent } from './timecode/timecode.component';
     TagRowComponent,
     TagsComponent,
     TimecodeComponent,
+    TimecodeReadonlyComponent,
+    TimecodesComponent,
     VideoPlayerComponent
   ],
   imports: [
@@ -49,6 +53,7 @@ import { TimecodeComponent } from './timecode/timecode.component';
     RouterModule.forRoot([
       { path: '', redirectTo: 'files', pathMatch: 'full' },
       { path: 'files', component: FilesComponent },
+      { path: 'timecodes', component: TimecodesComponent },
       { path: 'tags', component: TagsComponent },
       { path: 'duplicates', component: DuplicatesComponent }
     ]),

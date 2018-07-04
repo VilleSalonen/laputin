@@ -1,0 +1,70 @@
+@import './../../styles/styles.scss';
+
+:host {
+    @include g-layout__row;
+    flex: 2;
+    overflow: auto;
+}
+
+.container {
+    @include g-layout__row;
+    flex: 2;
+    overflow: auto;
+    background: $color-primary-1;
+    padding: $standard-margin;
+}
+
+.player {
+    background: $color-primary-1;
+    flex-basis: 100%;
+    overflow: auto;
+}
+
+.files {
+    @include g-layout__column;
+
+    background: $color-primary-1;
+    flex-basis: 100%;
+    overflow: auto;
+}
+
+.files-list {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: $standard-margin;
+
+    overflow: auto;
+
+    margin-top: 0;
+    margin-bottom: $standard-margin;
+}
+
+.files-search {
+    overflow-y: auto;
+    padding: $standard-margin;
+}
+
+.full-height {
+    min-height: 100%;
+    max-height: 100%;
+}
+
+.files-table {
+    flex: 2;
+    overflow-y: scroll;
+}
+
+.row {
+    @include g-layout__row;
+}
+
+.hidden {
+    display: none;
+}
+
+virtual-scroll {
+    height: 100%;
+}

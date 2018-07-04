@@ -251,7 +251,7 @@ export class Library {
             timecodeTags.push(new TimecodeTag(timecodeId, stmt2.lastID, timecodeTag.tag));
         }
 
-        return new Timecode(timecodeId, hash, timecodeTags, timecode.start, timecode.end);
+        return new Timecode(timecodeId, hash, timecode.path, timecodeTags, timecode.start, timecode.end);
     }
 
     public async removeTagFromTimecode(hash: string, timecodeId: string, timecodeTagId: string) {
@@ -282,17 +282,20 @@ export class Library {
 
         const sql1 = `
             SELECT
-                id,
-                hash,
-                start,
-                end
+                files_timecodes.id,
+                files_timecodes.hash AS hash,
+                files.path,
+                files_timecodes.start,
+                files_timecodes.end
             FROM files_timecodes
-            WHERE hash = ?
+            JOIN files
+            ON files.hash = files_timecodes.hash
+            WHERE files_timecodes.hash = ?
             ORDER BY start
         `;
 
         const each1 = (err: Error, row: any) => {
-            timecodes.push(new Timecode(row.id, row.hash, [], row.start, row.end));
+            timecodes.push(new Timecode(row.id, row.hash, row.path, [], row.start, row.end));
         };
 
         const stmt1 = this._db.prepare(sql1);
@@ -312,7 +315,7 @@ export class Library {
             ON files_timecodes.id = files_timecodes_tags.timecode_id
             JOIN tags
             ON tags.id = files_timecodes_tags.tag_id
-            WHERE hash = ?
+            WHERE files_timecodes.hash = ?
             ORDER BY files_timecodes.start, tags.name
         `;
 
@@ -328,6 +331,57 @@ export class Library {
         const timecodesWithTags = timecodes.filter(t => t.timecodeTags.length > 0);
         return timecodesWithTags;
     }
+
+    public async getTimecodes(query: Query): Promise<Timecode[]> {
+        const timecodes: Timecode[] = [];
+
+        const sql1 = `
+            SELECT
+                files_timecodes.id,
+                files_timecodes.hash AS hash,
+                files.path,
+                files_timecodes.start,
+                files_timecodes.end
+            FROM files_timecodes
+            JOIN files
+            ON files.hash = files_timecodes.hash
+            ORDER BY files.hash, start
+        `;
+
+        const each1 = (err: Error, row: any) => {
+            timecodes.push(new Timecode(row.id, row.hash, row.path, [], row.start, row.end));
+        };
+
+        const stmt1 = this._db.prepare(sql1);
+        await stmt1.eachAsync([], each1);
+
+        const sql2 = `
+            SELECT
+                files_timecodes_tags.id AS id,
+                files_timecodes_tags.timecode_id AS timecode_id,
+                files_timecodes_tags.tag_id AS tag_id,
+                tags.name AS tag_name
+            FROM files_timecodes_tags
+            JOIN files_timecodes
+            ON files_timecodes.id = files_timecodes_tags.timecode_id
+            JOIN tags
+            ON tags.id = files_timecodes_tags.tag_id
+            ORDER BY files_timecodes.start, tags.name
+        `;
+
+        const each2 = (err: Error, row: any) => {
+            const timecode = timecodes.find(t => t.timecodeId === row.timecode_id);
+
+            timecode.timecodeTags.push(new TimecodeTag(row.timecode_id, row.id, new Tag(row.tag_id, row.tag_name, 0)));
+        };
+
+        const stmt2 = this._db.prepare(sql2);
+        await stmt2.eachAsync([], each2);
+
+        const timecodesWithTags = timecodes.filter(t => t.timecodeTags.length > 0);
+        return timecodesWithTags;
+    }
+
 
     public deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
         const stmt = this._db.prepare('DELETE FROM tags_files WHERE id = ? AND hash = ?');

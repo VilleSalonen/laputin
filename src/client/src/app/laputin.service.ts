@@ -33,6 +33,13 @@ export class LaputinService {
             }).toPromise();
     }
 
+    public queryTimecodes(query: FileQuery): Promise<Timecode[]> {
+        const params = this.compileParams(query);
+        return this._http.get(this._baseUrl + '/timecodes' + params)
+            .map(res => res.json())
+            .toPromise();
+    }
+
     public getTags(): Promise<Tag[]> {
         return this._http.get(this._baseUrl + '/tags')
             .map(res => res.json())

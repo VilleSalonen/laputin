@@ -515,6 +515,7 @@ export class VideoPlayerComponent {
         const tagTimecode = new Timecode(
             null,
             this.file.hash,
+            this.file.path,
             selectedTimecodeTags,
             tagStart,
             tagEnd);

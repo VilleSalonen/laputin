@@ -1,0 +1,8 @@
+<div class="container">
+    <div class="column">
+        <div *ngFor="let fileWithTimecodes of filesWithTimecodes">
+            <span>{{ fileWithTimecodes.path }}</span>
+            <app-timecode-readonly *ngFor="let timecode of fileWithTimecodes.timecodes" [timecode]="timecode" style="display: flex; margin-bottom: 12px;"></app-timecode-readonly>
+        </div>
+    </div>
+</div>

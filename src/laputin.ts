@@ -76,6 +76,11 @@ export class Laputin {
             res.send(files);
         });
 
+        api.route('/timecodes').get(async (req, res) => {
+            const timecodes = await this.library.getTimecodes(req.query);
+            res.send(timecodes);
+        });
+
         api.route('/tags').get(async (req, res) => {
             const tags = await this.library.getTags(req.query);
             res.send(tags);

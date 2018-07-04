@@ -11,6 +11,7 @@ import { File } from './models/file';
                 <ul class="nav">
                     <li><a routerLink="/">Laputin</a></li>
                     <li><a routerLink="/files">Files</a></li>
+                    <li><a routerLink="/timecodes">Timecodes</a></li>
                     <li><a routerLink="/tags">Tags</a></li>
                     <li><a routerLink="/duplicates">Duplicates</a></li>
 
