@@ -94,31 +94,65 @@
         </div>
 
         <div class="column sidebar">
-            <div class="row">
+            <div class="row" style="margin-bottom: 6px;">
                 <div class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)" title="Click to reset tag selection">
                     {{ tag.name }}
                 </div>
 
                 <app-tag-autocomplete [tagContainer]="file" (select)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+            </div>
 
-                <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="fas fa-stopwatch"></i>
-                </a>
-                <a (click)="goToTagStart()" title="Go to tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="far fa-dot-circle"></i>
-                </a>
+            <div class="row" style="margin-bottom: 6px;">
+                <input type="text" [(ngModel)]="tagStart" placeholder="Start time" />
 
-                <input type="text" [(ngModel)]="tagStart" />
+                <span style="margin-right: 0.5em;">
+                    <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="fas fa-stopwatch"></i>
+                    </a>
+                </span>
+                <span style="margin-right: 0.5em;">
+                    <a (click)="goToTagStart()" title="Go to tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="far fa-dot-circle"></i>
+                    </a>
+                </span>
+                <span style="margin-right: 0.5em;">
+                    <a (click)="moveStartTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="fas fa-caret-left"></i>
+                    </a>
+                </span>
+                <span style="margin-right: 0.5em;">
+                    <a (click)="moveStartTimeForward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="fas fa-caret-right"></i>
+                    </a>
+                </span>
+            </div>
 
-                <a (click)="setTagEnd()" title="Set tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="fas fa-stopwatch"></i>
-                </a>
-                <a (click)="goToTagEnd()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="far fa-dot-circle"></i>
-                </a>
+            <div class="row" style="margin-bottom: 6px;">
+                <input type="text" [(ngModel)]="tagEnd" placeholder="End time" />
 
-                <input type="text" [(ngModel)]="tagEnd" />
+                <span style="margin-right: 0.5em;">
+                    <a (click)="setTagEnd()" title="Set tag timecode end" style="cursor: pointer;">
+                        <i class="fas fa-stopwatch"></i>
+                    </a>
+                </span>
+                <span style="margin-right: 0.5em;">
+                    <a (click)="goToTagEnd()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="far fa-dot-circle"></i>
+                    </a>
+                </span>
+                <span style="margin-right: 0.5em;">
+                    <a (click)="moveEndTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="fas fa-caret-left"></i>
+                    </a>
+                </span>
+                <span style="margin-right: 0.5em;">
+                    <a (click)="moveEndTimeForward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                        <i class="fas fa-caret-right"></i>
+                    </a>
+                </span>
+            </div>
 
+            <div class="row">
                 <button (click)="saveTagTimecode()">Tallennapa</button>
             </div>
 

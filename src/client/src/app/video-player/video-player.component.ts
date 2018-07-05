@@ -315,7 +315,7 @@ export class VideoPlayerComponent {
         result += ':';
         result += (seconds >= 10) ? seconds : '0' + seconds;
         result += '.';
-        result += (milliseconds > 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
+        result += (milliseconds >= 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
 
         return result;
     }
@@ -376,6 +376,38 @@ export class VideoPlayerComponent {
 
     public largeStepForward(): void {
         this.player.currentTime += 60;
+    }
+
+    public moveStartTimeBackward(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 20.0);
+        this.setTagStart();
+    }
+
+    public moveStartTimeForward(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 20.0);
+        this.setTagStart();
+    }
+
+    public moveEndTimeBackward(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 20.0);
+        this.setTagEnd();
+    }
+
+    public moveEndTimeForward(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 20.0);
+        this.setTagEnd();
     }
 
     public goToPrevious(): void {
