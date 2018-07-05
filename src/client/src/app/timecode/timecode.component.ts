@@ -50,7 +50,7 @@ export class TimecodeComponent {
         result += ':';
         result += (seconds >= 10) ? seconds : '0' + seconds;
         result += '.';
-        result += (milliseconds > 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
+        result += (milliseconds >= 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
 
         return result;
     }
