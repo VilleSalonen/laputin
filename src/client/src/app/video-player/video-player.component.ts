@@ -384,6 +384,7 @@ export class VideoPlayerComponent {
             : this.player.currentTime;
         this.player.currentTime = currentTime - (1 / 20.0);
         this.setTagStart();
+        this.playbackHasBeenStarted = true;
     }
 
     public moveStartTimeForward(): void {
@@ -407,6 +408,38 @@ export class VideoPlayerComponent {
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
             : this.player.currentTime;
         this.player.currentTime = currentTime + (1 / 20.0);
+        this.setTagEnd();
+    }
+
+    public moveStartTimeBackwardMore(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 4.0);
+        this.setTagStart();
+    }
+
+    public moveStartTimeForwardMore(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 4.0);
+        this.setTagStart();
+    }
+
+    public moveEndTimeBackwardMore(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 4.0);
+        this.setTagEnd();
+    }
+
+    public moveEndTimeForwardMore(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 4.0);
         this.setTagEnd();
     }
 

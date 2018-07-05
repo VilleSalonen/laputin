@@ -1,6 +1,6 @@
 <div style="position: relative;">
     <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px; cursor: pointer;"
-        (click)="goToTimecode(timecode)" />
+        (click)="goToTimecode()" />
 
     <div style="position: absolute; left: 12px; bottom: 12px; color: white;">
         <i class="far fa-play-circle" aria-hidden="true"></i>
@@ -8,14 +8,17 @@
 </div>
 
 <div class="column">
-    <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecode, timecodeTag)"
-        title="Remove {{timecodeTag.tag.name}} tag from timecode">
+    <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)" title="Remove {{timecodeTag.tag.name}} tag from timecode">
         {{timecodeTag.tag.name}}
     </div>
 
-    <div>{{formatPreciseDuration(timecode.start)}}-{{formatPreciseDuration(timecode.end)}}</div>
+    <div class="row">
+        <a (click)="goToTimecodeStart()">{{formatPreciseDuration(timecode.start)}}</a>
+        <span>-</span>
+        <a (click)="goToTimecodeEnd()">{{formatPreciseDuration(timecode.end)}}</a>
+    </div>
 
-    <a (click)="screenshotTimecode(timecode)" title="Set screenshot" style="cursor: pointer;">
+    <a (click)="screenshotTimecode()" title="Set screenshot" style="cursor: pointer;">
         <i class="fa fa-camera" aria-hidden="true"></i>
     </a>
 

@@ -55,10 +55,10 @@ export class TimecodeComponent {
         return result;
     }
 
-    public async screenshotTimecode(timecode: Timecode): Promise<void> {
+    public async screenshotTimecode(): Promise<void> {
         if (this._playerService.player) {
-            await this._service.screenshotTimecode(this.file, timecode, this._playerService.player.currentTime);
-            timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+            await this._service.screenshotTimecode(this.file, this.timecode, this._playerService.player.currentTime);
+            this.timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
         }
     }
 
@@ -85,19 +85,27 @@ export class TimecodeComponent {
         this.addingTags = false;
     }
 
-    public async removeTagFromExistingTimecode(timecode: Timecode, timecodeTag: TimecodeTag): Promise<void> {
-        await this._service.deleteTimecodeTag(timecode, timecodeTag);
+    public async removeTagFromExistingTimecode(timecodeTag: TimecodeTag): Promise<void> {
+        await this._service.deleteTimecodeTag(this.timecode, timecodeTag);
 
-        const timecodeTagsAfterDeletion = timecode.timecodeTags.filter(t => t.timecodeTagId !== timecodeTag.timecodeTagId);
-        timecode.timecodeTags = timecodeTagsAfterDeletion;
+        const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(t => t.timecodeTagId !== timecodeTag.timecodeTagId);
+        this.timecode.timecodeTags = timecodeTagsAfterDeletion;
 
         if (timecodeTagsAfterDeletion.length === 0) {
             this.removed.next(this.timecode);
         }
     }
 
-    public goToTimecode(timecode: Timecode): void {
-        this._playerService.setCurrentTime(timecode.start);
+    public goToTimecode(): void {
+        this._playerService.setCurrentTime(this.timecode.start);
         this._playerService.play();
+    }
+
+    public goToTimecodeStart(): void {
+        this._playerService.setCurrentTime(this.timecode.start);
+    }
+
+    public goToTimecodeEnd(): void {
+        this._playerService.setCurrentTime(this.timecode.end);
     }
 }
