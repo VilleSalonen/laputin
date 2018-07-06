@@ -14,7 +14,9 @@ import { AutocompleteType } from '../models/autocompletetype';
     templateUrl: './file-search.component.html',
 })
 export class FileSearchComponent {
-    public query: FileQuery = new FileQuery();
+    @Input()
+    public query: FileQuery;
+
     private filenameChanged: Subject<string> = new Subject<string>();
 
     public AutocompleteType = AutocompleteType;

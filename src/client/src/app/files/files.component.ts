@@ -24,7 +24,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     public files: File[] = [];
     public viewPortItems: File[] = [];
     public loading = false;
-    private _query: FileQuery = new FileQuery();
+    private query: FileQuery;
 
     private sub: any;
 
@@ -36,6 +36,8 @@ export class FilesComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+        this.query = new FileQuery(JSON.parse(localStorage.getItem('query')));
+
         this.filesSubscription.subscribe((files: File[]) =>
             this.files = files
         );
@@ -83,18 +85,19 @@ export class FilesComponent implements OnInit, OnDestroy {
     }
 
     filterFiles(query: FileQuery): void {
-        this._query = query;
+        this.query = query;
         this.loadFiles();
     }
 
     openFiles(): void {
-        this._service.openFiles(this._query);
+        this._service.openFiles(this.query);
     }
 
     loadFiles(): void {
         this.filesSubscription.next([]);
         this.loading = true;
-        this._service.queryFiles(this._query).then((files: File[]) => {
+        this._service.queryFiles(this.query).then((files: File[]) => {
+            localStorage.setItem('query', JSON.stringify(this.query));
             this.filesSubscription.next(files);
             this.loading = false;
         });

@@ -173,18 +173,20 @@ export class LaputinService {
     private compileParams(query: FileQuery): string {
         const params: string[] = [];
 
-        if (query.filename) { params.push('filename=' + query.filename); }
-        if (query.status) { params.push('status=' + query.status); }
-        if (query.hash) { params.push('hash=' + query.hash); }
+        if (query) {
+            if (query.filename) { params.push('filename=' + query.filename); }
+            if (query.status) { params.push('status=' + query.status); }
+            if (query.hash) { params.push('hash=' + query.hash); }
 
-        if (query.andTags.length > 0) {
-            params.push('and=' + _.map(query.andTags, (tag: Tag) => tag.id).join(','));
-        }
-        if (query.orTags.length > 0) {
-            params.push('or=' + _.map(query.orTags, (tag: Tag) => tag.id).join(','));
-        }
-        if (query.notTags.length > 0) {
-            params.push('not=' + _.map(query.notTags, (tag: Tag) => tag.id).join(','));
+            if (query.andTags.length > 0) {
+                params.push('and=' + _.map(query.andTags, (tag: Tag) => tag.id).join(','));
+            }
+            if (query.orTags.length > 0) {
+                params.push('or=' + _.map(query.orTags, (tag: Tag) => tag.id).join(','));
+            }
+            if (query.notTags.length > 0) {
+                params.push('not=' + _.map(query.notTags, (tag: Tag) => tag.id).join(','));
+            }
         }
 
         let paramsStr = '';
