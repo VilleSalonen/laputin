@@ -1,0 +1,34 @@
+@import './../../styles/styles.scss';
+
+:host {
+    @include g-layout__row;
+    flex: 2;
+    overflow: auto;
+}
+
+.container {
+    background: $color-primary-1;
+    flex-basis: 100%;
+    overflow: auto;
+    padding: $standard-margin;
+}
+
+.hidden {
+    display: none;
+}
+
+.filename {
+    padding-bottom: 0;
+    font-weight: bold;
+}
+
+.filename-small {
+    margin: 0;
+    font-size: 14px;
+}
+
+.filename-big {
+    margin-top: 0;
+    margin-bottom: 0; 
+    font-size: 20px;
+}

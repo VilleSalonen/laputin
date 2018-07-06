@@ -1,0 +1,13 @@
+<div class="container">
+    <h1 [hidden]="duplicates.length == 0">Showing {{filteredDuplicates.length}} matching duplicates</h1>
+    <h1 [hidden]="duplicates.length > 0">No duplicates found</h1>
+
+    <div *ngFor="let duplicate of filteredDuplicates">
+        {{duplicate.hash}}
+        <ul>
+            <li *ngFor="let file of duplicate.files">
+                {{file.path}}
+            </li>
+        </ul>
+    </div>
+</div>
