@@ -34,7 +34,6 @@ export class TagAutocompleteComponent implements OnInit {
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         this.termCtrl.valueChanges
             .debounceTime(500)
-            .distinctUntilChanged()
             .map((value: any) => <string> value)
             .subscribe((value: string) => this.onValueChange(value));
     }
