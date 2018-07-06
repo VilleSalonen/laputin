@@ -29,10 +29,7 @@ export class SearchBoxComponent {
 
         if ($event.which === ENTER) {
             this.update.emit(this.term);
-
-            if (this.clearOnEnter === 1) {
-                this.clear();
-            }
+            this.clear();
         }
 
         if ($event.which === ESC) {
