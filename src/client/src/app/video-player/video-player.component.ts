@@ -460,7 +460,7 @@ export class VideoPlayerComponent {
     }
 
     private emitChange(direction: ChangeDirection): void {
-        this.fileChange.emit(new FileChange(direction, this.random));
+        this.fileChange.emit(new FileChange(this.file, direction, this.random));
         this.playing = false;
     }
 

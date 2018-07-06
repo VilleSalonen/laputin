@@ -18,7 +18,7 @@
 
             <virtual-scroll [items]="files" (update)="viewPortItems = $event">
                 <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px;">
-                    <app-file [file]="file" [active]="activeFile === file" (selected)="selectFile($event)"></app-file>
+                    <app-file [file]="file"></app-file>
                 </div>
             </virtual-scroll>
         </div>

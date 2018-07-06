@@ -17,12 +17,6 @@ export class FileComponent {
     @Input()
     public file: File;
 
-    @Input()
-    public active: boolean;
-
-    @Output()
-    public selected: EventEmitter<File> = new EventEmitter<File>();
-
     public cacheBuster: string;
 
     constructor(private _service: LaputinService) {
@@ -35,9 +29,5 @@ export class FileComponent {
 
     public formattedTags(file: File): string {
         return _.map(file.tags, (tag) => tag.name).join(', ');
-    }
-
-    public select(): void {
-        this.selected.emit(this.file);
     }
 }

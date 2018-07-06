@@ -55,6 +55,7 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
     RouterModule.forRoot([
       { path: '', redirectTo: 'files', pathMatch: 'full' },
       { path: 'files', component: FilesComponent },
+      { path: 'files/:hash', component: FilesComponent },
       { path: 'timecodes', component: TimecodesComponent },
       { path: 'tags', component: TagsComponent },
       { path: 'duplicates', component: DuplicatesComponent }

@@ -34,12 +34,12 @@ export class TimecodesComponent implements OnInit {
         this._service.queryTimecodes(this._query).then((timecodes: Timecode[]) => {
             const timecodesByFiles = _.groupBy(timecodes, (t: Timecode) => t.path);
 
-            const bar: FileWithTimecodes[] = [];
-            _.forOwn(timecodesByFiles, foo => {
-                bar.push(new FileWithTimecodes(foo[0].path, foo));
+            const filesWithTimecodes: FileWithTimecodes[] = [];
+            _.forOwn(timecodesByFiles, timecode => {
+                filesWithTimecodes.push(new FileWithTimecodes(timecode[0].path, timecode[0].hash, timecode));
             });
 
-            this.filesWithTimecodes = bar;
+            this.filesWithTimecodes = filesWithTimecodes;
             this.loading = false;
         });
     }
@@ -51,6 +51,6 @@ export class TimecodesComponent implements OnInit {
 }
 
 class FileWithTimecodes {
-    constructor(public path: string, public timecodes: Timecode[]) {
+    constructor(public path: string, public hash: string, public timecodes: Timecode[]) {
     }
 }
