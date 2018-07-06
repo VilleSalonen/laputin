@@ -9,39 +9,17 @@ import { Subject } from 'rxjs/Subject';
 import { AutocompleteType } from '../models/autocompletetype';
 
 @Component({
-    selector: 'app-file-search',
-    styleUrls: ['./file-search.component.scss'],
-    templateUrl: './file-search.component.html',
+    selector: 'app-timecode-search',
+    styleUrls: ['./timecode-search.component.scss'],
+    templateUrl: './timecode-search.component.html',
 })
-export class FileSearchComponent {
-    @Input()
-    public query: FileQuery;
-
-    private filenameChanged: Subject<string> = new Subject<string>();
+export class TimecodeSearchComponent {
+    public query: FileQuery = new FileQuery();
 
     public AutocompleteType = AutocompleteType;
 
     @Output()
     public update: EventEmitter<FileQuery> = new EventEmitter<FileQuery>();
-
-    constructor() {
-        this.filenameChanged
-            .debounceTime(300)
-            .distinctUntilChanged()
-            .subscribe(model => {
-                this.query.filename = model;
-                this.update.emit(this.query);
-            });
-    }
-
-    onFilenameChanged(newFilename: string): void {
-        this.filenameChanged.next(newFilename);
-    }
-
-    onStatusChanged(newStatus: string): void {
-        this.query.status = newStatus;
-        this.update.emit(this.query);
-    }
 
     submitClicked(event: Event): void {
         event.preventDefault();

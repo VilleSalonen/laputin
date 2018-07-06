@@ -16,8 +16,17 @@ export class FileQuery implements TagContainer {
         return _.union(this.andTags, this.orTags, this.notTags);
     }
 
-    constructor() {
+    constructor(values?: any) {
         this.clear();
+
+        if (values) {
+            this.filename = values.filename;
+            this.status = values.status;
+            this.hash = values.hash;
+            this.andTags = values.andTags;
+            this.orTags = values.orTags;
+            this.notTags = values.notTags;
+        }
     }
 
     public andTag(tag: Tag) {

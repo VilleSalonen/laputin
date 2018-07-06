@@ -6,7 +6,7 @@ import {Http, HttpModule, Headers, Response} from '@angular/http';
 import * as _ from 'lodash';
 
 import {File} from './models/file';
-import {Tag} from './models/tag';
+import {Tag, Timecode, TimecodeTag} from './models/tag';
 import {FileQuery} from './models/filequery';
 import {Duplicate} from './models/duplicate';
 
@@ -33,6 +33,13 @@ export class LaputinService {
             }).toPromise();
     }
 
+    public queryTimecodes(query: FileQuery): Promise<Timecode[]> {
+        const params = this.compileParams(query);
+        return this._http.get(this._baseUrl + '/timecodes' + params)
+            .map(res => res.json())
+            .toPromise();
+    }
+
     public getTags(): Promise<Tag[]> {
         return this._http.get(this._baseUrl + '/tags')
             .map(res => res.json())
@@ -45,6 +52,31 @@ export class LaputinService {
             }).toPromise();
     }
 
+    public getTimecodes(file: File): Promise<Timecode[]> {
+        return this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
+            .map(res => res.json())
+            .toPromise();
+    }
+
+    public async createTagTimecode(file: File, timecode: Timecode): Promise<Timecode> {
+        const body = JSON.stringify({ timecode: timecode });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        return await this._http
+            .post(this._baseUrl + '/files/' + file.hash + '/timecodes', body, { headers: headers })
+            .map(res => res.json())
+            .toPromise();
+    }
+
+    public async deleteTimecodeTag(timecode: Timecode, timecodeTag: TimecodeTag): Promise<Response> {
+        const body = JSON.stringify({ timecode: timecode });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        return await this._http.delete(
+            this._baseUrl + '/files/' + timecode.hash + '/timecodes/' + timecode.timecodeId + '/tags/' + timecodeTag.timecodeTagId)
+            .toPromise();
+    }
+
     public getDuplicates(): Promise<Duplicate[]> {
         return this._http.get(this._baseUrl + '/duplicates')
             .map(res => res.json())
@@ -55,7 +87,7 @@ export class LaputinService {
 
                 for (const hash of hashes) {
                     const current = duplicates[hash];
-                    const files = current.map((file: any) => new File(file.hash, file.path, file.name, []));
+                    const files = current.map((file: any) => new File(file.hash, file.path, []));
                     result.push(new Duplicate(hash, files));
                 }
                 return result;
@@ -71,7 +103,7 @@ export class LaputinService {
     }
 
     private _convertFile(file: any): File {
-        return new File(file.hash, file.path, file.name, this._convertTags(file.tags));
+        return new File(file.hash, file.path, this._convertTags(file.tags));
     }
 
     public screenshotFile(file: File, timeInSeconds: number): void {
@@ -83,6 +115,15 @@ export class LaputinService {
             .subscribe(() => {
                 this.thumbnailChanged.next(file);
             });
+    }
+
+    public screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<Response> {
+        const body = JSON.stringify({ hash: file.hash, timecode: timecode, time: timeInSeconds });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        return this._http
+            .post(this._baseUrl + '/screenshotTimecode', body, { headers: headers })
+            .toPromise();
     }
 
     public openFiles(query: FileQuery): Promise<Response> {
@@ -132,18 +173,20 @@ export class LaputinService {
     private compileParams(query: FileQuery): string {
         const params: string[] = [];
 
-        if (query.filename) { params.push('filename=' + query.filename); }
-        if (query.status) { params.push('status=' + query.status); }
-        if (query.hash) { params.push('hash=' + query.hash); }
+        if (query) {
+            if (query.filename) { params.push('filename=' + query.filename); }
+            if (query.status) { params.push('status=' + query.status); }
+            if (query.hash) { params.push('hash=' + query.hash); }
 
-        if (query.andTags.length > 0) {
-            params.push('and=' + _.map(query.andTags, (tag: Tag) => tag.id).join(','));
-        }
-        if (query.orTags.length > 0) {
-            params.push('or=' + _.map(query.orTags, (tag: Tag) => tag.id).join(','));
-        }
-        if (query.notTags.length > 0) {
-            params.push('not=' + _.map(query.notTags, (tag: Tag) => tag.id).join(','));
+            if (query.andTags.length > 0) {
+                params.push('and=' + _.map(query.andTags, (tag: Tag) => tag.id).join(','));
+            }
+            if (query.orTags.length > 0) {
+                params.push('or=' + _.map(query.orTags, (tag: Tag) => tag.id).join(','));
+            }
+            if (query.notTags.length > 0) {
+                params.push('not=' + _.map(query.notTags, (tag: Tag) => tag.id).join(','));
+            }
         }
 
         let paramsStr = '';

@@ -22,6 +22,11 @@ import { TagFilterPipe } from './tag-filter.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { LaputinService } from './laputin.service';
+import { PlayerService } from './player.service';
+import { TimecodeComponent } from './timecode/timecode.component';
+import { TimecodesComponent } from './timecodes/timecodes.component';
+import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly.component';
+import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +41,10 @@ import { LaputinService } from './laputin.service';
     TagFilterPipe,
     TagRowComponent,
     TagsComponent,
+    TimecodeComponent,
+    TimecodeReadonlyComponent,
+    TimecodesComponent,
+    TimecodeSearchComponent,
     VideoPlayerComponent
   ],
   imports: [
@@ -46,12 +55,14 @@ import { LaputinService } from './laputin.service';
     RouterModule.forRoot([
       { path: '', redirectTo: 'files', pathMatch: 'full' },
       { path: 'files', component: FilesComponent },
+      { path: 'files/:hash', component: FilesComponent },
+      { path: 'timecodes', component: TimecodesComponent },
       { path: 'tags', component: TagsComponent },
       { path: 'duplicates', component: DuplicatesComponent }
     ]),
     VirtualScrollModule
   ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService, PlayerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

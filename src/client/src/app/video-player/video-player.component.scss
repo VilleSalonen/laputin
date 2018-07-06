@@ -39,6 +39,7 @@ video, .video-hero-shot, img {
     max-height: 100%;
     min-height: 100%;
     background: $color-primary-1;
+    width: 1000px;
 }
 
 .full-screen .player-view {
@@ -46,7 +47,6 @@ video, .video-hero-shot, img {
 }
 
 .player, .tagging {
-    flex-basis: 50%;
     padding: $standard-margin;
 }
 
@@ -138,4 +138,25 @@ video, .video-hero-shot, img {
 
 .fa {
     cursor: pointer;
+}
+
+input, select {
+    @include rounded-borders;
+
+    background: $color-complement-1;
+    color: $color-primary-4;
+    font-size: 1.2em;
+}
+
+input::placeholder {
+    color: $color-complement-2;
+    opacity: 1;
+}
+
+.sidebar {
+    padding: $standard-margin;
+}
+
+a, a:hover {
+    color: $color-primary-4;
 }

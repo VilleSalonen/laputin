@@ -7,9 +7,11 @@
 }
 
 .container {
-    @include g-layout__row;
+    @include g-layout__column;
     flex: 2;
     overflow: auto;
+    background: $color-primary-1;
+    padding: $standard-margin;
 }
 
 .player {
@@ -65,4 +67,25 @@
 
 virtual-scroll {
     height: 100%;
+}
+
+a, a:hover {
+    color: $color-primary-4;
+    text-decoration: none;
+}
+
+.filename {
+    padding-bottom: 0;
+    font-weight: bold;
+}
+
+.filename-small {
+    margin: 0;
+    font-size: 14px;
+}
+
+.filename-big {
+    margin-top: 0;
+    margin-bottom: 0; 
+    font-size: 20px;
 }

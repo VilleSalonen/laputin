@@ -6,8 +6,10 @@ import { Observable } from 'rxjs/Rx';
 import {File} from './../models/file';
 import {FileQuery} from './../models/filequery';
 import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag} from './../models/tag';
+import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
+import { AutocompleteType } from '../models/autocompletetype';
+import { PlayerService } from '../player.service';
 
 class MappedMouseEvent {
     constructor(public x: number, public y: number) {}
@@ -29,6 +31,7 @@ export class VideoPlayerComponent {
     public cacheBuster: string;
 
     public tagCreationOpen = false;
+    public AutocompleteType = AutocompleteType;
 
     private player: HTMLVideoElement;
 
@@ -56,35 +59,54 @@ export class VideoPlayerComponent {
         }
 
         this.player = content.nativeElement;
+        this._playerService.setPlayer(this.player);
         this.cacheBuster = null;
 
-        const playStart = Observable.fromEvent(this.player, 'playing');
-        const paused = Observable.fromEvent(this.player, 'pause');
-        const ended = Observable.fromEvent(this.player, 'ended');
+        const playStart = Observable
+            .fromEvent(this.player, 'playing')
+            .takeUntil(this.fileClosed);
+        const paused = Observable
+            .fromEvent(this.player, 'pause')
+            .takeUntil(this.fileClosed);
+        const ended = Observable
+            .fromEvent(this.player, 'ended')
+            .takeUntil(this.fileClosed);
         const playEnd = paused.merge(ended);
 
-        const playerDoubleClicked = Observable.fromEvent(this.player, 'dblclick');
+        const playerDoubleClicked = Observable
+            .fromEvent(this.player, 'dblclick')
+            .takeUntil(this.fileClosed);
         playerDoubleClicked.subscribe(() => this.toggleFullScreen());
 
         playStart.subscribe(() => this.playing = true);
         playEnd.subscribe(() => this.playing = false);
 
-        const mouseDowns = Observable.fromEvent(this.playhead.nativeElement, 'mousedown');
-        const mouseMoves = Observable.fromEvent(window, 'mousemove');
-        const mouseUps = Observable.fromEvent(window, 'mouseup');
+        const mouseDowns = Observable
+            .fromEvent(this.playhead.nativeElement, 'mousedown')
+            .takeUntil(this.fileClosed);
+        const mouseMoves = Observable
+            .fromEvent(window, 'mousemove')
+            .takeUntil(this.fileClosed);
+        const mouseUps = Observable
+            .fromEvent(window, 'mouseup')
+            .takeUntil(this.fileClosed);
 
-        const timeUpdates = Observable.fromEvent(this.player, 'timeupdate')
+        const timeUpdates = Observable
+            .fromEvent(this.player, 'timeupdate')
+            .takeUntil(this.fileClosed)
             .throttleTime(500)
             .map(() => this.player.currentTime / this.player.duration);
 
-        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click').map((event: MouseEvent) => {
-            event.preventDefault();
+        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click')
+            .takeUntil(this.fileClosed)
+            .map((event: MouseEvent) => {
+                event.preventDefault();
 
-            const timelineBoundingRect = this.getTimelineBoundingRect();
-            const timelineWidth = this.cachedTimelineWidth;
+                const timelineBoundingRect = this.getTimelineBoundingRect();
+                const timelineWidth = this.cachedTimelineWidth;
 
-            return this.clickPercent(event.clientX, timelineBoundingRect, timelineWidth);
-        });
+                return this.clickPercent(event.clientX, timelineBoundingRect, timelineWidth);
+            });
 
         const drags = mouseDowns.concatMap(() => {
             const timelineBoundingRect = this.getTimelineBoundingRect();
@@ -104,7 +126,7 @@ export class VideoPlayerComponent {
         drags
             .subscribe((playPercent: number) => this.setPlayheadTo(playPercent));
         drags
-            .throttleTime(50)
+            .debounceTime(50)
             .subscribe((playPercent: number) => this.setProgress(playPercent));
 
         timeUpdates
@@ -122,29 +144,37 @@ export class VideoPlayerComponent {
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
-        Observable.fromEvent(this.player, 'durationchange').subscribe(() => {
-            this.playbackHasBeenStarted = false;
-            this.playing = false;
-            this.duration = this.formatDuration(this.player.duration);
-            this.updateProgress(0);
+        Observable.fromEvent(this.player, 'durationchange')
+            .takeUntil(this.fileClosed)
+            .subscribe(() => {
+                this._service.getTimecodes(this.file).then((timecodes) => this.timecodes = timecodes);
 
-            if (this.player.videoWidth && this.player.videoHeight) {
-                this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
-            }
-        });
+                this.playbackHasBeenStarted = false;
+                this.playing = false;
+                this.duration = this.formatDuration(this.player.duration);
+                this.updateProgress(0);
 
-        Observable.fromEvent(window, 'webkitfullscreenchange').subscribe((event) => {
-            this.isFullScreen = !this.isFullScreen;
+                if (this.player.videoWidth && this.player.videoHeight) {
+                    this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
+                }
+            });
 
-            // We have to reset playhead because it might be further right than
-            // the new timeline width allows.
-            this.setPlayheadTo(0);
-            this.resetCache();
-            this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-            this.updateProgress(this.player.currentTime / this.player.duration);
-        });
+        Observable.fromEvent(window, 'webkitfullscreenchange')
+            .takeUntil(this.fileClosed)
+            .subscribe((event) => {
+                this.isFullScreen = !this.isFullScreen;
 
-        const windowKeyups = Observable.fromEvent(window, 'keyup');
+                // We have to reset playhead because it might be further right than
+                // the new timeline width allows.
+                this.setPlayheadTo(0);
+                this.resetCache();
+                this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+                this.updateProgress(this.player.currentTime / this.player.duration);
+            });
+
+        const windowKeyups = Observable
+            .fromEvent(window, 'keyup')
+            .takeUntil(this.fileClosed);
 
         windowKeyups
             .subscribe((event: KeyboardEvent) => {
@@ -214,10 +244,17 @@ export class VideoPlayerComponent {
 
     @Input() file: File;
 
+    public timecodes: Timecode[];
+    public selectedTagsForTimecode: Tag[] = [];
+    public tagStart: string;
+    public tagEnd: string;
+
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
+    @Output()
+    public fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
-    constructor(private _service: LaputinService) {
+    constructor(private _service: LaputinService, private _playerService: PlayerService) {
     }
 
     private setProgress(playPercent: number) {
@@ -262,6 +299,27 @@ export class VideoPlayerComponent {
         return result;
     }
 
+    private formatPreciseDuration(durationInSeconds: number): string {
+        const duration = moment.duration(durationInSeconds, 'seconds');
+
+        let result = '';
+
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
+        const milliseconds = parseInt(duration.milliseconds().toFixed(0), 10);
+
+        result += ((hours >= 10) ? hours : '0' + hours);
+        result += ':';
+        result += (minutes >= 10) ? minutes : '0' + minutes;
+        result += ':';
+        result += (seconds >= 10) ? seconds : '0' + seconds;
+        result += '.';
+        result += (milliseconds >= 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
+
+        return result;
+    }
+
     private getTimelineBoundingRect() {
         if (!this.cachedTimelineBoundingClientRect) {
             this.cachedTimelineBoundingClientRect = this.timeline.nativeElement.getBoundingClientRect();
@@ -284,16 +342,8 @@ export class VideoPlayerComponent {
         this.playhead.nativeElement.style.marginLeft = leftMargin + 'px';
     }
 
-    public directory(): string {
-        return this.file.path.replace(this.file.name, '').replace(/\//g, '\\');
-    }
-
-    public nameSansSuffix(): string {
-        return this.file.name.substr(0, this.file.name.lastIndexOf('.'));
-    }
-
-    public suffix(): string {
-        return this.file.name.substr(this.file.name.lastIndexOf('.'));
+    public close(): void {
+        this.fileClosed.emit();
     }
 
     public play(): void {
@@ -328,6 +378,71 @@ export class VideoPlayerComponent {
         this.player.currentTime += 60;
     }
 
+    public moveStartTimeBackward(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 20.0);
+        this.setTagStart();
+        this.playbackHasBeenStarted = true;
+    }
+
+    public moveStartTimeForward(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 20.0);
+        this.setTagStart();
+    }
+
+    public moveEndTimeBackward(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 20.0);
+        this.setTagEnd();
+    }
+
+    public moveEndTimeForward(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 20.0);
+        this.setTagEnd();
+    }
+
+    public moveStartTimeBackwardMore(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 4.0);
+        this.setTagStart();
+    }
+
+    public moveStartTimeForwardMore(): void {
+        const currentTime: number = this.tagStart
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 4.0);
+        this.setTagStart();
+    }
+
+    public moveEndTimeBackwardMore(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime - (1 / 4.0);
+        this.setTagEnd();
+    }
+
+    public moveEndTimeForwardMore(): void {
+        const currentTime: number = this.tagEnd
+            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+            : this.player.currentTime;
+        this.player.currentTime = currentTime + (1 / 4.0);
+        this.setTagEnd();
+    }
+
     public goToPrevious(): void {
         this.emitChange(ChangeDirection.Previous);
     }
@@ -345,7 +460,7 @@ export class VideoPlayerComponent {
     }
 
     private emitChange(direction: ChangeDirection): void {
-        this.fileChange.emit(new FileChange(direction, this.random));
+        this.fileChange.emit(new FileChange(this.file, direction, this.random));
         this.playing = false;
     }
 
@@ -399,6 +514,11 @@ export class VideoPlayerComponent {
         }, 1000);
     }
 
+    public async screenshotTimecode(timecode: Timecode): Promise<void> {
+        await this._service.screenshotTimecode(this.file, timecode, this.player.currentTime);
+        timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+    }
+
     public copy(): void {
         localStorage.setItem('tagClipboard', JSON.stringify(this.file.tags));
     }
@@ -406,5 +526,92 @@ export class VideoPlayerComponent {
     public paste(): void {
         const tags = JSON.parse(localStorage.getItem('tagClipboard'));
         this.addTags(tags);
+    }
+
+    public goToTimecode(timecode: Timecode): void {
+        this.player.currentTime = timecode.start;
+        this.play();
+    }
+
+    public addTagSelectionToTimecode(tag: Tag): void {
+        this.selectedTagsForTimecode.push(tag);
+    }
+
+    public removeTagSelectionFromTimecode(tag: Tag): void {
+        this.selectedTagsForTimecode = this.selectedTagsForTimecode.filter(t => t.id !== tag.id);
+    }
+
+    public setTagStart(): void {
+        this.tagStart = this.formatPreciseDuration(this.player.currentTime);
+    }
+
+    public setTagEnd(): void {
+        this.tagEnd = this.formatPreciseDuration(this.player.currentTime);
+    }
+
+    public goToTagStart(): void {
+        if (!this.tagStart) {
+            return;
+        }
+
+        this.player.currentTime = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
+        if (!this.playing) {
+            this.play();
+        }
+    }
+
+    public goToTagEnd(): void {
+        if (!this.tagEnd) {
+            return;
+        }
+
+        this.player.currentTime = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
+        if (!this.playing) {
+            this.play();
+        }
+    }
+
+    public async saveTagTimecode(): Promise<void> {
+        const tagStart = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
+        const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
+
+        const selectedTimecodeTags = this.selectedTagsForTimecode.map(t => new TimecodeTag(null, null, t));
+
+        const tagTimecode = new Timecode(
+            null,
+            this.file.hash,
+            this.file.path,
+            selectedTimecodeTags,
+            tagStart,
+            tagEnd);
+        const result = await this._service.createTagTimecode(this.file, tagTimecode);
+        this.addTagTimecode(result);
+
+        this.selectedTagsForTimecode = [];
+        this.tagStart = null;
+        this.tagEnd = null;
+    }
+
+    public removeTimecode(timecode: Timecode): void {
+        this.timecodes = this.timecodes.filter(t => t.timecodeId !== timecode.timecodeId);
+    }
+
+    private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {
+        return moment.duration(separatedTimecode).asSeconds();
+    }
+
+    private addTagTimecode(timecode: Timecode): void {
+        const timecodes = this.timecodes.slice();
+        timecodes.push(timecode);
+        timecodes.sort((a, b) => {
+            if (a.start < b.start) {
+                return -1;
+            } else if (a.start > b.start) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        this.timecodes = timecodes;
     }
 }

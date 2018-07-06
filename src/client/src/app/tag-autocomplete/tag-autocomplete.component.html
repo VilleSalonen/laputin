@@ -1,16 +1,8 @@
 <div>
-    <input
-            type="text"
-            [formControl]="termCtrl"
-            (keyup)="onKeyUp($event)"
-            (blur)="clear()"
-            placeholder="Tags">
+    <input type="text" [formControl]="termCtrl" (keyup)="onKeyUp($event)" placeholder="Tags">
     <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
         <ul class="typeahead-list" role="menu">
-            <li *ngFor="let tag of matchingTags; let i = index"
-                (click)="mouseSelection(tag)"
-                (mouseover)="selectedIndex = i"
-                [class]="selectedIndex == i ? 'hover' : ''">
+            <li *ngFor="let tag of matchingTags; let i = index" (click)="mouseSelection(tag)" (mouseover)="selectedIndex = i" [class]="selectedIndex == i ? 'hover' : ''">
                 {{tag.name}}
             </li>
         </ul>

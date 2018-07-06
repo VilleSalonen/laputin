@@ -1,13 +1,17 @@
-<div style="display: flex;">
-    <div style="width: 200px; max-width: 200px; margin-right: 12px; margin-top: auto; margin-bottom: auto;">
-        <img src="/laputin/thumbs-small/{{file.hash}}.jpg{{cacheBuster}}" style="max-width: 200px;" />
+<a [routerLink]="['/files', file.hash]">
+    <div style="display: flex;">
+        <div style="width: 200px; max-width: 200px; margin-right: 12px; margin-top: auto; margin-bottom: auto;">
+            <img src="/laputin/thumbs-small/{{file.hash}}.jpg{{cacheBuster}}" style="max-width: 200px;" />
+        </div>
+        <div>
+            <div class="filename">
+                <span class="filename-small">{{file.directory()}}</span>
+                <br />
+                <span class="filename-big">{{file.nameSansSuffix()}}</span>
+                <span class="filename-small">{{file.suffix()}}</span>
+            </div>
+
+            <p>{{formattedTags(file)}}</p>
+        </div>
     </div>
-    <div>
-        <p *ngIf="active" class="active-file">
-            <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
-            {{file.path}}
-        </p>
-        <p *ngIf="!active" (click)="select()" class="inactive-file">{{file.path}}</p>
-        <p>{{formattedTags(file)}}</p>
-    </div>
-</div>
+</a>

@@ -1,64 +1,83 @@
-import {Component, OnInit, Injectable, Inject} from '@angular/core';
+import { Component, OnInit, Injectable, Inject, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 
-import {File} from './../models/file';
-import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag} from './../models/tag';
-import {FileQuery} from './../models/filequery';
-import {LaputinService} from './../laputin.service';
+import { File } from './../models/file';
+import { FileChange, ChangeDirection } from './../models/filechange';
+import { Tag } from './../models/tag';
+import { FileQuery } from './../models/filequery';
+import { LaputinService } from './../laputin.service';
+import { PlayerService } from '../player.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 
 @Component({
     styleUrls: ['./files.component.scss'],
-    template: `
-        <div class="container">
-            <div class="files full-height">
-                <div class="files-search">
-                    <app-file-search (update)="filterFiles($event)"></app-file-search>
-
-                    <h2 style="margin-top: 0; margin-bottom: 0;">
-                        Showing {{files.length}} matching files
-                        <a (click)="openFiles()" title="Open in external player">
-                            <i class="fa fa-film" aria-hidden="true"></i>
-                        </a>
-                    </h2>
-                </div>
-
-                <div class="files-list" style="flex-grow: 1;">
-                    <div [ngClass]="{'hidden': !loading}">
-                        <i class="fa fa-spinner"></i>
-                    </div>
-
-                    <virtual-scroll [items]="files" (update)="viewPortItems = $event">
-                        <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px; direction: ltr;">
-                            <app-file [file]="file" [active]="activeFile === file" (selected)="selectFile($event)"></app-file>
-                        </div>
-                    </virtual-scroll>
-                </div>
-            </div>
-
-            <div class="player full-height">
-                <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
-            </div>
-        </div>
-    `
+    templateUrl: './files.component.html'
 })
 @Injectable()
-export class FilesComponent implements OnInit {
+export class FilesComponent implements OnInit, OnDestroy {
+    public allFilesSubscription: Subject<File[]> = new Subject<File[]>();
+    public filesSubscription: Subject<File[]> = new Subject<File[]>();
+    public hashParamSubscription: Subject<string> = new Subject<string>();
+
     public activeFile: File;
     public files: File[] = [];
     public viewPortItems: File[] = [];
     public loading = false;
-    private _query: FileQuery = new FileQuery();
+    public query: FileQuery;
 
-    constructor(private _service: LaputinService) {
-    }
+    private sub: any;
+
+    constructor(
+        private _service: LaputinService,
+        private _playerService: PlayerService,
+        private route: ActivatedRoute,
+        private router: Router
+    ) {}
 
     ngOnInit(): void {
+        this.query = new FileQuery(JSON.parse(localStorage.getItem('query')));
+
+        this.filesSubscription.subscribe((files: File[]) =>
+            this.files = files
+        );
+
+        this._service.queryFiles(new FileQuery()).then((files: File[]) => {
+            this.allFilesSubscription.next(files);
+        });
+
+        this.filesSubscription.combineLatest(this.allFilesSubscription, this.hashParamSubscription)
+            .subscribe(([files, allFiles, hashParam]) => {
+                if (hashParam) {
+                    let selectedFile = _.find(files, f => f.hash === hashParam);
+                    if (!selectedFile) {
+                        selectedFile = _.find(allFiles, f => f.hash === hashParam);
+                    }
+
+                    if (selectedFile) {
+                        this.selectFile(selectedFile);
+                    }
+                } else {
+                    this.closeFile();
+                }
+            });
+
         this.loadFiles();
+
+        this.sub = this.route.params.subscribe(params => {
+            this.hashParamSubscription.next(params['hash']);
+        });
+
+
+    }
+
+    ngOnDestroy(): void {
+        this.sub.unsubscribe();
     }
 
     changeActiveFile(fileChange: FileChange): void {
-        const activeIndex = this.files.indexOf(this.activeFile);
+        const activeIndex = this.files.indexOf(fileChange.currentFile);
 
         let newIndex: number;
         if (fileChange.random) {
@@ -72,36 +91,40 @@ export class FilesComponent implements OnInit {
         }
 
         if (newIndex < 0 || newIndex >= this.files.length) {
-            this.activeFile = this.files[0];
+            this.selectFile(this.files[0]);
         } else {
-            this.activeFile = this.files[newIndex];
+            this.selectFile(this.files[newIndex]);
         }
     }
 
     filterFiles(query: FileQuery): void {
-        this._query = query;
+        this.query = query;
         this.loadFiles();
     }
 
     openFiles(): void {
-        this._service.openFiles(this._query);
+        this._service.openFiles(this.query);
     }
 
     loadFiles(): void {
-        this.files = [];
+        this.filesSubscription.next([]);
         this.loading = true;
-        this._service.queryFiles(this._query).then((files: File[]) => {
-            this.files = files;
-
-            if (this.files) {
-                this.activeFile = files[0];
-            }
-
+        this._service.queryFiles(this.query).then((files: File[]) => {
+            localStorage.setItem('query', JSON.stringify(this.query));
+            this.filesSubscription.next(files);
             this.loading = false;
         });
     }
 
     selectFile(file: File): void {
         this.activeFile = file;
+
+        if (file) {
+            this.router.navigate(['/files', file.hash]);
+        }
+    }
+
+    closeFile(): void {
+        this.router.navigate(['/files']);
     }
 }

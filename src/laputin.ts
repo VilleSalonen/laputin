@@ -9,7 +9,7 @@ import {Library} from './library';
 import {FileLibrary} from './filelibrary';
 import {VLCOpener} from './vlcopener';
 import {File} from './file';
-import {Tag} from './tag';
+import {Tag, Timecode} from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
 
@@ -76,6 +76,11 @@ export class Laputin {
             res.send(files);
         });
 
+        api.route('/timecodes').get(async (req, res) => {
+            const timecodes = await this.library.getTimecodes(req.query);
+            res.send(timecodes);
+        });
+
         api.route('/tags').get(async (req, res) => {
             const tags = await this.library.getTags(req.query);
             res.send(tags);
@@ -104,6 +109,42 @@ export class Laputin {
             res.status(200).end();
         });
 
+        api.route('/files/:hash/timecodes').get(async (req, res) => {
+            const tags = await this.library.getTimecodesForFile(req.params.hash);
+            res.send(tags);
+        });
+
+        api.route('/files/:hash/timecodes').post(async (req, res) => {
+            const timecode: Timecode = req.body.timecode;
+
+            const query = new Query(undefined, undefined, req.params.hash, undefined, undefined, undefined);
+            const files = await this.library.getFiles(query);
+
+            if (files.length > 0) {
+                const result = await this.library.addTimecodeToFile(
+                    timecode,
+                    req.params.hash);
+
+                if (!timecode.timecodeId) {
+                    const screenshotTime = timecode.start + (timecode.end - timecode.start) * 0.66;
+
+                    const screenshotter = new Screenshotter(this._libraryPath);
+                    await screenshotter.screenshotTimecode(files[0], result, screenshotTime);
+                }
+
+                res.send(result);
+            } else {
+                console.log('no files found');
+                res.send(500);
+            }
+        });
+
+        api.route('/files/:hash/timecodes/:timecodeId/tags/:timecodeTagId').delete(async (req, res) => {
+            console.log(req.params);
+            const result = await this.library.removeTagFromTimecode(req.params.hash, req.params.timecodeId, req.params.timecodeTagId);
+            res.status(200).end();
+        });
+
         api.route('/files/:hash/tags/:tagId').delete(async (req, res) => {
             await this.library.deleteLinkBetweenTagAndFile(req.params.tagId, req.params.hash);
             res.status(200).end();
@@ -127,6 +168,22 @@ export class Laputin {
                 if (files.length > 0) {
                     const screenshotter = new Screenshotter(this._libraryPath);
                     await screenshotter.screenshot(files[0], req.body.time);
+                }
+
+                res.status(200).end();
+            } catch (error) {
+                res.status(500).end();
+            }
+        });
+
+        api.route('/screenshotTimecode').post(async (req, res) => {
+            try {
+                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined);
+                const files = await this.library.getFiles(query);
+
+                if (files.length > 0) {
+                    const screenshotter = new Screenshotter(this._libraryPath);
+                    await screenshotter.screenshotTimecode(files[0], req.body.timecode, req.body.time);
                 }
 
                 res.status(200).end();
