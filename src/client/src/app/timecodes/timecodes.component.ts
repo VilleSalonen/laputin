@@ -14,8 +14,10 @@ import { PlayerService } from '../player.service';
 })
 @Injectable()
 export class TimecodesComponent implements OnInit {
-    public filesWithTimecodes: FileWithTimecodes[] = [];
-    public viewPortItems: File[] = [];
+    public TimecodeItemType = TimecodeItemType;
+
+    public timecodeItems: TimecodeItem[] = [];
+    public viewPortItems: TimecodeItem[] = [];
     public loading = false;
     private _query: FileQuery = new FileQuery();
 
@@ -29,17 +31,19 @@ export class TimecodesComponent implements OnInit {
     }
 
     loadTimecodes(): void {
-        this.filesWithTimecodes = [];
+        this.timecodeItems = [];
         this.loading = true;
         this._service.queryTimecodes(this._query).then((timecodes: Timecode[]) => {
             const timecodesByFiles = _.groupBy(timecodes, (t: Timecode) => t.path);
 
-            const filesWithTimecodes: FileWithTimecodes[] = [];
-            _.forOwn(timecodesByFiles, timecode => {
-                filesWithTimecodes.push(new FileWithTimecodes(timecode[0].path, timecode[0].hash, timecode));
+            const timecodeItems: TimecodeItem[] = [];
+            _.forOwn(timecodesByFiles, codes => {
+
+                timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [])));
+                codes.forEach(c => timecodeItems.push(new TimecodeItem(TimecodeItemType.Timecode, c)));
             });
 
-            this.filesWithTimecodes = filesWithTimecodes;
+            this.timecodeItems = timecodeItems;
             this.loading = false;
         });
     }
@@ -51,6 +55,16 @@ export class TimecodesComponent implements OnInit {
 }
 
 class FileWithTimecodes {
-    constructor(public path: string, public hash: string, public timecodes: Timecode[]) {
+    constructor(public file: File, public timecodes: Timecode[]) {
     }
+}
+
+class TimecodeItem {
+    constructor(public type: TimecodeItemType, public item: any) {
+    }
+}
+
+enum TimecodeItemType {
+    File,
+    Timecode
 }

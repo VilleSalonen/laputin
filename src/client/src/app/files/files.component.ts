@@ -24,7 +24,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     public files: File[] = [];
     public viewPortItems: File[] = [];
     public loading = false;
-    private query: FileQuery;
+    public query: FileQuery;
 
     private sub: any;
 
