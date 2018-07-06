@@ -17,6 +17,7 @@ import { combineLatest } from 'rxjs/observable/combineLatest';
 })
 @Injectable()
 export class FilesComponent implements OnInit, OnDestroy {
+    public allFilesSubscription: Subject<File[]> = new Subject<File[]>();
     public filesSubscription: Subject<File[]> = new Subject<File[]>();
     public hashParamSubscription: Subject<string> = new Subject<string>();
 
@@ -42,21 +43,33 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.files = files
         );
 
-        this.filesSubscription.combineLatest(this.hashParamSubscription)
-        .subscribe(([files, hashParam]) => {
-            if (hashParam) {
-               const selectedFile = _.find(files, f => f.hash === hashParam);
-               this.selectFile(selectedFile);
-            } else {
-                this.closeFile();
-            }
+        this._service.queryFiles(new FileQuery()).then((files: File[]) => {
+            this.allFilesSubscription.next(files);
         });
+
+        this.filesSubscription.combineLatest(this.allFilesSubscription, this.hashParamSubscription)
+            .subscribe(([files, allFiles, hashParam]) => {
+                if (hashParam) {
+                    let selectedFile = _.find(files, f => f.hash === hashParam);
+                    if (!selectedFile) {
+                        selectedFile = _.find(allFiles, f => f.hash === hashParam);
+                    }
+
+                    if (selectedFile) {
+                        this.selectFile(selectedFile);
+                    }
+                } else {
+                    this.closeFile();
+                }
+            });
 
         this.loadFiles();
 
         this.sub = this.route.params.subscribe(params => {
             this.hashParamSubscription.next(params['hash']);
         });
+
+
     }
 
     ngOnDestroy(): void {
