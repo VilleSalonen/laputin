@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="filter-controls">
+        <form>
+            <div>
+                <label>Name</label>
+                <div>
+                    <div>
+                        <app-search-box (update)="filter($event)"></app-search-box>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div [ngClass]="{'hidden': !loading}">
+        <i class="fa fa-spinner"></i>
+    </div>
+
+    <div [ngClass]="{'hidden': loading}">
+        <h1>Showing {{filteredTags.length}} matching tags</h1>
+
+        <table class="table table-striped">
+            <tbody>
+                <tr *ngFor="let tag of filteredTags">
+                    <td>
+                        <app-tag-row [tag]="tag"></app-tag-row>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
