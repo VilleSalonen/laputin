@@ -1,6 +1,15 @@
 <div class="container full-height">
     <div class="files-search">
-        <app-timecode-search (update)="filterFiles($event)"></app-timecode-search>
+        <div class="row">
+            <app-timecode-search (update)="filterFiles($event)"></app-timecode-search>
+            <div class="export-button">
+                <span (click)="export()" style="cursor: pointer;">
+                    <i class="fas fa-share-square"></i> Export</span>
+            </div>
+            <div class="export-commands" *ngIf="exporting">
+                <textarea *ngIf="exporting">{{exportCommands}}</textarea>
+            </div>
+        </div>
     </div>
 
     <div class="files-list" style="flex-grow: 1;">

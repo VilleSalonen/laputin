@@ -1,9 +1,5 @@
 @import './../../styles/styles.scss';
 
-:host {
-    padding: $standard-margin;
-}
-
 .row {
     @include g-layout__row;
     align-items: center;
