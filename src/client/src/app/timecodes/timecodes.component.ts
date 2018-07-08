@@ -17,6 +17,7 @@ import * as moment from 'moment';
 export class TimecodesComponent implements OnInit {
     public TimecodeItemType = TimecodeItemType;
 
+    public timecodeAmount = 0;
     public timecodeItems: TimecodeItem[] = [];
     public viewPortItems: TimecodeItem[] = [];
     public loading = false;
@@ -64,6 +65,7 @@ export class TimecodesComponent implements OnInit {
                 codes.forEach(c => timecodeItems.push(new TimecodeItem(TimecodeItemType.Timecode, c)));
             });
 
+            this.timecodeAmount = timecodes.length;
             this.timecodeItems = timecodeItems;
             this.loading = false;
         });
