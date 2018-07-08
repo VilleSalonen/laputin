@@ -87,7 +87,7 @@ export class LaputinService {
 
                 for (const hash of hashes) {
                     const current = duplicates[hash];
-                    const files = current.map((file: any) => new File(file.hash, file.path, []));
+                    const files = current.map((file: any) => new File(file.hash, file.path, [], file.size));
                     result.push(new Duplicate(hash, files));
                 }
                 return result;
@@ -103,7 +103,7 @@ export class LaputinService {
     }
 
     private _convertFile(file: any): File {
-        return new File(file.hash, file.path, this._convertTags(file.tags));
+        return new File(file.hash, file.path, this._convertTags(file.tags), file.size);
     }
 
     public screenshotFile(file: File, timeInSeconds: number): void {

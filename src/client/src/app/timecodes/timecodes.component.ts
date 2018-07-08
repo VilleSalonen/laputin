@@ -61,7 +61,7 @@ export class TimecodesComponent implements OnInit {
             const timecodeItems: TimecodeItem[] = [];
             _.forOwn(timecodesByFiles, codes => {
 
-                timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [])));
+                timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [], 0)));
                 codes.forEach(c => timecodeItems.push(new TimecodeItem(TimecodeItemType.Timecode, c)));
             });
 
