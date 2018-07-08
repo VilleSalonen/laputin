@@ -7,12 +7,14 @@ export class File {
     public path: string;
     public name: string;
     public tags: Tag[];
+    public size: number;
 
-    constructor(hash: string, filePath: string, tags: Tag[]) {
+    constructor(hash: string, filePath: string, tags: Tag[], size: number) {
         this.hash = hash;
         this.path = filePath.replace(/\\/g, '/');
         this.name = this.cleanPath();
         this.tags = tags;
+        this.size = size;
     }
 
     private cleanPath(): string {

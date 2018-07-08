@@ -47,7 +47,7 @@ describe('File Library', function() {
     });
 
     it('When file is copied to library path, it can be found', async function() {
-        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', []);
+        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 123);
 
         // Start monitoring before file is copied
         laputin = await initializeLaputin(currentPath);
@@ -58,7 +58,7 @@ describe('File Library', function() {
     });
 
     it('When file is moved without changing its content, it can be found with same hash from new path', async function() {
-        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/automobile.jpg', []);
+        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/automobile.jpg', [], 123);
 
         fs.mkdirSync('deploy-tests/' + currentPath + '');
         await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
@@ -72,9 +72,9 @@ describe('File Library', function() {
     });
 
     it('Initial files can be found', async () => {
-        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', []);
-        const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', []);
-        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', []);
+        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 123);
+        const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', [], 123);
+        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 123);
 
         fs.mkdirSync('deploy-tests/' + currentPath + '');
         await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
@@ -88,9 +88,9 @@ describe('File Library', function() {
     });
 
     it('When file is deleted from library path, it can no longer be found', async function() {
-        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', []);
-        const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', []);
-        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', []);
+        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 123);
+        const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', [], 123);
+        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 123);
 
         fs.mkdirSync('deploy-tests/' + currentPath + '');
         await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
@@ -106,8 +106,8 @@ describe('File Library', function() {
     });
 
     it('When a duplicate file is copied to library path, it is detected as duplicate', async function() {
-        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', []);
-        const duplicateCarFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car-duplicate.jpg', []);
+        const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 123);
+        const duplicateCarFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car-duplicate.jpg', [], 123);
 
         fs.mkdirSync('deploy-tests/' + currentPath + '');
         await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
@@ -131,7 +131,7 @@ describe('File Library', function() {
     });
 
     it('When a file is overwritten with exact same file to exact same path, it is not detected as duplicate', async function() {
-        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', []);
+        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 123);
 
         fs.mkdirSync('deploy-tests/' + currentPath + '');
         await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
@@ -149,7 +149,7 @@ describe('File Library', function() {
     });
 
     it('When a file is renamed, it is not detected as duplicate', async function() {
-        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', []);
+        const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 123);
 
         fs.mkdirSync('deploy-tests/' + currentPath + '');
         await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');

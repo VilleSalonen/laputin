@@ -1,42 +1,31 @@
 import crypto = require('crypto');
 import fs = require('fs');
+import {promisify} from 'util';
+const fsStat = promisify(fs.stat);
+const fsOpen = promisify(fs.open);
+const fsRead = promisify(fs.read);
+const fsClose = promisify(fs.close);
+import _ = require('lodash');
 
 import {IHasher} from './ihasher';
+import {File} from './file';
 
 const CHUNK_SIZE = 1024;
 
 export class QuickMD5Hasher implements IHasher {
-    public hash(path: string): Promise<any> {
-        let done: Function;
-        const promise = new Promise<File>((resolve, reject) => done = resolve);
+    public async hash(path: string, existingFiles: File[], stats: fs.Stats): Promise<string> {
+        const escapedPath = path.replace(/\\/g, '/');
+        const file = _.find(existingFiles, (f: File) => f.path === escapedPath && f.size === stats.size);
+
+        if (file) {
+            return file.hash;
+        }
 
         try {
-            fs.open(path, 'r', function(err, fd) {
-                if (err) { return; }
-                if (typeof fd === 'undefined') { return; }
+            const fd = await fsOpen(path, 'r');
+            if (typeof fd === 'undefined') { return; }
 
-                fs.stat(path, function(innerErr, stats) {
-                    if (innerErr) { return; }
-
-                    // Sometimes stats is undefined. This is probably due to file being
-                    // moved elsewhere or deleted.
-                    if (typeof stats === 'undefined') { return; }
-
-                    const input_size: number = stats.size;
-                    const offset: number = input_size / 2.0 - CHUNK_SIZE / 2.0;
-                    const buffer: Buffer = new Buffer(CHUNK_SIZE);
-
-                    fs.read(fd, buffer, 0, buffer.length, offset, function(e, l, b) {
-                        const hash = crypto.createHash('md5')
-                            .update(buffer)
-                            .digest('hex');
-
-                        fs.close(fd, () => {
-                            done({ path: path, hash: hash });
-                        });
-                    });
-                });
-            });
+            return await this.readHash(fd, stats);
         } catch (e) {
             console.log(e);
             if (e.name === 'TypeError') {
@@ -46,6 +35,25 @@ export class QuickMD5Hasher implements IHasher {
                 throw e;
             }
         }
+    }
+
+    private readHash(fd: any, stats: fs.Stats): Promise<string> {
+        let done: Function;
+        const promise = new Promise<string>((resolve, reject) => done = resolve);
+
+        const input_size: number = stats.size;
+        const offset: number = input_size / 2.0 - CHUNK_SIZE / 2.0;
+        const buffer: Buffer = new Buffer(CHUNK_SIZE);
+
+        fs.read(fd, buffer, 0, buffer.length, offset, function(e, l, b) {
+            const hash = crypto.createHash('md5')
+                .update(buffer)
+                .digest('hex');
+
+            fs.close(fd, () => {
+                done(hash);
+            });
+        });
 
         return promise;
     }

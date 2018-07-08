@@ -117,7 +117,7 @@ export class Laputin {
         api.route('/files/:hash/timecodes').post(async (req, res) => {
             const timecode: Timecode = req.body.timecode;
 
-            const query = new Query(undefined, undefined, req.params.hash, undefined, undefined, undefined);
+            const query = new Query(undefined, undefined, req.params.hash, undefined, undefined, undefined, undefined);
             const files = await this.library.getFiles(query);
 
             if (files.length > 0) {
@@ -162,7 +162,7 @@ export class Laputin {
 
         api.route('/screenshot').post(async (req, res) => {
             try {
-                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined);
+                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined, undefined);
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
@@ -178,7 +178,7 @@ export class Laputin {
 
         api.route('/screenshotTimecode').post(async (req, res) => {
             try {
-                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined);
+                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined, undefined);
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {

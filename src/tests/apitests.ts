@@ -26,7 +26,7 @@ describe('Laputin API', function () {
     });
 
     it('Added file can be found', async () => {
-        const file: File = new File('aaaaa11111', 'new_funny_pic.jpg', []);
+        const file: File = new File('aaaaa11111', 'new_funny_pic.jpg', [], 123);
 
         await laputin.library.addFile(file);
 
@@ -84,7 +84,7 @@ describe('Laputin API', function () {
     });
 
     describe('Tagging', () => {
-        const file: File = new File('aaaaa', 'funny.jpg', []);
+        const file: File = new File('aaaaa', 'funny.jpg', [], 123);
         let tag: Tag;
 
         beforeEach(async () => {
@@ -98,7 +98,7 @@ describe('Laputin API', function () {
                 .send({ selectedTags: [tag] })
                 .expect(200);
 
-            await shouldContainFiles(laputin, [new File(file.hash, file.path, [tag])]);
+            await shouldContainFiles(laputin, [new File(file.hash, file.path, [tag], 123)]);
         });
 
         it('File tagging can be removed', async () => {
@@ -112,13 +112,13 @@ describe('Laputin API', function () {
                 .send({ tagId: tag.id })
                 .expect(200);
 
-            await shouldContainFiles(laputin, [new File(file.hash, file.path, [])]);
+            await shouldContainFiles(laputin, [new File(file.hash, file.path, [], 123)]);
         });
     });
 
     describe('Querying files by tagged status', async () => {
-        const taggedFile: File = new File('aaaaa', 'funny.jpg', []);
-        const untaggedFile: File = new File('bbbbb', 'untagged.jpg', []);
+        const taggedFile: File = new File('aaaaa', 'funny.jpg', [], 123);
+        const untaggedFile: File = new File('bbbbb', 'untagged.jpg', [], 123);
 
         let tag: Tag;
 
@@ -138,7 +138,7 @@ describe('Laputin API', function () {
                 .get('/api/files?status=both')
                 .expect(200)
                 .expect([
-                    new File(taggedFile.hash, taggedFile.path, [tag]),
+                    new File(taggedFile.hash, taggedFile.path, [tag], 123),
                     untaggedFile]);
         });
 
@@ -146,7 +146,7 @@ describe('Laputin API', function () {
             return request(laputin.app)
                 .get('/api/files?status=tagged')
                 .expect(200)
-                .expect([new File(taggedFile.hash, taggedFile.path, [tag])]);
+                .expect([new File(taggedFile.hash, taggedFile.path, [tag], 123)]);
         });
 
         it('Querying only untagged', async () => {
@@ -159,9 +159,9 @@ describe('Laputin API', function () {
 
     describe('Querying files by tags', () => {
         beforeEach(async () => {
-            const file1: File = new File('aaaaa', 'funny.jpg', []);
-            const file2: File = new File('bbbbb', 'educational.jpg', []);
-            const file3: File = new File('ccccc', 'serious.jpg', []);
+            const file1: File = new File('aaaaa', 'funny.jpg', [], 123);
+            const file2: File = new File('bbbbb', 'educational.jpg', [], 123);
+            const file3: File = new File('ccccc', 'serious.jpg', [], 123);
 
             await laputin.library.addFile(file1);
             await laputin.library.addFile(file2);
@@ -238,9 +238,9 @@ describe('Laputin API', function () {
     });
 
     describe('Deactivation', () => {
-        const file1: File = new File('aaaaa', 'funny.jpg', []);
-        const file2: File = new File('bbbbb', 'educational.jpg', []);
-        const file3: File = new File('ccccc', 'serious.jpg', []);
+        const file1: File = new File('aaaaa', 'funny.jpg', [], 123);
+        const file2: File = new File('bbbbb', 'educational.jpg', [], 123);
+        const file3: File = new File('ccccc', 'serious.jpg', [], 123);
 
         beforeEach(async () => {
             await laputin.library.addFile(file1);

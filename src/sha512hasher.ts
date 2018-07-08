@@ -2,11 +2,12 @@ import crypto = require('crypto');
 import fs = require('fs');
 
 import {IHasher} from './ihasher';
+import {File} from './file';
 
 export class Sha512Hasher implements IHasher {
-    public hash(path: string): Promise<any> {
+    public hash(path: string, existingFiles: File[], stats: fs.Stats): Promise<string> {
         let done: Function;
-        const promise = new Promise<File>((resolve, reject) => done = resolve);
+        const promise = new Promise<string>((resolve, reject) => done = resolve);
 
         const shasum = crypto.createHash('sha512');
 
@@ -15,7 +16,7 @@ export class Sha512Hasher implements IHasher {
             s.on('data', (d: any) => { shasum.update(d); });
             s.on('end', () => {
                 const hash = shasum.digest('hex');
-                done({ path: path, hash: hash });
+                done(hash);
             });
         } catch (e) {
             if (e.name === 'TypeError' && e.message === 'Bad argument') {

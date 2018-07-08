@@ -12,24 +12,33 @@ import {promisify} from 'util';
 const stat = promisify(fs.stat);
 
 import {IHasher} from './ihasher';
-import {File} from './file';
+import { File } from './file';
 import { Screenshotter } from './screenshotter';
+import { Library } from './library';
+import { Query } from './query.model';
 
 export class FileLibrary extends events.EventEmitter {
+    private _existingFiles: File[] = [];
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
 
-    constructor(private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter) {
+    constructor(private library: Library, private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter) {
         super();
     }
 
     public load(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const walker = walk.walk(this._libraryPath, { followLinks: false });
-            walker.on('file', (root, walkStat, callback) => { this.processFile(root, walkStat, callback); });
-            walker.on('end', () => {
-                this.startMonitoring();
-                resolve();
+            const query = new Query(undefined, undefined, undefined, undefined, undefined, undefined, true);
+            this.library.getFiles(query).then((existingFiles: File[]) => {
+                this._existingFiles = existingFiles;
+
+                const walkerOptions = { followLinks: false, filters: ['.laputin'] };
+                const walker = walk.walk(this._libraryPath, walkerOptions);
+                walker.on('file', (root, walkStat, callback) => { this.processFile(root, walkStat, callback); });
+                walker.on('end', () => {
+                    this.startMonitoring();
+                    resolve();
+                });
             });
         });
     }
@@ -54,26 +63,30 @@ export class FileLibrary extends events.EventEmitter {
             // cannot be done on created events. Hasher will swallow the error.
             // Thus each file is hashed and emitted just once even if both
             // events will be emitted.
-            monitor.on('created', (createdPath: string) => this.addFileFromPath(createdPath));
-            monitor.on('changed', (changedPath: string) => this.addFileFromPath(changedPath));
+            monitor.on('created', async (createdPath: string) => {
+                const stats = await stat(createdPath);
+                this.addFileFromPath(createdPath, stats);
+            });
+            monitor.on('changed', async (changedPath: string) => {
+                const stats = await stat(changedPath);
+                this.addFileFromPath(changedPath, stats);
+            });
             monitor.on('removed', (removedPath: string) => this.removeFileFromPath(removedPath));
         });
     }
 
     private async processFile(root: string, walkStat: walk.WalkStat, next: (() => void)): Promise<void> {
         const filePath = path.normalize(path.join(root, walkStat.name));
-        await this.addFileFromPath(filePath);
+        await this.addFileFromPath(filePath, walkStat);
         next();
     }
 
-    private async addFileFromPath(filePath: string): Promise<void> {
-        const stats = await stat(filePath);
+    private async addFileFromPath(filePath: string, stats: fs.Stats): Promise<void> {
         if (stats.isDirectory()) { return; }
+        if (this.fileShouldBeIgnored(filePath)) { return; }
 
-        const result = await this._hasher.hash(filePath);
-        const file = new File(result.hash, result.path, []);
-
-        if (this.fileShouldBeIgnored(file)) { return; }
+        const hash = await this._hasher.hash(filePath, this._existingFiles, stats);
+        const file = new File(hash, filePath, [], stats.size);
 
         this.addFileToBookkeeping(file);
 
@@ -95,11 +108,11 @@ export class FileLibrary extends events.EventEmitter {
         }
     }
 
-    private fileShouldBeIgnored(file: File) {
-        return path.basename(file.path).charAt(0) === '.'
-            || file.path.indexOf('.git') !== -1
-            || file.path.indexOf('.laputin') !== -1
-            || file.path.indexOf('Thumbs.db') !== -1;
+    private fileShouldBeIgnored(filePath: string) {
+        return path.basename(filePath).charAt(0) === '.'
+            || filePath.indexOf('.git') !== -1
+            || filePath.indexOf('.laputin') !== -1
+            || filePath.indexOf('Thumbs.db') !== -1;
     }
 
     private initializeListForHash(file: File): void {
@@ -118,11 +131,14 @@ export class FileLibrary extends events.EventEmitter {
         const fixedPath = filePath.replace(/\\/g, '/');
         const hash = this._hashesByPaths[fixedPath];
         const files = this._files[hash];
-        this._files[hash] = _.filter(files, (file: File) => {
-            return file.path !== fixedPath;
+        const file = _.filter(files, (f: File) => {
+            return f.path === fixedPath;
+        });
+        this._files[hash] = _.filter(files, (f: File) => {
+            return f.path !== fixedPath;
         });
 
-        this.emit('lost', new File(hash, filePath, []));
+        this.emit('lost', file);
 
         winston.log('verbose', 'Lost file:  ' + filePath);
     }
