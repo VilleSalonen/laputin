@@ -13,10 +13,9 @@ import {File} from './file';
 const CHUNK_SIZE = 1024;
 
 export class QuickMD5Hasher implements IHasher {
-    public async hash(path: string, existingFiles: File[], stats: fs.Stats): Promise<string> {
+    public async hash(path: string, existingFiles: {[path: string]: File}, stats: fs.Stats): Promise<string> {
         const escapedPath = path.replace(/\\/g, '/');
-        const file = _.find(existingFiles, (f: File) => f.path === escapedPath && f.size === stats.size);
-
+        const file = existingFiles[escapedPath];
         if (file) {
             return file.hash;
         }

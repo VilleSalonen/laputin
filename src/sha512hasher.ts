@@ -5,7 +5,7 @@ import {IHasher} from './ihasher';
 import {File} from './file';
 
 export class Sha512Hasher implements IHasher {
-    public hash(path: string, existingFiles: File[], stats: fs.Stats): Promise<string> {
+    public hash(path: string, existingFiles: {[path: string]: File}, stats: fs.Stats): Promise<string> {
         let done: Function;
         const promise = new Promise<string>((resolve, reject) => done = resolve);
 

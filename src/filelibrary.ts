@@ -18,7 +18,8 @@ import { Library } from './library';
 import { Query } from './query.model';
 
 export class FileLibrary extends events.EventEmitter {
-    private _existingFiles: File[] = [];
+    private _existingFiles: {[path: string]: File} = {};
+
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
 
@@ -28,9 +29,9 @@ export class FileLibrary extends events.EventEmitter {
 
     public load(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const query = new Query(undefined, undefined, undefined, undefined, undefined, undefined, true);
+            const query = new Query(undefined, undefined, undefined, undefined, undefined, undefined, undefined);
             this.library.getFiles(query).then((existingFiles: File[]) => {
-                this._existingFiles = existingFiles;
+                this._existingFiles = _.keyBy(existingFiles, f => f.path);
 
                 const walkerOptions = { followLinks: false, filters: ['.laputin'] };
                 const walker = walk.walk(this._libraryPath, walkerOptions);
