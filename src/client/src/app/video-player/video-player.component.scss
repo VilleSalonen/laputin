@@ -140,7 +140,7 @@ video, .video-hero-shot, img {
     cursor: pointer;
 }
 
-input, select {
+input, select, button {
     @include rounded-borders;
 
     background: $color-complement-1;
