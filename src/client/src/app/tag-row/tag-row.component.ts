@@ -5,15 +5,8 @@ import { Tag } from '../models/tag';
 
 @Component({
     selector: 'app-tag-row',
-    template: `
-        <div>
-            <div *ngIf="!isEditing" (click)="edit()">{{tag.name}}</div>
-            <div *ngIf="isEditing">
-                <input type="text" [(ngModel)]="name" (keyup)="onKeyUp($event)" />
-                <button (click)="save()">Save</button>
-                <button (click)="cancelEdit()">Cancel</button>
-            </div>
-        </div>`
+    styleUrls: ['./tag-row.component.scss'],
+    templateUrl: './tag-row.component.html',
 })
 @Injectable()
 export class TagRowComponent implements OnInit {
