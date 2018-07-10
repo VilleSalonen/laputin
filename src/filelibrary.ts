@@ -37,6 +37,11 @@ export class FileLibrary extends events.EventEmitter {
                 const walker = walk.walk(this._libraryPath, walkerOptions);
                 walker.on('file', (root, walkStat, callback) => { this.processFile(root, walkStat, callback); });
                 walker.on('end', () => {
+                    const missingFiles = _.values(this._existingFiles);
+                    missingFiles.forEach(file => {
+                        this.emit('lost', file);
+                    });
+
                     this.startMonitoring();
                     resolve();
                 });
@@ -86,18 +91,26 @@ export class FileLibrary extends events.EventEmitter {
         if (stats.isDirectory()) { return; }
         if (this.fileShouldBeIgnored(filePath)) { return; }
 
-        const hash = await this._hasher.hash(filePath, this._existingFiles, stats);
-        const file = new File(hash, filePath, [], stats.size);
+        const escapedFilePath = filePath.replace(/\\/g, '/');
+        if (this._existingFiles[escapedFilePath]) {
+            const file = this._existingFiles[escapedFilePath];
+            this.addFileToBookkeeping(file);
 
-        this.addFileToBookkeeping(file);
+            winston.log('verbose', 'File found in same path: ' + filePath);
+            delete this._existingFiles[escapedFilePath];
+        } else {
+            const hash = await this._hasher.hash(filePath, this._existingFiles, stats);
+            const file = new File(hash, filePath, [], stats.size);
+            this.addFileToBookkeeping(file);
 
-        if (!this._screenshotter.exists(file)) {
-            await this._screenshotter.screenshot(file, 180);
+            if (!this._screenshotter.exists(file)) {
+                await this._screenshotter.screenshot(file, 180);
+            }
+
+            this.emit('found', file);
+
+            winston.log('verbose', 'Found file: ' + filePath);
         }
-
-        this.emit('found', file);
-
-        winston.log('verbose', 'Found file: ' + filePath);
     }
 
     private addFileToBookkeeping(file: File): void {
@@ -132,7 +145,8 @@ export class FileLibrary extends events.EventEmitter {
         const fixedPath = filePath.replace(/\\/g, '/');
         const hash = this._hashesByPaths[fixedPath];
         const files = this._files[hash];
-        const file = _.filter(files, (f: File) => {
+
+        const file = _.find(files, (f: File) => {
             return f.path === fixedPath;
         });
         this._files[hash] = _.filter(files, (f: File) => {

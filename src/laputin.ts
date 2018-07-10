@@ -60,7 +60,6 @@ export class Laputin {
     }
 
     public async loadFiles(): Promise<void> {
-        await this.library.deactivateAll();
         return this.fileLibrary.load();
     }
 
