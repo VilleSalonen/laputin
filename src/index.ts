@@ -10,6 +10,7 @@ import {Laputin} from './laputin';
 import {Library} from './library';
 import {LaputinConfiguration} from './laputinconfiguration';
 import {compose} from './compose';
+import { Screenshotter } from './screenshotter';
 
 (async function() {
     const argumentDefinitions = [
@@ -62,7 +63,7 @@ import {compose} from './compose';
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
         : new LaputinConfiguration(3200, 'accurate');
 
-    const laputin = compose(options.libraryPath, configuration);
+    const laputin = compose(options.libraryPath, configuration, new Screenshotter(options.libraryPath));
 
     laputin.initializeRoutes();
 
