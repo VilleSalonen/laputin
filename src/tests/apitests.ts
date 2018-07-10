@@ -265,7 +265,8 @@ describe('Laputin API', function () {
         rimraf.sync(archivePath);
         fs.mkdirSync(archivePath);
 
-        const l = compose(archivePath, new LaputinConfiguration(1234, 'accurate'));
+        const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
+        const l = compose(archivePath, new LaputinConfiguration(1234, 'accurate'), fakeScreenshotter);
         l.initializeRoutes();
 
         await l.library.createTables();
