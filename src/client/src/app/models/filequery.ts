@@ -58,4 +58,13 @@ export class FileQuery implements TagContainer {
         this.orTags = [];
         this.notTags = [];
     }
+
+    public parametersSpecified(): boolean {
+        return this.filename !== ''
+            || this.status !== 'both'
+            || this.hash !== ''
+            || this.andTags.length > 0
+            || this.orTags.length > 0
+            || this.notTags.length > 0;
+    }
 }

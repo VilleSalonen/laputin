@@ -33,3 +33,10 @@ input::placeholder {
 .tag {
     margin-right: calc(0.5 * #{$standard-margin});
 }
+
+.selected-tags {
+    margin-left: $standard-margin;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}

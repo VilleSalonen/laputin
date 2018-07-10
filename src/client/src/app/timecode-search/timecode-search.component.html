@@ -13,8 +13,8 @@
     </div>
 </form>
 
-<div class="row">
-    <div class="tag btn-group" *ngFor="let tag of query.tags">
+<div class="row" style="align-items: flex-start;">
+    <div class="tag" *ngFor="let tag of query.tags">
         <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
     </div>
 </div>
