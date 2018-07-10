@@ -52,6 +52,18 @@ export class LaputinService {
             }).toPromise();
     }
 
+    public getAllTags(): Promise<Tag[]> {
+        return this._http.get(this._baseUrl + '/tags?unassociated=true')
+            .map(res => res.json())
+            .map((tags: any[]): Tag[] => {
+                const result: Tag[] = [];
+                if (tags) {
+                    tags.forEach((tag: any) => result.push(this._convertTag(tag)));
+                }
+                return result;
+            }).toPromise();
+    }
+
     public getTimecodes(file: File): Promise<Timecode[]> {
         return this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
             .map(res => res.json())

@@ -40,7 +40,12 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
+        if (this.type === AutocompleteType.FileTagging) {
+            // This will also contain tags which are not associated with any active files.
+            this._service.getAllTags().then((tags: Tag[]) => this.allTags = tags);
+        } else {
+            this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
+        }
     }
 
     onValueChange(value: string): void {
