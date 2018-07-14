@@ -13,7 +13,7 @@
     "express": "4.16.3",
     "lodash": "4.17.5",
     "rimraf": "~2.6.2",
-    "sqlite3": "^4.0.0",
+    "sqlite3": "^4.0.1",
     "tslint": "^5.7.0",
     "walk": "~2.3.9",
     "watch": "~1.0.1",
@@ -40,7 +40,7 @@
   },
   "scripts": {
     "build": "npm run build-server && npm run build-client",
-    "build-client": "cd client && ng build",
+    "build-client": "cd client && npx ng build",
     "prebuild-server": "rimraf deploy",
     "build-server": "tsc -p tsconfig.json --outDir deploy",
     "pretest-server": "npm run lint && rimraf deploy-tests && mkdir deploy-tests",
