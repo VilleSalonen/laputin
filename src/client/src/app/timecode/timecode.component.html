@@ -1,32 +1,36 @@
-<div style="position: relative;">
+<div style="position: relative;" (mouseover)="showControls = true" (mouseleave)="showControls = false">
     <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px; cursor: pointer;"
         (click)="goToTimecode()" />
 
-    <div style="position: absolute; left: 12px; bottom: 12px; color: white;">
+    <div style="position: absolute; left: 12px; top: 12px; color: white; cursor: pointer;" (click)="goToTimecode()">
         <i class="far fa-play-circle" aria-hidden="true"></i>
+    </div>
+
+    <div style="position: absolute; left: 172px; bottom: 12px;" *ngIf="showControls">
+        <a (click)="screenshotTimecode()" title="Set screenshot" style="cursor: pointer;">
+            <i class="fa fa-camera" aria-hidden="true"></i>
+        </a>
     </div>
 </div>
 
 <div class="column">
-    <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)" title="Remove {{timecodeTag.tag.name}} tag from timecode">
-        {{timecodeTag.tag.name}}
+    <div class="row">
+        <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)" title="Remove {{timecodeTag.tag.name}} tag from timecode">
+            {{timecodeTag.tag.name}}
+        </div>
+
+        <a (click)="addingTags = true" title="Add another tag to timecode" style="cursor: pointer;">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+
+        <div *ngIf="addingTags">
+            <app-tag-autocomplete [tagContainer]="file" (select)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+        </div>
     </div>
 
     <div class="row">
         <a (click)="goToTimecodeStart()">{{formatPreciseDuration(timecode.start)}}</a>
         <span>-</span>
         <a (click)="goToTimecodeEnd()">{{formatPreciseDuration(timecode.end)}}</a>
-    </div>
-
-    <a (click)="screenshotTimecode()" title="Set screenshot" style="cursor: pointer;">
-        <i class="fa fa-camera" aria-hidden="true"></i>
-    </a>
-
-    <a (click)="addingTags = true" title="Add another tag to timecode" style="cursor: pointer;">
-        <i class="fa fa-plus" aria-hidden="true"></i>
-    </a>
-
-    <div *ngIf="addingTags">
-        <app-tag-autocomplete [tagContainer]="file" (select)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
     </div>
 </div>

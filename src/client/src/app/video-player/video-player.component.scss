@@ -1,12 +1,50 @@
 @import './../../styles/styles.scss';
 
+:host {
+    @include g-layout__row;
+    flex: 2;
+    overflow: auto;
+}
+
+.container {
+    @include g-layout__row;
+    flex: 2;
+    overflow: auto;
+}
+
 .row {
     @include g-layout__row;
 }
 
-video, .video-hero-shot, img {
+.column {
+    @include g-layout__column;
+}
+
+.video-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%; 
+    overflow: hidden;
+}
+
+.video-container video {
+    /* Make video to at least 100% wide and tall */
+    min-width: 100%; 
+    min-height: 100%;
     max-height: 100%;
     max-width: 100%;
+  
+    /* Setting width & height to auto prevents the browser from stretching or squishing the video */
+    width: auto;
+    height: auto;
+  
+    /* Center the video */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
 }
 
 .video-hero-shot {
@@ -46,10 +84,6 @@ video, .video-hero-shot, img {
     width: 100%;
 }
 
-.player, .tagging {
-    padding: $standard-margin;
-}
-
 .player-controls {
     display: flex;
     flex-direction: row;
@@ -57,7 +91,6 @@ video, .video-hero-shot, img {
     color: $color-primary-1;
     padding: 0.25 * $standard-margin;
     max-width: 100%;
-    margin-top: -5px;
 }
 
 .player-main-button {

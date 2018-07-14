@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener, OnInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
@@ -11,24 +11,20 @@ import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 
-class MappedMouseEvent {
-    constructor(public x: number, public y: number) {}
-}
-
 @Component({
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
     templateUrl: './video-player.component.html'
 })
 @Injectable()
-export class VideoPlayerComponent {
+export class VideoPlayerComponent implements AfterViewInit {
     public playbackHasBeenStarted: boolean;
     public playing: boolean;
     public random: boolean;
     public progressText: string;
     public resolution: string;
     public isFullScreen: boolean;
-    public cacheBuster: string;
+    public cacheBuster = '';
 
     public tagCreationOpen = false;
     public AutocompleteType = AutocompleteType;
@@ -44,23 +40,26 @@ export class VideoPlayerComponent {
     @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
     @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
     @ViewChild('playerView', { read: ElementRef }) playerView: ElementRef;
+    @ViewChild('player', { read: ElementRef }) playerElem: ElementRef;
 
-    @ViewChild('player') set content(content: ElementRef) {
-        // Player element is never changed so if we already have a player, there
-        // is no need to change it. For some reason this setter is invoked
-        // constantly (for example when seeking). If we updated player on every
-        // invoke, performance was degraded.
-        if (this.player) {
-            return;
-        }
+    @Input() file: File;
 
-        if (!content) {
-            return;
-        }
+    public timecodes: Timecode[] = [];
+    public selectedTagsForTimecode: Tag[] = [];
+    public tagStart: string;
+    public tagEnd: string;
 
-        this.player = content.nativeElement;
+    @Output()
+    public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
+    @Output()
+    public fileClosed: EventEmitter<void> = new EventEmitter<void>();
+
+    constructor(private _service: LaputinService, private _playerService: PlayerService) {
+    }
+
+    public ngAfterViewInit(): void {
+        this.player = this.playerElem.nativeElement;
         this._playerService.setPlayer(this.player);
-        this.cacheBuster = null;
 
         const playStart = Observable
             .fromEvent(this.player, 'playing')
@@ -137,9 +136,10 @@ export class VideoPlayerComponent {
         playStart
             .merge(clicks)
             .merge(drags)
-            .subscribe(() =>
-                this.playbackHasBeenStarted = true
-            );
+            .subscribe(() => {
+                this.playbackHasBeenStarted = true;
+                this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+            });
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
@@ -147,7 +147,10 @@ export class VideoPlayerComponent {
         Observable.fromEvent(this.player, 'durationchange')
             .takeUntil(this.fileClosed)
             .subscribe(() => {
-                this._service.getTimecodes(this.file).then((timecodes) => this.timecodes = timecodes);
+                this._service.getTimecodes(this.file).then((timecodes) => {
+                    this.timecodes = timecodes;
+                    this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+                });
 
                 this.playbackHasBeenStarted = false;
                 this.playing = false;
@@ -240,21 +243,6 @@ export class VideoPlayerComponent {
 
         this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
         this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-    }
-
-    @Input() file: File;
-
-    public timecodes: Timecode[];
-    public selectedTagsForTimecode: Tag[] = [];
-    public tagStart: string;
-    public tagEnd: string;
-
-    @Output()
-    public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
-    @Output()
-    public fileClosed: EventEmitter<void> = new EventEmitter<void>();
-
-    constructor(private _service: LaputinService, private _playerService: PlayerService) {
     }
 
     private setProgress(playPercent: number) {

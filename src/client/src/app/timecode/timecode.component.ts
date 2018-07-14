@@ -30,6 +30,7 @@ export class TimecodeComponent {
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
 
     public addingTags: boolean;
+    public showControls: boolean;
 
     constructor(private _service: LaputinService, private _playerService: PlayerService) {
     }
