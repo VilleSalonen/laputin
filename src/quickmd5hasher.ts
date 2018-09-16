@@ -38,13 +38,13 @@ export class QuickMD5Hasher implements IHasher {
 
     private readHash(fd: any, stats: fs.Stats): Promise<string> {
         let done: Function;
-        const promise = new Promise<string>((resolve, reject) => done = resolve);
+        const promise = new Promise<string>((resolve) => done = resolve);
 
         const input_size: number = stats.size;
-        const offset: number = input_size / 2.0 - CHUNK_SIZE / 2.0;
-        const buffer: Buffer = new Buffer(CHUNK_SIZE);
+        const offset: number = Math.floor(input_size / 2.0 - CHUNK_SIZE / 2.0);
+        const buffer: Buffer = Buffer.alloc(CHUNK_SIZE);
 
-        fs.read(fd, buffer, 0, buffer.length, offset, function(e, l, b) {
+        fs.read(fd, buffer, 0, buffer.length, offset, () => {
             const hash = crypto.createHash('md5')
                 .update(buffer)
                 .digest('hex');
