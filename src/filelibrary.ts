@@ -27,7 +27,7 @@ export class FileLibrary extends events.EventEmitter {
         super();
     }
 
-    public load(): Promise<void> {
+    public load(performFullCheck: boolean): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const query = new Query(undefined, undefined, undefined, undefined, undefined, undefined, undefined);
             this.library.getFiles(query).then((existingFiles: File[]) => {
@@ -35,7 +35,7 @@ export class FileLibrary extends events.EventEmitter {
 
                 const walkerOptions = { followLinks: false, filters: ['.laputin'] };
                 const walker = walk.walk(this._libraryPath, walkerOptions);
-                walker.on('file', (root, walkStat, callback) => { this.processFile(root, walkStat, callback); });
+                walker.on('file', (root, walkStat, callback) => { this.processFile(root, walkStat, callback, performFullCheck); });
                 walker.on('end', () => {
                     const missingFiles = _.values(this._existingFiles);
                     missingFiles.forEach(file => {
@@ -71,35 +71,34 @@ export class FileLibrary extends events.EventEmitter {
             // events will be emitted.
             monitor.on('created', async (createdPath: string) => {
                 const stats = await stat(createdPath);
-                this.addFileFromPath(createdPath, stats);
+                this.addFileFromPath(createdPath, stats, false);
             });
             monitor.on('changed', async (changedPath: string) => {
                 const stats = await stat(changedPath);
-                this.addFileFromPath(changedPath, stats);
+                this.addFileFromPath(changedPath, stats, false);
             });
             monitor.on('removed', (removedPath: string) => this.removeFileFromPath(removedPath));
         });
     }
 
-    private async processFile(root: string, walkStat: walk.WalkStat, next: (() => void)): Promise<void> {
+    private async processFile(root: string, walkStat: walk.WalkStat, next: (() => void), performFullCheck: boolean): Promise<void> {
         const filePath = path.normalize(path.join(root, walkStat.name));
-        await this.addFileFromPath(filePath, walkStat);
+        await this.addFileFromPath(filePath, walkStat, performFullCheck);
         next();
     }
 
-    private async addFileFromPath(filePath: string, stats: fs.Stats): Promise<void> {
+    private async addFileFromPath(filePath: string, stats: fs.Stats, performFullCheck: boolean): Promise<void> {
         if (stats.isDirectory()) { return; }
         if (this.fileShouldBeIgnored(filePath)) { return; }
 
         const escapedFilePath = filePath.replace(/\\/g, '/');
-        if (this._existingFiles[escapedFilePath]) {
+        if (!performFullCheck && this._existingFiles[escapedFilePath] && this._existingFiles[escapedFilePath].size === stats.size) {
             const file = this._existingFiles[escapedFilePath];
             this.addFileToBookkeeping(file);
 
-            winston.log('verbose', 'File found in same path: ' + filePath);
-            delete this._existingFiles[escapedFilePath];
+            winston.log('verbose', 'File found in same path with same size: ' + filePath);
         } else {
-            const hash = await this._hasher.hash(filePath, this._existingFiles, stats);
+            const hash = await this._hasher.hash(filePath, stats);
             const file = new File(hash, filePath, [], stats.size);
             this.addFileToBookkeeping(file);
 
@@ -111,6 +110,8 @@ export class FileLibrary extends events.EventEmitter {
 
             winston.log('verbose', 'Found file: ' + filePath);
         }
+
+        delete this._existingFiles[escapedFilePath];
     }
 
     private addFileToBookkeeping(file: File): void {

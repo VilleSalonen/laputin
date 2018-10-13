@@ -332,7 +332,7 @@ async function initializeLaputin(path: string): Promise<Laputin> {
 
 async function startLaputin(l: Laputin): Promise<void> {
     l.initializeRoutes();
-    await l.loadFiles();
+    await l.loadFiles(false);
     await l.startListening();
 
     // File monitoring seems to need some time to wake up

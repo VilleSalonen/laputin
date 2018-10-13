@@ -59,8 +59,8 @@ export class Laputin {
         return promise;
     }
 
-    public async loadFiles(): Promise<void> {
-        return this.fileLibrary.load();
+    public async loadFiles(performFullCheck: boolean): Promise<void> {
+        return this.fileLibrary.load(performFullCheck);
     }
 
     public startMonitoring(): void {
