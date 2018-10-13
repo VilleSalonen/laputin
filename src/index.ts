@@ -17,7 +17,8 @@ import { Screenshotter } from './screenshotter';
         { name: 'libraryPath', type: String, multiple: false, defaultOption: true },
         { name: 'initialize', type: Boolean, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
-        { name: 'bypassHashing', type: Boolean, multiple: false }
+        { name: 'bypassHashing', type: Boolean, multiple: false },
+        { name: 'performFullCheck', type: Boolean, multiple: false }
     ];
     const usage = commandLineUsage(argumentDefinitions);
 
@@ -68,9 +69,9 @@ import { Screenshotter } from './screenshotter';
     laputin.initializeRoutes();
 
     if (!options.bypassHashing) {
-        winston.info('Hashing files...');
+        winston.info('Hashing files with performFullCheck=' + options.performFullCheck + '...');
         const timer = winston.startTimer();
-        await laputin.loadFiles();
+        await laputin.loadFiles(options.performFullCheck);
         timer.done('Hashing');
     } else {
         winston.info('Skipped hashing, starting monitoring.');

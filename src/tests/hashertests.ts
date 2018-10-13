@@ -11,7 +11,7 @@ describe('Hasher tests', function() {
     it('SHA-512 hasher', async () => {
         const hasher = new Sha512Hasher();
         const fakeStats: any = { size: 30791 };
-        const hash = await hasher.hash('tests/test-content/cats.jpg', {}, fakeStats);
+        const hash = await hasher.hash('tests/test-content/cats.jpg', fakeStats);
 
         const expectedHash =
          '70342c64bed51a0921b68e2df2fe893bc52c89454ee2dcb47aff436b7259d71805dbaf36838db76a7e919ba6249273d261b0f892b8b4958748350ff1f25d572e';
@@ -21,7 +21,7 @@ describe('Hasher tests', function() {
     it('Quick MD5 hasher', async () => {
         const hasher = new QuickMD5Hasher();
         const fakeStats: any = { size: 30791 };
-        const hash = await hasher.hash('tests/test-content/cats.jpg', {}, fakeStats);
+        const hash = await hasher.hash('tests/test-content/cats.jpg', fakeStats);
 
         expect(hash).to.eql('ea411d1af31ebb729a37c58c8e34236c');
     });

@@ -13,13 +13,7 @@ import {File} from './file';
 const CHUNK_SIZE = 1024;
 
 export class QuickMD5Hasher implements IHasher {
-    public async hash(path: string, existingFiles: {[path: string]: File}, stats: fs.Stats): Promise<string> {
-        const escapedPath = path.replace(/\\/g, '/');
-        const file = existingFiles[escapedPath];
-        if (file) {
-            return file.hash;
-        }
-
+    public async hash(path: string, stats: fs.Stats): Promise<string> {
         try {
             const fd = await fsOpen(path, 'r');
             if (typeof fd === 'undefined') { return; }
