@@ -96,13 +96,15 @@
     <div class="column" style="min-width: 500px;">
         <div style="margin-bottom: 24px;">
             <div class="row" style="margin-bottom: 6px;" *ngIf="selectedTagsForTimecode">
-                <div class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)" title="Click to reset tag selection">
+                <div class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
+                    title="Click to reset tag selection">
                     {{ tag.name }}
                 </div>
             </div>
 
             <div class="row" style="margin-bottom: 6px;">
-                <app-tag-autocomplete [tagContainer]="file" (select)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (select)="addTagSelectionToTimecode($event)"
+                    [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
             </div>
 
             <div class="row" style="margin-bottom: 6px;">
@@ -119,22 +121,26 @@
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeBackwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveStartTimeBackwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-backward"></i>
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveStartTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-caret-left"></i>
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeForward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveStartTimeForward()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-caret-right"></i>
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeForwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveStartTimeForwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-forward"></i>
                     </a>
                 </span>
@@ -154,13 +160,15 @@
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeBackwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveEndTimeBackwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-caret-left"></i>
                         <i class="fas fa-caret-left"></i>
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveEndTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-caret-left"></i>
                     </a>
                 </span>
@@ -170,7 +178,8 @@
                     </a>
                 </span>
                 <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeForwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
+                    <a (click)="moveEndTimeForwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
+                        style="cursor: pointer;">
                         <i class="fas fa-caret-right"></i>
                         <i class="fas fa-caret-right"></i>
                     </a>

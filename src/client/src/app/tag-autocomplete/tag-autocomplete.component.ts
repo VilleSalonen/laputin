@@ -27,6 +27,7 @@ export class TagAutocompleteComponent implements OnInit {
     public termCtrl = new FormControl();
 
     @Input() tagContainer: TagContainer;
+    @Input() exclude: Tag[];
     @Input() type: AutocompleteType;
 
     @Output()
@@ -69,9 +70,12 @@ export class TagAutocompleteComponent implements OnInit {
                         .slice(0, 10);
                 break;
             case AutocompleteType.FileTimecodeTagging:
+                const excludedTagIds = _.map(this.exclude, (tag: Tag) => tag.id);
+
                 this.matchingTags =
                     this.tagContainer.tags
                         .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
+                        .filter((tag: Tag) => _.indexOf(excludedTagIds, tag.id) === -1)
                         .slice(0, 10);
                 break;
         }

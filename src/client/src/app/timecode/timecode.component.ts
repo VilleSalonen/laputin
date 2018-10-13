@@ -21,7 +21,7 @@ import { PlayerService } from '../player.service';
     providers: [LaputinService]
 })
 @Injectable()
-export class TimecodeComponent {
+export class TimecodeComponent implements OnInit {
     public AutocompleteType = AutocompleteType;
 
     @Input() file: File;
@@ -31,8 +31,13 @@ export class TimecodeComponent {
 
     public addingTags: boolean;
     public showControls: boolean;
+    public alreadySelectedTags: Tag[];
 
     constructor(private _service: LaputinService, private _playerService: PlayerService) {
+    }
+
+    ngOnInit() {
+        this.updateAlreadySelectedTags();
     }
 
     public formatPreciseDuration(durationInSeconds: number): string {
@@ -82,6 +87,7 @@ export class TimecodeComponent {
             }
         });
         this.timecode.timecodeTags = timecodeTags;
+        this.updateAlreadySelectedTags();
 
         this.addingTags = false;
     }
@@ -108,5 +114,9 @@ export class TimecodeComponent {
 
     public goToTimecodeEnd(): void {
         this._playerService.setCurrentTime(this.timecode.end);
+    }
+
+    private updateAlreadySelectedTags(): void {
+        this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
     }
 }
