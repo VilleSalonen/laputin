@@ -374,8 +374,11 @@ export class Library {
 
         const each2 = (err: Error, row: any) => {
             const timecode = timecodes.find(t => t.timecodeId === row.timecode_id);
-
-            timecode.timecodeTags.push(new TimecodeTag(row.timecode_id, row.id, new Tag(row.tag_id, row.tag_name, 0)));
+            if (timecode) {
+                timecode.timecodeTags.push(new TimecodeTag(row.timecode_id, row.id, new Tag(row.tag_id, row.tag_name, 0)));
+            } else {
+                console.log('No timecode found with ' + row.timecode_id + '! Cannot add timecode tag.');
+            }
         };
 
         const stmt2 = this._db.prepare(sql2);
