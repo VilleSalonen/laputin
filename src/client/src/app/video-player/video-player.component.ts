@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, Inject, ViewChild, ElementRef, HostListener, OnInit, AfterViewInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
@@ -164,16 +164,15 @@ export class VideoPlayerComponent implements AfterViewInit {
 
         Observable.fromEvent(window, 'webkitfullscreenchange')
             .takeUntil(this.fileClosed)
-            .subscribe((event) => {
-                this.isFullScreen = !this.isFullScreen;
-
-                // We have to reset playhead because it might be further right than
-                // the new timeline width allows.
-                this.setPlayheadTo(0);
-                this.resetCache();
-                this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-                this.updateProgress(this.player.currentTime / this.player.duration);
-            });
+            .subscribe(() => {
+                    this.isFullScreen = !this.isFullScreen;
+                    // We have to reset playhead because it might be further right than
+                    // the new timeline width allows.
+                    this.setPlayheadTo(0);
+                    this.resetCache();
+                    this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+                    this.updateProgress(this.player.currentTime / this.player.duration);
+                });
 
         const windowKeyups = Observable
             .fromEvent(window, 'keyup')
@@ -474,7 +473,6 @@ export class VideoPlayerComponent implements AfterViewInit {
     }
 
     public removeTag(tag: Tag): void {
-        const tags = this.file.tags;
         this.file.tags = _.filter(this.file.tags, (t: Tag): boolean => t.id !== tag.id);
         this._service.deleteTagFileAssoc(this.file, tag)
             .subscribe(() => {});

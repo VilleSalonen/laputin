@@ -13,8 +13,8 @@ export class DuplicatesComponent {
     public duplicates: Duplicate[] = [];
     public filteredDuplicates: Duplicate[] = [];
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
-        _service.getDuplicates().then((duplicates: Duplicate[]) => {
+    constructor(@Inject(LaputinService) service: LaputinService) {
+        service.getDuplicates().then((duplicates: Duplicate[]) => {
             this.duplicates = duplicates;
             this.filteredDuplicates = duplicates;
         });

@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { PlayerService } from './player.service';
-import { File } from './models/file';
 
 @Component({
     selector: 'app-root',

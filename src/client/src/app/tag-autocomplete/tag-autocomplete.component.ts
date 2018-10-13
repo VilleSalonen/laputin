@@ -1,6 +1,5 @@
-import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Observable} from 'rxjs/Rx';
+import {Component, Input, Output, EventEmitter, Injectable, Inject, OnInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
 import * as _ from 'lodash';
 
 import 'rxjs/add/operator/debounceTime';

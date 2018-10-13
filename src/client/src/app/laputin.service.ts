@@ -1,8 +1,8 @@
-import {Component, Injectable, Inject, EventEmitter} from '@angular/core';
+import {Injectable, Inject} from '@angular/core';
 import {Observable, Subject} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {Http, HttpModule, Headers, Response} from '@angular/http';
+import {Http, Headers, Response} from '@angular/http';
 import * as _ from 'lodash';
 
 import {File} from './models/file';
@@ -81,8 +81,6 @@ export class LaputinService {
     }
 
     public async deleteTimecodeTag(timecode: Timecode, timecodeTag: TimecodeTag): Promise<Response> {
-        const body = JSON.stringify({ timecode: timecode });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return await this._http.delete(
             this._baseUrl + '/files/' + timecode.hash + '/timecodes/' + timecode.timecodeId + '/tags/' + timecodeTag.timecodeTagId)
@@ -139,7 +137,6 @@ export class LaputinService {
     }
 
     public openFiles(query: FileQuery): Promise<Response> {
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
         const params = this.compileParams(query);
         return this._http.get(this._baseUrl + '/open/files' + params).toPromise();
     }

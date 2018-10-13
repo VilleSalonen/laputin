@@ -1,7 +1,6 @@
 import {Component, OnInit, Injectable, Inject} from '@angular/core';
 import * as _ from 'lodash';
 
-import {File} from './../models/file';
 import {Tag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 

@@ -1,8 +1,5 @@
 import {Injectable} from '@angular/core';
 
-import {File} from './models/file';
-import { Subject } from 'rxjs-compat/Subject';
-
 @Injectable()
 export class PlayerService {
     public player: HTMLVideoElement = null;

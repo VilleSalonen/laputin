@@ -1,16 +1,11 @@
-import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Observable} from 'rxjs/Rx';
-import * as _ from 'lodash';
+import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
 import * as moment from 'moment';
 
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
 import {File} from './../models/file';
-import {Tag, Timecode, TimecodeTag} from './../models/tag';
-import {TagContainer} from './../models/tagcontainer';
-import {LaputinService} from './../laputin.service';
+import {Timecode} from './../models/tag';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 
@@ -30,7 +25,7 @@ export class TimecodeReadonlyComponent {
 
     public addingTags: boolean;
 
-    constructor(private _service: LaputinService, private _playerService: PlayerService) {
+    constructor(private _playerService: PlayerService) {
     }
 
     public formatPreciseDuration(durationInSeconds: number): string {

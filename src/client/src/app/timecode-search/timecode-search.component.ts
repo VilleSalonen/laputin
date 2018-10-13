@@ -1,11 +1,8 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import {Component, Output, EventEmitter} from '@angular/core';
 
-import {File} from './../models/file';
 import {Tag, TagStatus} from './../models/tag';
 import {FileQuery} from './../models/filequery';
 import {TagChange} from './../search-tag/search-tag.component';
-import { Subject } from 'rxjs/Subject';
 import { AutocompleteType } from '../models/autocompletetype';
 
 @Component({

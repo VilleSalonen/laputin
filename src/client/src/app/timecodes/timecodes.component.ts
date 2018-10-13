@@ -1,13 +1,21 @@
-import { Component, OnInit, Injectable, Inject } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 
 import { File } from './../models/file';
-import { FileChange, ChangeDirection } from './../models/filechange';
-import { Tag, Timecode } from './../models/tag';
+import { Timecode } from './../models/tag';
 import { FileQuery } from './../models/filequery';
 import { LaputinService } from './../laputin.service';
-import { PlayerService } from '../player.service';
 import * as moment from 'moment';
+
+class TimecodeItem {
+    constructor(public type: TimecodeItemType, public item: any) {
+    }
+}
+
+enum TimecodeItemType {
+    File,
+    Timecode
+}
 
 @Component({
     styleUrls: ['./timecodes.component.scss'],
@@ -27,8 +35,7 @@ export class TimecodesComponent implements OnInit {
     private _query: FileQuery = new FileQuery();
 
     constructor(
-        private _service: LaputinService,
-        private _playerService: PlayerService
+        private _service: LaputinService
     ) {}
 
     ngOnInit(): void {
@@ -101,19 +108,4 @@ export class TimecodesComponent implements OnInit {
         this.exporting = true;
         this.exportCommandsStr = this.exportCommands.join('\r\n');
     }
-}
-
-class FileWithTimecodes {
-    constructor(public file: File, public timecodes: Timecode[]) {
-    }
-}
-
-class TimecodeItem {
-    constructor(public type: TimecodeItemType, public item: any) {
-    }
-}
-
-enum TimecodeItemType {
-    File,
-    Timecode
 }

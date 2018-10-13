@@ -1,10 +1,7 @@
-import {Component, OnInit, Injectable, Inject, Input, EventEmitter, Output} from '@angular/core';
+import {Component, Injectable, Input} from '@angular/core';
 import * as _ from 'lodash';
 
 import {File} from './../models/file';
-import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag} from './../models/tag';
-import {FileQuery} from './../models/filequery';
 import {LaputinService} from './../laputin.service';
 
 @Component({
@@ -19,8 +16,8 @@ export class FileComponent {
 
     public cacheBuster: string;
 
-    constructor(private _service: LaputinService) {
-        _service.thumbnailChanged.subscribe((changed: File) => {
+    constructor(service: LaputinService) {
+        service.thumbnailChanged.subscribe((changed: File) => {
             if (changed.hash === this.file.hash) {
                 this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
             }

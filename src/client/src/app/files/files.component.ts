@@ -1,15 +1,12 @@
-import { Component, OnInit, Injectable, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, Injectable, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 
 import { File } from './../models/file';
 import { FileChange, ChangeDirection } from './../models/filechange';
-import { Tag } from './../models/tag';
 import { FileQuery } from './../models/filequery';
 import { LaputinService } from './../laputin.service';
-import { PlayerService } from '../player.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 
 @Component({
     styleUrls: ['./files.component.scss'],
@@ -31,7 +28,6 @@ export class FilesComponent implements OnInit, OnDestroy {
 
     constructor(
         private _service: LaputinService,
-        private _playerService: PlayerService,
         private route: ActivatedRoute,
         private router: Router
     ) {}

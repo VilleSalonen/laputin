@@ -1,6 +1,4 @@
-import {Component, Input, Output, EventEmitter, ElementRef, Injectable, Inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Observable} from 'rxjs/Rx';
+import {Component, Input, Output, EventEmitter, Injectable, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -9,7 +7,6 @@ import 'rxjs/add/operator/distinctUntilChanged';
 
 import {File} from './../models/file';
 import {Tag, Timecode, TimecodeTag} from './../models/tag';
-import {TagContainer} from './../models/tagcontainer';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
