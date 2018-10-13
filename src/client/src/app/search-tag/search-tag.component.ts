@@ -27,11 +27,11 @@ export class TagChange {
 })
 export class SearchTagComponent {
     @Input() public tag: Tag;
+    @Input() public tagClass: string;
 
     @Output() public removed: EventEmitter<Tag> = new EventEmitter<Tag>();
     @Output() public changed: EventEmitter<TagChange> = new EventEmitter<TagChange>();
 
-    public tagClass = 'must-contain';
     public isOpen = false;
 
     public toggle(): void {

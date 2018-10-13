@@ -7,8 +7,8 @@
             </div>
 
             <div class="control">
-                <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)" name="filename"
-                    placeholder="Filename" />
+                <input type="text" class="form-control" [ngModel]="query.filename" (ngModelChange)="onFilenameChanged($event)"
+                    name="filename" placeholder="Filename" />
             </div>
 
             <div class="control">
@@ -25,8 +25,16 @@
         </div>
 
         <div class="selected-tags">
-            <div class="tag" *ngFor="let tag of query.tags">
-                <app-search-tag [tag]="tag" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
+            <div class="tag" *ngFor="let tag of query.andTags">
+                <app-search-tag [tag]="tag" [tagClass]="'must-contain'" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
+            </div>
+
+            <div class="tag" *ngFor="let tag of query.orTags">
+                <app-search-tag [tag]="tag" [tagClass]="'can-contain'" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
+            </div>
+
+            <div class="tag" *ngFor="let tag of query.notTags">
+                <app-search-tag [tag]="tag" [tagClass]="'does-not-contain'" (changed)="changeTag($event)" (removed)="removeTag($event)"></app-search-tag>
             </div>
         </div>
 
