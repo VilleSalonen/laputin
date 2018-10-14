@@ -8,6 +8,8 @@ import {
   HashLocationStrategy
 } from '@angular/common';
 import { VirtualScrollModule } from 'angular2-virtual-scroll';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
@@ -27,6 +29,7 @@ import { TimecodeComponent } from './timecode/timecode.component';
 import { TimecodesComponent } from './timecodes/timecodes.component';
 import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly.component';
 import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
+
 
 @NgModule({
   declarations: [
@@ -52,6 +55,7 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
+    MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule,
     RouterModule.forRoot([
       { path: '', redirectTo: 'files', pathMatch: 'full' },
       { path: 'files', component: FilesComponent },
@@ -60,7 +64,8 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
       { path: 'tags', component: TagsComponent },
       { path: 'duplicates', component: DuplicatesComponent }
     ]),
-    VirtualScrollModule
+    VirtualScrollModule,
+    BrowserAnimationsModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService, PlayerService],
   bootstrap: [AppComponent]
