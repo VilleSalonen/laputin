@@ -1,10 +1,9 @@
 <div>
-    <input type="text" [formControl]="termCtrl" (keyup)="onKeyUp($event)" placeholder="Tags">
-    <div class="typeahead-list-container" *ngIf="matchingTags.length > 0">
-        <ul class="typeahead-list" role="menu">
-            <li *ngFor="let tag of matchingTags; let i = index" (click)="mouseSelection(tag)" (mouseover)="selectedIndex = i" [class]="selectedIndex == i ? 'hover' : ''">
-                {{tag.name}}
-            </li>
-        </ul>
-    </div>
+    <mat-form-field>
+        <input type="text" matInput [formControl]="termCtrl" [matAutocomplete]="auto" placeholder="Tags">
+    </mat-form-field>
+
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn">
+        <mat-option *ngFor="let tag of matchingTags" [value]="tag">{{tag.name}}</mat-option>
+    </mat-autocomplete>
 </div>
