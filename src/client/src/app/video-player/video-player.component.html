@@ -85,9 +85,7 @@
                 </div>
 
                 <div class="tags">
-                    <div *ngFor="let tag of file.tags" class="tag" (click)="removeTag(tag)" title="Click to remove {{tag.name}}">
-                        {{tag.name}}
-                    </div>
+                    <button class="tag" *ngFor="let tag of file.tags" (click)="removeTag(tag)" mat-flat-button title="Click to remove {{tag.name}}">{{tag.name}}</button>
                 </div>
             </div>
         </div>

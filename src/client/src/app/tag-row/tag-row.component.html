@@ -1,6 +1,7 @@
 <div *ngIf="!isEditing" (click)="edit()">
-    <div class="tag">{{tag.name}}</div>
-    {{tag.associationCount}}
+    <button class="tag" mat-flat-button title="Rename tag {{tag.name}}" matBadge="{{tag.associationCount}}"
+        matBadgePosition="after" matBadgeColor="accent">{{tag.name}}</button>
+
 </div>
 <div *ngIf="isEditing">
     <input type="text" [(ngModel)]="name" (keyup)="onKeyUp($event)" />
