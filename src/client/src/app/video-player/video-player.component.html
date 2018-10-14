@@ -93,7 +93,7 @@
 
     <div class="column" style="min-width: 500px;">
         <div style="margin-bottom: 24px;">
-            <div class="row" style="margin-bottom: 6px;" *ngIf="selectedTagsForTimecode">
+            <div class="row" style="margin-bottom: 6px; flex-wrap: wrap;" *ngIf="selectedTagsForTimecode">
                 <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
                     mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
             </div>
