@@ -8,7 +8,7 @@ import {
   HashLocationStrategy
 } from '@angular/common';
 import { VirtualScrollModule } from 'angular2-virtual-scroll';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
@@ -55,7 +55,7 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
-    MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule,
+    MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule,
     RouterModule.forRoot([
       { path: '', redirectTo: 'files', pathMatch: 'full' },
       { path: 'files', component: FilesComponent },

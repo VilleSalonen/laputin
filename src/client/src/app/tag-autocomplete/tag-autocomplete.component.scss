@@ -1,0 +1,6 @@
+@import './../../styles/styles.scss';
+
+mat-form-field {
+    width: 15 * $standard-margin;
+    max-width: 15 * $standard-margin;
+}

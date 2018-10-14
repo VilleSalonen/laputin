@@ -13,23 +13,6 @@
     margin-bottom: 0.25 * $standard-margin;
 }
 
-label {
-    margin-right: calc(0.5 * #{$standard-margin});
-}
-
-input, select, button {
-    @include rounded-borders;
-
-    background: $color-complement-1;
-    color: $color-primary-4;
-    font-size: 1.2em;
-}
-
-input::placeholder {
-    color: $color-complement-2;
-    opacity: 1;
-}
-
 .tag {
     margin-right: calc(0.5 * #{$standard-margin});
 }
@@ -39,4 +22,9 @@ input::placeholder {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
+}
+
+mat-form-field {
+    width: 15 * $standard-margin;
+    max-width: 15 * $standard-margin;
 }
