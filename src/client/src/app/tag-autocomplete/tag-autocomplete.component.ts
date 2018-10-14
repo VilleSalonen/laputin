@@ -18,8 +18,6 @@ import { AutocompleteType } from '../models/autocompletetype';
 })
 @Injectable()
 export class TagAutocompleteComponent implements OnInit {
-    public selectedIndex = -1;
-
     public allTags: Tag[] = [];
     public matchingTags: Tag[] = [];
 
@@ -46,6 +44,15 @@ export class TagAutocompleteComponent implements OnInit {
         } else {
             this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
         }
+    }
+
+    onOptionSelected(event: any) {
+        this.select.emit(event.option.value);
+        this.clear();
+    }
+
+    displayFn(tag?: Tag): string | undefined {
+        return tag ? tag.name : undefined;
     }
 
     onValueChange(value: string): void {
@@ -80,38 +87,9 @@ export class TagAutocompleteComponent implements OnInit {
         }
     }
 
-    mouseSelection(tag: Tag): void {
-        this.select.emit(tag);
-        this.clear();
-    }
-
-    onKeyUp($event: KeyboardEvent): void {
-        const UP = 38;
-        const DOWN = 40;
-        const ENTER = 13;
-        const ESC = 27;
-
-        if ($event.which === UP && this.selectedIndex > 0) {
-            this.selectedIndex--;
-        }
-
-        if ($event.which === DOWN && this.selectedIndex < this.matchingTags.length - 1) {
-            this.selectedIndex++;
-        }
-
-        if ($event.which === ENTER && this.selectedIndex >= 0 && this.selectedIndex < this.matchingTags.length) {
-            this.select.emit(this.matchingTags[this.selectedIndex]);
-            this.clear();
-        }
-
-        if ($event.which === ESC) {
-            this.clear();
-        }
-    }
 
     public clear(): void {
         this.termCtrl.setValue('');
         this.matchingTags = [];
-        this.selectedIndex = -1;
     }
 }
