@@ -20,7 +20,9 @@
               "src/assets",
               "src/favicon.ico"
             ],
-            "styles": [],
+            "styles": [
+                "src/styles/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -68,7 +70,11 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
-            "styles": [],
+            "styles": [
+              {
+                "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+              }
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico"
