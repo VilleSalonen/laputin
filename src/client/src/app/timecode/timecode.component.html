@@ -15,10 +15,8 @@
 
 <div class="column">
     <div class="row">
-        <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
-            title="Remove {{timecodeTag.tag.name}} tag from timecode">
-            {{timecodeTag.tag.name}}
-        </div>
+        <button *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
+            mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>
 
         <a (click)="addingTags = true" title="Add another tag to timecode" style="cursor: pointer;">
             <i class="fa fa-plus" aria-hidden="true"></i>

@@ -1,18 +1,11 @@
 @import './../../styles/styles.scss';
 
 .tag {
-    @include rounded-borders;
-
-    background: $color-primary-4;
-    color: #e0e0e0;
     margin-bottom: 0.25 * $standard-margin;
     margin-right: 0.25 * $standard-margin;
-    display: inline-block;
-
-    cursor: pointer;
 }
 
-input, select, button {
+input, select {
     @include rounded-borders;
 
     background: $color-complement-1;
