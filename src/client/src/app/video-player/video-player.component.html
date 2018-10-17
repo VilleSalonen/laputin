@@ -2,7 +2,7 @@
     <div class="column" style="flex-grow: 1; margin-right: 24px;">
         <div class="row" style="background: black; flex-grow: 1; position: relative; background-repeat: no-repeat; background-size: contain; background-position: center;"
             [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}">
-            <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="filename" style="color: white;">
+            <div [ngClass]="{ 'hidden': playing }" class="filename" style="color: white;">
                 <span class="filename-small">{{file.directory()}}</span>
                 <br />
                 <span class="filename-big">{{file.nameSansSuffix()}}</span>
