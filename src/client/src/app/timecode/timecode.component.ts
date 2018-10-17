@@ -26,15 +26,37 @@ export class TimecodeComponent implements OnInit {
     @Input() currentTime: number;
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
 
-    public addingTags: boolean;
     public showControls: boolean;
     public alreadySelectedTags: Tag[];
+    public editing: boolean;
 
     constructor(private _service: LaputinService, private _playerService: PlayerService) {
     }
 
     ngOnInit() {
         this.updateAlreadySelectedTags();
+    }
+
+    public formatTimecodeDuration(): string {
+        const duration = moment.duration(this.timecode.end - this.timecode.start, 'seconds');
+
+        let result = '';
+
+        const minutes = Math.floor(duration.asMinutes());
+        const seconds = duration.seconds();
+
+        if (minutes > 0) {
+            result += minutes + ' min ';
+        }
+        if (seconds > 0) {
+            result += seconds + ' sec';
+        }
+
+        return result.trim();
+    }
+
+    public toggleEdit(): void {
+        this.editing = !this.editing;
     }
 
     public formatPreciseDuration(durationInSeconds: number): string {
@@ -85,8 +107,6 @@ export class TimecodeComponent implements OnInit {
         });
         this.timecode.timecodeTags = timecodeTags;
         this.updateAlreadySelectedTags();
-
-        this.addingTags = false;
     }
 
     public async removeTagFromExistingTimecode(timecodeTag: TimecodeTag): Promise<void> {
@@ -115,5 +135,9 @@ export class TimecodeComponent implements OnInit {
 
     private updateAlreadySelectedTags(): void {
         this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
+    }
+
+    public formattedTags(): string {
+        return _.map(this.timecode.timecodeTags, (timecodeTag) => timecodeTag.tag.name).join(', ');
     }
 }
