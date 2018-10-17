@@ -4,7 +4,5 @@
 </div>
 
 <div class="column">
-    <div *ngFor="let timecodeTag of timecode.timecodeTags" class="tag">
-        {{timecodeTag.tag.name}}
-    </div>
+    <button *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" mat-flat-button title="Click to reset tag selection">{{timecodeTag.tag.name}}</button>
 </div>
