@@ -20,6 +20,7 @@ import { AutocompleteType } from '../models/autocompletetype';
 export class TagAutocompleteComponent implements OnInit {
     public allTags: Tag[] = [];
     public matchingTags: Tag[] = [];
+    public otherTags: Tag[] = [];
 
     public termCtrl = new FormControl();
 
@@ -76,12 +77,18 @@ export class TagAutocompleteComponent implements OnInit {
                         .slice(0, 10);
                 break;
             case AutocompleteType.FileTimecodeTagging:
+                const fileTags = _.map(this.tagContainer.tags, (tag: Tag) => tag.id);
                 const excludedTagIds = _.map(this.exclude, (tag: Tag) => tag.id);
 
                 this.matchingTags =
                     this.tagContainer.tags
                         .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
                         .filter((tag: Tag) => _.indexOf(excludedTagIds, tag.id) === -1)
+                        .slice(0, 10);
+                this.otherTags =
+                    this.allTags
+                        .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
+                        .filter((tag: Tag) => _.indexOf(fileTags, tag.id) === -1)
                         .slice(0, 10);
                 break;
         }
