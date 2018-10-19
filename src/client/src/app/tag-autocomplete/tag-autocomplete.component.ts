@@ -57,6 +57,10 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     onValueChange(value: string): void {
+        if (!value) {
+            return;
+        }
+
         const searchTerm = value.toLowerCase();
 
         if (!this.tagContainer) { return; }
