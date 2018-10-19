@@ -104,86 +104,57 @@
             </div>
 
             <div class="row" style="margin-bottom: 6px;">
+                <button mat-mini-fab color="primary" (click)="setTagStart()" title="Set tag timecode start">
+                    <i class="fas fa-stopwatch"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="goToTagStart()" title="Go to tag timecode start">
+                    <i class="far fa-dot-circle"></i>
+                </button>
+
                 <mat-form-field>
                     <input matInput placeholder="Start time" [(ngModel)]="tagStart" style="width: 6em;" />
                 </mat-form-field>
 
-                <span style="margin-right: 0.5em;">
-                    <a (click)="setTagStart()" title="Set tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="fas fa-stopwatch"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="goToTagStart()" title="Go to tag timecode start" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="far fa-dot-circle"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeBackwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-backward"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-caret-left"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeForward()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-caret-right"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveStartTimeForwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-forward"></i>
-                    </a>
-                </span>
+                <button mat-mini-fab color="primary" (click)="moveStartTimeBackwardMore()" title="Move start time backward more">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="moveStartTimeBackward()" title="Move start time backward">
+                    <i class="fas fa-caret-left"></i>
+                </button>
+
+                <button mat-mini-fab color="primary" (click)="moveStartTimeForward()" title="Move start time forward">
+                    <i class="fas fa-caret-right"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="moveStartTimeForwardMore()" title="Move start time forward more">
+                    <i class="fas fa-forward"></i>
+                </button>
             </div>
 
             <div class="row" style="margin-bottom: 6px;">
+                <button mat-mini-fab color="primary" (click)="setTagEnd()" title="Set tag timecode end">
+                    <i class="fas fa-stopwatch"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="goToTagEnd()" title="Go to tag timecode end">
+                    <i class="far fa-dot-circle"></i>
+                </button>
+
                 <mat-form-field>
                     <input matInput [(ngModel)]="tagEnd" placeholder="End time" style="width: 6em;" />
                 </mat-form-field>
 
-                <span style="margin-right: 0.5em;">
-                    <a (click)="setTagEnd()" title="Set tag timecode end" style="cursor: pointer;">
-                        <i class="fas fa-stopwatch"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="goToTagEnd()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="far fa-dot-circle"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeBackwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-caret-left"></i>
-                        <i class="fas fa-caret-left"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeBackward()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-caret-left"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeForward()" title="Go to tag timecode end" style="margin-right: 0.5em;" style="cursor: pointer;">
-                        <i class="fas fa-caret-right"></i>
-                    </a>
-                </span>
-                <span style="margin-right: 0.5em;">
-                    <a (click)="moveEndTimeForwardMore()" title="Go to tag timecode end" style="margin-right: 0.5em;"
-                        style="cursor: pointer;">
-                        <i class="fas fa-caret-right"></i>
-                        <i class="fas fa-caret-right"></i>
-                    </a>
-                </span>
+                <button mat-mini-fab color="primary" (click)="moveEndTimeBackwardMore()" title="Move end time backward more">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="moveEndTimeBackward()" title="Move end time backward">
+                    <i class="fas fa-caret-left"></i>
+                </button>
+
+                <button mat-mini-fab color="primary" (click)="moveEndTimeForward()" title="Move end time forward">
+                    <i class="fas fa-caret-right"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="moveEndTimeForwardMore()" title="Move end time forward more">
+                    <i class="fas fa-forward"></i>
+                </button>
             </div>
 
             <button (click)="saveTagTimecode()" mat-button>Save</button>
