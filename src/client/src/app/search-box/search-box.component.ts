@@ -2,16 +2,15 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 
 @Component({
     selector: 'app-search-box',
-    styleUrls: ['./search-box.component.scss'],
     template: `
-    <div>
+    <mat-form-field>
         <input
-            class="form-control"
+            matInput
             type="text"
             [(ngModel)]="term"
             (keyup)="onKeyUp($event)"
             placeholder="Create a new tag" />
-    </div>`
+    </mat-form-field>`
 })
 export class SearchBoxComponent {
     public term = '';
