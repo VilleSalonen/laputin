@@ -251,7 +251,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private setProgress(playPercent: number) {
         const newTime = this.player.duration * playPercent;
         if (!isNaN(newTime) && 0 <= newTime && newTime <= this.player.duration) {
-            this.player.currentTime = newTime;
+            this.setCurrentTime(newTime);
         }
     }
 
@@ -373,16 +373,15 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagStart
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
             : this.player.currentTime;
-        this.player.currentTime = currentTime - (1 / 20.0);
+        this.setCurrentTime(currentTime - (1 / 20.0));
         this.setTagStart();
-        this.playbackHasBeenStarted = true;
     }
 
     public moveStartTimeForward(): void {
         const currentTime: number = this.tagStart
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
             : this.player.currentTime;
-        this.player.currentTime = currentTime + (1 / 20.0);
+        this.setCurrentTime(currentTime + (1 / 20.0));
         this.setTagStart();
     }
 
@@ -390,7 +389,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagEnd
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
             : this.player.currentTime;
-        this.player.currentTime = currentTime - (1 / 20.0);
+        this.setCurrentTime(currentTime - (1 / 20.0));
         this.setTagEnd();
     }
 
@@ -398,7 +397,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagEnd
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
             : this.player.currentTime;
-        this.player.currentTime = currentTime + (1 / 20.0);
+        this.setCurrentTime(currentTime + (1 / 20.0));
         this.setTagEnd();
     }
 
@@ -406,7 +405,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagStart
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
             : this.player.currentTime;
-        this.player.currentTime = currentTime - (1 / 4.0);
+        this.setCurrentTime(currentTime - (1 / 4.0));
         this.setTagStart();
     }
 
@@ -414,7 +413,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagStart
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
             : this.player.currentTime;
-        this.player.currentTime = currentTime + (1 / 4.0);
+        this.setCurrentTime(currentTime + (1 / 4.0));
         this.setTagStart();
     }
 
@@ -422,7 +421,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagEnd
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
             : this.player.currentTime;
-        this.player.currentTime = currentTime - (1 / 4.0);
+        this.setCurrentTime(currentTime - (1 / 4.0));
         this.setTagEnd();
     }
 
@@ -430,7 +429,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentTime: number = this.tagEnd
             ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
             : this.player.currentTime;
-        this.player.currentTime = currentTime + (1 / 4.0);
+        this.setCurrentTime(currentTime + (1 / 4.0));
         this.setTagEnd();
     }
 
@@ -519,7 +518,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public goToTimecode(timecode: Timecode): void {
-        this.player.currentTime = timecode.start;
+        this.setCurrentTime(timecode.start);
         this.play();
     }
 
@@ -549,7 +548,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             return;
         }
 
-        this.player.currentTime = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
+        this.setCurrentTime(this.convertFromSeparatedTimecodeToSeconds(this.tagStart));
         if (!this.playing) {
             this.play();
         }
@@ -560,7 +559,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             return;
         }
 
-        this.player.currentTime = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
+        this.setCurrentTime(this.convertFromSeparatedTimecodeToSeconds(this.tagEnd));
         if (!this.playing) {
             this.play();
         }
@@ -608,5 +607,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             }
         });
         this.timecodes = timecodes;
+    }
+
+    private setCurrentTime(newCurrentTime: number) {
+        this.player.currentTime = newCurrentTime;
+        this.playbackHasBeenStarted = true;
     }
 }
