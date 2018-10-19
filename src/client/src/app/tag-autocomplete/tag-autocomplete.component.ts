@@ -98,7 +98,6 @@ export class TagAutocompleteComponent implements OnInit {
         }
     }
 
-
     public clear(): void {
         this.termCtrl.setValue('');
         this.matchingTags = [];
