@@ -524,6 +524,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public addTagSelectionToTimecode(tag: Tag): void {
+        const alreadyAddedOnFile = this.file.tags.find(t => t.id === tag.id);
+        if (!alreadyAddedOnFile) {
+            this.addTag(tag);
+        }
+
         this.selectedTagsForTimecode.push(tag);
     }
 
