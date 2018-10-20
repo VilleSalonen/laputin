@@ -10,7 +10,7 @@ import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
-import { MatSliderChange } from '@angular/material';
+import { MatSliderChange, MatSlider } from '@angular/material';
 
 @Component({
     selector: 'app-video-player',
@@ -193,7 +193,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.close();
     }
 
-    private setProgress(playPercent: number) {
+    public setProgress(sliderChangeEvent: MatSliderChange) {
+        const playPercent = sliderChangeEvent.value / this.sliderMax;
+
         const newTime = this.player.duration * playPercent;
         if (!isNaN(newTime) && 0 <= newTime && newTime <= this.player.duration) {
             this.setCurrentTime(newTime);
@@ -254,11 +256,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         result += (milliseconds >= 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
 
         return result;
-    }
-
-    public sliderChange(event: MatSliderChange) {
-        console.log(event);
-        this.setProgress(event.value / this.sliderMax);
     }
 
     private setPlayheadTo(playPercent: number) {
