@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
@@ -17,7 +17,7 @@ import { PlayerService } from '../player.service';
     templateUrl: './video-player.component.html'
 })
 @Injectable()
-export class VideoPlayerComponent implements AfterViewInit {
+export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public playbackHasBeenStarted: boolean;
     public playing: boolean;
     public random: boolean;
@@ -242,6 +242,10 @@ export class VideoPlayerComponent implements AfterViewInit {
 
         this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
         this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
+    }
+
+    ngOnDestroy(): void {
+        this.close();
     }
 
     private setProgress(playPercent: number) {
