@@ -29,9 +29,7 @@
             </div>
 
             <div class="timeline-and-buttons">
-                <div class="timeline" #timeline>
-                    <div class="playhead" #playhead></div>
-                </div>
+                <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="sliderChange($event)"></mat-slider>
 
                 <div style="display: flex; flex-direction: row;">
                     <div (click)="random = !random" [ngClass]="{'active-button': random}" style="margin-right: 0.5em;">

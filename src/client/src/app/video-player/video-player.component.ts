@@ -10,6 +10,7 @@ import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
+import { MatSliderChange } from '@angular/material';
 
 @Component({
     selector: 'app-video-player',
@@ -31,14 +32,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     private player: HTMLVideoElement;
 
-    private cachedTimelineWidth: number;
-    private cachedPlayheadWidth: number;
     private duration: string;
 
-    private cachedTimelineBoundingClientRect: any;
-
-    @ViewChild('playhead', { read: ElementRef }) playhead: ElementRef;
-    @ViewChild('timeline', { read: ElementRef }) timeline: ElementRef;
     @ViewChild('playerView', { read: ElementRef }) playerView: ElementRef;
     @ViewChild('player', { read: ElementRef }) playerElem: ElementRef;
 
@@ -48,6 +43,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public selectedTagsForTimecode: Tag[] = [];
     public tagStart: string;
     public tagEnd: string;
+
+    public sliderMin = 0;
+    public sliderMax = 1000000;
+    public sliderValue: number;
 
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
@@ -80,15 +79,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         playStart.subscribe(() => this.playing = true);
         playEnd.subscribe(() => this.playing = false);
 
-        const mouseDowns = Observable
-            .fromEvent(this.playhead.nativeElement, 'mousedown')
-            .takeUntil(this.fileClosed);
-        const mouseMoves = Observable
-            .fromEvent(window, 'mousemove')
-            .takeUntil(this.fileClosed);
-        const mouseUps = Observable
-            .fromEvent(window, 'mouseup')
-            .takeUntil(this.fileClosed);
+        playStart.subscribe(() => this.playbackHasBeenStarted = true);
 
         const timeUpdates = Observable
             .fromEvent(this.player, 'timeupdate')
@@ -96,50 +87,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             .throttleTime(500)
             .map(() => this.player.currentTime / this.player.duration);
 
-        const clicks = Observable.fromEvent(this.timeline.nativeElement, 'click')
-            .takeUntil(this.fileClosed)
-            .map((event: MouseEvent) => {
-                event.preventDefault();
-
-                const timelineBoundingRect = this.getTimelineBoundingRect();
-                const timelineWidth = this.cachedTimelineWidth;
-
-                return this.clickPercent(event.clientX, timelineBoundingRect, timelineWidth);
-            });
-
-        const drags = mouseDowns.concatMap(() => {
-            const timelineBoundingRect = this.getTimelineBoundingRect();
-            const timelineWidth = this.cachedTimelineWidth;
-
-            return mouseMoves.takeUntil(mouseUps).map((dragEvent: MouseEvent) => {
-                return this.clickPercent(dragEvent.clientX, timelineBoundingRect, timelineWidth);
-            });
-        });
-
-        clicks
-            .subscribe((playPercent: number) => {
-                this.setPlayheadTo(playPercent);
-                this.setProgress(playPercent);
-            });
-
-        drags
-            .subscribe((playPercent: number) => this.setPlayheadTo(playPercent));
-        drags
-            .debounceTime(50)
-            .subscribe((playPercent: number) => this.setProgress(playPercent));
-
         timeUpdates
             .subscribe((playPercent: number) =>
                 this.updateProgress(playPercent)
             );
-
-        playStart
-            .merge(clicks)
-            .merge(drags)
-            .subscribe(() => {
-                this.playbackHasBeenStarted = true;
-                this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
-            });
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
@@ -149,7 +100,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             .subscribe(() => {
                 this._service.getTimecodes(this.file).then((timecodes) => {
                     this.timecodes = timecodes;
-                    this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
                 });
 
                 this.playbackHasBeenStarted = false;
@@ -169,8 +119,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     // We have to reset playhead because it might be further right than
                     // the new timeline width allows.
                     this.setPlayheadTo(0);
-                    this.resetCache();
-                    this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
                     this.updateProgress(this.player.currentTime / this.player.duration);
                 });
 
@@ -239,9 +187,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                         break;
                 }
         });
-
-        this.cachedPlayheadWidth = this.playhead.nativeElement.offsetWidth;
-        this.cachedTimelineWidth = this.timeline.nativeElement.offsetWidth - this.cachedPlayheadWidth;
     }
 
     ngOnDestroy(): void {
@@ -311,26 +256,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         return result;
     }
 
-    private getTimelineBoundingRect() {
-        if (!this.cachedTimelineBoundingClientRect) {
-            this.cachedTimelineBoundingClientRect = this.timeline.nativeElement.getBoundingClientRect();
-        }
-
-        return this.cachedTimelineBoundingClientRect.left + (this.cachedPlayheadWidth / 2);
-    }
-
-    private resetCache() {
-        this.cachedTimelineBoundingClientRect = null;
-    }
-
-    private clickPercent(x, boundingRect, width) {
-        const position = ((x - boundingRect) / width);
-        return Math.max(0.0, Math.min(position, 1.0));
+    public sliderChange(event: MatSliderChange) {
+        console.log(event);
+        this.setProgress(event.value / this.sliderMax);
     }
 
     private setPlayheadTo(playPercent: number) {
-        const leftMargin = this.cachedTimelineWidth * playPercent;
-        this.playhead.nativeElement.style.marginLeft = leftMargin + 'px';
+        this.sliderValue = playPercent * this.sliderMax;
     }
 
     public close(): void {
