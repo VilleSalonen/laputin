@@ -6,7 +6,7 @@
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn">
         <mat-option *ngFor="let tag of matchingTags" [value]="tag">{{tag.name}}</mat-option>
 
-        <mat-optgroup [label]="'Add new tag to file'">
+        <mat-optgroup [label]="'Add new tag to file'" *ngIf="otherTags && otherTags.length > 0">
             <mat-option *ngFor="let tag of otherTags" [value]="tag">{{tag.name}}</mat-option>
         </mat-optgroup>
     </mat-autocomplete>
