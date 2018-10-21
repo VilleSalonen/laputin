@@ -133,6 +133,16 @@ export class TimecodeComponent implements OnInit {
         this._playerService.setCurrentTime(this.timecode.end);
     }
 
+    public async setTagStart(): Promise<void> {
+        this.timecode.start = this._playerService.getCurrentTime();
+        await this._service.updateTimecodeStartAndEnd(this.file, this.timecode);
+    }
+
+    public async setTagEnd(): Promise<void> {
+        this.timecode.end = this._playerService.getCurrentTime();
+        await this._service.updateTimecodeStartAndEnd(this.file, this.timecode);
+    }
+
     private updateAlreadySelectedTags(): void {
         this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
     }
