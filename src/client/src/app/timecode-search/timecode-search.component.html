@@ -1,6 +1,6 @@
 <form (ngSubmit)="submitClicked($event)">
     <div class="control">
-        <app-tag-autocomplete [tagContainer]="query" (select)="addTag($event)" [type]="AutocompleteType.FileSearch">
+        <app-tag-autocomplete [tagContainer]="query" (tagSelected)="addTag($event)" [type]="AutocompleteType.FileSearch">
         </app-tag-autocomplete>
     </div>
 

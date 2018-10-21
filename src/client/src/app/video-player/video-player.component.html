@@ -71,7 +71,7 @@
 
             <div class="row">
                 <div class="tag-tools">
-                    <app-tag-autocomplete [tagContainer]="file" (select)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
+                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
 
                     <small>
                         <a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a>
@@ -97,7 +97,7 @@
             </div>
 
             <div class="row" style="margin-bottom: 6px;">
-                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (select)="addTagSelectionToTimecode($event)"
+                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
                     [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
             </div>
 

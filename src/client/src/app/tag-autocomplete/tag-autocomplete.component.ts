@@ -29,7 +29,7 @@ export class TagAutocompleteComponent implements OnInit {
     @Input() type: AutocompleteType;
 
     @Output()
-    public select = new EventEmitter<Tag>();
+    public tagSelected = new EventEmitter<Tag>();
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         this.termCtrl.valueChanges
@@ -48,7 +48,7 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     onOptionSelected(event: any) {
-        this.select.emit(event.option.value);
+        this.tagSelected.emit(event.option.value);
         this.clear();
     }
 

@@ -14,7 +14,7 @@
             <button *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
                 mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>
 
-            <app-tag-autocomplete [tagContainer]="file" [exclude]="alreadySelectedTags" (select)="addTagSelectionToTimecode($event)"
+            <app-tag-autocomplete [tagContainer]="file" [exclude]="alreadySelectedTags" (tagSelected)="addTagSelectionToTimecode($event)"
                 [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
         </ng-container>
         <ng-container *ngIf="!editing">
