@@ -277,6 +277,15 @@ export class Library {
         await stmt2.runAsync(timecodeId, timecodeId);
     }
 
+    public async updateTimecodeStartAndEnd(hash: string, timecode_id: number, timecode: Timecode): Promise<void> {
+        const stmt = this._db.prepare(`
+            UPDATE files_timecodes
+            SET start = ?, end = ?
+            WHERE id = ?
+        `);
+        await stmt.runAsync(timecode.start, timecode.end, timecode_id);
+    }
+
     public async getTimecodesForFile(hash: string): Promise<Timecode[]> {
         const timecodes: Timecode[] = [];
 

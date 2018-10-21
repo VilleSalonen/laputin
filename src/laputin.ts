@@ -138,6 +138,11 @@ export class Laputin {
             }
         });
 
+        api.route('/files/:hash/timecodes/:timecodeId').put(async (req, res) => {
+            await this.library.updateTimecodeStartAndEnd(req.params.hash, req.params.timecodeId, req.body.timecode);
+            res.status(200).end();
+        });
+
         api.route('/files/:hash/timecodes/:timecodeId/tags/:timecodeTagId').delete(async (req, res) => {
             const result = await this.library.removeTagFromTimecode(req.params.hash, req.params.timecodeId, req.params.timecodeTagId);
             res.status(200).end();

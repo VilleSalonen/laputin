@@ -8,6 +8,10 @@ export class PlayerService {
         this.player = player;
     }
 
+    public getCurrentTime(): number {
+        return this.player.currentTime;
+    }
+
     public setCurrentTime(currentTime: number): void {
         this.player.currentTime = currentTime;
     }

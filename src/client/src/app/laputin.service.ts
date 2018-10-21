@@ -179,6 +179,14 @@ export class LaputinService {
         return this._http.delete(this._baseUrl + '/files/' + file.hash + '/tags/' + tag.id);
     }
 
+    public updateTimecodeStartAndEnd(file: File, timecode: Timecode): Promise<any> {
+        const body = JSON.stringify({
+            timecode: timecode
+        });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        return this._http.put(this._baseUrl + '/files/' + file.hash + '/timecodes/' + timecode.timecodeId, body, { headers: headers }).toPromise();
+    }
+
     private compileParams(query: FileQuery): string {
         const params: string[] = [];
 
