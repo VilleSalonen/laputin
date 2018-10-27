@@ -116,17 +116,20 @@
     padding-bottom: 0;
     font-weight: bold;
     z-index: 10;
+    text-shadow: 1px 1px 0 black;
 }
 
 .filename-small {
     margin: 0;
     font-size: 14px;
+    text-shadow: 1px 1px 0 black;
 }
 
 .filename-big {
     margin-top: 0;
     margin-bottom: 0; 
     font-size: 20px;
+    text-shadow: 1px 1px 0 black;
 }
 
 .timeline {
