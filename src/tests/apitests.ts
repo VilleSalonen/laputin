@@ -7,8 +7,7 @@ import request = require('supertest');
 
 import { File } from './../file';
 import { Tag } from './../tag';
-import { TagQuery } from './../tagquery.model';
-import { compose } from './../compose';
+import { composeForTests } from './../compose';
 import { Laputin } from './../laputin';
 import { LaputinConfiguration } from './../laputinconfiguration';
 
@@ -266,7 +265,7 @@ describe('Laputin API', function () {
         fs.mkdirSync(archivePath);
 
         const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
-        const l = compose(archivePath, new LaputinConfiguration(1234, 'accurate'), fakeScreenshotter);
+        const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate'), fakeScreenshotter);
         l.initializeRoutes();
 
         await l.library.createTables();

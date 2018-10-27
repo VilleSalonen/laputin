@@ -127,7 +127,7 @@ export class Laputin {
                 if (!timecode.timecodeId) {
                     const screenshotTime = timecode.start + (timecode.end - timecode.start) * 0.66;
 
-                    const screenshotter = new Screenshotter(this._libraryPath);
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
                     await screenshotter.screenshotTimecode(files[0], result, screenshotTime);
                 }
 
@@ -169,7 +169,7 @@ export class Laputin {
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(this._libraryPath);
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
                     await screenshotter.screenshot(files[0], req.body.time);
                 }
 
@@ -185,7 +185,7 @@ export class Laputin {
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(this._libraryPath);
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
                     await screenshotter.screenshotTimecode(files[0], req.body.timecode, req.body.time);
                 }
 
