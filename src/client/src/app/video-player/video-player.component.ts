@@ -10,7 +10,7 @@ import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
-import { MatSliderChange, MatSlider } from '@angular/material';
+import { MatSliderChange } from '@angular/material';
 
 @Component({
     selector: 'app-video-player',
