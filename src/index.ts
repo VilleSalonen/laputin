@@ -64,7 +64,7 @@ import { Screenshotter } from './screenshotter';
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
         : new LaputinConfiguration(3200, 'accurate');
 
-    const laputin = compose(options.libraryPath, configuration, new Screenshotter(options.libraryPath));
+    const laputin = compose(options.libraryPath, configuration);
 
     laputin.initializeRoutes();
 

@@ -7,6 +7,7 @@ import winston = require('winston');
 
 import {File} from './file';
 import { Timecode } from './tag';
+import { Library } from './library';
 
 export class Screenshotter {
     private _thumbsPath: string;
@@ -15,7 +16,7 @@ export class Screenshotter {
     private _tagTimecodeThumbsSmallPath: string;
     private _initialized: boolean;
 
-    constructor(private _libraryPath: string) {
+    constructor(private _libraryPath: string, private _library: Library) {
         this._thumbsPath = path.join(this._libraryPath, '//.laputin//thumbs//');
         this._thumbsSmallPath = path.join(this._libraryPath, '//.laputin//thumbs-small//');
         this._tagTimecodeThumbsPath = path.join(this._libraryPath, '//.laputin//tag-timecode-thumbs//');
@@ -44,6 +45,7 @@ export class Screenshotter {
         try {
             child_process.execSync(command);
             child_process.execSync(commandSmall);
+            this._library.storeTimeForFileScreenshot(file, timeInSeconds);
             winston.log('verbose', 'Created screenshot for ' + file.path + '.');
         } catch (err) {
             winston.log('error', 'Could not create screenshot for ' + file.path + '!');
@@ -66,6 +68,7 @@ export class Screenshotter {
         try {
             child_process.execSync(command);
             child_process.execSync(commandSmall);
+            this._library.storeTimeForTimecodeScreenshot(timecode, timeInSeconds);
             winston.log('verbose', 'Created screenshot for ' + file.path + ' and timecode ID ' + timecode.timecodeId + '.');
         } catch (err) {
             winston.log('error', 'Could not create screenshot for ' + file.path + '!');

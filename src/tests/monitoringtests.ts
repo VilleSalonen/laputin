@@ -1,15 +1,12 @@
 import chai = require('chai');
 const expect = chai.expect;
-const assert = chai.assert;
 
 import fs = require('fs');
-import rimraf = require('rimraf');
 import request = require('supertest');
 import events = require('events');
 
 import {File} from './../file';
-import {Tag} from './../tag';
-import {compose} from './../compose';
+import {composeForTests} from './../compose';
 import {Laputin} from './../laputin';
 import {LaputinConfiguration} from './../laputinconfiguration';
 
@@ -321,7 +318,7 @@ async function initializeLaputin(path: string): Promise<Laputin> {
     }
 
     const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
-    const l = compose(archivePath, new LaputinConfiguration(1234, 'accurate'), fakeScreenshotter);
+    const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate'), fakeScreenshotter);
 
     await l.library.createTables();
 
