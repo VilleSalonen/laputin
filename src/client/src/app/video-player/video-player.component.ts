@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
@@ -18,7 +18,7 @@ import { MatSliderChange } from '@angular/material';
     templateUrl: './video-player.component.html'
 })
 @Injectable()
-export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     public playbackHasBeenStarted: boolean;
     public playing: boolean;
     public random: boolean;
@@ -48,12 +48,24 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public sliderMax = 1000000;
     public sliderValue: number;
 
+    public videoSource: string;
+
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
     @Output()
     public fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private _service: LaputinService, private _playerService: PlayerService) {
+    }
+
+    public ngOnInit(): void {
+        this._service.proxyExists(this.file).subscribe(proxyExists => {
+            if (proxyExists) {
+                this.videoSource = `/proxies/${this.file.hash}.mp4`;
+            } else {
+                this.videoSource = `/media/${this.file.escapedUrl()}`;
+            }
+        });
     }
 
     public ngAfterViewInit(): void {

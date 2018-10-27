@@ -3,7 +3,7 @@ import bodyParser = require('body-parser');
 import path = require('path');
 import http = require('http');
 import _ = require('lodash');
-import cors = require('cors');
+import fs = require('fs');
 
 import {Library} from './library';
 import {FileLibrary} from './filelibrary';
@@ -18,8 +18,12 @@ export class Laputin {
     private _server: http.Server;
 
     constructor(
-        private _libraryPath: string, public library: Library, public fileLibrary: FileLibrary,
-        private _opener: VLCOpener, private _port: number) {
+        private _libraryPath: string,
+        public library: Library,
+        public fileLibrary: FileLibrary,
+        private _opener: VLCOpener,
+        private _port: number,
+        private _proxyDirectory: string) {
         this.fileLibrary.on('found', (file: File) => this.library.addFile(file));
         this.fileLibrary.on('lost', (file: File) => this.library.deactivateFile(file));
     }
@@ -39,6 +43,10 @@ export class Laputin {
 
         const mediaCatchAll = express();
         this.app.use('/media/', mediaCatchAll);
+
+        if (this._proxyDirectory) {
+            this.app.use('/proxies', express.static(this._proxyDirectory));
+        }
     }
 
     public startListening(): Promise<void> {
@@ -192,6 +200,19 @@ export class Laputin {
                 res.status(200).end();
             } catch (error) {
                 res.status(500).end();
+            }
+        });
+
+        api.route('/proxyExists/:hash').get(async (req, res) => {
+            if (!(this._proxyDirectory)) {
+                res.send(false);
+            } else {
+                try {
+                    fs.accessSync(path.join(this._proxyDirectory, req.params.hash + '.mp4'), fs.constants.R_OK);
+                    res.send(true);
+                } catch (error) {
+                    res.send(false);
+                }
             }
         });
 

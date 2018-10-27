@@ -18,7 +18,14 @@ export function compose(libraryPath: string, configuration: LaputinConfiguration
 
     const opener = new VLCOpener(libraryPath);
 
-    return new Laputin(libraryPath, library, fileLibrary, opener, configuration.port);
+    return new Laputin(
+        libraryPath,
+        library,
+        fileLibrary,
+        opener,
+        configuration.port,
+        configuration.proxyDirectory
+    );
 }
 
 export function composeForTests(
@@ -33,7 +40,14 @@ export function composeForTests(
 
     const opener = new VLCOpener(libraryPath);
 
-    return new Laputin(libraryPath, library, fileLibrary, opener, configuration.port);
+    return new Laputin(
+        libraryPath,
+        library,
+        fileLibrary,
+        opener,
+        configuration.port,
+        configuration.proxyDirectory
+    );
 }
 
 function composeHasher(configuration: LaputinConfiguration): IHasher {

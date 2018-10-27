@@ -62,7 +62,7 @@ import { Screenshotter } from './screenshotter';
     const configFilePath = path.join(options.libraryPath, '.laputin.json');
     const configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-        : new LaputinConfiguration(3200, 'accurate');
+        : new LaputinConfiguration(3200, 'accurate', null);
 
     const laputin = compose(options.libraryPath, configuration);
 
