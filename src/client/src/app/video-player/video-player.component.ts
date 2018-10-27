@@ -222,7 +222,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateTime(): void {
         const currentTime = this.formatDuration(this.player.currentTime);
 
-        if (currentTime.indexOf('NaN') === -1 && this.duration.indexOf('NaN') === -1) {
+        if (currentTime.indexOf('NaN') === -1 && this.duration && this.duration.indexOf('NaN') === -1) {
             this.progressText = currentTime + '/' + this.duration;
         } else {
             this.progressText = '00:00/00:00';
