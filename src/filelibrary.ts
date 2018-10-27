@@ -150,13 +150,18 @@ export class FileLibrary extends events.EventEmitter {
         const file = _.find(files, (f: File) => {
             return f.path === fixedPath;
         });
-        this._files[hash] = _.filter(files, (f: File) => {
-            return f.path !== fixedPath;
-        });
 
-        this.emit('lost', file);
+        if (file) {
+            this._files[hash] = _.filter(files, (f: File) => {
+                return f.path !== fixedPath;
+            });
 
-        winston.log('verbose', 'Lost file:  ' + filePath);
+            this.emit('lost', file);
+
+            winston.log('verbose', 'Lost file:  ' + filePath);
+        } else {
+            winston.log('warning', `Tried to remove file ${filePath} but it was not found from file list via hash ${hash}!`);
+        }
     }
 
     public getDuplicates(): any {
