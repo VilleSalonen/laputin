@@ -175,6 +175,12 @@ export class LaputinService {
         return this.addTags(file, [tag]);
     }
 
+    public proxyExists(file: File): Observable<boolean> {
+        return this._http
+            .get(this._baseUrl + '/proxyExists/' + file.hash)
+            .map(res => res.json());
+    }
+
     public deleteTagFileAssoc(file: File, tag: Tag): Observable<Response> {
         return this._http.delete(this._baseUrl + '/files/' + file.hash + '/tags/' + tag.id);
     }

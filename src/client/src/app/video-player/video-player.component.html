@@ -14,7 +14,7 @@
             </div>
 
             <div [ngClass]="{ 'hidden': !playbackHasBeenStarted }" class="video-container">
-                <video src="/media/{{file.escapedUrl()}}" #player></video>
+                <video src="{{videoSource}}" #player></video>
             </div>
         </div>
 
