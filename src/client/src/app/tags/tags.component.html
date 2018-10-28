@@ -1,46 +1,24 @@
 <div class="container">
-    <div class="filter-controls">
-        <form>
-            <div>
-                <label>Name</label>
-                <div>
-                    <div>
-                        <app-search-box (update)="filter($event)"></app-search-box>
-                    </div>
-                </div>
+    <div class="tags">
+        <div class="tags-search">
+            <form>
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Filter tags" name="filter" (keyup)="onKeyUp($event)"
+                        [(ngModel)]="term" />
+                </mat-form-field>
+            </form>
+
+            <h1>Showing {{filteredTags.length}} matching tags</h1>
+        </div>
+
+        <div class="tags-list">
+            <div [ngClass]="{'hidden': !loading}">
+                <i class="fa fa-spinner"></i>
             </div>
-        </form>
-    </div>
 
-    <div [ngClass]="{'hidden': !loading}">
-        <i class="fa fa-spinner"></i>
-    </div>
-
-    <p>See <a href="#orphaned">orphaned tags</a></p>
-
-    <div [ngClass]="{'hidden': loading}">
-        <h1>Showing {{filteredTags.length}} matching tags</h1>
-
-        <table class="table table-striped">
-            <tbody>
-                <tr *ngFor="let tag of filteredTags">
-                    <td>
-                        <app-tag-row [tag]="tag"></app-tag-row>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h1 id="orphaned">Showing {{filteredOrphanedTags.length}} matching orphaned tags</h1>
-
-        <table class="table table-striped">
-            <tbody>
-                <tr *ngFor="let tag of filteredOrphanedTags">
-                    <td>
-                        <app-tag-row [tag]="tag"></app-tag-row>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <virtual-scroll [items]="filteredTags" (update)="viewPortItems = $event">
+                <app-tag-row *ngFor="let tag of viewPortItems" [tag]="tag" style="height: 320px; max-height: 320px; padding: 12px;"></app-tag-row>
+            </virtual-scroll>
+        </div>
     </div>
 </div>
