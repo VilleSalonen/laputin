@@ -12,6 +12,7 @@ import {LaputinService} from './../laputin.service';
 export class TagsComponent implements OnInit {
     public tags: Tag[] = [];
     public filteredTags: Tag[] = [];
+    public filteredOrphanedTags: Tag[] = [];
     public loading: boolean;
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
@@ -22,13 +23,16 @@ export class TagsComponent implements OnInit {
         this._service.getAllTags()
             .then((tags) => {
                 this.tags = tags;
-                this.filteredTags = tags;
+                this.filteredTags = tags.filter(t => t.associationCount > 0);
+                this.filteredOrphanedTags = tags.filter(t => t.associationCount === 0);
                 this.loading = false;
             });
     }
 
     filter(term: string) {
         const termUpperCase = term.toUpperCase();
-        this.filteredTags = _.filter(this.tags, (tag) => tag.name.toUpperCase().indexOf(termUpperCase) >= 0);
+        const searchTermMatches = this.tags.filter((tag) => tag.name.toUpperCase().indexOf(termUpperCase) >= 0);
+        this.filteredTags = searchTermMatches.filter((tag) => tag.associationCount > 0);
+        this.filteredOrphanedTags = searchTermMatches.filter((tag) => tag.associationCount === 0);
     }
 }

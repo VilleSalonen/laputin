@@ -16,12 +16,26 @@
         <i class="fa fa-spinner"></i>
     </div>
 
+    <p>See <a href="#orphaned">orphaned tags</a></p>
+
     <div [ngClass]="{'hidden': loading}">
         <h1>Showing {{filteredTags.length}} matching tags</h1>
 
         <table class="table table-striped">
             <tbody>
                 <tr *ngFor="let tag of filteredTags">
+                    <td>
+                        <app-tag-row [tag]="tag"></app-tag-row>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h1 id="orphaned">Showing {{filteredOrphanedTags.length}} matching orphaned tags</h1>
+
+        <table class="table table-striped">
+            <tbody>
+                <tr *ngFor="let tag of filteredOrphanedTags">
                     <td>
                         <app-tag-row [tag]="tag"></app-tag-row>
                     </td>
