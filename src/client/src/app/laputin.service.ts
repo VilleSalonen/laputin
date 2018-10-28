@@ -136,6 +136,15 @@ export class LaputinService {
             .toPromise();
     }
 
+    public screenshotTag(tag: Tag, file: File, timeInSeconds: number): Promise<Response> {
+        const body = JSON.stringify({ tag: tag, hash: file.hash, time: timeInSeconds });
+        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+
+        return this._http
+            .post(this._baseUrl + '/screenshotTag', body, { headers: headers })
+            .toPromise();
+    }
+
     public openFiles(query: FileQuery): Promise<Response> {
         const params = this.compileParams(query);
         return this._http.get(this._baseUrl + '/open/files' + params).toPromise();

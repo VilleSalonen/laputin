@@ -34,6 +34,7 @@ export class Library {
             tag_id INTEGER
         );`);
         await this._db.runAsync('CREATE TABLE screenshot_times_files (hash TEXT PRIMARY KEY, time REAL);');
+        await this._db.runAsync('CREATE TABLE screenshot_times_tags (id INTEGER PRIMARY KEY, hash TEXT, time REAL);');
         await this._db.runAsync('CREATE TABLE screenshot_times_timecodes (id INTEGER PRIMARY KEY, time REAL);');
     }
 
@@ -430,5 +431,10 @@ export class Library {
     public storeTimeForTimecodeScreenshot(timecode: Timecode, time: number) {
         const stmt = this._db.prepare('INSERT OR REPLACE INTO screenshot_times_timecodes (id, time) VALUES (?, ?)');
         return stmt.runAsync(timecode.timecodeId, time);
+    }
+
+    public storeTimeForTagScreenshot(tag: Tag, file: File, time: number) {
+        const stmt = this._db.prepare('INSERT OR REPLACE INTO screenshot_times_tags (id, hash, time) VALUES (?, ?, ?)');
+        return stmt.runAsync(tag.id, file.hash, time);
     }
 }

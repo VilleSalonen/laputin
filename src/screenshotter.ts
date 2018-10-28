@@ -6,7 +6,7 @@ import os = require('os');
 import winston = require('winston');
 
 import {File} from './file';
-import { Timecode } from './tag';
+import { Timecode, Tag } from './tag';
 import { Library } from './library';
 
 export class Screenshotter {
@@ -14,6 +14,8 @@ export class Screenshotter {
     private _thumbsSmallPath: string;
     private _tagTimecodeThumbsPath: string;
     private _tagTimecodeThumbsSmallPath: string;
+    private _tagThumbsPath: string;
+    private _tagThumbsSmallPath: string;
     private _initialized: boolean;
 
     constructor(private _libraryPath: string, private _library: Library) {
@@ -21,6 +23,8 @@ export class Screenshotter {
         this._thumbsSmallPath = path.join(this._libraryPath, '//.laputin//thumbs-small//');
         this._tagTimecodeThumbsPath = path.join(this._libraryPath, '//.laputin//tag-timecode-thumbs//');
         this._tagTimecodeThumbsSmallPath = path.join(this._libraryPath, '//.laputin//tag-timecode-thumbs-small//');
+        this._tagThumbsPath = path.join(this._libraryPath, '//.laputin//tag-thumbs//');
+        this._tagThumbsSmallPath = path.join(this._libraryPath, '//.laputin//tag-thumbs-small//');
     }
 
     public exists(file: File): boolean {
@@ -75,6 +79,29 @@ export class Screenshotter {
         }
     }
 
+    public async screenshotTag(tag: Tag, file: File, timeInSeconds: number): Promise<void> {
+        this.initialize();
+
+        const command = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+            ' -i "' + file.path +
+            '" -vframes 1 ' +
+            '"' + this.getTagThumbPath(tag) + '"';
+
+        const commandSmall = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+            ' -i "' + file.path +
+            '" -vframes 1 -vf scale=200:-1 ' +
+            '"' + this.getTagThumbSmallPath(tag) + '"';
+
+        try {
+            child_process.execSync(command);
+            child_process.execSync(commandSmall);
+            this._library.storeTimeForTagScreenshot(tag, file, timeInSeconds);
+            winston.log('verbose', 'Created screenshot for tag ' + tag.name + ' from file ' + file.path + '.');
+        } catch (err) {
+            winston.log('error', 'Could not create screenshot for tag ' + tag.name + '!');
+        }
+    }
+
     private initialize(): void {
         if (this._initialized) {
             return;
@@ -124,5 +151,13 @@ export class Screenshotter {
 
     private getTagTimecodeThumbSmallPath(timecode: Timecode) {
         return path.join(this._tagTimecodeThumbsSmallPath, timecode.timecodeId + '.jpg');
+    }
+
+    private getTagThumbPath(tag: Tag) {
+        return path.join(this._tagThumbsPath, tag.id + '.jpg');
+    }
+
+    private getTagThumbSmallPath(tag: Tag) {
+        return path.join(this._tagThumbsSmallPath, tag.id + '.jpg');
     }
 }

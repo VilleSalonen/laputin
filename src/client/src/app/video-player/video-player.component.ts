@@ -50,6 +50,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public videoSource: string;
 
+    public selectedScreenshotTag: Tag;
+
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
     @Output()
@@ -447,6 +449,15 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     public async screenshotTimecode(timecode: Timecode): Promise<void> {
         await this._service.screenshotTimecode(this.file, timecode, this.player.currentTime);
         timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+    }
+
+    public selectScreenshotTag(tag: Tag): void {
+        this.selectedScreenshotTag = tag;
+    }
+
+    public screenshotTag(): void {
+        this._service.screenshotTag(this.selectedScreenshotTag, this.file, this.player.currentTime);
+        this.selectedScreenshotTag = null;
     }
 
     public copy(): void {
