@@ -16,7 +16,6 @@ import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { FileComponent } from './file/file.component';
 import { FilesComponent } from './files/files.component';
 import { FileSearchComponent } from './file-search/file-search.component';
-import { SearchBoxComponent } from './search-box/search-box.component';
 import { SearchTagComponent } from './search-tag/search-tag.component';
 import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.component';
 import { TagsComponent } from './tags/tags.component';
@@ -38,7 +37,6 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
     FileComponent,
     FilesComponent,
     FileSearchComponent,
-    SearchBoxComponent,
     SearchTagComponent,
     TagAutocompleteComponent,
     TagFilterPipe,
