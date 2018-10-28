@@ -1,33 +1,18 @@
-<mat-card style="width: 400px;">
-    <mat-card-header>
-        <mat-card-title>
-            {{formattedTags()}}
-        </mat-card-title>
-        <mat-card-subtitle>
-            {{formatTimecodeDuration()}}
-        </mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}">
-    <mat-card-content>
-        <ng-container *ngIf="editing">
-            <button *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
-                mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>
+<div class="container">
+    <div class="screenshot">
+        <img (click)="goToTimecodeStart()" mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
+            [matTooltip]="formatTimecodeDuration() + ': ' + formattedTags()" />
+    </div>
 
-            <app-tag-autocomplete [tagContainer]="file" [exclude]="alreadySelectedTags" (tagSelected)="addTagSelectionToTimecode($event)"
-                [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+    <div class="controls screenshot-control" (click)="screenshotTimecode()" title="Set screenshot to timecode">
+        <i class="fas fa-camera"></i>
+    </div>
 
-            <button mat-mini-fab color="primary" (click)="setTagStart()" title="Set tag timecode start">
-                <i class="fas fa-stopwatch"></i>
-            </button>
-            <button mat-mini-fab color="primary" (click)="setTagEnd()" title="Set tag timecode end">
-                <i class="fas fa-stopwatch"></i>
-            </button>
-        </ng-container>
-    </mat-card-content>
-    <mat-card-actions>
-        <button mat-button (click)="goToTimecodeStart()" title="{{formatPreciseDuration(timecode.start)}}"><i class="fas fa-sign-out-alt"></i></button>
-        <button mat-button (click)="toggleEdit()"><i class="far fa-edit"></i></button>
-        <button mat-button (click)="screenshotTimecode()" title="Set screenshot"><i class="fa fa-camera" aria-hidden="true"></i></button>
-        <button mat-button (click)="goToTimecodeEnd()" title="{{formatPreciseDuration(timecode.end)}}"><i class="fas fa-sign-in-alt"></i></button>
-    </mat-card-actions>
-</mat-card>
+    <div class="controls edit-control" (click)="edit()" title="Edit...">
+        <i class="fas fa-edit"></i>
+    </div>
+
+    <div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{formatPreciseDuration(timecode.end)}}">
+        <i class="fas fa-sign-in-alt"></i>
+    </div>
+</div>

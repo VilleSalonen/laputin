@@ -1,0 +1,7 @@
+<h1 mat-dialog-title>Create screenshot for tag</h1>
+<div mat-dialog-content>
+    <app-tag-autocomplete [tagContainer]="data.file" (tagSelected)="selectScreenshotTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancel</button>
+</div>

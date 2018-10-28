@@ -3,14 +3,18 @@
         <input type="text" matInput [formControl]="termCtrl" [matAutocomplete]="auto" placeholder="Tags" (keyup)="onKeyUp($event)" />
     </mat-form-field>
 
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn"
+        [panelWidth]="'500px'">
         <mat-option *ngFor="let tag of matchingTags" [value]="tag">
             <img *ngIf="tag" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tag.id}}.jpg" onerror="this.style.display = 'none'" />
             {{tag.name}}
         </mat-option>
 
         <mat-optgroup [label]="'Add new tag to file'" *ngIf="otherTags && otherTags.length > 0">
-            <mat-option *ngFor="let tag of otherTags" [value]="tag">{{tag.name}}</mat-option>
+            <mat-option *ngFor="let tag of otherTags" [value]="tag">
+                <img *ngIf="tag" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tag.id}}.jpg" onerror="this.style.display = 'none'" />
+                {{tag.name}}
+            </mat-option>
         </mat-optgroup>
 
         <mat-optgroup [label]="'Create new tag'" *ngIf="tagCreationAllowed && searchTermOriginalForm">

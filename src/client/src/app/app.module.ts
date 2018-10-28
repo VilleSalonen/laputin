@@ -8,7 +8,7 @@ import {
   HashLocationStrategy
 } from '@angular/common';
 import { VirtualScrollModule } from 'angular2-virtual-scroll';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
@@ -28,6 +28,8 @@ import { TimecodeComponent } from './timecode/timecode.component';
 import { TimecodesComponent } from './timecodes/timecodes.component';
 import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly.component';
 import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
+import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screenshot-dialog.component';
+import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
 
 
 @NgModule({
@@ -42,18 +44,23 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
     TagFilterPipe,
     TagRowComponent,
     TagsComponent,
+    TagScreenshotDialogComponent,
     TimecodeComponent,
+    TimecodeEditDialogComponent,
     TimecodeReadonlyComponent,
     TimecodesComponent,
     TimecodeSearchComponent,
     VideoPlayerComponent
+  ],
+  entryComponents: [
+      TagScreenshotDialogComponent, TimecodeEditDialogComponent
   ],
   imports: [
     BrowserModule,
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
-    MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule,
+    MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule,
     RouterModule.forRoot([
       { path: '', redirectTo: 'files', pathMatch: 'full' },
       { path: 'files', component: FilesComponent },
