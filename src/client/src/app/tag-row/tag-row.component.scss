@@ -1,14 +1,1 @@
 @import './../../styles/styles.scss';
-
-.tag {
-    margin-bottom: 0.25 * $standard-margin;
-    margin-right: 0.25 * $standard-margin;
-}
-
-input, select {
-    @include rounded-borders;
-
-    background: $color-complement-1;
-    color: $color-primary-4;
-    font-size: 1.2em;
-}

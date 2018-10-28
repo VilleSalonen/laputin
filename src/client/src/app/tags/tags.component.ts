@@ -15,6 +15,10 @@ export class TagsComponent implements OnInit {
     public filteredOrphanedTags: Tag[] = [];
     public loading: boolean;
 
+    public viewPortItems: Tag[] = [];
+
+    public term = '';
+
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }
 
@@ -23,16 +27,26 @@ export class TagsComponent implements OnInit {
         this._service.getAllTags()
             .then((tags) => {
                 this.tags = tags;
-                this.filteredTags = tags.filter(t => t.associationCount > 0);
-                this.filteredOrphanedTags = tags.filter(t => t.associationCount === 0);
+                this.filteredTags = tags;
                 this.loading = false;
             });
     }
 
     filter(term: string) {
         const termUpperCase = term.toUpperCase();
-        const searchTermMatches = this.tags.filter((tag) => tag.name.toUpperCase().indexOf(termUpperCase) >= 0);
-        this.filteredTags = searchTermMatches.filter((tag) => tag.associationCount > 0);
-        this.filteredOrphanedTags = searchTermMatches.filter((tag) => tag.associationCount === 0);
+        this.filteredTags = this.tags.filter((tag) => tag.name.toUpperCase().indexOf(termUpperCase) >= 0);
+    }
+
+    public onKeyUp($event: KeyboardEvent): void {
+        const ENTER = 13;
+        const ESC = 27;
+
+        if ($event.which === ENTER) {
+            this.filter(this.term);
+        }
+
+        if ($event.which === ESC) {
+            this.term = '';
+        }
     }
 }
