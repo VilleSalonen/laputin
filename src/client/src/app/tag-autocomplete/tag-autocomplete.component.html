@@ -1,6 +1,6 @@
 <div>
     <mat-form-field>
-        <input type="text" matInput [formControl]="termCtrl" [matAutocomplete]="auto" placeholder="Tags">
+        <input type="text" matInput [formControl]="termCtrl" [matAutocomplete]="auto" placeholder="Tags" (keyup)="onKeyUp($event)" />
     </mat-form-field>
 
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn">
