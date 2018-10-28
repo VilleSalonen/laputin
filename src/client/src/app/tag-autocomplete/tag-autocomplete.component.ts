@@ -122,6 +122,15 @@ export class TagAutocompleteComponent implements OnInit {
 
     public clear(): void {
         this.termCtrl.setValue('');
+        this.searchTermOriginalForm = '';
         this.matchingTags = [];
+    }
+
+    public onKeyUp($event: KeyboardEvent): void {
+        const ESC = 27;
+
+        if ($event.which === ESC) {
+            this.clear();
+        }
     }
 }
