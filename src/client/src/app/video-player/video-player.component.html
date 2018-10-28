@@ -73,14 +73,6 @@
                 <div class="tag-tools">
                     <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
 
-                    <small>
-                        <a (click)="toggleTagCreation()">Didn't find the tag you were looking for..?</a>
-                    </small>
-
-                    <div *ngIf="tagCreationOpen">
-                        <app-search-box (update)="addNewTag($event)"></app-search-box>
-                    </div>
-
                     <span *ngIf="selectedScreenshotTag">{{ selectedScreenshotTag.name }}</span>
                     <a (click)="playbackHasBeenStarted && selectedScreenshotTag && screenshotTag()" title="Set screenshot for tag"
                         style="cursor: pointer;">

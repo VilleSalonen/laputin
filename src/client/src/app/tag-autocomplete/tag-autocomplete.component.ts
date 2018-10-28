@@ -31,6 +31,11 @@ export class TagAutocompleteComponent implements OnInit {
     @Output()
     public tagSelected = new EventEmitter<Tag>();
 
+    public AutocompleteType = AutocompleteType;
+
+    public tagCreationAllowed = false;
+    public searchTermOriginalForm: string;
+
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         this.termCtrl.valueChanges
             .debounceTime(500)
@@ -45,10 +50,20 @@ export class TagAutocompleteComponent implements OnInit {
         } else {
             this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
         }
+
+        this.tagCreationAllowed = this.type !== AutocompleteType.FileSearch;
     }
 
-    onOptionSelected(event: any) {
-        this.tagSelected.emit(event.option.value);
+    async onOptionSelected(event: any) {
+        if (event && event.option && event.option.value) {
+            if (event.option.value === 'create' && this.searchTermOriginalForm) {
+                const tag = await this._service.createTag(this.searchTermOriginalForm).toPromise();
+                this.tagSelected.emit(tag);
+            } else {
+                this.tagSelected.emit(event.option.value);
+            }
+        }
+
         this.clear();
     }
 
@@ -57,16 +72,23 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     onValueChange(value: string): void {
-        if (!value) {
+        if (!value) { return; }
+        if (!this.tagContainer) { return; }
+
+        if (value.length === 0) {
+            this.matchingTags = [];
             return;
         }
 
         const searchTerm = value.toLowerCase();
 
-        if (!this.tagContainer) { return; }
-        if (searchTerm.length === 0) {
-            this.matchingTags = [];
-            return;
+        const tagExistsWithSameName = this.allTags
+            .find((tag: Tag) => tag.name.toLowerCase() === searchTerm);
+
+        if (!tagExistsWithSameName) {
+            this.searchTermOriginalForm = value;
+        } else {
+            this.searchTermOriginalForm = '';
         }
 
         switch (this.type) {

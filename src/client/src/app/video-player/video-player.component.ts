@@ -401,14 +401,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tagCreationOpen = !this.tagCreationOpen;
     }
 
-    public addNewTag(newTag: string): void {
-        this._service.createTag(newTag)
-                     .subscribe(tag => {
-                        this._service.addTag(this.file, tag)
-                            .subscribe(() => this.addTagsToFile([tag]));
-                     });
-    }
-
     public addTag(tag: Tag): void {
         this.addTags([tag]);
     }

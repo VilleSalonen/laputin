@@ -12,5 +12,12 @@
         <mat-optgroup [label]="'Add new tag to file'" *ngIf="otherTags && otherTags.length > 0">
             <mat-option *ngFor="let tag of otherTags" [value]="tag">{{tag.name}}</mat-option>
         </mat-optgroup>
+
+        <mat-optgroup [label]="'Create new tag'" *ngIf="tagCreationAllowed && searchTermOriginalForm">
+            <mat-option [value]="'create'">
+                <i class="fas fa-plus"></i>
+                {{ searchTermOriginalForm }}
+            </mat-option>
+        </mat-optgroup>
     </mat-autocomplete>
 </div>
