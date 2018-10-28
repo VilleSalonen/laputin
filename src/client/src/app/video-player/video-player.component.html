@@ -80,6 +80,13 @@
                     <div *ngIf="tagCreationOpen">
                         <app-search-box (update)="addNewTag($event)"></app-search-box>
                     </div>
+
+                    <span *ngIf="selectedScreenshotTag">{{ selectedScreenshotTag.name }}</span>
+                    <a (click)="playbackHasBeenStarted && selectedScreenshotTag && screenshotTag()" title="Set screenshot for tag"
+                        style="cursor: pointer;">
+                        <i class="fa fa-camera" aria-hidden="true"></i>
+                    </a>
+                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="selectScreenshotTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
                 </div>
 
                 <div class="tags">

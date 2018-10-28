@@ -203,6 +203,22 @@ export class Laputin {
             }
         });
 
+        api.route('/screenshotTag').post(async (req, res) => {
+            try {
+                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined, undefined);
+                const files = await this.library.getFiles(query);
+
+                if (files.length > 0) {
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
+                    await screenshotter.screenshotTag(req.body.tag, files[0], req.body.time);
+                }
+
+                res.status(200).end();
+            } catch (error) {
+                res.status(500).end();
+            }
+        });
+
         api.route('/proxyExists/:hash').get(async (req, res) => {
             if (!(this._proxyDirectory)) {
                 res.send(false);
