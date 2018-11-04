@@ -6,16 +6,16 @@ import fs = require('fs');
 import path = require('path');
 import winston = require('winston');
 
-import {Laputin} from './laputin';
 import {Library} from './library';
 import {LaputinConfiguration} from './laputinconfiguration';
 import {compose} from './compose';
-import { Screenshotter } from './screenshotter';
+import { ProxyGenerator } from './proxygenerator';
 
 (async function() {
     const argumentDefinitions = [
         { name: 'libraryPath', type: String, multiple: false, defaultOption: true },
         { name: 'initialize', type: Boolean, multiple: false },
+        { name: 'createProxies', type: Boolean, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
         { name: 'bypassHashing', type: Boolean, multiple: false },
         { name: 'performFullCheck', type: Boolean, multiple: false }
@@ -63,6 +63,15 @@ import { Screenshotter } from './screenshotter';
     const configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
         : new LaputinConfiguration(3200, 'accurate', null);
+
+
+    if (options.createProxies) {
+        const library = new Library(options.libraryPath);
+        const proxyGenerator = new ProxyGenerator(library, configuration);
+        await proxyGenerator.generateMissingProxies();
+
+        process.exit(0);
+    }
 
     const laputin = compose(options.libraryPath, configuration);
 
