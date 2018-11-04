@@ -366,7 +366,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     public toggleFullScreen(): void {
         if (this.isFullScreen) {
-            document.webkitExitFullscreen();
+            (<any>document).webkitExitFullscreen();
         } else {
             this.playerView.nativeElement.webkitRequestFullScreen();
         }
