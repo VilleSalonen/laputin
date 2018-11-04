@@ -1,5 +1,4 @@
 import { Component, OnInit, Injectable, OnDestroy } from '@angular/core';
-import * as _ from 'lodash';
 
 import { File } from './../models/file';
 import { FileChange, ChangeDirection } from './../models/filechange';
@@ -46,9 +45,9 @@ export class FilesComponent implements OnInit, OnDestroy {
         this.filesSubscription.combineLatest(this.allFilesSubscription, this.hashParamSubscription)
             .subscribe(([files, allFiles, hashParam]) => {
                 if (hashParam) {
-                    let selectedFile = _.find(files, f => f.hash === hashParam);
+                    let selectedFile = files.find(f => f.hash === hashParam);
                     if (!selectedFile) {
-                        selectedFile = _.find(allFiles, f => f.hash === hashParam);
+                        selectedFile = allFiles.find(f => f.hash === hashParam);
                     }
 
                     if (selectedFile) {
@@ -77,7 +76,7 @@ export class FilesComponent implements OnInit, OnDestroy {
 
         let newIndex: number;
         if (fileChange.random) {
-            newIndex = _.random(0, this.files.length - 1);
+            newIndex = Math.random() * (this.files.length - 1);
         } else {
             if (fileChange.direction === ChangeDirection.Previous) {
                 newIndex = activeIndex - 1;

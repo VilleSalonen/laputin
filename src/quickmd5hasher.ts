@@ -1,14 +1,9 @@
 import crypto = require('crypto');
 import fs = require('fs');
 import {promisify} from 'util';
-const fsStat = promisify(fs.stat);
 const fsOpen = promisify(fs.open);
-const fsRead = promisify(fs.read);
-const fsClose = promisify(fs.close);
-import _ = require('lodash');
 
 import {IHasher} from './ihasher';
-import {File} from './file';
 
 const CHUNK_SIZE = 1024;
 

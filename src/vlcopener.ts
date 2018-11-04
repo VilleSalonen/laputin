@@ -44,7 +44,7 @@ export class VLCOpener {
 
         files = _.sortBy(files, (video) => video.path);
 
-        _.each(files, function(video) {
+        files.forEach((video) => {
             let videoPath;
             if (os.platform() === 'win32') {
                 videoPath = video.path.replace(/\//g, '\\');

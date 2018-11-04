@@ -283,7 +283,7 @@ describe('Laputin API', function () {
     }
 
     function resultShouldContainFileHashes(res: { body: any }, expectedHashes: string[]) {
-        const hashes = _.map(res.body, 'hash').sort();
+        const hashes = _.map(res.body.map, 'hash').sort();
         expect(hashes).to.eql(expectedHashes);
     }
 });

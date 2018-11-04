@@ -1,5 +1,4 @@
 import {Component, Injectable, Input} from '@angular/core';
-import * as _ from 'lodash';
 
 import {File} from './../models/file';
 import {LaputinService} from './../laputin.service';
@@ -25,6 +24,6 @@ export class FileComponent {
     }
 
     public formattedTags(file: File): string {
-        return _.map(file.tags, (tag) => tag.name).join(', ');
+        return file.tags.map((tag) => tag.name).join(', ');
     }
 }

@@ -1,8 +1,6 @@
-import _ = require('lodash');
 import fs = require('fs');
 import child_process = require('child_process');
 import path = require('path');
-import os = require('os');
 import winston = require('winston');
 
 import {File} from './file';

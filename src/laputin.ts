@@ -2,7 +2,6 @@ import express = require('express');
 import bodyParser = require('body-parser');
 import path = require('path');
 import http = require('http');
-import _ = require('lodash');
 import fs = require('fs');
 
 import {Library} from './library';
@@ -110,7 +109,7 @@ export class Laputin {
 
         api.route('/files/:hash/tags').post((req, res) => {
             const selectedTags = req.body.selectedTags;
-            _.each(selectedTags, (tag: Tag) => {
+            selectedTags.forEach((tag: Tag) => {
                 this.library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
             });
             res.status(200).end();

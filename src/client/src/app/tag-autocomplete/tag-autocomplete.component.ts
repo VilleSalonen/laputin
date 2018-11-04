@@ -1,6 +1,5 @@
 import {Component, Input, Output, EventEmitter, Injectable, Inject, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import * as _ from 'lodash';
 
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -94,27 +93,27 @@ export class TagAutocompleteComponent implements OnInit {
         switch (this.type) {
             case AutocompleteType.FileSearch:
             case AutocompleteType.FileTagging:
-                const alreadyAdded = _.map(this.tagContainer.tags, (tag: Tag) => tag.id);
+                const alreadyAdded = this.tagContainer.tags.map((tag: Tag) => tag.id);
 
                 this.matchingTags =
                     this.allTags
-                        .filter((tag: Tag) => _.indexOf(alreadyAdded, tag.id) === -1)
+                        .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                         .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
                         .slice(0, 10);
                 break;
             case AutocompleteType.FileTimecodeTagging:
-                const fileTags = _.map(this.tagContainer.tags, (tag: Tag) => tag.id);
-                const excludedTagIds = _.map(this.exclude, (tag: Tag) => tag.id);
+                const fileTags = this.tagContainer.tags.map((tag: Tag) => tag.id);
+                const excludedTagIds = this.exclude.map((tag: Tag) => tag.id);
 
                 this.matchingTags =
                     this.tagContainer.tags
                         .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
-                        .filter((tag: Tag) => _.indexOf(excludedTagIds, tag.id) === -1)
+                        .filter((tag: Tag) => excludedTagIds.indexOf(tag.id) === -1)
                         .slice(0, 10);
                 this.otherTags =
                     this.allTags
                         .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
-                        .filter((tag: Tag) => _.indexOf(fileTags, tag.id) === -1)
+                        .filter((tag: Tag) => fileTags.indexOf(tag.id) === -1)
                         .slice(0, 10);
                 break;
         }
