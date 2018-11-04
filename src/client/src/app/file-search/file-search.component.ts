@@ -1,10 +1,8 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 
-import {Tag, TagStatus} from './../models/tag';
-import {FileQuery} from './../models/filequery';
+import {Tag, TagStatus, FileQuery, AutocompleteType} from './../models';
 import {TagChange} from './../search-tag/search-tag.component';
 import { Subject } from 'rxjs/Subject';
-import { AutocompleteType } from '../models/autocompletetype';
 
 @Component({
     selector: 'app-file-search',

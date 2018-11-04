@@ -3,12 +3,8 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
 
-import {File} from './../models/file';
-import {FileQuery} from './../models/filequery';
-import {FileChange, ChangeDirection} from './../models/filechange';
-import {Tag, Timecode, TimecodeTag} from './../models/tag';
+import {File, FileQuery, FileChange, ChangeDirection, Tag, Timecode, TimecodeTag, AutocompleteType} from './../models';
 import {LaputinService} from './../laputin.service';
-import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';

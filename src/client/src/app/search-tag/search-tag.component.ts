@@ -1,6 +1,6 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 
-import {Tag, TagStatus} from '../models/tag';
+import { Tag, TagStatus } from '../models';
 
 export class TagChange {
     constructor(public tag: Tag, public tagStatus: TagStatus) {

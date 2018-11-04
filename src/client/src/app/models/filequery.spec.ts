@@ -1,5 +1,9 @@
-import {FileQuery} from './filequery';
-import {Tag} from './tag';
+declare var describe: any;
+declare var it: any;
+declare var expect: any;
+
+import { FileQuery } from './filequery';
+import { Tag } from './tag';
 
 describe('File Query', function() {
     it('Filename defaults to empty string', () => {
@@ -16,7 +20,7 @@ describe('File Query', function() {
         expect(query.filename).toEqual('');
     });
 
-    it('Status defaults to \'both\'', () => {
+    it('Status defaults to Both', () => {
         const query = new FileQuery();
         expect(query.status).toEqual('both');
     });

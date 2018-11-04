@@ -1,9 +1,7 @@
 import {Component, Output, EventEmitter} from '@angular/core';
 
-import {Tag, TagStatus} from './../models/tag';
-import {FileQuery} from './../models/filequery';
 import {TagChange} from './../search-tag/search-tag.component';
-import { AutocompleteType } from '../models/autocompletetype';
+import { TagStatus, Tag, AutocompleteType, FileQuery } from '../models';
 
 @Component({
     selector: 'app-timecode-search',
