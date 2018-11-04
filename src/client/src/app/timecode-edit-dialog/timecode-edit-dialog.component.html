@@ -4,7 +4,7 @@
 
 <p>{{ formatPreciseDuration(timecode.start) }} - {{ formatPreciseDuration(timecode.end) }}</p>
 
-<p>{{ formatTimecodeDuration(timecode) }}</p>
+<p>{{ formatTimecodeDuration() }}</p>
 
 <button *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
     mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>
