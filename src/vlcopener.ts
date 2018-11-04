@@ -15,7 +15,7 @@ export class VLCOpener {
         this._child = undefined;
 
         if (os.platform() === 'win32') {
-            this._binaryPath = 'C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe';
+            this._binaryPath = 'C:\\Program Files\\VideoLAN\\VLC\\vlc.exe';
         } else {
             this._binaryPath = '/Applications/VLC.app/Contents/MacOS/VLC';
         }
@@ -23,10 +23,10 @@ export class VLCOpener {
         this._playlistPath = path.join(libraryPath, '.playlist.m3u');
     }
 
-    public async open(files: File[]): Promise<void> {
+    public open(files: File[]): void {
         this.close();
-        await this._writeVideosToPlaylist(files);
-        return this._openPlayer();
+        this._writeVideosToPlaylist(files);
+        this._openPlayer();
     }
 
     public close() {
@@ -39,35 +39,29 @@ export class VLCOpener {
         }
     }
 
-    private _writeVideosToPlaylist(files: File[]): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            let playlist = '#EXTM3U\n';
+    private _writeVideosToPlaylist(files: File[]): void {
+        let playlist = '#EXTM3U\n';
 
-            files = _.sortBy(files, (video) => video.path);
+        files = _.sortBy(files, (video) => video.path);
 
-            _.each(files, function(video) {
-                let videoPath;
-                if (os.platform() === 'win32') {
-                    videoPath = video.path.replace(/\//g, '\\');
-                } else {
-                    videoPath = video.path;
-                }
+        _.each(files, function(video) {
+            let videoPath;
+            if (os.platform() === 'win32') {
+                videoPath = video.path.replace(/\//g, '\\');
+            } else {
+                videoPath = video.path;
+            }
 
-                playlist += '#EXTINF:-1,' + videoPath + '\n';
-                playlist += videoPath + '\n';
-            });
-
-            fs.writeFile(this._playlistPath, playlist, function(err) {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve();
-            });
+            playlist += '#EXTINF:-1,' + videoPath + '\n';
+            playlist += videoPath + '\n';
         });
+
+        fs.writeFileSync(this._playlistPath, playlist);
     }
 
     private _openPlayer() {
-        this._child = child_process.exec('"' + this._binaryPath + '" ' + this._playlistPath);
+        console.log('executing');
+        console.log(`"${this._binaryPath}" "${this._playlistPath}"`);
+        this._child = child_process.exec(`"${this._binaryPath}" "${this._playlistPath}"`);
     }
 }
