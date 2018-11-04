@@ -124,8 +124,9 @@
 }
 
 .filename {
-    padding: 24px;
-    padding-bottom: 0;
+    position: absolute;
+    top: $standard-margin;
+    left: $standard-margin;
     font-weight: bold;
     z-index: 10;
     text-shadow: 1px 1px 0 black;
