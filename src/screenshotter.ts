@@ -36,12 +36,12 @@ export class Screenshotter {
     public async screenshot(file: File, timeInSeconds: number): Promise<void> {
         this.initialize();
 
-        const command = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+        const command = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 ' +
             '"' + this.getThumbPath(file) + '"';
 
-        const commandSmall = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+        const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 -vf scale=200:-1 ' +
             '"' + this.getThumbSmallPath(file) + '"';
@@ -59,12 +59,12 @@ export class Screenshotter {
     public async screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<void> {
         this.initialize();
 
-        const command = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+        const command = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 ' +
             '"' + this.getTagTimecodeThumbPath(timecode) + '"';
 
-        const commandSmall = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+        const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 -vf scale=200:-1 ' +
             '"' + this.getTagTimecodeThumbSmallPath(timecode) + '"';
@@ -82,12 +82,12 @@ export class Screenshotter {
     public async screenshotTag(tag: Tag, file: File, timeInSeconds: number): Promise<void> {
         this.initialize();
 
-        const command = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+        const command = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 ' +
             '"' + this.getTagThumbPath(tag) + '"';
 
-        const commandSmall = '"C:\\Tools\\ffmpeg.exe" -y -ss ' + timeInSeconds +
+        const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
             '" -vframes 1 -vf scale=200:-1 ' +
             '"' + this.getTagThumbSmallPath(tag) + '"';
