@@ -3,9 +3,8 @@ import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
-import {File} from './../models/file';
+import {File, Timecode, Tag, TimecodeTag} from './../models';
 import { AutocompleteType } from '../models/autocompletetype';
-import { Timecode, Tag, TimecodeTag } from '../models/tag';
 import { LaputinService } from '../laputin.service';
 import { PlayerService } from '../player.service';
 

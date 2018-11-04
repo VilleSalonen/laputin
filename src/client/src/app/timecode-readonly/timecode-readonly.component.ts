@@ -5,9 +5,9 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
 import {File} from './../models/file';
-import {Timecode} from './../models/tag';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
+import { Timecode } from '../models';
 
 @Component({
     selector: 'app-timecode-readonly',

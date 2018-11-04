@@ -1,9 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 
-import { File } from './../models/file';
-import { Timecode } from './../models/tag';
-import { FileQuery } from './../models/filequery';
+import { File, Timecode, FileQuery } from './../models';
 import { LaputinService } from './../laputin.service';
 import * as moment from 'moment';
 

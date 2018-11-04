@@ -5,10 +5,7 @@ import 'rxjs/add/operator/toPromise';
 import {Http, Headers, Response} from '@angular/http';
 import * as _ from 'lodash';
 
-import {File} from './models/file';
-import {Tag, Timecode, TimecodeTag} from './models/tag';
-import {FileQuery} from './models/filequery';
-import {Duplicate} from './models/duplicate';
+import { File, FileQuery, Timecode, Tag, TimecodeTag, Duplicate } from './models';
 
 @Injectable()
 export class LaputinService {

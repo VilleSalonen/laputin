@@ -5,8 +5,7 @@ import * as moment from 'moment';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
-import {File} from './../models/file';
-import {Timecode, TimecodeTag} from './../models/tag';
+import {File, Timecode, TimecodeTag} from './../models';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
