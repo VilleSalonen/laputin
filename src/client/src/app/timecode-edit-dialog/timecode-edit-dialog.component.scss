@@ -1,0 +1,16 @@
+@import './../../styles/styles.scss';
+
+.screenshot {
+    display: flex;
+    justify-content: center;
+    margin-bottom: $standard-margin;
+}
+
+button {
+    margin-right: 0.25 * $standard-margin;
+    margin-bottom: 0.25 * $standard-margin;
+}
+
+img {
+    max-height: 200px;
+}

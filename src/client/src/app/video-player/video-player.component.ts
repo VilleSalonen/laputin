@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
@@ -10,7 +10,8 @@ import {Tag, Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
-import { MatSliderChange } from '@angular/material';
+import { MatSliderChange, MatDialog } from '@angular/material';
+import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
 
 @Component({
     selector: 'app-video-player',
@@ -18,7 +19,7 @@ import { MatSliderChange } from '@angular/material';
     templateUrl: './video-player.component.html'
 })
 @Injectable()
-export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public playbackHasBeenStarted: boolean;
     public playing: boolean;
     public random: boolean;
@@ -36,8 +37,26 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('playerView', { read: ElementRef }) playerView: ElementRef;
     @ViewChild('player', { read: ElementRef }) playerElem: ElementRef;
+    @ViewChild('slider', { read: ElementRef }) sliderElem: ElementRef;
+    @ViewChild('volume', { read: ElementRef }) volumeSliderElem: ElementRef;
 
-    @Input() file: File;
+    private _file: File;
+
+    @Input()
+    get file(): File {
+        return this._file;
+    }
+    set file(value: File) {
+        this._file = value;
+
+        this._service.proxyExists(this.file).subscribe(proxyExists => {
+            if (proxyExists) {
+                this.videoSource = `/proxies/${this.file.hash}.mp4`;
+            } else {
+                this.videoSource = `/media/${this.file.escapedUrl()}`;
+            }
+        });
+    }
 
     public timecodes: Timecode[] = [];
     public selectedTagsForTimecode: Tag[] = [];
@@ -48,26 +67,18 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     public sliderMax = 1000000;
     public sliderValue: number;
 
-    public videoSource: string;
+    public volumeMin = 0;
+    public volumeMax = 100;
+    public volumeValue = 100;
 
-    public selectedScreenshotTag: Tag;
+    public videoSource: string;
 
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
     @Output()
     public fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
-    constructor(private _service: LaputinService, private _playerService: PlayerService) {
-    }
-
-    public ngOnInit(): void {
-        this._service.proxyExists(this.file).subscribe(proxyExists => {
-            if (proxyExists) {
-                this.videoSource = `/proxies/${this.file.hash}.mp4`;
-            } else {
-                this.videoSource = `/media/${this.file.escapedUrl()}`;
-            }
-        });
+    constructor(private _service: LaputinService, private _playerService: PlayerService, private dialog: MatDialog) {
     }
 
     public ngAfterViewInit(): void {
@@ -151,25 +162,39 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
                 switch (event.key) {
+                    case 'PageUp':
+                        this.megaStepForward();
+                        break;
+                    case 'PageDown':
+                        this.megaStepBackward();
+                        break;
                     case 'ArrowLeft':
                         if (event.shiftKey) {
                             this.tinyStepBackward();
                         } else {
-                            this.smallStepBackward();
+                            this.largeStepBackward();
                         }
                         break;
                     case 'ArrowRight':
                         if (event.shiftKey) {
                             this.tinyStepForward();
                         } else {
-                            this.smallStepForward();
+                            this.largeStepForward();
                         }
                         break;
                     case 'ArrowUp':
-                        this.largeStepForward();
+                        if (event.shiftKey) {
+                            this.smallStepForward();
+                        } else {
+                            this.hugeStepForward();
+                        }
                         break;
                     case 'ArrowDown':
-                        this.largeStepBackward();
+                        if (event.shiftKey) {
+                            this.smallStepBackward();
+                        } else {
+                            this.hugeStepBackward();
+                        }
                         break;
                     case 'Enter':
                         if (event.altKey) {
@@ -183,21 +208,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.play();
                         }
                         break;
-                    case 'w':
+                    case 'a':
                         this.goToPrevious();
                         break;
-                    case 's':
+                    case 'd':
                         this.goToNext();
-                        break;
-                    case 'c':
-                        if (event.ctrlKey) {
-                            this.copy();
-                        }
-                        break;
-                    case 'v':
-                        if (event.ctrlKey) {
-                            this.paste();
-                        }
                         break;
                 }
         });
@@ -216,9 +231,22 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    public setVolume(sliderChangeEvent: MatSliderChange) {
+        const volumePercent = sliderChangeEvent.value / this.volumeMax;
+        this.player.volume = volumePercent;
+
+        if (this.volumeSliderElem && this.volumeSliderElem.nativeElement) {
+            this.volumeSliderElem.nativeElement.blur();
+        }
+    }
+
     private updateProgress(playPercent: number) {
         this.setPlayheadTo(playPercent);
         this.updateTime();
+
+        if (this.sliderElem && this.sliderElem.nativeElement) {
+            this.sliderElem.nativeElement.blur();
+        }
     }
 
     private updateTime(): void {
@@ -288,92 +316,44 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.player.pause();
     }
 
-    public tinyStepBackward(): void {
-        this.player.currentTime -= 1;
-    }
-
-    public smallStepBackward(): void {
-        this.player.currentTime -= 10;
-    }
-
     public largeStepBackward(): void {
-        this.player.currentTime -= 60;
+        this.setCurrentTime(this.player.currentTime - 10);
     }
 
-    public tinyStepForward(): void {
-        this.player.currentTime += 1;
+    public hugeStepBackward(): void {
+        this.setCurrentTime(this.player.currentTime - 60);
     }
 
-    public smallStepForward(): void {
-        this.player.currentTime += 10;
+    public megaStepBackward(): void {
+        this.setCurrentTime(this.player.currentTime - 600);
     }
 
     public largeStepForward(): void {
-        this.player.currentTime += 60;
+        this.setCurrentTime(this.player.currentTime + 10);
     }
 
-    public moveStartTimeBackward(): void {
-        const currentTime: number = this.tagStart
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime - (1 / 20.0));
-        this.setTagStart();
+    public hugeStepForward(): void {
+        this.setCurrentTime(this.player.currentTime + 60);
     }
 
-    public moveStartTimeForward(): void {
-        const currentTime: number = this.tagStart
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime + (1 / 20.0));
-        this.setTagStart();
+    public megaStepForward(): void {
+        this.setCurrentTime(this.player.currentTime + 600);
     }
 
-    public moveEndTimeBackward(): void {
-        const currentTime: number = this.tagEnd
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime - (1 / 20.0));
-        this.setTagEnd();
+    public smallStepBackward(): void {
+        this.setCurrentTime(this.player.currentTime - (1 / 4.0));
     }
 
-    public moveEndTimeForward(): void {
-        const currentTime: number = this.tagEnd
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime + (1 / 20.0));
-        this.setTagEnd();
+    public tinyStepBackward(): void {
+        this.setCurrentTime(this.player.currentTime - (1 / 20.0));
     }
 
-    public moveStartTimeBackwardMore(): void {
-        const currentTime: number = this.tagStart
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime - (1 / 4.0));
-        this.setTagStart();
+    public tinyStepForward(): void {
+        this.setCurrentTime(this.player.currentTime + (1 / 20.0));
     }
 
-    public moveStartTimeForwardMore(): void {
-        const currentTime: number = this.tagStart
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime + (1 / 4.0));
-        this.setTagStart();
-    }
-
-    public moveEndTimeBackwardMore(): void {
-        const currentTime: number = this.tagEnd
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime - (1 / 4.0));
-        this.setTagEnd();
-    }
-
-    public moveEndTimeForwardMore(): void {
-        const currentTime: number = this.tagEnd
-            ? this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
-            : this.player.currentTime;
-        this.setCurrentTime(currentTime + (1 / 4.0));
-        this.setTagEnd();
+    public smallStepForward(): void {
+        this.setCurrentTime(this.player.currentTime + (1 / 4.0));
     }
 
     public goToPrevious(): void {
@@ -443,13 +423,19 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
     }
 
-    public selectScreenshotTag(tag: Tag): void {
-        this.selectedScreenshotTag = tag;
-    }
+    public openTagScreenshotDialog(): void {
+        const dialogRef = this.dialog.open(TagScreenshotDialogComponent, {
+            width: '500px',
+            data: {
+                file: this.file
+            }
+        });
 
-    public screenshotTag(): void {
-        this._service.screenshotTag(this.selectedScreenshotTag, this.file, this.player.currentTime);
-        this.selectedScreenshotTag = null;
+        dialogRef.afterClosed().subscribe(tag => {
+            if (tag) {
+                this._service.screenshotTag(tag, this.file, this.player.currentTime);
+            }
+        });
     }
 
     public copy(): void {

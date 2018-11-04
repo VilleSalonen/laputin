@@ -1,7 +1,6 @@
 <div class="container" style="padding: 24px;">
-    <div class="column" style="flex-grow: 1; margin-right: 24px;">
-        <div class="row" style="background: black; flex-grow: 1; position: relative; background-repeat: no-repeat; background-size: contain; background-position: center;"
-            [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}">
+    <div class="column player" style="flex-grow: 1; margin-right: 24px; position: relative;">
+        <div class="row video-area" [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}">
             <div [ngClass]="{ 'hidden': playing }" class="filename" style="color: white;">
                 <span class="filename-small">{{file.directory()}}</span>
                 <br />
@@ -16,80 +15,97 @@
             <div [ngClass]="{ 'hidden': !playbackHasBeenStarted }" class="video-container">
                 <video src="{{videoSource}}" #player></video>
             </div>
+
+            <div class="player-controls" *ngIf="playbackHasBeenStarted" style="position: absolute; bottom: 0; background: white; width: 100%;">
+                <div class="player-main-button">
+                    <button *ngIf="!playing" color="primary" mat-raised-button (click)="play()">
+                        <i class="fa fa-play" aria-hidden="true"></i>
+                    </button>
+
+                    <button *ngIf="playing" color="primary" mat-raised-button (click)="pause()">
+                        <i class="fa fa-pause" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="timeline-and-buttons">
+                    <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="setProgress($event)"
+                        #slider></mat-slider>
+
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <button *ngIf="!random" mat-button (click)="random = !random" title="Toggle random">
+                            <i class="fa fa-random" aria-hidden="true"></i>
+                        </button>
+
+                        <button *ngIf="random" mat-button (click)="random = !random" color="primary" title="Toggle random">
+                            <i class="fa fa-random" aria-hidden="true"></i>
+                        </button>
+
+                        <button mat-button (click)="goToPrevious()" title="Go to previous">
+                            <i class="fa fa-fast-backward" aria-hidden="true"></i>
+                        </button>
+
+                        <button mat-button (click)="goToNext()" title="Go to next">
+                            <i class="fa fa-fast-forward" aria-hidden="true"></i>
+                        </button>
+
+                        <span style="margin-right: 48px;">{{progressText}}</span>
+
+                        <mat-menu #appMenu="matMenu">
+                            <button mat-menu-item (click)="playbackHasBeenStarted && screenshot()">
+                                <i class="fa fa-camera" aria-hidden="true"></i> Set file screenshot
+                            </button>
+                            <button mat-menu-item (click)="playbackHasBeenStarted && openTagScreenshotDialog()">
+                                <i class="fa fa-camera" aria-hidden="true"></i> Set tag screenshot...
+                            </button>
+                            <button mat-menu-item (click)="openFile()">
+                                <i class="fa fa-film" aria-hidden="true"></i> Open file in external player
+                            </button>
+                            <button mat-menu-item (click)="copy()">
+                                <i class="fa fa-copy" aria-hidden="true"></i> Copy tags from current file
+                            </button>
+                            <button mat-menu-item (click)="paste()">
+                                <i class="fa fa-paste" aria-hidden="true"></i> Paste tags to current file
+                            </button>
+                        </mat-menu>
+
+                        <button mat-icon-button [matMenuTriggerFor]="appMenu">
+                            Menu
+                        </button>
+
+                        <mat-slider [min]="volumeMin" [max]="volumeMax" [value]="volumeValue" (change)="setVolume($event)"
+                            #volume></mat-slider>
+                    </div>
+                </div>
+
+                <div class="player-main-button">
+                    <div (click)="toggleFullScreen()">
+                        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="player-controls">
-            <div class="player-main-button">
-                <div *ngIf="!playing" (click)="play()">
-                    <i class="fa fa-play" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="playing" (click)="pause()">
-                    <i class="fa fa-pause" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div class="timeline-and-buttons">
-                <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="setProgress($event)"></mat-slider>
-
-                <div style="display: flex; flex-direction: row;">
-                    <div (click)="random = !random" [ngClass]="{'active-button': random}" style="margin-right: 0.5em;">
-                        <i class="fa fa-random" aria-hidden="true"></i>
-                    </div>
-                    <div (click)="goToPrevious()" style="margin-right: 0.5em;">
-                        <i class="fa fa-fast-backward" aria-hidden="true"></i>
-                    </div>
-                    <div (click)="goToNext()" style="margin-right: 0.5em;">
-                        <i class="fa fa-fast-forward" aria-hidden="true"></i>
-                    </div>
-
-                    <span>{{progressText}}</span>
-                </div>
-            </div>
-
-            <div class="player-main-button">
-                <div (click)="toggleFullScreen()">
-                    <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-                </div>
-            </div>
+        <div class="timecodes" *ngIf="timecodes.length > 0">
+            <app-timecode *ngFor="let timecode of timecodes" [file]="file" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
         </div>
+    </div>
 
-        <div class="tagging" style="padding-top: 0; min-height: 150px;">
-            <div style="display: flex; flex-direction: row;" style="margin-right: 0.5em;">
-                <a (click)="playbackHasBeenStarted && screenshot()" title="Set screenshot" style="cursor: pointer;">
-                    <i class="fa fa-camera" aria-hidden="true"></i>
-                </a>
-                <a (click)="openFile()" title="Open in external player" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="fa fa-film" aria-hidden="true"></i>
-                </a>
-                <a (click)="copy()" title="Copy tags" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="fa fa-copy" aria-hidden="true"></i>
-                </a>
-                <a (click)="paste()" title="Paste tags" style="margin-right: 0.5em;" style="cursor: pointer;">
-                    <i class="fa fa-paste" aria-hidden="true"></i>
-                </a>
-            </div>
-
+    <div class="column" style="min-width: 500px; max-width: 500px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="margin-bottom: 24px;">
             <div class="row">
                 <div class="tag-tools">
                     <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
-
-                    <span *ngIf="selectedScreenshotTag">{{ selectedScreenshotTag.name }}</span>
-                    <a (click)="playbackHasBeenStarted && selectedScreenshotTag && screenshotTag()" title="Set screenshot for tag"
-                        style="cursor: pointer;">
-                        <i class="fa fa-camera" aria-hidden="true"></i>
-                    </a>
-                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="selectScreenshotTag($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
                 </div>
+            </div>
 
-                <div class="tags">
+            <div class="row">
+                <div class="tags" style="flex-wrap: wrap;">
                     <button class="tag" *ngFor="let tag of file.tags" (click)="removeTag(tag)" mat-flat-button title="Click to remove {{tag.name}}">{{tag.name}}</button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="column" style="min-width: 500px;">
-        <div style="margin-bottom: 24px;">
+        <div>
             <div class="row" style="margin-bottom: 6px; flex-wrap: wrap;" *ngIf="selectedTagsForTimecode">
                 <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
                     mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
@@ -111,20 +127,6 @@
                 <mat-form-field>
                     <input matInput placeholder="Start time" [(ngModel)]="tagStart" style="width: 6em;" />
                 </mat-form-field>
-
-                <button mat-mini-fab color="primary" (click)="moveStartTimeBackwardMore()" title="Move start time backward more">
-                    <i class="fas fa-backward"></i>
-                </button>
-                <button mat-mini-fab color="primary" (click)="moveStartTimeBackward()" title="Move start time backward">
-                    <i class="fas fa-caret-left"></i>
-                </button>
-
-                <button mat-mini-fab color="primary" (click)="moveStartTimeForward()" title="Move start time forward">
-                    <i class="fas fa-caret-right"></i>
-                </button>
-                <button mat-mini-fab color="primary" (click)="moveStartTimeForwardMore()" title="Move start time forward more">
-                    <i class="fas fa-forward"></i>
-                </button>
             </div>
 
             <div class="row" style="margin-bottom: 6px;">
@@ -138,31 +140,9 @@
                 <mat-form-field>
                     <input matInput [(ngModel)]="tagEnd" placeholder="End time" style="width: 6em;" />
                 </mat-form-field>
-
-                <button mat-mini-fab color="primary" (click)="moveEndTimeBackwardMore()" title="Move end time backward more">
-                    <i class="fas fa-backward"></i>
-                </button>
-                <button mat-mini-fab color="primary" (click)="moveEndTimeBackward()" title="Move end time backward">
-                    <i class="fas fa-caret-left"></i>
-                </button>
-
-                <button mat-mini-fab color="primary" (click)="moveEndTimeForward()" title="Move end time forward">
-                    <i class="fas fa-caret-right"></i>
-                </button>
-                <button mat-mini-fab color="primary" (click)="moveEndTimeForwardMore()" title="Move end time forward more">
-                    <i class="fas fa-forward"></i>
-                </button>
             </div>
 
             <button (click)="saveTagTimecode()" mat-button>Save</button>
-
-            <p *ngIf="timecodes.length === 0">No timecodes yet</p>
-        </div>
-
-        <div style="flex-grow: 1; overflow-y: auto;" *ngIf="timecodes.length > 0">
-            <div *ngFor="let timecode of timecodes" style="margin-bottom: 12px;">
-                <app-timecode [file]="file" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
-            </div>
         </div>
     </div>
 </div>

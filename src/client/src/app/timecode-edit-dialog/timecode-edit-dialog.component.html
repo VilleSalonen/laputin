@@ -1,0 +1,31 @@
+<div class="screenshot">
+    <img mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" />
+</div>
+
+<p>{{ formatPreciseDuration(timecode.start) }} - {{ formatPreciseDuration(timecode.end) }}</p>
+
+<p>{{ formatTimecodeDuration(timecode) }}</p>
+
+<button *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
+    mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>
+
+<app-tag-autocomplete [tagContainer]="file" [exclude]="alreadySelectedTags" (tagSelected)="addTagSelectionToTimecode($event)"
+    [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+
+<div>
+    <button mat-button (click)="setTagStart()">
+        Set tag timecode start to current frame
+    </button>
+</div>
+
+<div>
+    <button mat-button (click)="setTagEnd()">
+        Set tag timecode end to current frame
+    </button>
+</div>
+
+<div>
+    <button mat-button (click)="close()">
+        Close
+    </button>
+</div>

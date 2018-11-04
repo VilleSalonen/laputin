@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, OnInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -6,10 +6,12 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
 import {File} from './../models/file';
-import {Tag, Timecode, TimecodeTag} from './../models/tag';
+import {Timecode, TimecodeTag} from './../models/tag';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
+import { TimecodeEditDialogComponent } from '../timecode-edit-dialog/timecode-edit-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'app-timecode',
@@ -18,7 +20,7 @@ import { PlayerService } from '../player.service';
     providers: [LaputinService]
 })
 @Injectable()
-export class TimecodeComponent implements OnInit {
+export class TimecodeComponent {
     public AutocompleteType = AutocompleteType;
 
     @Input() file: File;
@@ -26,15 +28,7 @@ export class TimecodeComponent implements OnInit {
     @Input() currentTime: number;
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
 
-    public showControls: boolean;
-    public alreadySelectedTags: Tag[];
-    public editing: boolean;
-
-    constructor(private _service: LaputinService, private _playerService: PlayerService) {
-    }
-
-    ngOnInit() {
-        this.updateAlreadySelectedTags();
+    constructor(private _service: LaputinService, private _playerService: PlayerService, private editDialog: MatDialog) {
     }
 
     public formatTimecodeDuration(): string {
@@ -55,8 +49,20 @@ export class TimecodeComponent implements OnInit {
         return result.trim();
     }
 
-    public toggleEdit(): void {
-        this.editing = !this.editing;
+    public edit(): void {
+        const dialogRef = this.editDialog.open(TimecodeEditDialogComponent, {
+            width: '500px',
+            data: {
+                file: this.file,
+                timecode: this.timecode
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            if (this.timecode.timecodeTags.length === 0) {
+                this.removed.next(this.timecode);
+            }
+        });
     }
 
     public formatPreciseDuration(durationInSeconds: number): string {
@@ -87,39 +93,6 @@ export class TimecodeComponent implements OnInit {
         }
     }
 
-    public async addTagSelectionToTimecode(tag: Tag): Promise<void> {
-        const clonedTimecode = _.cloneDeep(this.timecode);
-        clonedTimecode.timecodeTags = [
-            new TimecodeTag(null, this.timecode.timecodeId, tag)
-        ];
-        const result = await this._service.createTagTimecode(this.file, clonedTimecode);
-
-        const timecodeTags = this.timecode.timecodeTags.slice();
-        timecodeTags.push(result.timecodeTags[0]);
-        timecodeTags.sort((a, b) => {
-            if (a.tag.name < b.tag.name) {
-                return -1;
-            } else if (a.tag.name > b.tag.name) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        this.timecode.timecodeTags = timecodeTags;
-        this.updateAlreadySelectedTags();
-    }
-
-    public async removeTagFromExistingTimecode(timecodeTag: TimecodeTag): Promise<void> {
-        await this._service.deleteTimecodeTag(this.timecode, timecodeTag);
-
-        const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(t => t.timecodeTagId !== timecodeTag.timecodeTagId);
-        this.timecode.timecodeTags = timecodeTagsAfterDeletion;
-
-        if (timecodeTagsAfterDeletion.length === 0) {
-            this.removed.next(this.timecode);
-        }
-    }
-
     public goToTimecode(): void {
         this._playerService.setCurrentTime(this.timecode.start);
         this._playerService.play();
@@ -133,21 +106,10 @@ export class TimecodeComponent implements OnInit {
         this._playerService.setCurrentTime(this.timecode.end);
     }
 
-    public async setTagStart(): Promise<void> {
-        this.timecode.start = this._playerService.getCurrentTime();
-        await this._service.updateTimecodeStartAndEnd(this.file, this.timecode);
-    }
-
-    public async setTagEnd(): Promise<void> {
-        this.timecode.end = this._playerService.getCurrentTime();
-        await this._service.updateTimecodeStartAndEnd(this.file, this.timecode);
-    }
-
-    private updateAlreadySelectedTags(): void {
-        this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
-    }
-
     public formattedTags(): string {
-        return _.map(this.timecode.timecodeTags, (timecodeTag) => timecodeTag.tag.name).join(', ');
+        return _
+            .sortBy(this.timecode.timecodeTags, [(t: TimecodeTag) => t.tag.name])
+            .map((timecodeTag) => timecodeTag.tag.name)
+            .join(', ');
     }
 }

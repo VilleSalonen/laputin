@@ -47,6 +47,15 @@
     transform: translate(-50%,-50%);
 }
 
+.video-area {
+    background: black;
+    flex-grow: 1;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
 .video-hero-shot {
     position: relative;
 }
@@ -84,13 +93,16 @@
     width: 100%;
 }
 
-.player-controls {
+.player:hover .player-controls {
     display: flex;
+}
+
+.player-controls {
+    display: none;
     flex-direction: row;
-    background: $color-primary-4;
-    color: $color-primary-1;
     padding: 0.25 * $standard-margin;
     max-width: 100%;
+    z-index: 20;
 }
 
 .player-main-button {
@@ -176,4 +188,18 @@
 
 a, a:hover {
     color: $color-primary-4;
+}
+
+.timecodes {
+    margin-top: $standard-margin;
+    min-height: 167px;
+    display: flex;
+    flex-direction: row;
+    max-width: 2000px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+app-timecode {
+    max-height: 150px;
 }

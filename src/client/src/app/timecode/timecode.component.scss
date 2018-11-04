@@ -1,6 +1,37 @@
 @import './../../styles/styles.scss';
 
-.tag {
-    margin-bottom: 0.25 * $standard-margin;
-    margin-right: 0.25 * $standard-margin;
+img, .screenshot {
+    max-height: 150px;
+}
+
+.container {
+    max-height: 150px;
+    position: relative; 
+}
+
+.controls {
+    position: absolute;
+    color: white;
+    text-shadow: 1px 1px 0 black;
+    display: none;
+    flex-direction: row;
+}
+
+.edit-control {
+    left: 0.25 * $standard-margin; 
+    bottom: 0.25 * $standard-margin;
+}
+
+.timecode-end-control {
+    right: 0.25 * $standard-margin; 
+    bottom: 0.25 * $standard-margin;
+}
+
+.screenshot-control {
+    top: 0.25 * $standard-margin;
+    right: 0.25 * $standard-margin;
+}
+
+.container:hover .controls {
+    display: flex;
 }
