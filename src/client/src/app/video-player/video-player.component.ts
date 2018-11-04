@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
@@ -540,7 +540,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     private setCurrentTime(newCurrentTime: number) {
-        const previousTime = this.player.currentTime;
         this.player.currentTime = newCurrentTime;
         this.playbackHasBeenStarted = true;
     }
