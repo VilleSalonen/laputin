@@ -1,6 +1,6 @@
 import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
-import * as _ from 'lodash';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs/Rx';
 
 import {File, FileQuery, FileChange, ChangeDirection, Tag, Timecode, TimecodeTag, AutocompleteType} from './../models';
@@ -387,14 +387,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public removeTag(tag: Tag): void {
-        this.file.tags = _.filter(this.file.tags, (t: Tag): boolean => t.id !== tag.id);
+        this.file.tags = this.file.tags.filter((t: Tag): boolean => t.id !== tag.id);
         this._service.deleteTagFileAssoc(this.file, tag)
             .subscribe(() => {});
     }
 
     private addTagsToFile(tags: Tag[]): void {
         const currentTags = this.file.tags;
-        _.each(tags, (tag: Tag) => currentTags.push(tag));
+        tags.forEach((tag: Tag) => currentTags.push(tag));
         const sorted = _.sortBy(currentTags, (tag: Tag) => tag.name);
         this.file.tags = sorted;
     }

@@ -138,7 +138,7 @@ export class FileLibrary extends events.EventEmitter {
 
     private identicalFileAlreadyExistsInIdenticalPath(file: File): boolean {
         const files = this._files[file.hash];
-        return _.some(files, (fileForChecking: File): boolean => file.path === fileForChecking.path);
+        return files.some((fileForChecking: File): boolean => file.path === fileForChecking.path);
     }
 
     private removeFileFromPath(filePath: string): void {
@@ -147,12 +147,12 @@ export class FileLibrary extends events.EventEmitter {
         const hash = this._hashesByPaths[fixedPath];
         const files = this._files[hash];
 
-        const file = _.find(files, (f: File) => {
+        const file = files.find((f: File) => {
             return f.path === fixedPath;
         });
 
         if (file) {
-            this._files[hash] = _.filter(files, (f: File) => {
+            this._files[hash] = files.filter((f: File) => {
                 return f.path !== fixedPath;
             });
 
