@@ -167,7 +167,7 @@ export class Laputin {
 
         api.route('/open/files').get(async (req, res) => {
             const files = await this.library.getFiles(req.query);
-            await this._opener.open(files);
+            this._opener.open(files);
             res.status(200).end();
         });
 
