@@ -76,7 +76,7 @@ export class FilesComponent implements OnInit, OnDestroy {
 
         let newIndex: number;
         if (fileChange.random) {
-            newIndex = Math.random() * (this.files.length - 1);
+            newIndex = Math.floor(Math.random() * (this.files.length - 1));
         } else {
             if (fileChange.direction === ChangeDirection.Previous) {
                 newIndex = activeIndex - 1;
