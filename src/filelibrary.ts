@@ -147,6 +147,10 @@ export class FileLibrary extends events.EventEmitter {
         const hash = this._hashesByPaths[fixedPath];
         const files = this._files[hash];
 
+        if (!files) {
+            return;
+        }
+
         const file = files.find((f: File) => {
             return f.path === fixedPath;
         });
