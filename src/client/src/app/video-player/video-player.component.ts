@@ -210,6 +210,20 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     case 'd':
                         this.goToNext();
                         break;
+                    case 'q':
+                        if (event.shiftKey) {
+                            this.goToTagStart();
+                        } else {
+                            this.setTagStart();
+                        }
+                        break;
+                    case 'e':
+                        if (event.shiftKey) {
+                            this.goToTagEnd();
+                        } else {
+                            this.setTagEnd();
+                        }
+                        break;
                     case 'PrintScreen':
                         this.screenshot();
                         break;
