@@ -24,7 +24,7 @@ export class TagAutocompleteComponent implements OnInit {
     public termCtrl = new FormControl();
 
     @Input() tagContainer: TagContainer;
-    @Input() exclude: Tag[];
+    @Input() exclude: Tag[] = [];
     @Input() type: AutocompleteType;
 
     @Output()
