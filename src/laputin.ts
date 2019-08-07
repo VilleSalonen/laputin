@@ -8,7 +8,7 @@ import {Library} from './library';
 import {FileLibrary} from './filelibrary';
 import {VLCOpener} from './vlcopener';
 import {File} from './file';
-import {Tag, Timecode} from './tag';
+import {Tag, Timecode, TimecodeTag} from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
 
@@ -127,6 +127,10 @@ export class Laputin {
             const files = await this.library.getFiles(query);
 
             if (files.length > 0) {
+                timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
+                    this.library.createNewLinkBetweenTagAndFile(timecodeTag.tag, req.params.hash);
+                });
+
                 const result = await this.library.addTimecodeToFile(
                     timecode,
                     req.params.hash);
