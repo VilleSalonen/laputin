@@ -210,6 +210,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     case 'd':
                         this.goToNext();
                         break;
+                    case 'PrintScreen':
+                        this.screenshot();
+                        break;
                 }
         });
     }
