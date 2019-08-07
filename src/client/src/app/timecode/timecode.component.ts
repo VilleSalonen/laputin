@@ -93,7 +93,7 @@ export class TimecodeComponent {
     }
 
     public goToTimecode(): void {
-        this._playerService.setCurrentTime(this.timecode.start);
+        this.goToTimecodeStart();
         this._playerService.play();
     }
 

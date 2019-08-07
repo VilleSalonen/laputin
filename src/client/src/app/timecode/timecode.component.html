@@ -1,15 +1,19 @@
 <div class="container">
     <div class="screenshot">
-        <img (click)="goToTimecodeStart()" mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
+        <img (click)="goToTimecode()" mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
             [matTooltip]="formatTimecodeDuration() + ': ' + formattedTags()" />
+    </div>
+
+    <div class="controls edit-control" (click)="edit()" title="Edit...">
+        <i class="fas fa-edit"></i>
     </div>
 
     <div class="controls screenshot-control" (click)="screenshotTimecode()" title="Set screenshot to timecode">
         <i class="fas fa-camera"></i>
     </div>
 
-    <div class="controls edit-control" (click)="edit()" title="Edit...">
-        <i class="fas fa-edit"></i>
+    <div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{formatPreciseDuration(timecode.start)}}">
+        <i class="fas fa-sign-out-alt"></i>
     </div>
 
     <div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{formatPreciseDuration(timecode.end)}}">
