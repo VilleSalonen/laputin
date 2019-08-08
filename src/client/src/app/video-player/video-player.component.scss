@@ -21,7 +21,7 @@
 }
 
 .video-container {
-    position: absolute;
+    position: relative;
     top: 0;
     bottom: 0;
     width: 100%;
@@ -51,6 +51,21 @@
     background: black;
     flex-grow: 1;
     position: relative;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.screenshot-preview {
+    position: absolute;
+    top: $standard-margin;
+    max-height: 25%;
+    height: 25%;
+    right: $standard-margin;
+    max-width: 25%;
+    width: 25%;
+    z-index: 99;
+    background-color: black;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;

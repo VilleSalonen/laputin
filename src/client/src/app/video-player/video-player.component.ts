@@ -17,6 +17,7 @@ import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-scree
 @Injectable()
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public playbackHasBeenStarted: boolean;
+    public showScreenshotPreview: boolean;
     public playing: boolean;
     public random: boolean;
     public progressText: string;
@@ -224,6 +225,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                             this.setTagEnd();
                         }
                         break;
+                    case 's':
+                        this.toggleRandom();
+                        break;
                     case 'PrintScreen':
                         this.screenshot();
                         break;
@@ -385,6 +389,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         }
     }
 
+    public toggleRandom(): void {
+        this.random = !this.random;
+    }
+
     private emitChange(direction: ChangeDirection): void {
         this.fileChange.emit(new FileChange(this.file, direction, this.random));
         this.playing = false;
@@ -424,11 +432,18 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public screenshot(): void {
-        this._service.screenshotFile(this.file, this.player.currentTime);
-        // Allow for a some delay because user only see this thumbnail when she changes to another file and then back.
-        setTimeout(() => {
-            this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
-        }, 1000);
+        this._service.screenshotFile(this.file, this.player.currentTime)
+            .toPromise()
+            .then(() => {
+                // Allow for a some delay because user only see this thumbnail when she changes to another file and then back.
+                this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+                this.showScreenshotPreview = true;
+
+                setTimeout(
+                    () => this.showScreenshotPreview = false,
+                    3000
+                );
+            });
     }
 
     public async screenshotTimecode(timecode: Timecode): Promise<void> {

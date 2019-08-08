@@ -6,6 +6,7 @@ import {Http, Headers, Response} from '@angular/http';
 import * as _ from 'lodash';
 
 import { File, FileQuery, Timecode, Tag, TimecodeTag, Duplicate } from './models';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LaputinService {
@@ -113,15 +114,15 @@ export class LaputinService {
         return new File(file.hash, file.path, this._convertTags(file.tags), file.size);
     }
 
-    public screenshotFile(file: File, timeInSeconds: number): void {
+    public screenshotFile(file: File, timeInSeconds: number): Observable<Response> {
         const body = JSON.stringify({ hash: file.hash, time: timeInSeconds });
         const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
-        this._http
+        return this._http
             .post(this._baseUrl + '/screenshot', body, { headers: headers })
-            .subscribe(() => {
-                this.thumbnailChanged.next(file);
-            });
+            .pipe(
+                tap(() => this.thumbnailChanged.next(file))
+            );
     }
 
     public screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<Response> {

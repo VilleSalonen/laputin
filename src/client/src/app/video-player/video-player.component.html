@@ -13,6 +13,10 @@
             </div>
 
             <div [ngClass]="{ 'hidden': !playbackHasBeenStarted }" class="video-container">
+                <div class="screenshot-preview" [ngClass]="{ 'hidden': !showScreenshotPreview }" [ngStyle]="showScreenshotPreview && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg?' + cacheBuster + ')'}">
+                    &nbsp;
+                </div>
+
                 <video src="{{videoSource}}" #player></video>
             </div>
 
@@ -32,11 +36,11 @@
                         #slider></mat-slider>
 
                     <div style="display: flex; flex-direction: row; align-items: center;">
-                        <button *ngIf="!random" mat-button (click)="random = !random" title="Toggle random">
+                        <button *ngIf="!random" mat-button (click)="toggleRandom()" title="Toggle random">
                             <i class="fa fa-random" aria-hidden="true"></i>
                         </button>
 
-                        <button *ngIf="random" mat-button (click)="random = !random" color="primary" title="Toggle random">
+                        <button *ngIf="random" mat-button (click)="toggleRandom()" color="primary" title="Toggle random">
                             <i class="fa fa-random" aria-hidden="true"></i>
                         </button>
 
