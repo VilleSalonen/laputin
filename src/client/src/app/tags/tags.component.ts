@@ -14,8 +14,6 @@ export class TagsComponent implements OnInit {
     public filteredOrphanedTags: Tag[] = [];
     public loading: boolean;
 
-    public viewPortItems: Tag[] = [];
-
     public term = '';
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {

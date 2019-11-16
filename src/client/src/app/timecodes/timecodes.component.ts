@@ -25,7 +25,6 @@ export class TimecodesComponent implements OnInit {
 
     public timecodeAmount = 0;
     public timecodeItems: TimecodeItem[] = [];
-    public viewPortItems: TimecodeItem[] = [];
     public loading = false;
     public exporting = false;
     public exportCommands: string[] = [];

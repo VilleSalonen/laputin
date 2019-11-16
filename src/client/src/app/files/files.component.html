@@ -16,11 +16,11 @@
                 <i class="fa fa-spinner"></i>
             </div>
 
-            <virtual-scroll [items]="files" (update)="viewPortItems = $event">
-                <div *ngFor="let file of viewPortItems" style="height: 160px; padding: 12px;">
+            <virtual-scroller #scroll [items]="files">
+                <div *ngFor="let file of scroll.viewPortItems" style="height: 160px; padding: 12px;">
                     <app-file [file]="file"></app-file>
                 </div>
-            </virtual-scroll>
+            </virtual-scroller>
         </div>
     </div>
 

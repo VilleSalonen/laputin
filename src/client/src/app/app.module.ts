@@ -7,7 +7,7 @@ import {
   LocationStrategy,
   HashLocationStrategy
 } from '@angular/common';
-import { VirtualScrollModule } from 'angular2-virtual-scroll';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -69,7 +69,7 @@ import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edi
       { path: 'tags', component: TagsComponent },
       { path: 'duplicates', component: DuplicatesComponent }
     ]),
-    VirtualScrollModule,
+    VirtualScrollerModule,
     BrowserAnimationsModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService, PlayerService],

@@ -16,9 +16,9 @@
                 <i class="fa fa-spinner"></i>
             </div>
 
-            <virtual-scroll [items]="filteredTags" (update)="viewPortItems = $event">
-                <app-tag-row *ngFor="let tag of viewPortItems" [tag]="tag" style="height: 320px; max-height: 320px; padding: 12px;"></app-tag-row>
-            </virtual-scroll>
+            <virtual-scroller #scroll [items]="filteredTags">
+                <app-tag-row *ngFor="let tag of scroll.viewPortItems" [tag]="tag" style="height: 320px; max-height: 320px; padding: 12px;"></app-tag-row>
+            </virtual-scroller>
         </div>
     </div>
 </div>

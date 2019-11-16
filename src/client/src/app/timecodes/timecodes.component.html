@@ -15,8 +15,8 @@
     <div class="files-list" style="flex-grow: 1;">
         <h2>Showing {{timecodeAmount}} matching timecodes</h2>
 
-        <virtual-scroll [items]="timecodeItems" (update)="viewPortItems = $event">
-            <div *ngFor="let timecodeItem of viewPortItems">
+        <virtual-scroller #scroll [items]="timecodeItems">
+            <div *ngFor="let timecodeItem of scroll.viewPortItems">
                 <div *ngIf="timecodeItem.type === TimecodeItemType.File">
                     <div style="height: 160px;">
                         <a [routerLink]="['/files', timecodeItem.item.hash]">
@@ -43,6 +43,6 @@
                     </div>
                 </div>
             </div>
-        </virtual-scroll>
+        </virtual-scroller>
     </div>
 </div>
