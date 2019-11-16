@@ -32,10 +32,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     private duration: string;
 
-    @ViewChild('playerView', { read: ElementRef }) playerView: ElementRef;
-    @ViewChild('player', { read: ElementRef }) playerElem: ElementRef;
-    @ViewChild('slider', { read: ElementRef }) sliderElem: ElementRef;
-    @ViewChild('volume', { read: ElementRef }) volumeSliderElem: ElementRef;
+    @ViewChild('playerView', { static: false }) playerView: ElementRef;
+    @ViewChild('player', { static: false }) playerElem: ElementRef;
+    @ViewChild('slider', { static: false }) sliderElem: ElementRef;
+    @ViewChild('volume', { static: false }) volumeSliderElem: ElementRef;
 
     private _file: File;
 
@@ -150,7 +150,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
         windowKeyups
             .subscribe((event: KeyboardEvent) => {
-                if (event.srcElement.nodeName === 'INPUT') {
+                if ((<any>event.srcElement).nodeName === 'INPUT') {
                     if (event.key === 'Escape') {
                         (<any>event.srcElement).blur();
                     }
