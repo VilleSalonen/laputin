@@ -26,6 +26,9 @@ export class TimecodeEditDialogComponent {
 
     public alreadySelectedTags: Tag[];
 
+    public formatTimecodeDuration = Utils.formatTimecodeDuration;
+    public formatPreciseDuration = Utils.formatPreciseDuration;
+
     constructor(
         public dialogRef: MatDialogRef<TimecodeEditDialogData>,
         @Inject(MAT_DIALOG_DATA) data: TimecodeEditDialogData,
@@ -88,7 +91,4 @@ export class TimecodeEditDialogComponent {
     private updateAlreadySelectedTags(): void {
         this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
     }
-
-    public formatTimecodeDuration = Utils.formatTimecodeDuration;
-    public formatPreciseDuration = Utils.formatPreciseDuration;
 }

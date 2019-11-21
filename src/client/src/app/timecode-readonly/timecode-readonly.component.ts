@@ -27,6 +27,8 @@ export class TimecodeReadonlyComponent {
 
     public addingTags: boolean;
 
+    public formatTimecodeDuration = Utils.formatTimecodeDuration;
+
     constructor(private _playerService: PlayerService) {
     }
 
@@ -34,8 +36,6 @@ export class TimecodeReadonlyComponent {
         this._playerService.setCurrentTime(timecode.start);
         this._playerService.play();
     }
-
-    public formatTimecodeDuration = Utils.formatTimecodeDuration;
 
     public formattedTags(): string {
         return _

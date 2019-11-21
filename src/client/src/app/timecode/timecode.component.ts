@@ -28,6 +28,9 @@ export class TimecodeComponent {
     @Input() currentTime: number;
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
 
+    public formatTimecodeDuration = Utils.formatTimecodeDuration;
+    public formatPreciseDuration = Utils.formatPreciseDuration;
+
     constructor(private _service: LaputinService, private _playerService: PlayerService, private editDialog: MatDialog) {
     }
 
@@ -46,9 +49,6 @@ export class TimecodeComponent {
             }
         });
     }
-
-    public formatTimecodeDuration = Utils.formatTimecodeDuration;
-    public formatPreciseDuration = Utils.formatPreciseDuration;
 
     public async screenshotTimecode(): Promise<void> {
         if (this._playerService.player) {
