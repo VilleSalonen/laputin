@@ -2,5 +2,4 @@ languages:
   JavaScript: true
   TypeScript: true
 exclude_paths:
-- "src/client/karma.conf.js"
-- "src/client/protractor.conf.js"
+- "src/tests/*.ts"
