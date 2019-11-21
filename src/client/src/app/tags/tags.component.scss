@@ -3,13 +3,11 @@
 :host {
     @include g-layout__row;
     flex: 2;
-    overflow: auto;
 }
 
 .container {
     @include g-layout__row;
     flex: 2;
-    overflow: auto;
 }
 
 .hidden {
@@ -21,7 +19,6 @@
 
     background: $color-primary-1;
     flex-basis: 100%;
-    overflow: auto;
 }
 
 .tags-list {
@@ -32,10 +29,21 @@
 
     padding: $standard-margin;
 
-    overflow: auto;
-
     margin-top: 0;
     margin-bottom: $standard-margin;
+}
+
+.tags-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 800px 800px 800px;
+    column-gap: 0.5 * $standard-margin;
+    row-gap: 0.5 * $standard-margin;
+}
+
+.grid-item {
+    height: 450px;
+    display: flex;
 }
 
 .tags-search {

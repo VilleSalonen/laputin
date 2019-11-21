@@ -2,10 +2,10 @@
     <div class="column player" style="flex-grow: 1; margin-right: 24px; position: relative;">
         <div class="row video-area" [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}">
             <div [ngClass]="{ 'hidden': playing }" class="filename" style="color: white;">
-                <span class="filename-small">{{file.directory()}}</span>
+                <span class="filename-small">{{file.directory}}</span>
                 <br />
-                <span class="filename-big">{{file.nameSansSuffix()}}</span>
-                <span class="filename-small">{{file.suffix()}}</span>
+                <span class="filename-big">{{file.nameSansSuffix}}</span>
+                <span class="filename-small">{{file.suffix}}</span>
             </div>
 
             <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-play" (click)="play()" *ngIf="!playing">

@@ -16,9 +16,11 @@
                 <i class="fa fa-spinner"></i>
             </div>
 
-            <virtual-scroller #scroll [items]="filteredTags">
-                <app-tag-row *ngFor="let tag of scroll.viewPortItems" [tag]="tag" style="height: 320px; max-height: 320px; padding: 12px;"></app-tag-row>
-            </virtual-scroller>
+            <div class="tags-grid">
+                <div class="grid-item" *ngFor="let tag of filteredTags">
+                    <app-tag-row [tag]="tag"></app-tag-row>
+                </div>
+            </div>
         </div>
     </div>
 </div>

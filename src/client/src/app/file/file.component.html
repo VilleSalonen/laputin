@@ -1,17 +1,14 @@
-<a [routerLink]="['/files', file.hash]">
-    <div style="display: flex;">
-        <div style="width: 200px; max-width: 200px; margin-right: 12px; margin-top: auto; margin-bottom: auto;">
-            <img src="/laputin/thumbs-small/{{file.hash}}.jpg{{cacheBuster}}" style="max-width: 200px;" />
+<a [routerLink]="['/files', file.hash]" (deferLoad)="showMyElement=true">
+    <div class="container" *ngIf="showMyElement" [ngStyle]="{'background-image': 'url(/laputin/thumbs-small/' + file.hash + '.jpg' + cacheBuster + ')'}">
+        <div class="filename">
+            <span class="filename-small">{{file.directory}}</span>
+            <br />
+            <span class="filename-big">{{file.nameSansSuffix}}</span>
+            <span class="filename-small">{{file.suffix}} ({{file.humanSize}})</span>
         </div>
-        <div>
-            <div class="filename">
-                <span class="filename-small">{{file.directory()}}</span>
-                <br />
-                <span class="filename-big">{{file.nameSansSuffix()}}</span>
-                <span class="filename-small">{{file.suffix()}} ({{file.humanSize}})</span>
-            </div>
 
-            <p>{{formattedTags(file)}}</p>
+        <div class="tags">
+            <span>{{formattedTags(file)}}</span>
         </div>
     </div>
 </a>

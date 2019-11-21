@@ -1,4 +1,4 @@
-<div class="container full-height">
+<div class="container">
     <div class="files-search">
         <div class="row">
             <app-timecode-search (update)="filterFiles($event)"></app-timecode-search>
@@ -17,30 +17,22 @@
 
         <virtual-scroller #scroll [items]="timecodeItems">
             <div *ngFor="let timecodeItem of scroll.viewPortItems">
-                <div *ngIf="timecodeItem.type === TimecodeItemType.File">
-                    <div style="height: 160px;">
-                        <a [routerLink]="['/files', timecodeItem.item.hash]">
-                            <div style="display: flex; margin-bottom: 12px;">
-                                <div style="width: 200px; max-width: 200px; margin-right: 12px; margin-top: auto; margin-bottom: auto;">
-                                    <img src="/laputin/thumbs-small/{{timecodeItem.item.hash}}.jpg" style="max-width: 200px;" />
-                                </div>
-                                <div>
-                                    <div class="filename">
-                                        <span class="filename-small">{{timecodeItem.item.directory()}}</span>
-                                        <br />
-                                        <span class="filename-big">{{timecodeItem.item.nameSansSuffix()}}</span>
-                                        <span class="filename-small">{{timecodeItem.item.suffix()}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                <a [routerLink]="['/files', timecodeItem.item.hash]">
+                    <div style="display: flex; margin-bottom: 12px;">
+                        <div class="filename">
+                            <span class="filename-small">{{timecodeItem.item.directory}}</span>
+                            <br />
+                            <span class="filename-big">{{timecodeItem.item.nameSansSuffix}}</span>
+                            <span class="filename-small">{{timecodeItem.item.suffix}}</span>
+                        </div>
                     </div>
-                </div>
+                </a>
 
-                <div *ngIf="timecodeItem.type === TimecodeItemType.Timecode">
-                    <div style="height: 160px;">
-                        <app-timecode-readonly [timecode]="timecodeItem.item" style="display: flex; margin-bottom: 12px; margin-left: 96px;"></app-timecode-readonly>
-                    </div>
+                <div style="display: flex; flex-direction: row; overflow-y: hidden; max-width: 100%; margin-bottom: 24px;">
+                    <ng-container *ngFor="let code of timecodeItem.codes; let i = index">
+                        <app-timecode-readonly *ngIf="i < 7" [timecode]="code"></app-timecode-readonly>
+                    </ng-container>
+                    <div *ngIf="timecodeItem.codes.length >= 7">...</div>
                 </div>
             </div>
         </virtual-scroller>

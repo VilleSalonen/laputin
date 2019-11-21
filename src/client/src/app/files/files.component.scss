@@ -3,7 +3,7 @@
 :host {
     @include g-layout__row;
     flex: 2;
-    overflow: auto;
+    // overflow: auto;
 }
 
 .container {
@@ -24,6 +24,19 @@
     background: $color-primary-1;
     flex-basis: 100%;
     overflow: auto;
+}
+
+.files-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 800px 800px 800px;
+    column-gap: 0.5 * $standard-margin;
+    row-gap: 0.5 * $standard-margin;
+}
+
+.grid-item {
+    height: 450px;
+    display: flex;
 }
 
 .files-list {
@@ -65,4 +78,8 @@
 
 virtual-scroller {
     height: 100%;
+}
+
+.show-more {
+    margin-top: $standard-margin;
 }

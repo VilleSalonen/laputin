@@ -18,6 +18,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     public hashParamSubscription: Subject<string> = new Subject<string>();
 
     public activeFile: File;
+    public allFiles: File[] = [];
     public files: File[] = [];
     public loading = false;
     public query: FileQuery;
@@ -33,9 +34,10 @@ export class FilesComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.query = new FileQuery(JSON.parse(localStorage.getItem('query')));
 
-        this.filesSubscription.subscribe((files: File[]) =>
-            this.files = files
-        );
+        this.filesSubscription.subscribe((files: File[]) => {
+            this.allFiles = files;
+            this.files = files.slice(0, 100);
+        });
 
         this._service.queryFiles(new FileQuery()).then((files: File[]) => {
             this.allFilesSubscription.next(files);
@@ -71,11 +73,11 @@ export class FilesComponent implements OnInit, OnDestroy {
     }
 
     changeActiveFile(fileChange: FileChange): void {
-        const activeIndex = this.files.indexOf(fileChange.currentFile);
+        const activeIndex = this.allFiles.indexOf(fileChange.currentFile);
 
         let newIndex: number;
         if (fileChange.random) {
-            newIndex = Math.floor(Math.random() * (this.files.length - 1));
+            newIndex = Math.floor(Math.random() * (this.allFiles.length - 1));
         } else {
             if (fileChange.direction === ChangeDirection.Previous) {
                 newIndex = activeIndex - 1;
@@ -84,10 +86,10 @@ export class FilesComponent implements OnInit, OnDestroy {
             }
         }
 
-        if (newIndex < 0 || newIndex >= this.files.length) {
-            this.selectFile(this.files[0]);
+        if (newIndex < 0 || newIndex >= this.allFiles.length) {
+            this.selectFile(this.allFiles[0]);
         } else {
-            this.selectFile(this.files[newIndex]);
+            this.selectFile(this.allFiles[newIndex]);
         }
     }
 
@@ -120,5 +122,9 @@ export class FilesComponent implements OnInit, OnDestroy {
 
     closeFile(): void {
         this.router.navigate(['/files']);
+    }
+
+    showMore(): void {
+        this.files = this.allFiles.slice(0, this.files.length + 100);
     }
 }

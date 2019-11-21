@@ -1,8 +1,2 @@
-<div style="position: relative;">
-    <img src="/laputin/tag-timecode-thumbs-small/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="margin-right: 12px; cursor: pointer;"
-        (click)="goToTimecode(timecode)" />
-</div>
-
-<div class="column">
-    <button color="primary" *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" mat-flat-button title="Click to reset tag selection">{{timecodeTag.tag.name}}</button>
-</div>
+<img src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" style="max-width: 300px; margin-right: 12px; cursor: pointer;"
+    (click)="goToTimecode(timecode)" [matTooltip]="formatTimecodeDuration() + ': ' + formattedTags()" />

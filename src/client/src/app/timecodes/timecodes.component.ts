@@ -6,7 +6,7 @@ import { LaputinService } from './../laputin.service';
 import * as moment from 'moment';
 
 class TimecodeItem {
-    constructor(public type: TimecodeItemType, public item: any) {
+    constructor(public type: TimecodeItemType, public item: any, public codes: Timecode[]) {
     }
 }
 
@@ -64,9 +64,7 @@ export class TimecodesComponent implements OnInit {
 
             const timecodeItems: TimecodeItem[] = [];
             _.forOwn(timecodesByFiles, codes => {
-
-                timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [], 0)));
-                codes.forEach(c => timecodeItems.push(new TimecodeItem(TimecodeItemType.Timecode, c)));
+                timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [], 0), codes));
             });
 
             this.timecodeAmount = timecodes.length;

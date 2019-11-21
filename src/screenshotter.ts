@@ -41,7 +41,7 @@ export class Screenshotter {
 
         const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
-            '" -vframes 1 -vf scale=200:-1 ' +
+            '" -vframes 1 -vf scale=800:-1 ' +
             '"' + this.getThumbSmallPath(file) + '"';
 
         try {
@@ -64,7 +64,7 @@ export class Screenshotter {
 
         const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
-            '" -vframes 1 -vf scale=200:-1 ' +
+            '" -vframes 1 -vf scale=800:-1 ' +
             '"' + this.getTagTimecodeThumbSmallPath(timecode) + '"';
 
         try {
@@ -87,7 +87,7 @@ export class Screenshotter {
 
         const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
             ' -i "' + file.path +
-            '" -vframes 1 -vf scale=200:-1 ' +
+            '" -vframes 1 -vf scale=800:-1 ' +
             '"' + this.getTagThumbSmallPath(tag) + '"';
 
         try {

@@ -4,26 +4,18 @@ import {TagContainer} from './tagcontainer';
 export class File implements TagContainer {
     public name: string;
     public humanSize: string;
+    public escapedUrl: string;
+    public directory: string;
+    public nameSansSuffix: string;
+    public suffix: string;
 
     constructor(public hash: string, public path: string, public tags: Tag[], public size: number) {
         this.name = this.path.substring(this.path.lastIndexOf('/') + 1);
+        this.escapedUrl = this.path.replace('#', '%23');
+        this.directory = this.path.replace(this.name, '').replace(/\//g, '\\');
+        this.nameSansSuffix = this.name.substr(0, this.name.lastIndexOf('.'));
+        this.suffix = this.name.substr(this.name.lastIndexOf('.'));
         this.humanSize = this.formatHumanSize();
-    }
-
-    public escapedUrl() {
-        return this.path.replace('#', '%23');
-    }
-
-    public directory(): string {
-        return this.path.replace(this.name, '').replace(/\//g, '\\');
-    }
-
-    public nameSansSuffix(): string {
-        return this.name.substr(0, this.name.lastIndexOf('.'));
-    }
-
-    public suffix(): string {
-        return this.name.substr(this.name.lastIndexOf('.'));
     }
 
     private formatHumanSize(): string {

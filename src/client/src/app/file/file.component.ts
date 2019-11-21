@@ -13,7 +13,9 @@ export class FileComponent {
     @Input()
     public file: File;
 
-    public cacheBuster: string;
+    public cacheBuster = '';
+
+    public showMyElement: boolean;
 
     constructor(service: LaputinService) {
         service.thumbnailChanged.subscribe((changed: File) => {

@@ -1,5 +1,6 @@
 import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -7,7 +8,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {File} from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
-import { Timecode } from '../models';
+import { Timecode, TimecodeTag } from '../models';
 
 @Component({
     selector: 'app-timecode-readonly',
@@ -52,5 +53,30 @@ export class TimecodeReadonlyComponent {
     public goToTimecode(timecode: Timecode): void {
         this._playerService.setCurrentTime(timecode.start);
         this._playerService.play();
+    }
+
+    public formatTimecodeDuration(): string {
+        const duration = moment.duration(this.timecode.end - this.timecode.start, 'seconds');
+
+        let result = '';
+
+        const minutes = Math.floor(duration.asMinutes());
+        const seconds = duration.seconds();
+
+        if (minutes > 0) {
+            result += minutes + ' min ';
+        }
+        if (seconds > 0) {
+            result += seconds + ' sec';
+        }
+
+        return result.trim();
+    }
+
+    public formattedTags(): string {
+        return _
+            .sortBy(this.timecode.timecodeTags, [(t: TimecodeTag) => t.tag.name])
+            .map((timecodeTag) => timecodeTag.tag.name)
+            .join(', ');
     }
 }

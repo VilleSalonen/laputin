@@ -13,6 +13,7 @@ export class TagRowComponent implements OnInit {
     @Input() tag: Tag;
     public isEditing = false;
     public name = '';
+    public showMyElement: boolean;
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
     }

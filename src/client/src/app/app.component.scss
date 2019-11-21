@@ -1,10 +1,14 @@
 @import './../styles/styles.scss';
 
-.maincontainer {
-    @include g-layout__column;
-
+:host {
+    display: flex;
     min-height: 100vh;
     max-height: 100vh;
+}
+
+.maincontainer {
+    @include g-layout__column;
+    flex: 1;
 }
 
 .content {

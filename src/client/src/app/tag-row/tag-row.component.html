@@ -1,4 +1,8 @@
-<mat-card style="width: 400px;">
+<div class="container" (deferLoad)="showMyElement=true" [ngStyle]="showMyElement && {'background-image': 'url(/laputin/tag-thumbs/' + tag.id + '.jpg'}">
+    <span class="tag-name">{{tag.name}}</span>
+</div>
+
+<!--<mat-card style="width: 400px;">
     <mat-card-header>
         <mat-card-title>
             {{tag.name}}
@@ -23,4 +27,4 @@
     <mat-card-actions>
         <button mat-button (click)="edit()"><i class="far fa-edit"></i></button>
     </mat-card-actions>
-</mat-card>
+</mat-card>-->

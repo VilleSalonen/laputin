@@ -50,7 +50,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             if (proxyExists) {
                 this.videoSource = `/proxies/${this.file.hash}.mp4`;
             } else {
-                this.videoSource = `/media/${this.file.escapedUrl()}`;
+                this.videoSource = `/media/${this.file.escapedUrl}`;
             }
         });
     }

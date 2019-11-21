@@ -10,6 +10,7 @@ import {
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DeferLoadModule} from '@trademe/ng-defer-load';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
@@ -70,7 +71,8 @@ import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edi
       { path: 'duplicates', component: DuplicatesComponent }
     ]),
     VirtualScrollerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    DeferLoadModule
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService, PlayerService],
   bootstrap: [AppComponent]

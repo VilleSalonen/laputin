@@ -1,8 +1,24 @@
 @import './../../styles/styles.scss';
 
+:host {
+    flex: 1;
+    display: flex;
+}
+
 a, a:hover {
-    color: $color-primary-4;
+    display: flex;
+    flex: 1;
+    color: white;
+    text-shadow: 1px 1px 0 black;
     text-decoration: none;
+}
+
+.container {
+    flex: 1;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .filename {
@@ -21,14 +37,6 @@ a, a:hover {
     font-size: 20px;
 }
 
-.tag {
-    @include rounded-borders;
-
-    background: $color-primary-4;
-    color: #e0e0e0;
-    margin-bottom: 0.25 * $standard-margin;
-    margin-right: 0.25 * $standard-margin;
-    display: inline-block;
-
-    cursor: pointer;
+.filename, .tags {
+    margin: 0.25 * $standard-margin;
 }
