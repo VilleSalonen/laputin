@@ -31,24 +31,6 @@ export class TimecodeComponent {
     constructor(private _service: LaputinService, private _playerService: PlayerService, private editDialog: MatDialog) {
     }
 
-    public formatTimecodeDuration(): string {
-        const duration = moment.duration(this.timecode.end - this.timecode.start, 'seconds');
-
-        let result = '';
-
-        const minutes = Math.floor(duration.asMinutes());
-        const seconds = duration.seconds();
-
-        if (minutes > 0) {
-            result += minutes + ' min ';
-        }
-        if (seconds > 0) {
-            result += seconds + ' sec';
-        }
-
-        return result.trim();
-    }
-
     public edit(): void {
         const dialogRef = this.editDialog.open(TimecodeEditDialogComponent, {
             width: '500px',
@@ -65,6 +47,7 @@ export class TimecodeComponent {
         });
     }
 
+    public formatTimecodeDuration = Utils.formatTimecodeDuration;
     public formatPreciseDuration = Utils.formatPreciseDuration;
 
     public async screenshotTimecode(): Promise<void> {

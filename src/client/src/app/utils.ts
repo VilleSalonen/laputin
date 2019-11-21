@@ -1,6 +1,24 @@
 import * as moment from 'moment';
 
 export namespace Utils {
+    export function formatTimecodeDuration(): string {
+        const duration = moment.duration(this.timecode.end - this.timecode.start, 'seconds');
+
+        let result = '';
+
+        const minutes = Math.floor(duration.asMinutes());
+        const seconds = duration.seconds();
+
+        if (minutes > 0) {
+            result += minutes + ' min ';
+        }
+        if (seconds > 0) {
+            result += seconds + ' sec';
+        }
+
+        return result.trim();
+    }
+
     export function formatPreciseDuration(durationInSeconds: number): string {
         const duration = moment.duration(durationInSeconds, 'seconds');
 

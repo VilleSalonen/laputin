@@ -9,6 +9,7 @@ import {File} from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { Timecode, TimecodeTag } from '../models';
+import { Utils } from '../utils';
 
 @Component({
     selector: 'app-timecode-readonly',
@@ -34,23 +35,7 @@ export class TimecodeReadonlyComponent {
         this._playerService.play();
     }
 
-    public formatTimecodeDuration(): string {
-        const duration = moment.duration(this.timecode.end - this.timecode.start, 'seconds');
-
-        let result = '';
-
-        const minutes = Math.floor(duration.asMinutes());
-        const seconds = duration.seconds();
-
-        if (minutes > 0) {
-            result += minutes + ' min ';
-        }
-        if (seconds > 0) {
-            result += seconds + ' sec';
-        }
-
-        return result.trim();
-    }
+    public formatTimecodeDuration = Utils.formatTimecodeDuration;
 
     public formattedTags(): string {
         return _

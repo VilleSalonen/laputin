@@ -89,23 +89,6 @@ export class TimecodeEditDialogComponent {
         this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
     }
 
-    public formatTimecodeDuration(): string {
-        const duration = moment.duration(this.timecode.end - this.timecode.start, 'seconds');
-
-        let result = '';
-
-        const minutes = Math.floor(duration.asMinutes());
-        const seconds = duration.seconds();
-
-        if (minutes > 0) {
-            result += minutes + ' min ';
-        }
-        if (seconds > 0) {
-            result += seconds + ' sec';
-        }
-
-        return result.trim();
-    }
-
+    public formatTimecodeDuration = Utils.formatTimecodeDuration;
     public formatPreciseDuration = Utils.formatPreciseDuration;
 }
