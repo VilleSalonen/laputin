@@ -8,6 +8,7 @@ import {LaputinService} from './../laputin.service';
 import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
+import { Utils } from '../utils';
 
 @Component({
     selector: 'app-video-player',
@@ -296,27 +297,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         return result;
     }
 
-    private formatPreciseDuration(durationInSeconds: number): string {
-        const duration = moment.duration(durationInSeconds, 'seconds');
-
-        let result = '';
-
-        const hours = duration.hours();
-        const minutes = duration.minutes();
-        const seconds = duration.seconds();
-        const milliseconds = parseInt(duration.milliseconds().toFixed(0), 10);
-
-        result += ((hours >= 10) ? hours : '0' + hours);
-        result += ':';
-        result += (minutes >= 10) ? minutes : '0' + minutes;
-        result += ':';
-        result += (seconds >= 10) ? seconds : '0' + seconds;
-        result += '.';
-        result += (milliseconds >= 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
-
-        return result;
-    }
-
     private setPlayheadTo(playPercent: number) {
         this.sliderValue = playPercent * this.sliderMax;
     }
@@ -494,11 +474,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public setTagStart(): void {
-        this.tagStart = this.formatPreciseDuration(this.player.currentTime);
+        this.tagStart = Utils.formatPreciseDuration(this.player.currentTime);
     }
 
     public setTagEnd(): void {
-        this.tagEnd = this.formatPreciseDuration(this.player.currentTime);
+        this.tagEnd = Utils.formatPreciseDuration(this.player.currentTime);
     }
 
     public goToTagStart(): void {

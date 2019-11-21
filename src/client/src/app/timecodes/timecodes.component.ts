@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 import { File, Timecode, FileQuery } from './../models';
 import { LaputinService } from './../laputin.service';
-import * as moment from 'moment';
+import { Utils } from '../utils';
 
 class TimecodeItem {
     constructor(public type: TimecodeItemType, public item: any, public codes: Timecode[]) {
@@ -50,13 +50,13 @@ export class TimecodesComponent implements OnInit {
                 const tags = t.timecodeTags.map(ta => ta.tag.name).join(', ');
 
                 this.exportCommands.push('ffmpeg ' +
-                    '-ss ' + this.formatPreciseDuration(t.start) + ' ' +
+                    '-ss ' + Utils.formatPreciseDuration(t.start) + ' ' +
                     '-i "' + t.path.replace(/\//g, '\\') + '" ' +
-                    '-t ' + this.formatPreciseDuration(t.end - t.start) + ' ' +
+                    '-t ' + Utils.formatPreciseDuration(t.end - t.start) + ' ' +
                     '-map v? -map a? -map s? -c:v hevc_nvenc -c:a copy -profile:v main -preset slow ' +
                     '"TARGET_DIR\\' + name +
-                    ' (' + this.formatPreciseDuration(t.start).replace(/[\:]/g, '.') +
-                    '-' + this.formatPreciseDuration(t.start).replace(/[\:]/g, '.') + ') ['
+                    ' (' + Utils.formatPreciseDuration(t.start).replace(/[\:]/g, '.') +
+                    '-' + Utils.formatPreciseDuration(t.start).replace(/[\:]/g, '.') + ') ['
                     + tags + '].mp4"');
             });
 
@@ -71,27 +71,6 @@ export class TimecodesComponent implements OnInit {
             this.timecodeItems = timecodeItems;
             this.loading = false;
         });
-    }
-
-    private formatPreciseDuration(durationInSeconds: number): string {
-        const duration = moment.duration(durationInSeconds, 'seconds');
-
-        let result = '';
-
-        const hours = duration.hours();
-        const minutes = duration.minutes();
-        const seconds = duration.seconds();
-        const milliseconds = parseInt(duration.milliseconds().toFixed(0), 10);
-
-        result += ((hours >= 10) ? hours : '0' + hours);
-        result += ':';
-        result += (minutes >= 10) ? minutes : '0' + minutes;
-        result += ':';
-        result += (seconds >= 10) ? seconds : '0' + seconds;
-        result += '.';
-        result += (milliseconds > 100) ? milliseconds : (milliseconds >= 10) ? '0' + milliseconds : '00' + milliseconds;
-
-        return result;
     }
 
     filterFiles(query: FileQuery): void {
