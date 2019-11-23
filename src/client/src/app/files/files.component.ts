@@ -5,7 +5,7 @@ import { FileChange, ChangeDirection } from './../models/filechange';
 import { FileQuery } from './../models/filequery';
 import { LaputinService } from './../laputin.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 
 @Component({
     styleUrls: ['./files.component.scss'],
@@ -43,7 +43,7 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.allFilesSubscription.next(files);
         });
 
-        this.filesSubscription.combineLatest(this.allFilesSubscription, this.hashParamSubscription)
+        combineLatest(this.filesSubscription, this.allFilesSubscription, this.hashParamSubscription)
             .subscribe(([files, allFiles, hashParam]) => {
                 if (hashParam) {
                     let selectedFile = files.find(f => f.hash === hashParam);

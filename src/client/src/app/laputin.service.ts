@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
-import {Http, Headers, Response} from '@angular/http';
+import {Response} from '@angular/http';
 import * as _ from 'lodash';
+import { tap, map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject, Observable } from 'rxjs';
 
 import { File, FileQuery, Timecode, Tag, TimecodeTag, Duplicate } from './models';
-import { tap } from 'rxjs/operators';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class LaputinService {
@@ -21,14 +19,16 @@ export class LaputinService {
     public queryFiles(query: FileQuery): Promise<File[]> {
         const params = this.compileParams(query);
         return this._http.get(this._baseUrl + '/files' + params)
-            .map((files: any[]): File[] => {
-                const result: File[] = [];
-                if (files) {
-                    files.forEach((file: any) => result.push(this._convertFile(file)));
-                }
+            .pipe(
+                map((files: any[]): File[] => {
+                    const result: File[] = [];
+                    if (files) {
+                        files.forEach((file: any) => result.push(this._convertFile(file)));
+                    }
 
-                return result;
-            }).toPromise();
+                    return result;
+                })
+            ).toPromise();
     }
 
     public queryTimecodes(query: FileQuery): Promise<Timecode[]> {
@@ -38,25 +38,27 @@ export class LaputinService {
     }
 
     public getTags(): Promise<Tag[]> {
-        return this._http.get(this._baseUrl + '/tags')
-            .map((tags: any[]): Tag[] => {
+        return this._http.get(this._baseUrl + '/tags').pipe(
+            map((tags: any[]): Tag[] => {
                 const result: Tag[] = [];
                 if (tags) {
                     tags.forEach((tag: any) => result.push(this._convertTag(tag)));
                 }
                 return result;
-            }).toPromise();
+            })
+        ).toPromise();
     }
 
     public getAllTags(): Promise<Tag[]> {
-        return this._http.get(this._baseUrl + '/tags?unassociated=true')
-            .map((tags: any[]): Tag[] => {
+        return this._http.get(this._baseUrl + '/tags?unassociated=true').pipe(
+            map((tags: any[]): Tag[] => {
                 const result: Tag[] = [];
                 if (tags) {
                     tags.forEach((tag: any) => result.push(this._convertTag(tag)));
                 }
                 return result;
-            }).toPromise();
+            })
+        ).toPromise();
     }
 
     public getTimecodes(file: File): Promise<Timecode[]> {
@@ -80,8 +82,8 @@ export class LaputinService {
     }
 
     public getDuplicates(): Promise<Duplicate[]> {
-        return this._http.get(this._baseUrl + '/duplicates')
-            .map((duplicates: any): any[] => {
+        return this._http.get(this._baseUrl + '/duplicates').pipe(
+            map((duplicates: any): any[] => {
                 const result: Duplicate[] = [];
 
                 const hashes = Object.keys(duplicates);
@@ -92,7 +94,8 @@ export class LaputinService {
                     result.push(new Duplicate(hash, files));
                 }
                 return result;
-            }).toPromise();
+            })
+        ).toPromise();
     }
 
     private _convertTag(tag: any): Tag {
@@ -147,7 +150,9 @@ export class LaputinService {
 
         return this._http
             .post(this._baseUrl + '/tags', body, { headers: headers })
-            .map(tag => this._convertTag(tag));
+            .pipe(
+                map(tag => this._convertTag(tag))
+            );
     }
 
     public renameTag(tag: Tag, newTagName: string): Promise<Tag> {
@@ -156,8 +161,9 @@ export class LaputinService {
 
         return this._http
             .put(this._baseUrl + '/tags/' + tag.id, body, { headers: headers })
-            .map(jsonTag => this._convertTag(jsonTag))
-            .toPromise();
+            .pipe(
+                map(jsonTag => this._convertTag(jsonTag))
+            ).toPromise();
     }
 
     public addTags(file: File, tags: Tag[]): Observable<any> {

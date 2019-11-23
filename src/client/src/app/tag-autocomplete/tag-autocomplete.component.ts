@@ -1,13 +1,11 @@
 import {Component, Input, Output, EventEmitter, Injectable, Inject, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-
 import {Tag} from './../models/tag';
 import {TagContainer} from './../models/tagcontainer';
 import {LaputinService} from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
+import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-tag-autocomplete',
@@ -37,9 +35,9 @@ export class TagAutocompleteComponent implements OnInit {
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         this.termCtrl.valueChanges
-            .debounceTime(500)
-            .map((value: any) => <string> value)
-            .subscribe((value: string) => this.onValueChange(value));
+            .pipe(
+                debounceTime(500),
+            ).subscribe((value: string) => this.onValueChange(value));
     }
 
     ngOnInit() {

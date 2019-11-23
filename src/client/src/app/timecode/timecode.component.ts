@@ -1,9 +1,5 @@
 import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
 import * as _ from 'lodash';
-import * as moment from 'moment';
-
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
 
 import {File, Timecode, TimecodeTag} from './../models';
 import {LaputinService} from './../laputin.service';

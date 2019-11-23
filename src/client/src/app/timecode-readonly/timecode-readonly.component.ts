@@ -1,9 +1,5 @@
 import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
-import * as moment from 'moment';
 import * as _ from 'lodash';
-
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
 
 import {File} from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';

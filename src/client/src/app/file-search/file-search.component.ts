@@ -2,7 +2,8 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 
 import {Tag, TagStatus, FileQuery, AutocompleteType} from './../models';
 import {TagChange} from './../search-tag/search-tag.component';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-file-search',
@@ -22,9 +23,10 @@ export class FileSearchComponent {
 
     constructor() {
         this.filenameChanged
-            .debounceTime(300)
-            .distinctUntilChanged()
-            .subscribe(model => {
+            .pipe(
+                debounceTime(300),
+                distinctUntilChanged()
+            ).subscribe(model => {
                 this.query.filename = model;
                 this.update.emit(this.query);
             });

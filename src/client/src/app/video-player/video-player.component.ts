@@ -1,7 +1,6 @@
 import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Rx';
 
 import {File, FileQuery, FileChange, ChangeDirection, Tag, Timecode, TimecodeTag, AutocompleteType} from './../models';
 import {LaputinService} from './../laputin.service';
@@ -9,6 +8,8 @@ import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { Utils } from '../utils';
+import { Observable, fromEvent, merge } from 'rxjs';
+import { takeUntil, throttleTime, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-video-player',
@@ -83,20 +84,20 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.player = this.playerElem.nativeElement;
         this._playerService.setPlayer(this.player);
 
-        const playStart = Observable
-            .fromEvent(this.player, 'playing')
-            .takeUntil(this.fileClosed);
-        const paused = Observable
-            .fromEvent(this.player, 'pause')
-            .takeUntil(this.fileClosed);
-        const ended = Observable
-            .fromEvent(this.player, 'ended')
-            .takeUntil(this.fileClosed);
-        const playEnd = paused.merge(ended);
+        const playStart = fromEvent(this.player, 'playing').pipe(
+            takeUntil(this.fileClosed)
+        );
+        const paused = fromEvent(this.player, 'pause').pipe(
+            takeUntil(this.fileClosed)
+        );
+        const ended = fromEvent(this.player, 'ended').pipe(
+            takeUntil(this.fileClosed)
+        );
+        const playEnd = merge(paused, ended);
 
-        const playerDoubleClicked = Observable
-            .fromEvent(this.player, 'dblclick')
-            .takeUntil(this.fileClosed);
+        const playerDoubleClicked = fromEvent(this.player, 'dblclick').pipe(
+            takeUntil(this.fileClosed)
+        );
         playerDoubleClicked.subscribe(() => this.toggleFullScreen());
 
         playStart.subscribe(() => this.playing = true);
@@ -104,11 +105,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
         playStart.subscribe(() => this.playbackHasBeenStarted = true);
 
-        const timeUpdates = Observable
-            .fromEvent(this.player, 'timeupdate')
-            .takeUntil(this.fileClosed)
-            .throttleTime(500)
-            .map(() => this.player.currentTime / this.player.duration);
+        const timeUpdates = fromEvent(this.player, 'timeupdate').pipe(
+            takeUntil(this.fileClosed),
+            throttleTime(500),
+            map(() => this.player.currentTime / this.player.duration)
+        );
 
         timeUpdates
             .subscribe((playPercent: number) =>
@@ -118,36 +119,36 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
-        Observable.fromEvent(this.player, 'durationchange')
-            .takeUntil(this.fileClosed)
-            .subscribe(() => {
-                this._service.getTimecodes(this.file).then((timecodes) => {
-                    this.timecodes = timecodes;
-                });
-
-                this.playbackHasBeenStarted = false;
-                this.playing = false;
-                this.duration = this.formatDuration(this.player.duration);
-                this.updateProgress(0);
-
-                if (this.player.videoWidth && this.player.videoHeight) {
-                    this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
-                }
+        fromEvent(this.player, 'durationchange').pipe(
+            takeUntil(this.fileClosed)
+        ).subscribe(() => {
+            this._service.getTimecodes(this.file).then((timecodes) => {
+                this.timecodes = timecodes;
             });
 
-        Observable.fromEvent(window, 'webkitfullscreenchange')
-            .takeUntil(this.fileClosed)
-            .subscribe(() => {
-                    this.isFullScreen = !this.isFullScreen;
-                    // We have to reset playhead because it might be further right than
-                    // the new timeline width allows.
-                    this.setPlayheadTo(0);
-                    this.updateProgress(this.player.currentTime / this.player.duration);
-                });
+            this.playbackHasBeenStarted = false;
+            this.playing = false;
+            this.duration = this.formatDuration(this.player.duration);
+            this.updateProgress(0);
 
-        const windowKeyups = Observable
-            .fromEvent(window, 'keyup')
-            .takeUntil(this.fileClosed);
+            if (this.player.videoWidth && this.player.videoHeight) {
+                this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
+            }
+        });
+
+        fromEvent(window, 'webkitfullscreenchange').pipe(
+            takeUntil(this.fileClosed)
+        ).subscribe(() => {
+            this.isFullScreen = !this.isFullScreen;
+            // We have to reset playhead because it might be further right than
+            // the new timeline width allows.
+            this.setPlayheadTo(0);
+            this.updateProgress(this.player.currentTime / this.player.duration);
+        });
+
+        const windowKeyups = fromEvent(window, 'keyup').pipe(
+            takeUntil(this.fileClosed)
+        );
 
         windowKeyups
             .subscribe((event: KeyboardEvent) => {

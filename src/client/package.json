@@ -28,7 +28,6 @@
     "moment": "2.24.0",
     "ngx-virtual-scroller": "3.0.3",
     "rxjs": "6.5.3",
-    "rxjs-compat": "6.5.3",
     "zone.js": "0.10.2"
   },
   "devDependencies": {
