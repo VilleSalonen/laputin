@@ -1,4 +1,4 @@
-import {Injectable, Inject} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 
 import { File, FileQuery, Timecode, Tag, TimecodeTag, Duplicate } from './models';
 import { tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class LaputinService {
@@ -14,13 +15,12 @@ export class LaputinService {
 
     public thumbnailChanged: Subject<File> = new Subject<File>();
 
-    constructor(@Inject(Http) private _http: Http) {
+    constructor(private _http: HttpClient) {
     }
 
     public queryFiles(query: FileQuery): Promise<File[]> {
         const params = this.compileParams(query);
         return this._http.get(this._baseUrl + '/files' + params)
-            .map(res => res.json())
             .map((files: any[]): File[] => {
                 const result: File[] = [];
                 if (files) {
@@ -33,14 +33,12 @@ export class LaputinService {
 
     public queryTimecodes(query: FileQuery): Promise<Timecode[]> {
         const params = this.compileParams(query);
-        return this._http.get(this._baseUrl + '/timecodes' + params)
-            .map(res => res.json())
+        return <Promise<Timecode[]>>this._http.get(this._baseUrl + '/timecodes' + params)
             .toPromise();
     }
 
     public getTags(): Promise<Tag[]> {
         return this._http.get(this._baseUrl + '/tags')
-            .map(res => res.json())
             .map((tags: any[]): Tag[] => {
                 const result: Tag[] = [];
                 if (tags) {
@@ -52,7 +50,6 @@ export class LaputinService {
 
     public getAllTags(): Promise<Tag[]> {
         return this._http.get(this._baseUrl + '/tags?unassociated=true')
-            .map(res => res.json())
             .map((tags: any[]): Tag[] => {
                 const result: Tag[] = [];
                 if (tags) {
@@ -63,23 +60,20 @@ export class LaputinService {
     }
 
     public getTimecodes(file: File): Promise<Timecode[]> {
-        return this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
-            .map(res => res.json())
+        return <Promise<Timecode[]>>this._http.get(this._baseUrl + '/files/' + file.hash + '/timecodes')
             .toPromise();
     }
 
-    public async createTagTimecode(file: File, timecode: Timecode): Promise<Timecode> {
+    public createTagTimecode(file: File, timecode: Timecode): Promise<Timecode> {
         const body = JSON.stringify({ timecode: timecode });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
-        return await this._http
+        return <Promise<Timecode>>this._http
             .post(this._baseUrl + '/files/' + file.hash + '/timecodes', body, { headers: headers })
-            .map(res => res.json())
             .toPromise();
     }
 
-    public async deleteTimecodeTag(timecode: Timecode, timecodeTag: TimecodeTag): Promise<Response> {
-
+    public async deleteTimecodeTag(timecode: Timecode, timecodeTag: TimecodeTag): Promise<any> {
         return await this._http.delete(
             this._baseUrl + '/files/' + timecode.hash + '/timecodes/' + timecode.timecodeId + '/tags/' + timecodeTag.timecodeTagId)
             .toPromise();
@@ -87,7 +81,6 @@ export class LaputinService {
 
     public getDuplicates(): Promise<Duplicate[]> {
         return this._http.get(this._baseUrl + '/duplicates')
-            .map(res => res.json())
             .map((duplicates: any): any[] => {
                 const result: Duplicate[] = [];
 
@@ -114,9 +107,9 @@ export class LaputinService {
         return new File(file.hash, file.path, this._convertTags(file.tags), file.size);
     }
 
-    public screenshotFile(file: File, timeInSeconds: number): Observable<Response> {
+    public screenshotFile(file: File, timeInSeconds: number): Observable<any> {
         const body = JSON.stringify({ hash: file.hash, time: timeInSeconds });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
             .post(this._baseUrl + '/screenshot', body, { headers: headers })
@@ -125,55 +118,53 @@ export class LaputinService {
             );
     }
 
-    public screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<Response> {
+    public screenshotTimecode(file: File, timecode: Timecode, timeInSeconds: number): Promise<any> {
         const body = JSON.stringify({ hash: file.hash, timecode: timecode, time: timeInSeconds });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
             .post(this._baseUrl + '/screenshotTimecode', body, { headers: headers })
             .toPromise();
     }
 
-    public screenshotTag(tag: Tag, file: File, timeInSeconds: number): Promise<Response> {
+    public screenshotTag(tag: Tag, file: File, timeInSeconds: number): Promise<any> {
         const body = JSON.stringify({ tag: tag, hash: file.hash, time: timeInSeconds });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
             .post(this._baseUrl + '/screenshotTag', body, { headers: headers })
             .toPromise();
     }
 
-    public openFiles(query: FileQuery): Promise<Response> {
+    public openFiles(query: FileQuery): Promise<any> {
         const params = this.compileParams(query);
         return this._http.get(this._baseUrl + '/open/files' + params).toPromise();
     }
 
     public createTag(newTagName: string): Observable<Tag> {
         const body = JSON.stringify({ tagName: newTagName });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
             .post(this._baseUrl + '/tags', body, { headers: headers })
-            .map(res => res.json())
             .map(tag => this._convertTag(tag));
     }
 
     public renameTag(tag: Tag, newTagName: string): Promise<Tag> {
         const body = JSON.stringify({ name: newTagName });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http
             .put(this._baseUrl + '/tags/' + tag.id, body, { headers: headers })
-            .map(res => res.json())
             .map(jsonTag => this._convertTag(jsonTag))
             .toPromise();
     }
 
-    public addTags(file: File, tags: Tag[]): Observable<Response> {
+    public addTags(file: File, tags: Tag[]): Observable<any> {
         const body = JSON.stringify({
             selectedTags: tags
         });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
 
         return this._http.post(this._baseUrl + '/files/' + file.hash + '/tags', body, { headers: headers });
     }
@@ -182,13 +173,12 @@ export class LaputinService {
         return this.addTags(file, [tag]);
     }
 
-    public proxyExists(file: File): Observable<boolean> {
+    public proxyExists(file: File): Observable<any> {
         return this._http
-            .get(this._baseUrl + '/proxyExists/' + file.hash)
-            .map(res => res.json());
+            .get(this._baseUrl + '/proxyExists/' + file.hash);
     }
 
-    public deleteTagFileAssoc(file: File, tag: Tag): Observable<Response> {
+    public deleteTagFileAssoc(file: File, tag: Tag): Observable<any> {
         return this._http.delete(this._baseUrl + '/files/' + file.hash + '/tags/' + tag.id);
     }
 
@@ -196,7 +186,7 @@ export class LaputinService {
         const body = JSON.stringify({
             timecode: timecode
         });
-        const headers = new Headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ 'Accept': 'application/json', 'Content-Type': 'application/json' });
         return this._http.put(this._baseUrl + '/files/' + file.hash + '/timecodes/' + timecode.timecodeId, body, { headers: headers }).toPromise();
     }
 

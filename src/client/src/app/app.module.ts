@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import {
   LocationStrategy,
@@ -11,6 +10,7 @@ import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DeferLoadModule} from '@trademe/ng-defer-load';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
@@ -58,7 +58,7 @@ import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edi
   ],
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule,
