@@ -44,6 +44,7 @@ export class TimecodesComponent implements OnInit {
         this.loading = true;
         this._service
             .queryTimecodes(this._query)
+            .toPromise()
             .then((timecodes: Timecode[]) => {
                 this.exportCommands = [];
                 timecodes.forEach(t => {

@@ -37,10 +37,10 @@ export class LaputinService {
         );
     }
 
-    public queryTimecodes(query: FileQuery): Promise<Timecode[]> {
+    public queryTimecodes(query: FileQuery): Observable<Timecode[]> {
         const params = this.compileParams(query);
-        return <Promise<Timecode[]>>(
-            this._http.get(this._baseUrl + '/timecodes' + params).toPromise()
+        return this._http.get<Timecode[]>(
+            this._baseUrl + '/timecodes' + params
         );
     }
 
