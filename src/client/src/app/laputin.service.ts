@@ -155,7 +155,7 @@ export class LaputinService {
         file: File,
         timecode: Timecode,
         timeInSeconds: number
-    ): Promise<any> {
+    ): Observable<any> {
         const body = JSON.stringify({
             hash: file.hash,
             timecode: timecode,
@@ -166,11 +166,9 @@ export class LaputinService {
             'Content-Type': 'application/json'
         });
 
-        return this._http
-            .post(this._baseUrl + '/screenshotTimecode', body, {
-                headers: headers
-            })
-            .toPromise();
+        return this._http.post(this._baseUrl + '/screenshotTimecode', body, {
+            headers: headers
+        });
     }
 
     public screenshotTag(

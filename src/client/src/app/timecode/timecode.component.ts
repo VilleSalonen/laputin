@@ -56,11 +56,13 @@ export class TimecodeComponent {
 
     public async screenshotTimecode(): Promise<void> {
         if (this._playerService.player) {
-            await this._service.screenshotTimecode(
-                this.file,
-                this.timecode,
-                this._playerService.player.currentTime
-            );
+            await this._service
+                .screenshotTimecode(
+                    this.file,
+                    this.timecode,
+                    this._playerService.player.currentTime
+                )
+                .toPromise();
             this.timecode.cacheBuster =
                 '?cachebuster=' + new Date().toISOString();
         }
