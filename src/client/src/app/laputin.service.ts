@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
 import { tap, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
@@ -236,7 +235,7 @@ export class LaputinService {
         );
     }
 
-    public addTag(file: File, tag: Tag): Observable<Response> {
+    public addTag(file: File, tag: Tag): Observable<any> {
         return this.addTags(file, [tag]);
     }
 
