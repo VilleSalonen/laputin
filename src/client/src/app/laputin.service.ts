@@ -73,21 +73,17 @@ export class LaputinService {
     public createTagTimecode(
         file: File,
         timecode: Timecode
-    ): Promise<Timecode> {
+    ): Observable<Timecode> {
         const body = JSON.stringify({ timecode: timecode });
         const headers = new HttpHeaders({
             Accept: 'application/json',
             'Content-Type': 'application/json'
         });
 
-        return <Promise<Timecode>>(
-            this._http
-                .post(
-                    this._baseUrl + '/files/' + file.hash + '/timecodes',
-                    body,
-                    { headers: headers }
-                )
-                .toPromise()
+        return this._http.post<Timecode>(
+            this._baseUrl + '/files/' + file.hash + '/timecodes',
+            body,
+            { headers: headers }
         );
     }
 

@@ -44,10 +44,9 @@ export class TimecodeEditDialogComponent {
         clonedTimecode.timecodeTags = [
             new TimecodeTag(null, this.timecode.timecodeId, tag)
         ];
-        const result = await this._service.createTagTimecode(
-            this.file,
-            clonedTimecode
-        );
+        const result = await this._service
+            .createTagTimecode(this.file, clonedTimecode)
+            .toPromise();
 
         const timecodeTags = this.timecode.timecodeTags.slice();
         timecodeTags.push(result.timecodeTags[0]);

@@ -571,10 +571,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             tagStart,
             tagEnd
         );
-        const result = await this._service.createTagTimecode(
-            this.file,
-            tagTimecode
-        );
+        const result = await this._service
+            .createTagTimecode(this.file, tagTimecode)
+            .toPromise();
         this.addTagTimecode(result);
 
         this.selectedTagsForTimecode = [];
