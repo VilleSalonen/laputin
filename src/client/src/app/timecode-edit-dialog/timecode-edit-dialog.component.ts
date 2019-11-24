@@ -66,7 +66,9 @@ export class TimecodeEditDialogComponent {
     public async removeTagFromExistingTimecode(
         timecodeTag: TimecodeTag
     ): Promise<void> {
-        await this._service.deleteTimecodeTag(this.timecode, timecodeTag);
+        await this._service
+            .deleteTimecodeTag(this.timecode, timecodeTag)
+            .toPromise();
 
         const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(
             t => t.timecodeTagId !== timecodeTag.timecodeTagId

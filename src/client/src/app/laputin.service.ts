@@ -87,21 +87,19 @@ export class LaputinService {
         );
     }
 
-    public async deleteTimecodeTag(
+    public deleteTimecodeTag(
         timecode: Timecode,
         timecodeTag: TimecodeTag
-    ): Promise<any> {
-        return await this._http
-            .delete(
-                this._baseUrl +
-                    '/files/' +
-                    timecode.hash +
-                    '/timecodes/' +
-                    timecode.timecodeId +
-                    '/tags/' +
-                    timecodeTag.timecodeTagId
-            )
-            .toPromise();
+    ): Observable<any> {
+        return this._http.delete(
+            this._baseUrl +
+                '/files/' +
+                timecode.hash +
+                '/timecodes/' +
+                timecode.timecodeId +
+                '/tags/' +
+                timecodeTag.timecodeTagId
+        );
     }
 
     public getDuplicates(): Promise<Duplicate[]> {
