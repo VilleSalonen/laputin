@@ -1,5 +1,4 @@
 import { Component, OnInit, Injectable } from '@angular/core';
-import * as _ from 'lodash';
 
 import { File, Timecode, FileQuery } from './../models';
 import { LaputinService } from './../laputin.service';
@@ -60,12 +59,20 @@ export class TimecodesComponent implements OnInit {
                     + tags + '].mp4"');
             });
 
-            const timecodesByFiles = _.groupBy(timecodes, (t: Timecode) => t.path);
+            const timecodesByFiles = {};
+            timecodes.forEach(timecode => {
+                if (!timecodesByFiles[timecode.path]) {
+                    timecodesByFiles[timecode.path] = [];
+                }
+
+                timecodesByFiles[timecode.path].push(timecode);
+            });
 
             const timecodeItems: TimecodeItem[] = [];
-            _.forOwn(timecodesByFiles, codes => {
+            for (let key of Object.keys(timecodesByFiles)) {
+                const codes = timecodesByFiles[key];
                 timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [], 0), codes));
-            });
+            }
 
             this.timecodeAmount = timecodes.length;
             this.timecodeItems = timecodeItems;

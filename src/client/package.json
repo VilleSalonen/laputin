@@ -23,7 +23,6 @@
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/router": "8.2.14",
     "@trademe/ng-defer-load": "^3.0.1",
-    "@types/lodash": "4.14.148",
     "core-js": "3.4.1",
     "moment": "2.24.0",
     "ngx-virtual-scroller": "3.0.3",

@@ -1,4 +1,3 @@
-import _ = require('lodash');
 import chai = require('chai');
 const expect = chai.expect;
 import fs = require('fs');
@@ -282,8 +281,8 @@ describe('Laputin API', function () {
             .expect(expectedFiles);
     }
 
-    function resultShouldContainFileHashes(res: { body: any }, expectedHashes: string[]) {
-        const hashes = _.map(res.body, 'hash').sort();
+    function resultShouldContainFileHashes(res: { body: any[] }, expectedHashes: string[]) {
+        const hashes = res.body.map(f => f.hash).sort();
         expect(hashes).to.eql(expectedHashes);
     }
 });

@@ -118,7 +118,7 @@ export class Library {
             splitIds.forEach((id) => {
                 params.push(id);
             });
-            const wheres = _.map(splitIds, () => {
+            const wheres = splitIds.map(() => {
                 return ' files.hash ' + opr1 + ' (SELECT hash FROM tags_files WHERE id=?) ';
             });
 

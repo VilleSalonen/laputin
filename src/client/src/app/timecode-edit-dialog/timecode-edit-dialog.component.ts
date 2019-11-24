@@ -1,7 +1,5 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import * as _ from 'lodash';
-import * as moment from 'moment';
 
 import {File, Timecode, Tag, TimecodeTag} from './../models';
 import { AutocompleteType } from '../models/autocompletetype';
@@ -42,7 +40,7 @@ export class TimecodeEditDialogComponent {
     }
 
     public async addTagSelectionToTimecode(tag: Tag): Promise<void> {
-        const clonedTimecode = _.cloneDeep(this.timecode);
+        const clonedTimecode = JSON.parse(JSON.stringify(this.timecode));
         clonedTimecode.timecodeTags = [
             new TimecodeTag(null, this.timecode.timecodeId, tag)
         ];

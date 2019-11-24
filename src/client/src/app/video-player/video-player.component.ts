@@ -1,6 +1,5 @@
 import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import * as moment from 'moment';
-import * as _ from 'lodash';
 
 import {File, FileQuery, FileChange, ChangeDirection, Tag, Timecode, TimecodeTag, AutocompleteType} from './../models';
 import {LaputinService} from './../laputin.service';
@@ -8,7 +7,7 @@ import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { Utils } from '../utils';
-import { Observable, fromEvent, merge } from 'rxjs';
+import { fromEvent, merge } from 'rxjs';
 import { takeUntil, throttleTime, map } from 'rxjs/operators';
 
 @Component({
@@ -401,7 +400,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private addTagsToFile(tags: Tag[]): void {
         const currentTags = this.file.tags;
         tags.forEach((tag: Tag) => currentTags.push(tag));
-        const sorted = _.sortBy(currentTags, (tag: Tag) => tag.name);
+        const sorted = currentTags.sort((a, b) => (a.name > b.name) ? 1 : -1);
         this.file.tags = sorted;
     }
 

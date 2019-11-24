@@ -1,5 +1,4 @@
 import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
-import * as _ from 'lodash';
 
 import {File} from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
@@ -34,8 +33,7 @@ export class TimecodeReadonlyComponent {
     }
 
     public formattedTags(): string {
-        return _
-            .sortBy(this.timecode.timecodeTags, [(t: TimecodeTag) => t.tag.name])
+        return this.timecode.timecodeTags.sort((a, b) => (a.tag.name > b.tag.name) ? 1 : - 1)
             .map((timecodeTag) => timecodeTag.tag.name)
             .join(', ');
     }

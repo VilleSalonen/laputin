@@ -1,4 +1,3 @@
-import _ = require('lodash');
 import fs = require('fs');
 import child_process = require('child_process');
 import path = require('path');
@@ -42,7 +41,7 @@ export class VLCOpener {
     private _writeVideosToPlaylist(files: File[]): void {
         let playlist = '#EXTM3U\n';
 
-        files = _.sortBy(files, (video) => video.path);
+        files = files.sort((a, b) => (a.path > b.path) ? 1 : -1);
 
         files.forEach((video) => {
             let videoPath;

@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Response} from '@angular/http';
-import * as _ from 'lodash';
 import { tap, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
@@ -205,13 +204,13 @@ export class LaputinService {
             if (query.hash) { params.push('hash=' + query.hash); }
 
             if (query.andTags.length > 0) {
-                params.push('and=' + _.map(query.andTags, (tag: Tag) => tag.id).join(','));
+                params.push('and=' + query.andTags.map((tag: Tag) => tag.id).join(','));
             }
             if (query.orTags.length > 0) {
-                params.push('or=' + _.map(query.orTags, (tag: Tag) => tag.id).join(','));
+                params.push('or=' + query.orTags.map((tag: Tag) => tag.id).join(','));
             }
             if (query.notTags.length > 0) {
-                params.push('not=' + _.map(query.notTags, (tag: Tag) => tag.id).join(','));
+                params.push('not=' + query.notTags.map((tag: Tag) => tag.id).join(','));
             }
         }
 
