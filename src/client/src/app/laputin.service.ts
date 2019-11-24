@@ -44,38 +44,24 @@ export class LaputinService {
         );
     }
 
-    public getTags(): Promise<Tag[]> {
+    public getTags(): Observable<Tag[]> {
         return this._http
             .get(this._baseUrl + '/tags')
             .pipe(
-                map((tags: any[]): Tag[] => {
-                    const result: Tag[] = [];
-                    if (tags) {
-                        tags.forEach((tag: any) =>
-                            result.push(this._convertTag(tag))
-                        );
-                    }
-                    return result;
-                })
-            )
-            .toPromise();
+                map((tags: any[]): Tag[] =>
+                    tags.map((tag: any) => this._convertTag(tag))
+                )
+            );
     }
 
-    public getAllTags(): Promise<Tag[]> {
+    public getAllTags(): Observable<Tag[]> {
         return this._http
             .get(this._baseUrl + '/tags?unassociated=true')
             .pipe(
-                map((tags: any[]): Tag[] => {
-                    const result: Tag[] = [];
-                    if (tags) {
-                        tags.forEach((tag: any) =>
-                            result.push(this._convertTag(tag))
-                        );
-                    }
-                    return result;
-                })
-            )
-            .toPromise();
+                map((tags: any[]): Tag[] =>
+                    tags.map((tag: any) => this._convertTag(tag))
+                )
+            );
     }
 
     public getTimecodes(file: File): Promise<Timecode[]> {

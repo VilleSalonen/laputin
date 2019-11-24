@@ -20,11 +20,14 @@ export class TagsComponent implements OnInit {
 
     ngOnInit(): void {
         this.loading = true;
-        this._service.getAllTags().then(tags => {
-            this.tags = tags;
-            this.filteredTags = tags;
-            this.loading = false;
-        });
+        this._service
+            .getAllTags()
+            .toPromise()
+            .then(tags => {
+                this.tags = tags;
+                this.filteredTags = tags;
+                this.loading = false;
+            });
     }
 
     filter(term: string) {

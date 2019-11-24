@@ -52,10 +52,12 @@ export class TagAutocompleteComponent implements OnInit {
             // This will also contain tags which are not associated with any active files.
             this._service
                 .getAllTags()
+                .toPromise()
                 .then((tags: Tag[]) => (this.allTags = tags));
         } else {
             this._service
                 .getTags()
+                .toPromise()
                 .then((tags: Tag[]) => (this.allTags = tags));
         }
 
