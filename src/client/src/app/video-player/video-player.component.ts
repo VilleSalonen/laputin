@@ -144,9 +144,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         fromEvent(this.player, 'durationchange')
             .pipe(takeUntil(this.fileClosed))
             .subscribe(() => {
-                this._service.getTimecodes(this.file).then(timecodes => {
-                    this.timecodes = timecodes;
-                });
+                this._service
+                    .getTimecodes(this.file)
+                    .toPromise()
+                    .then(timecodes => {
+                        this.timecodes = timecodes;
+                    });
 
                 this.playbackHasBeenStarted = false;
                 this.playing = false;

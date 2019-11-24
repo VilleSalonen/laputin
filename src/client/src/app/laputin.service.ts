@@ -64,11 +64,9 @@ export class LaputinService {
             );
     }
 
-    public getTimecodes(file: File): Promise<Timecode[]> {
-        return <Promise<Timecode[]>>(
-            this._http
-                .get(this._baseUrl + '/files/' + file.hash + '/timecodes')
-                .toPromise()
+    public getTimecodes(file: File): Observable<Timecode[]> {
+        return this._http.get<Timecode[]>(
+            this._baseUrl + '/files/' + file.hash + '/timecodes'
         );
     }
 
