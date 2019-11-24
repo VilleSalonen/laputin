@@ -208,7 +208,7 @@ export class LaputinService {
             .pipe(map(tag => this._convertTag(tag)));
     }
 
-    public renameTag(tag: Tag, newTagName: string): Promise<Tag> {
+    public renameTag(tag: Tag, newTagName: string): Observable<Tag> {
         const body = JSON.stringify({ name: newTagName });
         const headers = new HttpHeaders({
             Accept: 'application/json',
@@ -217,8 +217,7 @@ export class LaputinService {
 
         return this._http
             .put(this._baseUrl + '/tags/' + tag.id, body, { headers: headers })
-            .pipe(map(jsonTag => this._convertTag(jsonTag)))
-            .toPromise();
+            .pipe(map(jsonTag => this._convertTag(jsonTag)));
     }
 
     public addTags(file: File, tags: Tag[]): Observable<any> {

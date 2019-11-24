@@ -33,7 +33,7 @@ export class TagRowComponent implements OnInit {
     }
 
     public save(): void {
-        this._service.renameTag(this.tag, this.name);
+        this._service.renameTag(this.tag, this.name).toPromise();
         this.tag.name = this.name;
         this.cancelEdit();
     }
