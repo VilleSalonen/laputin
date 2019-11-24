@@ -39,9 +39,12 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.files = files.slice(0, 100);
         });
 
-        this._service.queryFiles(new FileQuery()).then((files: File[]) => {
-            this.allFilesSubscription.next(files);
-        });
+        this._service
+            .queryFiles(new FileQuery())
+            .toPromise()
+            .then((files: File[]) => {
+                this.allFilesSubscription.next(files);
+            });
 
         combineLatest(
             this.filesSubscription,
@@ -106,11 +109,14 @@ export class FilesComponent implements OnInit, OnDestroy {
     loadFiles(): void {
         this.filesSubscription.next([]);
         this.loading = true;
-        this._service.queryFiles(this.query).then((files: File[]) => {
-            localStorage.setItem('query', JSON.stringify(this.query));
-            this.filesSubscription.next(files);
-            this.loading = false;
-        });
+        this._service
+            .queryFiles(this.query)
+            .toPromise()
+            .then((files: File[]) => {
+                localStorage.setItem('query', JSON.stringify(this.query));
+                this.filesSubscription.next(files);
+                this.loading = false;
+            });
     }
 
     selectFile(file: File): void {

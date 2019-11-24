@@ -21,23 +21,20 @@ export class LaputinService {
 
     constructor(private _http: HttpClient) {}
 
-    public queryFiles(query: FileQuery): Promise<File[]> {
+    public queryFiles(query: FileQuery): Observable<File[]> {
         const params = this.compileParams(query);
-        return this._http
-            .get(this._baseUrl + '/files' + params)
-            .pipe(
-                map((files: any[]): File[] => {
-                    const result: File[] = [];
-                    if (files) {
-                        files.forEach((file: any) =>
-                            result.push(this._convertFile(file))
-                        );
-                    }
+        return this._http.get(this._baseUrl + '/files' + params).pipe(
+            map((files: any[]): File[] => {
+                const result: File[] = [];
+                if (files) {
+                    files.forEach((file: any) =>
+                        result.push(this._convertFile(file))
+                    );
+                }
 
-                    return result;
-                })
-            )
-            .toPromise();
+                return result;
+            })
+        );
     }
 
     public queryTimecodes(query: FileQuery): Promise<Timecode[]> {
