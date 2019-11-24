@@ -191,11 +191,9 @@ export class LaputinService {
         });
     }
 
-    public openFiles(query: FileQuery): Promise<any> {
+    public openFiles(query: FileQuery): Observable<any> {
         const params = this.compileParams(query);
-        return this._http
-            .get(this._baseUrl + '/open/files' + params)
-            .toPromise();
+        return this._http.get(this._baseUrl + '/open/files' + params);
     }
 
     public createTag(newTagName: string): Observable<Tag> {

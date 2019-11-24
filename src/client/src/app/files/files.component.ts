@@ -103,7 +103,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     }
 
     openFiles(): void {
-        this._service.openFiles(this.query);
+        this._service.openFiles(this.query).toPromise();
     }
 
     loadFiles(): void {
