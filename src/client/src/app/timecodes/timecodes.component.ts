@@ -69,7 +69,7 @@ export class TimecodesComponent implements OnInit {
             });
 
             const timecodeItems: TimecodeItem[] = [];
-            for (let key of Object.keys(timecodesByFiles)) {
+            for (const key of Object.keys(timecodesByFiles)) {
                 const codes = timecodesByFiles[key];
                 timecodeItems.push(new TimecodeItem(TimecodeItemType.File, new File(codes[0].hash, codes[0].path, [], 0), codes));
             }
