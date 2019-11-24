@@ -1,9 +1,17 @@
-import {Component, Input, Output, EventEmitter, Injectable, Inject, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    Injectable,
+    Inject,
+    OnInit
+} from '@angular/core';
+import { FormControl } from '@angular/forms';
 
-import {Tag} from './../models/tag';
-import {TagContainer} from './../models/tagcontainer';
-import {LaputinService} from './../laputin.service';
+import { Tag } from './../models/tag';
+import { TagContainer } from './../models/tagcontainer';
+import { LaputinService } from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { debounceTime, map } from 'rxjs/operators';
 
@@ -35,17 +43,20 @@ export class TagAutocompleteComponent implements OnInit {
 
     constructor(@Inject(LaputinService) private _service: LaputinService) {
         this.termCtrl.valueChanges
-            .pipe(
-                debounceTime(500),
-            ).subscribe((value: string) => this.onValueChange(value));
+            .pipe(debounceTime(500))
+            .subscribe((value: string) => this.onValueChange(value));
     }
 
     ngOnInit() {
         if (this.type === AutocompleteType.FileTagging) {
             // This will also contain tags which are not associated with any active files.
-            this._service.getAllTags().then((tags: Tag[]) => this.allTags = tags);
+            this._service
+                .getAllTags()
+                .then((tags: Tag[]) => (this.allTags = tags));
         } else {
-            this._service.getTags().then((tags: Tag[]) => this.allTags = tags);
+            this._service
+                .getTags()
+                .then((tags: Tag[]) => (this.allTags = tags));
         }
 
         this.tagCreationAllowed = this.type !== AutocompleteType.FileSearch;
@@ -53,8 +64,13 @@ export class TagAutocompleteComponent implements OnInit {
 
     async onOptionSelected(event: any) {
         if (event && event.option && event.option.value) {
-            if (event.option.value === 'create' && this.searchTermOriginalForm) {
-                const tag = await this._service.createTag(this.searchTermOriginalForm).toPromise();
+            if (
+                event.option.value === 'create' &&
+                this.searchTermOriginalForm
+            ) {
+                const tag = await this._service
+                    .createTag(this.searchTermOriginalForm)
+                    .toPromise();
                 this.tagSelected.emit(tag);
             } else {
                 this.tagSelected.emit(event.option.value);
@@ -69,8 +85,12 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     onValueChange(value: string): void {
-        if (!value) { return; }
-        if (!this.tagContainer) { return; }
+        if (!value) {
+            return;
+        }
+        if (!this.tagContainer) {
+            return;
+        }
 
         if (value.length === 0) {
             this.matchingTags = [];
@@ -79,8 +99,9 @@ export class TagAutocompleteComponent implements OnInit {
 
         const searchTerm = value.toLowerCase();
 
-        const tagExistsWithSameName = this.allTags
-            .find((tag: Tag) => tag.name.toLowerCase() === searchTerm);
+        const tagExistsWithSameName = this.allTags.find(
+            (tag: Tag) => tag.name.toLowerCase() === searchTerm
+        );
 
         if (!tagExistsWithSameName) {
             this.searchTermOriginalForm = value;
@@ -91,28 +112,35 @@ export class TagAutocompleteComponent implements OnInit {
         switch (this.type) {
             case AutocompleteType.FileSearch:
             case AutocompleteType.FileTagging:
-                const alreadyAdded = this.tagContainer.tags.map((tag: Tag) => tag.id);
+                const alreadyAdded = this.tagContainer.tags.map(
+                    (tag: Tag) => tag.id
+                );
 
-                this.matchingTags =
-                    this.allTags
-                        .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
-                        .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
-                        .slice(0, 10);
+                this.matchingTags = this.allTags
+                    .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
+                    .filter((tag: Tag) =>
+                        tag.name.toLowerCase().includes(searchTerm)
+                    )
+                    .slice(0, 10);
                 break;
             case AutocompleteType.FileTimecodeTagging:
-                const fileTags = this.tagContainer.tags.map((tag: Tag) => tag.id);
+                const fileTags = this.tagContainer.tags.map(
+                    (tag: Tag) => tag.id
+                );
                 const excludedTagIds = this.exclude.map((tag: Tag) => tag.id);
 
-                this.matchingTags =
-                    this.tagContainer.tags
-                        .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
-                        .filter((tag: Tag) => excludedTagIds.indexOf(tag.id) === -1)
-                        .slice(0, 10);
-                this.otherTags =
-                    this.allTags
-                        .filter((tag: Tag) => tag.name.toLowerCase().includes(searchTerm))
-                        .filter((tag: Tag) => fileTags.indexOf(tag.id) === -1)
-                        .slice(0, 10);
+                this.matchingTags = this.tagContainer.tags
+                    .filter((tag: Tag) =>
+                        tag.name.toLowerCase().includes(searchTerm)
+                    )
+                    .filter((tag: Tag) => excludedTagIds.indexOf(tag.id) === -1)
+                    .slice(0, 10);
+                this.otherTags = this.allTags
+                    .filter((tag: Tag) =>
+                        tag.name.toLowerCase().includes(searchTerm)
+                    )
+                    .filter((tag: Tag) => fileTags.indexOf(tag.id) === -1)
+                    .slice(0, 10);
                 break;
         }
     }

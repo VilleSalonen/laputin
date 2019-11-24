@@ -1,5 +1,5 @@
-import {Tag} from './tag';
-import {TagContainer} from './tagcontainer';
+import { Tag } from './tag';
+import { TagContainer } from './tagcontainer';
 
 export class File implements TagContainer {
     public name: string;
@@ -9,7 +9,12 @@ export class File implements TagContainer {
     public nameSansSuffix: string;
     public suffix: string;
 
-    constructor(public hash: string, public path: string, public tags: Tag[], public size: number) {
+    constructor(
+        public hash: string,
+        public path: string,
+        public tags: Tag[],
+        public size: number
+    ) {
         this.name = this.path.substring(this.path.lastIndexOf('/') + 1);
         this.escapedUrl = this.path.replace('#', '%23');
         this.directory = this.path.replace(this.name, '').replace(/\//g, '\\');

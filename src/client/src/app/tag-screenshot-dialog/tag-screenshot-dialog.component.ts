@@ -1,7 +1,7 @@
-import {Component, Inject} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import {File} from './../models/file';
+import { File } from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
 import { Tag } from '../models/tag';
 
@@ -12,7 +12,7 @@ export interface TagScreenshotDialogData {
 
 @Component({
     selector: 'app-tag-screenshot-dialog',
-    templateUrl: 'tag-screenshot-dialog.component.html',
+    templateUrl: 'tag-screenshot-dialog.component.html'
 })
 export class TagScreenshotDialogComponent {
     public AutocompleteType = AutocompleteType;
@@ -22,8 +22,7 @@ export class TagScreenshotDialogComponent {
     constructor(
         public dialogRef: MatDialogRef<TagScreenshotDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: TagScreenshotDialogData
-    ) {
-    }
+    ) {}
 
     selectScreenshotTag(tag: Tag) {
         this.data.tag = tag;

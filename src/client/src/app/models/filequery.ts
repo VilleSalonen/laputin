@@ -1,5 +1,5 @@
-import {Tag} from './tag';
-import {TagContainer} from './tagcontainer';
+import { Tag } from './tag';
+import { TagContainer } from './tagcontainer';
 
 export class FileQuery implements TagContainer {
     public filename: string;
@@ -43,9 +43,15 @@ export class FileQuery implements TagContainer {
     }
 
     public removeTag(tagToRemove: Tag) {
-        this.andTags = this.andTags.filter((tag: Tag) => tag.id !== tagToRemove.id);
-        this.orTags = this.orTags.filter((tag: Tag) => tag.id !== tagToRemove.id);
-        this.notTags = this.notTags.filter((tag: Tag) => tag.id !== tagToRemove.id);
+        this.andTags = this.andTags.filter(
+            (tag: Tag) => tag.id !== tagToRemove.id
+        );
+        this.orTags = this.orTags.filter(
+            (tag: Tag) => tag.id !== tagToRemove.id
+        );
+        this.notTags = this.notTags.filter(
+            (tag: Tag) => tag.id !== tagToRemove.id
+        );
     }
 
     public clear(): void {
@@ -58,11 +64,13 @@ export class FileQuery implements TagContainer {
     }
 
     public parametersSpecified(): boolean {
-        return this.filename !== ''
-            || this.status !== 'both'
-            || this.hash !== ''
-            || this.andTags.length > 0
-            || this.orTags.length > 0
-            || this.notTags.length > 0;
+        return (
+            this.filename !== '' ||
+            this.status !== 'both' ||
+            this.hash !== '' ||
+            this.andTags.length > 0 ||
+            this.orTags.length > 0 ||
+            this.notTags.length > 0
+        );
     }
 }

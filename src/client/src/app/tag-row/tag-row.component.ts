@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Injectable, Inject } from '@angular/core';
 
-import {LaputinService} from './../laputin.service';
+import { LaputinService } from './../laputin.service';
 import { Tag } from '../models/tag';
 
 @Component({
     selector: 'app-tag-row',
     styleUrls: ['./tag-row.component.scss'],
-    templateUrl: './tag-row.component.html',
+    templateUrl: './tag-row.component.html'
 })
 @Injectable()
 export class TagRowComponent implements OnInit {
@@ -15,11 +15,9 @@ export class TagRowComponent implements OnInit {
     public name = '';
     public showMyElement: boolean;
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
-    }
+    constructor(@Inject(LaputinService) private _service: LaputinService) {}
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     public onKeyUp($event: KeyboardEvent): void {
         const ENTER = 13;

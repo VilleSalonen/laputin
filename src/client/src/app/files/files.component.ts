@@ -43,29 +43,30 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.allFilesSubscription.next(files);
         });
 
-        combineLatest(this.filesSubscription, this.allFilesSubscription, this.hashParamSubscription)
-            .subscribe(([files, allFiles, hashParam]) => {
-                if (hashParam) {
-                    let selectedFile = files.find(f => f.hash === hashParam);
-                    if (!selectedFile) {
-                        selectedFile = allFiles.find(f => f.hash === hashParam);
-                    }
-
-                    if (selectedFile) {
-                        this.selectFile(selectedFile);
-                    }
-                } else {
-                    this.closeFile();
+        combineLatest(
+            this.filesSubscription,
+            this.allFilesSubscription,
+            this.hashParamSubscription
+        ).subscribe(([files, allFiles, hashParam]) => {
+            if (hashParam) {
+                let selectedFile = files.find(f => f.hash === hashParam);
+                if (!selectedFile) {
+                    selectedFile = allFiles.find(f => f.hash === hashParam);
                 }
-            });
+
+                if (selectedFile) {
+                    this.selectFile(selectedFile);
+                }
+            } else {
+                this.closeFile();
+            }
+        });
 
         this.loadFiles();
 
         this.sub = this.route.params.subscribe(params => {
             this.hashParamSubscription.next(params['hash']);
         });
-
-
     }
 
     ngOnDestroy(): void {

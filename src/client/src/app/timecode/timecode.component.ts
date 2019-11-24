@@ -1,7 +1,13 @@
-import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    Injectable
+} from '@angular/core';
 
-import {File, Timecode, TimecodeTag} from './../models';
-import {LaputinService} from './../laputin.service';
+import { File, Timecode, TimecodeTag } from './../models';
+import { LaputinService } from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { TimecodeEditDialogComponent } from '../timecode-edit-dialog/timecode-edit-dialog.component';
@@ -26,8 +32,11 @@ export class TimecodeComponent {
     public formatTimecodeDuration = Utils.formatTimecodeDuration;
     public formatPreciseDuration = Utils.formatPreciseDuration;
 
-    constructor(private _service: LaputinService, private _playerService: PlayerService, private editDialog: MatDialog) {
-    }
+    constructor(
+        private _service: LaputinService,
+        private _playerService: PlayerService,
+        private editDialog: MatDialog
+    ) {}
 
     public edit(): void {
         const dialogRef = this.editDialog.open(TimecodeEditDialogComponent, {
@@ -47,8 +56,13 @@ export class TimecodeComponent {
 
     public async screenshotTimecode(): Promise<void> {
         if (this._playerService.player) {
-            await this._service.screenshotTimecode(this.file, this.timecode, this._playerService.player.currentTime);
-            this.timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+            await this._service.screenshotTimecode(
+                this.file,
+                this.timecode,
+                this._playerService.player.currentTime
+            );
+            this.timecode.cacheBuster =
+                '?cachebuster=' + new Date().toISOString();
         }
     }
 
@@ -66,8 +80,9 @@ export class TimecodeComponent {
     }
 
     public formattedTags(): string {
-        return this.timecode.timecodeTags.sort((a, b) => (a.tag.name > b.tag.name) ? 1 : - 1)
-            .map((timecodeTag) => timecodeTag.tag.name)
+        return this.timecode.timecodeTags
+            .sort((a, b) => (a.tag.name > b.tag.name ? 1 : -1))
+            .map(timecodeTag => timecodeTag.tag.name)
             .join(', ');
     }
 }

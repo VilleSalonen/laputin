@@ -1,14 +1,14 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import {Tag, TagStatus, FileQuery, AutocompleteType} from './../models';
-import {TagChange} from './../search-tag/search-tag.component';
+import { Tag, TagStatus, FileQuery, AutocompleteType } from './../models';
+import { TagChange } from './../search-tag/search-tag.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-file-search',
     styleUrls: ['./file-search.component.scss'],
-    templateUrl: './file-search.component.html',
+    templateUrl: './file-search.component.html'
 })
 export class FileSearchComponent {
     @Input()
@@ -23,10 +23,8 @@ export class FileSearchComponent {
 
     constructor() {
         this.filenameChanged
-            .pipe(
-                debounceTime(300),
-                distinctUntilChanged()
-            ).subscribe(model => {
+            .pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(model => {
                 this.query.filename = model;
                 this.update.emit(this.query);
             });
@@ -51,7 +49,9 @@ export class FileSearchComponent {
         // method. That triggers tag selection.
         //
         // To get rid of such problematic selections, check type.
-        if (tag instanceof Event) { return; }
+        if (tag instanceof Event) {
+            return;
+        }
 
         this.query.andTag(tag);
         this.update.emit(this.query);

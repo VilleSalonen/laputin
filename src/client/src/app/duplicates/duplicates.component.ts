@@ -1,7 +1,7 @@
-import {Component, Injectable, Inject} from '@angular/core';
+import { Component, Injectable, Inject } from '@angular/core';
 
-import {LaputinService} from './../laputin.service';
-import {Duplicate} from './../models/duplicate';
+import { LaputinService } from './../laputin.service';
+import { Duplicate } from './../models/duplicate';
 
 @Component({
     styleUrls: ['./duplicates.component.scss'],
@@ -21,8 +21,10 @@ export class DuplicatesComponent {
 
     filter(term: string) {
         const termUpperCase = term.toUpperCase();
-        this.filteredDuplicates =
-            this.duplicates.filter((duplicate) =>
-                duplicate.files.some((file) => file.name.toUpperCase().indexOf(termUpperCase) >= 0));
+        this.filteredDuplicates = this.duplicates.filter(duplicate =>
+            duplicate.files.some(
+                file => file.name.toUpperCase().indexOf(termUpperCase) >= 0
+            )
+        );
     }
 }

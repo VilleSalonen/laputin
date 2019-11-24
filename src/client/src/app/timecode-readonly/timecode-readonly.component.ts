@@ -1,6 +1,12 @@
-import {Component, Input, Output, EventEmitter, Injectable} from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    Injectable
+} from '@angular/core';
 
-import {File} from './../models/file';
+import { File } from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { Timecode, TimecodeTag } from '../models';
@@ -24,8 +30,7 @@ export class TimecodeReadonlyComponent {
 
     public formatTimecodeDuration = Utils.formatTimecodeDuration;
 
-    constructor(private _playerService: PlayerService) {
-    }
+    constructor(private _playerService: PlayerService) {}
 
     public goToTimecode(timecode: Timecode): void {
         this._playerService.setCurrentTime(timecode.start);
@@ -33,8 +38,9 @@ export class TimecodeReadonlyComponent {
     }
 
     public formattedTags(): string {
-        return this.timecode.timecodeTags.sort((a, b) => (a.tag.name > b.tag.name) ? 1 : - 1)
-            .map((timecodeTag) => timecodeTag.tag.name)
+        return this.timecode.timecodeTags
+            .sort((a, b) => (a.tag.name > b.tag.name ? 1 : -1))
+            .map(timecodeTag => timecodeTag.tag.name)
             .join(', ');
     }
 }

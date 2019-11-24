@@ -1,8 +1,27 @@
-import {Component, Input, Output, EventEmitter, Injectable, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    Injectable,
+    ViewChild,
+    ElementRef,
+    AfterViewInit,
+    OnDestroy
+} from '@angular/core';
 import * as moment from 'moment';
 
-import {File, FileQuery, FileChange, ChangeDirection, Tag, Timecode, TimecodeTag, AutocompleteType} from './../models';
-import {LaputinService} from './../laputin.service';
+import {
+    File,
+    FileQuery,
+    FileChange,
+    ChangeDirection,
+    Tag,
+    Timecode,
+    TimecodeTag,
+    AutocompleteType
+} from './../models';
+import { LaputinService } from './../laputin.service';
 import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
@@ -72,12 +91,17 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public videoSource: string;
 
     @Output()
-    public fileChange: EventEmitter<FileChange> = new EventEmitter<FileChange>();
+    public fileChange: EventEmitter<FileChange> = new EventEmitter<
+        FileChange
+    >();
     @Output()
     public fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
-    constructor(private _service: LaputinService, private _playerService: PlayerService, private dialog: MatDialog) {
-    }
+    constructor(
+        private _service: LaputinService,
+        private _playerService: PlayerService,
+        private dialog: MatDialog
+    ) {}
 
     public ngAfterViewInit(): void {
         this.player = this.playerElem.nativeElement;
@@ -99,10 +123,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         );
         playerDoubleClicked.subscribe(() => this.toggleFullScreen());
 
-        playStart.subscribe(() => this.playing = true);
-        playEnd.subscribe(() => this.playing = false);
+        playStart.subscribe(() => (this.playing = true));
+        playEnd.subscribe(() => (this.playing = false));
 
-        playStart.subscribe(() => this.playbackHasBeenStarted = true);
+        playStart.subscribe(() => (this.playbackHasBeenStarted = true));
 
         const timeUpdates = fromEvent(this.player, 'timeupdate').pipe(
             takeUntil(this.fileClosed),
@@ -110,129 +134,130 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             map(() => this.player.currentTime / this.player.duration)
         );
 
-        timeUpdates
-            .subscribe((playPercent: number) =>
-                this.updateProgress(playPercent)
-            );
+        timeUpdates.subscribe((playPercent: number) =>
+            this.updateProgress(playPercent)
+        );
 
         // Force progress update when video is changed or seeked.
         // Without forced update, these changes will be seen with a
         // delay.
-        fromEvent(this.player, 'durationchange').pipe(
-            takeUntil(this.fileClosed)
-        ).subscribe(() => {
-            this._service.getTimecodes(this.file).then((timecodes) => {
-                this.timecodes = timecodes;
+        fromEvent(this.player, 'durationchange')
+            .pipe(takeUntil(this.fileClosed))
+            .subscribe(() => {
+                this._service.getTimecodes(this.file).then(timecodes => {
+                    this.timecodes = timecodes;
+                });
+
+                this.playbackHasBeenStarted = false;
+                this.playing = false;
+                this.duration = this.formatDuration(this.player.duration);
+                this.updateProgress(0);
+
+                if (this.player.videoWidth && this.player.videoHeight) {
+                    this.resolution =
+                        this.player.videoWidth + 'x' + this.player.videoHeight;
+                }
             });
 
-            this.playbackHasBeenStarted = false;
-            this.playing = false;
-            this.duration = this.formatDuration(this.player.duration);
-            this.updateProgress(0);
-
-            if (this.player.videoWidth && this.player.videoHeight) {
-                this.resolution = this.player.videoWidth + 'x' + this.player.videoHeight;
-            }
-        });
-
-        fromEvent(window, 'webkitfullscreenchange').pipe(
-            takeUntil(this.fileClosed)
-        ).subscribe(() => {
-            this.isFullScreen = !this.isFullScreen;
-            // We have to reset playhead because it might be further right than
-            // the new timeline width allows.
-            this.setPlayheadTo(0);
-            this.updateProgress(this.player.currentTime / this.player.duration);
-        });
+        fromEvent(window, 'webkitfullscreenchange')
+            .pipe(takeUntil(this.fileClosed))
+            .subscribe(() => {
+                this.isFullScreen = !this.isFullScreen;
+                // We have to reset playhead because it might be further right than
+                // the new timeline width allows.
+                this.setPlayheadTo(0);
+                this.updateProgress(
+                    this.player.currentTime / this.player.duration
+                );
+            });
 
         const windowKeyups = fromEvent(window, 'keyup').pipe(
             takeUntil(this.fileClosed)
         );
 
-        windowKeyups
-            .subscribe((event: KeyboardEvent) => {
-                if ((<any>event.srcElement).nodeName === 'INPUT') {
-                    if (event.key === 'Escape') {
-                        (<any>event.srcElement).blur();
+        windowKeyups.subscribe((event: KeyboardEvent) => {
+            if ((<any>event.srcElement).nodeName === 'INPUT') {
+                if (event.key === 'Escape') {
+                    (<any>event.srcElement).blur();
+                }
+
+                return;
+            }
+
+            switch (event.key) {
+                case 'PageUp':
+                    this.megaStepForward();
+                    break;
+                case 'PageDown':
+                    this.megaStepBackward();
+                    break;
+                case 'ArrowLeft':
+                    if (event.shiftKey) {
+                        this.tinyStepBackward();
+                    } else {
+                        this.largeStepBackward();
                     }
-
-                    return;
-                }
-
-                switch (event.key) {
-                    case 'PageUp':
-                        this.megaStepForward();
-                        break;
-                    case 'PageDown':
-                        this.megaStepBackward();
-                        break;
-                    case 'ArrowLeft':
-                        if (event.shiftKey) {
-                            this.tinyStepBackward();
-                        } else {
-                            this.largeStepBackward();
-                        }
-                        break;
-                    case 'ArrowRight':
-                        if (event.shiftKey) {
-                            this.tinyStepForward();
-                        } else {
-                            this.largeStepForward();
-                        }
-                        break;
-                    case 'ArrowUp':
-                        if (event.shiftKey) {
-                            this.smallStepForward();
-                        } else {
-                            this.hugeStepForward();
-                        }
-                        break;
-                    case 'ArrowDown':
-                        if (event.shiftKey) {
-                            this.smallStepBackward();
-                        } else {
-                            this.hugeStepBackward();
-                        }
-                        break;
-                    case 'Enter':
-                        if (event.altKey) {
-                            this.toggleFullScreen();
-                        }
-                        break;
-                    case ' ':
-                        if (this.playing) {
-                            this.pause();
-                        } else {
-                            this.play();
-                        }
-                        break;
-                    case 'a':
-                        this.goToPrevious();
-                        break;
-                    case 'd':
-                        this.goToNext();
-                        break;
-                    case 'q':
-                        if (event.shiftKey) {
-                            this.goToTagStart();
-                        } else {
-                            this.setTagStart();
-                        }
-                        break;
-                    case 'e':
-                        if (event.shiftKey) {
-                            this.goToTagEnd();
-                        } else {
-                            this.setTagEnd();
-                        }
-                        break;
-                    case 's':
-                        this.toggleRandom();
-                        break;
-                    case 'PrintScreen':
-                        this.screenshot();
-                        break;
-                }
+                    break;
+                case 'ArrowRight':
+                    if (event.shiftKey) {
+                        this.tinyStepForward();
+                    } else {
+                        this.largeStepForward();
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (event.shiftKey) {
+                        this.smallStepForward();
+                    } else {
+                        this.hugeStepForward();
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (event.shiftKey) {
+                        this.smallStepBackward();
+                    } else {
+                        this.hugeStepBackward();
+                    }
+                    break;
+                case 'Enter':
+                    if (event.altKey) {
+                        this.toggleFullScreen();
+                    }
+                    break;
+                case ' ':
+                    if (this.playing) {
+                        this.pause();
+                    } else {
+                        this.play();
+                    }
+                    break;
+                case 'a':
+                    this.goToPrevious();
+                    break;
+                case 'd':
+                    this.goToNext();
+                    break;
+                case 'q':
+                    if (event.shiftKey) {
+                        this.goToTagStart();
+                    } else {
+                        this.setTagStart();
+                    }
+                    break;
+                case 'e':
+                    if (event.shiftKey) {
+                        this.goToTagEnd();
+                    } else {
+                        this.setTagEnd();
+                    }
+                    break;
+                case 's':
+                    this.toggleRandom();
+                    break;
+                case 'PrintScreen':
+                    this.screenshot();
+                    break;
+            }
         });
     }
 
@@ -244,7 +269,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const playPercent = sliderChangeEvent.value / this.sliderMax;
 
         const newTime = this.player.duration * playPercent;
-        if (!isNaN(newTime) && 0 <= newTime && newTime <= this.player.duration) {
+        if (
+            !isNaN(newTime) &&
+            0 <= newTime &&
+            newTime <= this.player.duration
+        ) {
             this.setCurrentTime(newTime);
         }
     }
@@ -270,7 +299,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private updateTime(): void {
         const currentTime = this.formatDuration(this.player.currentTime);
 
-        if (currentTime.indexOf('NaN') === -1 && this.duration && this.duration.indexOf('NaN') === -1) {
+        if (
+            currentTime.indexOf('NaN') === -1 &&
+            this.duration &&
+            this.duration.indexOf('NaN') === -1
+        ) {
             this.progressText = currentTime + '/' + this.duration;
         } else {
             this.progressText = '00:00/00:00';
@@ -287,12 +320,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const seconds = duration.seconds();
 
         if (hours) {
-            result += ((hours >= 10) ? hours : '0' + hours) + ':';
+            result += (hours >= 10 ? hours : '0' + hours) + ':';
         }
 
-        result += (minutes >= 10) ? minutes : '0' + minutes;
+        result += minutes >= 10 ? minutes : '0' + minutes;
         result += ':';
-        result += (seconds >= 10) ? seconds : '0' + seconds;
+        result += seconds >= 10 ? seconds : '0' + seconds;
 
         return result;
     }
@@ -338,19 +371,19 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public smallStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - (1 / 4.0));
+        this.setCurrentTime(this.player.currentTime - 1 / 4.0);
     }
 
     public tinyStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - (1 / 20.0));
+        this.setCurrentTime(this.player.currentTime - 1 / 20.0);
     }
 
     public tinyStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + (1 / 20.0));
+        this.setCurrentTime(this.player.currentTime + 1 / 20.0);
     }
 
     public smallStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + (1 / 4.0));
+        this.setCurrentTime(this.player.currentTime + 1 / 4.0);
     }
 
     public goToPrevious(): void {
@@ -387,20 +420,22 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public addTags(tags: Tag[]): void {
-        this._service.addTags(this.file, tags)
-                     .subscribe(() => this.addTagsToFile(tags));
+        this._service
+            .addTags(this.file, tags)
+            .subscribe(() => this.addTagsToFile(tags));
     }
 
     public removeTag(tag: Tag): void {
-        this.file.tags = this.file.tags.filter((t: Tag): boolean => t.id !== tag.id);
-        this._service.deleteTagFileAssoc(this.file, tag)
-            .subscribe(() => {});
+        this.file.tags = this.file.tags.filter(
+            (t: Tag): boolean => t.id !== tag.id
+        );
+        this._service.deleteTagFileAssoc(this.file, tag).subscribe(() => {});
     }
 
     private addTagsToFile(tags: Tag[]): void {
         const currentTags = this.file.tags;
         tags.forEach((tag: Tag) => currentTags.push(tag));
-        const sorted = currentTags.sort((a, b) => (a.name > b.name) ? 1 : -1);
+        const sorted = currentTags.sort((a, b) => (a.name > b.name ? 1 : -1));
         this.file.tags = sorted;
     }
 
@@ -412,23 +447,25 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public screenshot(): void {
-        this._service.screenshotFile(this.file, this.player.currentTime)
+        this._service
+            .screenshotFile(this.file, this.player.currentTime)
             .toPromise()
             .then(() => {
                 // Allow for a some delay because user only see this thumbnail when she changes to another file and then back.
-                this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+                this.cacheBuster = '?cachebuster=' + new Date().toISOString();
                 this.showScreenshotPreview = true;
 
-                setTimeout(
-                    () => this.showScreenshotPreview = false,
-                    3000
-                );
+                setTimeout(() => (this.showScreenshotPreview = false), 3000);
             });
     }
 
     public async screenshotTimecode(timecode: Timecode): Promise<void> {
-        await this._service.screenshotTimecode(this.file, timecode, this.player.currentTime);
-        timecode.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+        await this._service.screenshotTimecode(
+            this.file,
+            timecode,
+            this.player.currentTime
+        );
+        timecode.cacheBuster = '?cachebuster=' + new Date().toISOString();
     }
 
     public openTagScreenshotDialog(): void {
@@ -441,7 +478,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe(tag => {
             if (tag) {
-                this._service.screenshotTag(tag, this.file, this.player.currentTime);
+                this._service.screenshotTag(
+                    tag,
+                    this.file,
+                    this.player.currentTime
+                );
             }
         });
     }
@@ -470,7 +511,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public removeTagSelectionFromTimecode(tag: Tag): void {
-        this.selectedTagsForTimecode = this.selectedTagsForTimecode.filter(t => t.id !== tag.id);
+        this.selectedTagsForTimecode = this.selectedTagsForTimecode.filter(
+            t => t.id !== tag.id
+        );
     }
 
     public setTagStart(): void {
@@ -486,7 +529,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             return;
         }
 
-        this.setCurrentTime(this.convertFromSeparatedTimecodeToSeconds(this.tagStart));
+        this.setCurrentTime(
+            this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
+        );
         if (!this.playing) {
             this.play();
         }
@@ -497,17 +542,23 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             return;
         }
 
-        this.setCurrentTime(this.convertFromSeparatedTimecodeToSeconds(this.tagEnd));
+        this.setCurrentTime(
+            this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
+        );
         if (!this.playing) {
             this.play();
         }
     }
 
     public async saveTagTimecode(): Promise<void> {
-        const tagStart = this.convertFromSeparatedTimecodeToSeconds(this.tagStart);
+        const tagStart = this.convertFromSeparatedTimecodeToSeconds(
+            this.tagStart
+        );
         const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
 
-        const selectedTimecodeTags = this.selectedTagsForTimecode.map(t => new TimecodeTag(null, null, t));
+        const selectedTimecodeTags = this.selectedTagsForTimecode.map(
+            t => new TimecodeTag(null, null, t)
+        );
 
         const tagTimecode = new Timecode(
             null,
@@ -515,8 +566,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             this.file.path,
             selectedTimecodeTags,
             tagStart,
-            tagEnd);
-        const result = await this._service.createTagTimecode(this.file, tagTimecode);
+            tagEnd
+        );
+        const result = await this._service.createTagTimecode(
+            this.file,
+            tagTimecode
+        );
         this.addTagTimecode(result);
 
         this.selectedTagsForTimecode = [];
@@ -525,10 +580,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public removeTimecode(timecode: Timecode): void {
-        this.timecodes = this.timecodes.filter(t => t.timecodeId !== timecode.timecodeId);
+        this.timecodes = this.timecodes.filter(
+            t => t.timecodeId !== timecode.timecodeId
+        );
     }
 
-    private convertFromSeparatedTimecodeToSeconds(separatedTimecode: string): number {
+    private convertFromSeparatedTimecodeToSeconds(
+        separatedTimecode: string
+    ): number {
         return moment.duration(separatedTimecode).asSeconds();
     }
 

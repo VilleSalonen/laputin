@@ -9,6 +9,6 @@ export class Timecode {
         public path: string,
         public timecodeTags: TimecodeTag[],
         public start: number,
-        public end: number) {
-    }
+        public end: number
+    ) {}
 }

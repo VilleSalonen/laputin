@@ -1,12 +1,12 @@
-import {Component, Output, EventEmitter} from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
-import {TagChange} from './../search-tag/search-tag.component';
+import { TagChange } from './../search-tag/search-tag.component';
 import { TagStatus, Tag, AutocompleteType, FileQuery } from '../models';
 
 @Component({
     selector: 'app-timecode-search',
     styleUrls: ['./timecode-search.component.scss'],
-    templateUrl: './timecode-search.component.html',
+    templateUrl: './timecode-search.component.html'
 })
 export class TimecodeSearchComponent {
     public query: FileQuery = new FileQuery();
@@ -26,7 +26,9 @@ export class TimecodeSearchComponent {
         // method. That triggers tag selection.
         //
         // To get rid of such problematic selections, check type.
-        if (tag instanceof Event) { return; }
+        if (tag instanceof Event) {
+            return;
+        }
 
         this.query.andTag(tag);
         this.update.emit(this.query);

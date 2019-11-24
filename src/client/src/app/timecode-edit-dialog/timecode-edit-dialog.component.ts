@@ -1,7 +1,7 @@
-import {Component, Inject} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import {File, Timecode, Tag, TimecodeTag} from './../models';
+import { File, Timecode, Tag, TimecodeTag } from './../models';
 import { AutocompleteType } from '../models/autocompletetype';
 import { LaputinService } from '../laputin.service';
 import { PlayerService } from '../player.service';
@@ -14,7 +14,7 @@ export interface TimecodeEditDialogData {
 
 @Component({
     templateUrl: 'timecode-edit-dialog.component.html',
-    styleUrls: ['./timecode-edit-dialog.component.scss'],
+    styleUrls: ['./timecode-edit-dialog.component.scss']
 })
 export class TimecodeEditDialogComponent {
     public AutocompleteType = AutocompleteType;
@@ -44,7 +44,10 @@ export class TimecodeEditDialogComponent {
         clonedTimecode.timecodeTags = [
             new TimecodeTag(null, this.timecode.timecodeId, tag)
         ];
-        const result = await this._service.createTagTimecode(this.file, clonedTimecode);
+        const result = await this._service.createTagTimecode(
+            this.file,
+            clonedTimecode
+        );
 
         const timecodeTags = this.timecode.timecodeTags.slice();
         timecodeTags.push(result.timecodeTags[0]);
@@ -61,10 +64,14 @@ export class TimecodeEditDialogComponent {
         this.updateAlreadySelectedTags();
     }
 
-    public async removeTagFromExistingTimecode(timecodeTag: TimecodeTag): Promise<void> {
+    public async removeTagFromExistingTimecode(
+        timecodeTag: TimecodeTag
+    ): Promise<void> {
         await this._service.deleteTimecodeTag(this.timecode, timecodeTag);
 
-        const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(t => t.timecodeTagId !== timecodeTag.timecodeTagId);
+        const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(
+            t => t.timecodeTagId !== timecodeTag.timecodeTagId
+        );
         this.timecode.timecodeTags = timecodeTagsAfterDeletion;
     }
 
@@ -87,6 +94,8 @@ export class TimecodeEditDialogComponent {
     }
 
     private updateAlreadySelectedTags(): void {
-        this.alreadySelectedTags = this.timecode.timecodeTags.map(timecodeTag => timecodeTag.tag);
+        this.alreadySelectedTags = this.timecode.timecodeTags.map(
+            timecodeTag => timecodeTag.tag
+        );
     }
 }

@@ -2,14 +2,25 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import {
-  LocationStrategy,
-  HashLocationStrategy
-} from '@angular/common';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule } from '@angular/material';
+import {
+    MatButtonModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    MatSlideToggleModule,
+    MatInputModule,
+    MatBadgeModule,
+    MatSelectModule,
+    MatCardModule,
+    MatSliderModule,
+    MatDialogModule,
+    MatMenuModule,
+    MatTooltipModule
+} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DeferLoadModule} from '@trademe/ng-defer-load';
+import { DeferLoadModule } from '@trademe/ng-defer-load';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
@@ -32,49 +43,65 @@ import { TimecodeSearchComponent } from './timecode-search/timecode-search.compo
 import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
 
-
 @NgModule({
-  declarations: [
-    AppComponent,
-    DuplicatesComponent,
-    FileComponent,
-    FilesComponent,
-    FileSearchComponent,
-    SearchTagComponent,
-    TagAutocompleteComponent,
-    TagFilterPipe,
-    TagRowComponent,
-    TagsComponent,
-    TagScreenshotDialogComponent,
-    TimecodeComponent,
-    TimecodeEditDialogComponent,
-    TimecodeReadonlyComponent,
-    TimecodesComponent,
-    TimecodeSearchComponent,
-    VideoPlayerComponent
-  ],
-  entryComponents: [
-      TagScreenshotDialogComponent, TimecodeEditDialogComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatAutocompleteModule, MatSlideToggleModule, MatInputModule, MatBadgeModule, MatSelectModule, MatCardModule, MatSliderModule, MatDialogModule, MatMenuModule, MatTooltipModule,
-    RouterModule.forRoot([
-      { path: '', redirectTo: 'files', pathMatch: 'full' },
-      { path: 'files', component: FilesComponent },
-      { path: 'files/:hash', component: FilesComponent },
-      { path: 'timecodes', component: TimecodesComponent },
-      { path: 'tags', component: TagsComponent },
-      { path: 'duplicates', component: DuplicatesComponent }
-    ]),
-    VirtualScrollerModule,
-    BrowserAnimationsModule,
-    DeferLoadModule
-  ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, LaputinService, PlayerService],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        DuplicatesComponent,
+        FileComponent,
+        FilesComponent,
+        FileSearchComponent,
+        SearchTagComponent,
+        TagAutocompleteComponent,
+        TagFilterPipe,
+        TagRowComponent,
+        TagsComponent,
+        TagScreenshotDialogComponent,
+        TimecodeComponent,
+        TimecodeEditDialogComponent,
+        TimecodeReadonlyComponent,
+        TimecodesComponent,
+        TimecodeSearchComponent,
+        VideoPlayerComponent
+    ],
+    entryComponents: [
+        TagScreenshotDialogComponent,
+        TimecodeEditDialogComponent
+    ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatAutocompleteModule,
+        MatSlideToggleModule,
+        MatInputModule,
+        MatBadgeModule,
+        MatSelectModule,
+        MatCardModule,
+        MatSliderModule,
+        MatDialogModule,
+        MatMenuModule,
+        MatTooltipModule,
+        RouterModule.forRoot([
+            { path: '', redirectTo: 'files', pathMatch: 'full' },
+            { path: 'files', component: FilesComponent },
+            { path: 'files/:hash', component: FilesComponent },
+            { path: 'timecodes', component: TimecodesComponent },
+            { path: 'tags', component: TagsComponent },
+            { path: 'duplicates', component: DuplicatesComponent }
+        ]),
+        VirtualScrollerModule,
+        BrowserAnimationsModule,
+        DeferLoadModule
+    ],
+    providers: [
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        LaputinService,
+        PlayerService
+    ],
+    bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

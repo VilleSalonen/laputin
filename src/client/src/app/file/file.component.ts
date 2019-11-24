@@ -1,7 +1,7 @@
-import {Component, Injectable, Input} from '@angular/core';
+import { Component, Injectable, Input } from '@angular/core';
 
-import {File} from './../models/file';
-import {LaputinService} from './../laputin.service';
+import { File } from './../models/file';
+import { LaputinService } from './../laputin.service';
 
 @Component({
     selector: 'app-file',
@@ -20,12 +20,12 @@ export class FileComponent {
     constructor(service: LaputinService) {
         service.thumbnailChanged.subscribe((changed: File) => {
             if (changed.hash === this.file.hash) {
-                this.cacheBuster = '?cachebuster=' + (new Date().toISOString());
+                this.cacheBuster = '?cachebuster=' + new Date().toISOString();
             }
         });
     }
 
     public formattedTags(file: File): string {
-        return file.tags.map((tag) => tag.name).join(', ');
+        return file.tags.map(tag => tag.name).join(', ');
     }
 }

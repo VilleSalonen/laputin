@@ -1,7 +1,7 @@
-import {Component, OnInit, Injectable, Inject} from '@angular/core';
+import { Component, OnInit, Injectable, Inject } from '@angular/core';
 
-import {Tag} from './../models/tag';
-import {LaputinService} from './../laputin.service';
+import { Tag } from './../models/tag';
+import { LaputinService } from './../laputin.service';
 
 @Component({
     styleUrls: ['./tags.component.scss'],
@@ -16,22 +16,22 @@ export class TagsComponent implements OnInit {
 
     public term = '';
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
-    }
+    constructor(@Inject(LaputinService) private _service: LaputinService) {}
 
     ngOnInit(): void {
         this.loading = true;
-        this._service.getAllTags()
-            .then((tags) => {
-                this.tags = tags;
-                this.filteredTags = tags;
-                this.loading = false;
-            });
+        this._service.getAllTags().then(tags => {
+            this.tags = tags;
+            this.filteredTags = tags;
+            this.loading = false;
+        });
     }
 
     filter(term: string) {
         const termUpperCase = term.toUpperCase();
-        this.filteredTags = this.tags.filter((tag) => tag.name.toUpperCase().indexOf(termUpperCase) >= 0);
+        this.filteredTags = this.tags.filter(
+            tag => tag.name.toUpperCase().indexOf(termUpperCase) >= 0
+        );
     }
 
     public onKeyUp($event: KeyboardEvent): void {
