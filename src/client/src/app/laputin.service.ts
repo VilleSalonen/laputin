@@ -175,7 +175,7 @@ export class LaputinService {
         tag: Tag,
         file: File,
         timeInSeconds: number
-    ): Promise<any> {
+    ): Observable<any> {
         const body = JSON.stringify({
             tag: tag,
             hash: file.hash,
@@ -186,9 +186,9 @@ export class LaputinService {
             'Content-Type': 'application/json'
         });
 
-        return this._http
-            .post(this._baseUrl + '/screenshotTag', body, { headers: headers })
-            .toPromise();
+        return this._http.post(this._baseUrl + '/screenshotTag', body, {
+            headers: headers
+        });
     }
 
     public openFiles(query: FileQuery): Promise<any> {
