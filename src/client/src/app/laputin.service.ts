@@ -102,27 +102,24 @@ export class LaputinService {
         );
     }
 
-    public getDuplicates(): Promise<Duplicate[]> {
-        return this._http
-            .get(this._baseUrl + '/duplicates')
-            .pipe(
-                map((duplicates: any): any[] => {
-                    const result: Duplicate[] = [];
+    public getDuplicates(): Observable<Duplicate[]> {
+        return this._http.get(this._baseUrl + '/duplicates').pipe(
+            map((duplicates: any): any[] => {
+                const result: Duplicate[] = [];
 
-                    const hashes = Object.keys(duplicates);
+                const hashes = Object.keys(duplicates);
 
-                    for (const hash of hashes) {
-                        const current = duplicates[hash];
-                        const files = current.map(
-                            (file: any) =>
-                                new File(file.hash, file.path, [], file.size)
-                        );
-                        result.push(new Duplicate(hash, files));
-                    }
-                    return result;
-                })
-            )
-            .toPromise();
+                for (const hash of hashes) {
+                    const current = duplicates[hash];
+                    const files = current.map(
+                        (file: any) =>
+                            new File(file.hash, file.path, [], file.size)
+                    );
+                    result.push(new Duplicate(hash, files));
+                }
+                return result;
+            })
+        );
     }
 
     private _convertTag(tag: any): Tag {

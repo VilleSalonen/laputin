@@ -13,10 +13,13 @@ export class DuplicatesComponent {
     public filteredDuplicates: Duplicate[] = [];
 
     constructor(@Inject(LaputinService) service: LaputinService) {
-        service.getDuplicates().then((duplicates: Duplicate[]) => {
-            this.duplicates = duplicates;
-            this.filteredDuplicates = duplicates;
-        });
+        service
+            .getDuplicates()
+            .toPromise()
+            .then((duplicates: Duplicate[]) => {
+                this.duplicates = duplicates;
+                this.filteredDuplicates = duplicates;
+            });
     }
 
     filter(term: string) {
