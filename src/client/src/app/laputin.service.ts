@@ -253,7 +253,7 @@ export class LaputinService {
     public updateTimecodeStartAndEnd(
         file: File,
         timecode: Timecode
-    ): Promise<any> {
+    ): Observable<any> {
         const body = JSON.stringify({
             timecode: timecode
         });
@@ -261,17 +261,15 @@ export class LaputinService {
             Accept: 'application/json',
             'Content-Type': 'application/json'
         });
-        return this._http
-            .put(
-                this._baseUrl +
-                    '/files/' +
-                    file.hash +
-                    '/timecodes/' +
-                    timecode.timecodeId,
-                body,
-                { headers: headers }
-            )
-            .toPromise();
+        return this._http.put(
+            this._baseUrl +
+                '/files/' +
+                file.hash +
+                '/timecodes/' +
+                timecode.timecodeId,
+            body,
+            { headers: headers }
+        );
     }
 
     private compileParams(query: FileQuery): string {

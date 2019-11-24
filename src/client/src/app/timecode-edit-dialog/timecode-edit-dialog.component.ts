@@ -78,12 +78,16 @@ export class TimecodeEditDialogComponent {
 
     public async setTagStart(): Promise<void> {
         this.timecode.start = this._playerService.getCurrentTime();
-        await this._service.updateTimecodeStartAndEnd(this.file, this.timecode);
+        await this._service
+            .updateTimecodeStartAndEnd(this.file, this.timecode)
+            .toPromise();
     }
 
     public async setTagEnd(): Promise<void> {
         this.timecode.end = this._playerService.getCurrentTime();
-        await this._service.updateTimecodeStartAndEnd(this.file, this.timecode);
+        await this._service
+            .updateTimecodeStartAndEnd(this.file, this.timecode)
+            .toPromise();
     }
 
     close(): void {
