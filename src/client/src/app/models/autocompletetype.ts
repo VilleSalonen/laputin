@@ -1,5 +1,6 @@
 export enum AutocompleteType {
     FileSearch,
     FileTagging,
-    FileTimecodeTagging
+    FileTimecodeTagging,
+    ScreenshotTagging
 }

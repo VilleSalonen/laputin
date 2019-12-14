@@ -54,6 +54,17 @@ export class FileQuery implements TagContainer {
         );
     }
 
+    public isEmpty(): boolean {
+        return (
+            this.filename === '' &&
+            this.status === 'both' &&
+            this.hash === '' &&
+            this.andTags.length === 0 &&
+            this.orTags.length === 0 &&
+            this.notTags.length === 0
+        );
+    }
+
     public clear(): void {
         this.filename = '';
         this.status = 'both';

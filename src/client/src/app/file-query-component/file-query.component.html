@@ -1,0 +1,102 @@
+<mat-form-field class="example-chip-list">
+    <mat-chip-list #chipList aria-label="Tag selection">
+        <ng-container *ngIf="query.status && query.status !== 'both'">
+            <mat-chip
+                [selectable]="selectable"
+                [removable]="removable"
+                (removed)="clearStatus()"
+            >
+                status: {{query.status}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+        </ng-container>
+
+        <ng-container *ngIf="type !== AutocompleteType.FileTimecodeTagging">
+            <mat-chip
+                *ngFor="let tag of query.andTags"
+                [selectable]="selectable"
+                [removable]="removable"
+                (click)="orTag(tag)"
+                (removed)="remove(tag)"
+            >
+                ✔
+                {{tag.name}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+
+            <mat-chip
+                *ngFor="let tag of query.orTags"
+                [selectable]="selectable"
+                [removable]="removable"
+                (click)="notTag(tag)"
+                (removed)="remove(tag)"
+            >
+                ❔
+                {{tag.name}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+
+            <mat-chip
+                *ngFor="let tag of query.notTags"
+                [selectable]="selectable"
+                [removable]="removable"
+                (click)="andTag(tag)"
+                (removed)="remove(tag)"
+            >
+                ❕
+                {{tag.name}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+        </ng-container>
+        <input
+            placeholder="Search"
+            #termInput
+            #trigger="matAutocompleteTrigger"
+            [formControl]="termCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputAddOnBlur]="addOnBlur"
+            (input)="onValueChange($event)"
+            (keyup)="onKeyUp($event)"
+            (focus)="showHelp()" />
+        <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInputAndQuery()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-chip-list>
+
+    <mat-autocomplete class="file-query-autocomplete" #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [panelWidth]="'1024px'">
+        <mat-option disabled *ngIf="searchTerm && !searchTerm.startsWith('tag:') && !searchTerm.startsWith('status:')">Search for: {{ searchTerm }}</mat-option>
+
+        <ng-container *ngIf="this.query.isEmpty()">
+            <mat-optgroup [label]="'Search options'">
+                <mat-option value="use-tag"><span style="font-weight: bold;">tag: </span> tag</mat-option>
+                <mat-option value="use-status"><span style="font-weight: bold;">status: </span> tagged, untagged, all</mat-option>
+                <mat-option value="use-file"><span style="font-weight: bold;">file: </span> file</mat-option>
+            </mat-optgroup>
+        </ng-container>
+
+        <ng-container *ngIf="searchTerm && matchingStatuses.length > 0">
+            <mat-optgroup [label]="'Tagging status'">
+                <mat-option *ngFor="let statusOption of matchingStatuses" [value]="statusOption">{{ statusOption.text }}</mat-option>
+            </mat-optgroup>
+        </ng-container>
+
+        <ng-container *ngIf="searchTerm && matchingTags.length > 0">
+            <mat-optgroup [label]="'Tags'">
+                <mat-option *ngFor="let tagOption of matchingTags" [value]="tagOption">
+                    <img *ngIf="tagOption.value" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tagOption.value.id}}.jpg" onerror="this.style.display = 'none'" />
+                    {{tagOption.text}}
+                </mat-option>
+            </mat-optgroup>
+        </ng-container>
+
+        <ng-container *ngIf="searchTerm && matchingFiles.length > 0">
+            <mat-optgroup [label]="'Files'">
+                <mat-option *ngFor="let fileOption of matchingFiles" [value]="fileOption">
+                    <img *ngIf="fileOption.value" class="tag-preview" aria-hidden src="/laputin/thumbs-small/{{fileOption.value.hash}}.jpg" onerror="this.style.display = 'none'" />
+                    {{fileOption.text}}
+                </mat-option>
+            </mat-optgroup>
+        </ng-container>
+    </mat-autocomplete>
+</mat-form-field>

@@ -98,14 +98,7 @@
         <div style="margin-bottom: 24px;">
             <div class="row">
                 <div class="tag-tools">
-                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="tags" style="flex-wrap: wrap;">
-                    <button class="tag" color="primary" *ngFor="let tag of file.tags" (click)="removeTag(tag)"
-                        mat-flat-button title="Click to remove {{tag.name}}">{{tag.name}}</button>
+                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
                 </div>
             </div>
         </div>
@@ -118,7 +111,7 @@
 
             <div class="row" style="margin-bottom: 6px;">
                 <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
-                    [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
             </div>
 
             <div class="row" style="margin-bottom: 6px;">

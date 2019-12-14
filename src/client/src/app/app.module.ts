@@ -17,7 +17,9 @@ import {
     MatSliderModule,
     MatDialogModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatChipsModule,
+    MatIconModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DeferLoadModule } from '@trademe/ng-defer-load';
@@ -27,7 +29,6 @@ import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { FileComponent } from './file/file.component';
 import { FilesComponent } from './files/files.component';
-import { FileSearchComponent } from './file-search/file-search.component';
 import { SearchTagComponent } from './search-tag/search-tag.component';
 import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.component';
 import { TagsComponent } from './tags/tags.component';
@@ -42,14 +43,15 @@ import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly
 import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
 import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
+import { FileQueryComponent } from './file-query-component/file-query.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         DuplicatesComponent,
         FileComponent,
+        FileQueryComponent,
         FilesComponent,
-        FileSearchComponent,
         SearchTagComponent,
         TagAutocompleteComponent,
         TagFilterPipe,
@@ -85,6 +87,8 @@ import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edi
         MatDialogModule,
         MatMenuModule,
         MatTooltipModule,
+        MatChipsModule,
+        MatIconModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },

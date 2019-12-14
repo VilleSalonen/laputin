@@ -1,19 +1,24 @@
 import {
     Component,
+    ElementRef,
+    ViewChild,
     Input,
     Output,
     EventEmitter,
-    Injectable,
-    Inject,
-    OnInit
+    OnInit,
+    Injectable
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import {
+    MatAutocompleteSelectedEvent,
+    MatAutocomplete
+} from '@angular/material/autocomplete';
+import { debounceTime } from 'rxjs/operators';
 
 import { Tag } from './../models/tag';
 import { TagContainer } from './../models/tagcontainer';
 import { LaputinService } from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
-import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-tag-autocomplete',
@@ -27,7 +32,15 @@ export class TagAutocompleteComponent implements OnInit {
     public matchingTags: Tag[] = [];
     public otherTags: Tag[] = [];
 
+    public selectable = false;
+    public removable = true;
+    public addOnBlur = false;
     public termCtrl = new FormControl();
+
+    @ViewChild('termInput', { static: false }) termInput: ElementRef<
+        HTMLInputElement
+    >;
+    @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
 
     @Input() tagContainer: TagContainer;
     @Input() exclude: Tag[] = [];
@@ -35,19 +48,21 @@ export class TagAutocompleteComponent implements OnInit {
 
     @Output()
     public tagSelected = new EventEmitter<Tag>();
+    @Output()
+    public tagRemoved = new EventEmitter<Tag>();
 
     public AutocompleteType = AutocompleteType;
 
     public tagCreationAllowed = false;
     public searchTermOriginalForm: string;
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {
+    constructor(private _service: LaputinService) {
         this.termCtrl.valueChanges
             .pipe(debounceTime(500))
             .subscribe((value: string) => this.onValueChange(value));
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         if (this.type === AutocompleteType.FileTagging) {
             // This will also contain tags which are not associated with any active files.
             this._service
@@ -64,7 +79,15 @@ export class TagAutocompleteComponent implements OnInit {
         this.tagCreationAllowed = this.type !== AutocompleteType.FileSearch;
     }
 
-    async onOptionSelected(event: any) {
+    public remove(tag: Tag): void {
+        const index = this.tagContainer.tags.indexOf(tag);
+
+        if (index >= 0) {
+            this.tagRemoved.emit(tag);
+        }
+    }
+
+    public async onOptionSelected(event: MatAutocompleteSelectedEvent) {
         if (event && event.option && event.option.value) {
             if (
                 event.option.value === 'create' &&
@@ -82,11 +105,11 @@ export class TagAutocompleteComponent implements OnInit {
         this.clear();
     }
 
-    displayFn(tag?: Tag): string | undefined {
+    public displayFn(tag?: Tag): string | undefined {
         return tag ? tag.name : undefined;
     }
 
-    onValueChange(value: string): void {
+    private onValueChange(value: string): void {
         if (!value) {
             return;
         }
@@ -148,7 +171,8 @@ export class TagAutocompleteComponent implements OnInit {
     }
 
     public clear(): void {
-        this.termCtrl.setValue('');
+        this.termInput.nativeElement.value = '';
+        this.termCtrl.setValue(null);
         this.searchTermOriginalForm = '';
         this.matchingTags = [];
     }

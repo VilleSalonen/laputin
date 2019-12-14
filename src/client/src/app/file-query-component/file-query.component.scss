@@ -1,0 +1,21 @@
+@import './../../styles/styles.scss';
+
+mat-form-field {
+    width: 15 * $standard-margin;
+    max-width: 15 * $standard-margin;
+}
+
+.mat-option {
+    height: 72px;
+}
+
+.tag-preview {
+    vertical-align: middle;
+    height: 50px;
+}
+
+::ng-deep {
+    .mat-autocomplete-panel {
+        max-height: 800px !important;
+    }
+}

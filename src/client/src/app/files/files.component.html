@@ -1,7 +1,7 @@
 <div class="container">
     <div class="files full-height" [ngClass]="{'hidden': activeFile}">
         <div class="files-search">
-            <app-file-search [query]="query" (update)="filterFiles($event)"></app-file-search>
+            <app-file-query [query]="query" (queryUpdated)="filterFiles($event)"></app-file-query>
 
             <h2 style="margin-top: 0; margin-bottom: 0;">
                 Showing {{allFiles.length}} matching files

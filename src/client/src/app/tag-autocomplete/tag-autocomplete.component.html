@@ -1,27 +1,43 @@
-<div>
-    <mat-form-field>
-        <input type="text" matInput [formControl]="termCtrl" [matAutocomplete]="auto" placeholder="Tags" (keyup)="onKeyUp($event)" />
-    </mat-form-field>
-
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn"
-        [panelWidth]="'500px'">
-        <mat-option *ngFor="let tag of matchingTags" [value]="tag">
-            <img *ngIf="tag" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tag.id}}.jpg" onerror="this.style.display = 'none'" />
-            {{tag.name}}
-        </mat-option>
-
-        <mat-optgroup [label]="'Add new tag to file'" *ngIf="otherTags && otherTags.length > 0">
-            <mat-option *ngFor="let tag of otherTags" [value]="tag">
-                <img *ngIf="tag" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tag.id}}.jpg" onerror="this.style.display = 'none'" />
+<mat-form-field class="example-chip-list">
+    <mat-chip-list #chipList aria-label="Tag selection">
+        <ng-container *ngIf="type !== AutocompleteType.FileTimecodeTagging">
+            <mat-chip
+                *ngFor="let tag of tagContainer.tags"
+                [selectable]="selectable"
+                [removable]="removable"
+                (removed)="remove(tag)"
+            >
                 {{tag.name}}
-            </mat-option>
-        </mat-optgroup>
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+        </ng-container>
+        <input
+            placeholder="Tags"
+            #termInput
+            [formControl]="termCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputAddOnBlur]="addOnBlur"
+            (keyup)="onKeyUp($event)" />
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn" [panelWidth]="'500px'">
+      <mat-option *ngFor="let tag of matchingTags" [value]="tag">
+          <img *ngIf="tag" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tag.id}}.jpg" onerror="this.style.display = 'none'" />
+          {{tag.name}}
+      </mat-option>
 
-        <mat-optgroup [label]="'Create new tag'" *ngIf="tagCreationAllowed && searchTermOriginalForm">
-            <mat-option [value]="'create'">
-                <i class="fas fa-plus"></i>
-                {{ searchTermOriginalForm }}
-            </mat-option>
-        </mat-optgroup>
-    </mat-autocomplete>
-</div>
+      <mat-optgroup [label]="'Add new tag to file'" *ngIf="otherTags && otherTags.length > 0">
+          <mat-option *ngFor="let tag of otherTags" [value]="tag">
+              <img *ngIf="tag" class="tag-preview" aria-hidden src="/laputin/tag-thumbs-small/{{tag.id}}.jpg" onerror="this.style.display = 'none'" />
+              {{tag.name}}
+          </mat-option>
+      </mat-optgroup>
+
+      <mat-optgroup [label]="'Create new tag'" *ngIf="tagCreationAllowed && searchTermOriginalForm">
+          <mat-option [value]="'create'">
+              <i class="fas fa-plus"></i>
+              {{ searchTermOriginalForm }}
+          </mat-option>
+      </mat-optgroup>
+  </mat-autocomplete>
+</mat-form-field>
