@@ -6,6 +6,12 @@
     overflow: auto;
 }
 
+::ng-deep {
+    .mat-slider-track-background {
+        background: white !important;
+    }
+}
+
 .container {
     @include g-layout__row;
     flex: 2;
@@ -108,16 +114,17 @@
     width: 100%;
 }
 
-.player:hover .player-controls {
-    display: flex;
-}
-
 .player-controls {
     display: none;
+    position: absolute;
+    bottom: $standard-margin;
+    width: 100%;
+    display: none;
     flex-direction: row;
-    padding: 0.25 * $standard-margin;
+    // padding: 0.25 * $standard-margin;
     max-width: 100%;
     z-index: 20;
+    color: white;
 }
 
 .player-main-button {
@@ -138,13 +145,23 @@
     margin-right: 0.25 * $standard-margin;
 }
 
+.show .filename {
+    display: block !important;
+}
+
+.show .player-controls {
+    display: flex !important;
+}
+
 .filename {
+    display: none;
     position: absolute;
     top: $standard-margin;
     left: $standard-margin;
     font-weight: bold;
     z-index: 10;
     text-shadow: 1px 1px 0 black;
+    color: white;
 }
 
 .filename-small {

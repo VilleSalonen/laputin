@@ -26,8 +26,15 @@ import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { Utils } from '../utils';
-import { fromEvent, merge } from 'rxjs';
-import { takeUntil, throttleTime, map } from 'rxjs/operators';
+import { fromEvent, merge, of } from 'rxjs';
+import {
+    takeUntil,
+    throttleTime,
+    map,
+    delay,
+    switchMap,
+    distinctUntilChanged
+} from 'rxjs/operators';
 
 @Component({
     selector: 'app-video-player',
@@ -47,6 +54,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     public tagCreationOpen = false;
     public AutocompleteType = AutocompleteType;
+
+    public fooClass: boolean;
 
     private player: HTMLVideoElement;
 
@@ -166,6 +175,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             .pipe(takeUntil(this.fileClosed))
             .subscribe(() => {
                 this.isFullScreen = !this.isFullScreen;
+
+                if (this.isFullScreen) {
+                    this.playerElem.nativeElement.focus();
+                }
+
                 // We have to reset playhead because it might be further right than
                 // the new timeline width allows.
                 this.setPlayheadTo(0);
@@ -177,6 +191,32 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const windowKeyups = fromEvent(window, 'keyup').pipe(
             takeUntil(this.fileClosed)
         );
+
+        const mouseEnter = fromEvent(
+            this.playerView.nativeElement,
+            'mouseenter'
+        );
+        const mouseMove = fromEvent(this.playerView.nativeElement, 'mousemove');
+        const afterMouseMove = mouseMove.pipe(
+            map(ev => of(ev).pipe(delay(2000))),
+            switchMap(flatten => flatten)
+        );
+        const mouseLeave = fromEvent(
+            this.playerView.nativeElement,
+            'mouseleave'
+        );
+
+        const starts = merge(mouseEnter, mouseMove).pipe(map(() => 'start'));
+        const ends = merge(afterMouseMove, mouseLeave).pipe(map(() => 'end'));
+        merge(starts, ends)
+            .pipe(distinctUntilChanged(), takeUntil(this.fileClosed))
+            .subscribe(val => {
+                if (val === 'start') {
+                    this.fooClass = true;
+                } else {
+                    this.fooClass = false;
+                }
+            });
 
         windowKeyups.subscribe((event: KeyboardEvent) => {
             if ((<any>event.srcElement).nodeName === 'INPUT') {
@@ -224,6 +264,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     break;
                 case 'Enter':
                     if (event.altKey) {
+                        this.toggleFullScreen();
+                    }
+                    break;
+                case 'Escape':
+                    if (this.isFullScreen) {
                         this.toggleFullScreen();
                     }
                     break;
