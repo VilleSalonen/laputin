@@ -15,9 +15,13 @@ export class TagRowComponent implements OnInit {
     public name = '';
     public showMyElement: boolean;
 
+    public image: string;
+
     constructor(@Inject(LaputinService) private _service: LaputinService) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.image = `/laputin/tag-thumbs/${this.tag.id}.jpg`;
+    }
 
     public onKeyUp($event: KeyboardEvent): void {
         const ENTER = 13;

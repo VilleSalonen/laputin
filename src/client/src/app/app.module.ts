@@ -22,8 +22,8 @@ import {
     MatIconModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DeferLoadModule } from '@trademe/ng-defer-load';
 import { HttpClientModule } from '@angular/common/http';
+import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
@@ -89,6 +89,7 @@ import { FileQueryComponent } from './file-query-component/file-query.component'
         MatTooltipModule,
         MatChipsModule,
         MatIconModule,
+        LazyLoadImageModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },
@@ -98,8 +99,7 @@ import { FileQueryComponent } from './file-query-component/file-query.component'
             { path: 'duplicates', component: DuplicatesComponent }
         ]),
         VirtualScrollerModule,
-        BrowserAnimationsModule,
-        DeferLoadModule
+        BrowserAnimationsModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

@@ -1,4 +1,4 @@
-import { Component, Injectable, Input } from '@angular/core';
+import { Component, Injectable, Input, OnInit } from '@angular/core';
 
 import { File } from './../models/file';
 import { LaputinService } from './../laputin.service';
@@ -9,11 +9,12 @@ import { LaputinService } from './../laputin.service';
     templateUrl: './file.component.html'
 })
 @Injectable()
-export class FileComponent {
+export class FileComponent implements OnInit {
     @Input()
     public file: File;
 
     public cacheBuster = '';
+    public image: string;
 
     public showMyElement: boolean;
 
@@ -23,6 +24,10 @@ export class FileComponent {
                 this.cacheBuster = '?cachebuster=' + new Date().toISOString();
             }
         });
+    }
+
+    public ngOnInit() {
+        this.image = `/laputin/thumbs-small/${this.file.hash}.jpg${this.cacheBuster}`;
     }
 
     public formattedTags(file: File): string {

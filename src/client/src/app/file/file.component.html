@@ -1,5 +1,5 @@
-<a [routerLink]="['/files', file.hash]" (deferLoad)="showMyElement=true">
-    <div class="container" *ngIf="showMyElement" [ngStyle]="{'background-image': 'url(/laputin/thumbs-small/' + file.hash + '.jpg' + cacheBuster + ')'}">
+<a [routerLink]="['/files', file.hash]">
+    <div class="container" [lazyLoad]="image">
         <div class="filename">
             <span class="filename-small">{{file.directory}}</span>
             <br />
