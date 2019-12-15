@@ -1,17 +1,17 @@
 <div class="container">
     <div class="files full-height" [ngClass]="{'hidden': activeFile}">
         <div class="files-search">
-            <app-file-query [query]="query" (queryUpdated)="filterFiles($event)"></app-file-query>
-
-            <h2 style="margin-top: 0; margin-bottom: 0;">
+            <h2>
                 Showing {{allFiles.length}} matching files
                 <a (click)="openFiles()" title="Open in external player">
                     <i class="fa fa-film" aria-hidden="true"></i>
                 </a>
             </h2>
+
+            <app-file-query [query]="query" (queryUpdated)="filterFiles($event)"></app-file-query>
         </div>
 
-        <div class="files-list" style="flex-grow: 1;">
+        <div class="files-list">
             <div [ngClass]="{'hidden': !loading}">
                 <i class="fa fa-spinner"></i>
             </div>

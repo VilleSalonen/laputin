@@ -49,7 +49,7 @@
             </mat-chip>
         </ng-container>
         <input
-            placeholder="Search"
+            role="searchbox"
             #termInput
             #trigger="matAutocompleteTrigger"
             [formControl]="termCtrl"
@@ -67,7 +67,7 @@
     <mat-autocomplete class="file-query-autocomplete" #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [panelWidth]="'1024px'">
         <mat-option disabled *ngIf="searchTerm && !searchTerm.startsWith('tag:') && !searchTerm.startsWith('status:')">Search for: {{ searchTerm }}</mat-option>
 
-        <ng-container *ngIf="this.query.isEmpty()">
+        <ng-container *ngIf="this.query.isEmpty() && !searchTerm">
             <mat-optgroup [label]="'Search options'">
                 <mat-option value="use-tag"><span style="font-weight: bold;">tag: </span> tag</mat-option>
                 <mat-option value="use-status"><span style="font-weight: bold;">status: </span> tagged, untagged, all</mat-option>

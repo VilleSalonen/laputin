@@ -14,7 +14,7 @@ import {
     MatAutocomplete,
     MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, tap } from 'rxjs/operators';
 
 import { Tag } from './../models/tag';
 import { File } from './../models/file';
@@ -85,14 +85,18 @@ export class FileQueryComponent implements OnInit {
 
     public tagCreationAllowed = false;
 
-    private filenameChanged: Subject<string> = new Subject<string>();
+    private queryUpdatedSubject = new Subject<FileQuery>();
 
     constructor(private _service: LaputinService, private router: Router) {
-        this.filenameChanged
-            .pipe(debounceTime(300), distinctUntilChanged())
-            .subscribe(model => {
-                this.query.filename = model;
-                this.emitUpdate(this.query);
+        this.queryUpdatedSubject
+            .pipe(
+                distinctUntilChanged(
+                    (a, b) => JSON.stringify(a) === JSON.stringify(b)
+                )
+            )
+            .subscribe(query => {
+                this.query = new FileQuery(query);
+                this.queryUpdated.emit(query);
             });
     }
 
@@ -125,23 +129,27 @@ export class FileQueryComponent implements OnInit {
     }
 
     public remove(tag: Tag): void {
-        this.query.removeTag(tag);
-        this.emitUpdate(this.query);
+        const query = new FileQuery(this.query);
+        query.removeTag(tag);
+        this.emitUpdate(query);
     }
 
     public andTag(tag: Tag) {
-        this.query.andTag(tag);
-        this.emitUpdate(this.query);
+        const query = new FileQuery(this.query);
+        query.andTag(tag);
+        this.emitUpdate(query);
     }
 
     public orTag(tag: Tag) {
-        this.query.orTag(tag);
-        this.emitUpdate(this.query);
+        const query = new FileQuery(this.query);
+        query.orTag(tag);
+        this.emitUpdate(query);
     }
 
     public notTag(tag: Tag) {
-        this.query.notTag(tag);
-        this.emitUpdate(this.query);
+        const query = new FileQuery(this.query);
+        query.notTag(tag);
+        this.emitUpdate(query);
     }
 
     public async onOptionSelected(event: MatAutocompleteSelectedEvent) {
@@ -149,14 +157,16 @@ export class FileQueryComponent implements OnInit {
             if (event.option.value === 'use-tag') {
                 this.termInput.nativeElement.value = 'tag:';
             } else if (event.option.value.type === OptionType.Status) {
-                this.query.status = event.option.value.value;
-                this.query.filename = '';
-                this.emitUpdate(this.query);
+                const query = new FileQuery(this.query);
+                query.status = event.option.value.value;
+                query.filename = '';
+                this.emitUpdate(query);
                 this.clearInput();
             } else if (event.option.value.type === OptionType.Tag) {
-                this.andTag(event.option.value.value);
-                this.query.filename = '';
-                this.emitUpdate(this.query);
+                const query = new FileQuery(this.query);
+                query.andTag(event.option.value.value);
+                query.filename = '';
+                this.emitUpdate(query);
                 this.clearInput();
             } else if (event.option.value.type === OptionType.File) {
                 this.router.navigate(['/files', event.option.value.value.hash]);
@@ -170,8 +180,8 @@ export class FileQueryComponent implements OnInit {
         this.searchTerm = value ? value.toLowerCase() : '';
 
         if (this.searchTerm.length === 0) {
-            this.query = new FileQuery();
-            this.queryUpdated.emit(this.query);
+            // this.query = new FileQuery();
+            // this.queryUpdated.emit(this.query);
             return;
         }
 
@@ -195,8 +205,6 @@ export class FileQueryComponent implements OnInit {
                 option.value.name.toLowerCase().includes(tagSearchTerm)
             )
             .slice(0, 5);
-
-        this.filenameChanged.next(this.searchTerm);
     }
 
     public clearInputAndQuery(): void {
@@ -205,19 +213,20 @@ export class FileQueryComponent implements OnInit {
     }
 
     public clearInput(): void {
+        this.searchTerm = '';
         this.termInput.nativeElement.value = '';
         this.termCtrl.setValue(null);
         this.matchingTags = [];
     }
 
     public clearQuery(): void {
-        this.query = new FileQuery();
-        this.queryUpdated.emit(this.query);
+        this.emitUpdate(new FileQuery());
     }
 
     public clearStatus(): void {
-        this.query.status = 'both';
-        this.emitUpdate(this.query);
+        const query = new FileQuery(this.query);
+        query.status = 'both';
+        this.emitUpdate(query);
     }
 
     public onKeyUp($event: KeyboardEvent): void {
@@ -227,12 +236,14 @@ export class FileQueryComponent implements OnInit {
 
         if ($event.key === 'Enter') {
             this.autocompleteTrigger.closePanel();
+            const query = new FileQuery(this.query);
+            query.filename = this.searchTerm || '';
+            this.emitUpdate(query);
         }
     }
 
     public emitUpdate(query: FileQuery) {
-        console.log(query);
-        this.queryUpdated.emit(query);
+        this.queryUpdatedSubject.next(query);
     }
 
     public showHelp() {}
