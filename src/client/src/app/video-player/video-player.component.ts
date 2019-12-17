@@ -55,7 +55,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public tagCreationOpen = false;
     public AutocompleteType = AutocompleteType;
 
-    public fooClass: boolean;
+    public mouseOverVideo: boolean;
 
     private player: HTMLVideoElement;
 
@@ -212,9 +212,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             .pipe(distinctUntilChanged(), takeUntil(this.fileClosed))
             .subscribe(val => {
                 if (val === 'start') {
-                    this.fooClass = true;
+                    this.mouseOverVideo = true;
                 } else {
-                    this.fooClass = false;
+                    this.mouseOverVideo = false;
                 }
             });
 
