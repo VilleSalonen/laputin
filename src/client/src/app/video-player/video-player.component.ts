@@ -62,6 +62,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private duration: string;
 
     @ViewChild('playerView', { static: false }) playerView: ElementRef;
+    @ViewChild('videoArea', { static: false }) videoArea: ElementRef;
     @ViewChild('player', { static: false }) playerElem: ElementRef;
     @ViewChild('slider', { static: false }) sliderElem: ElementRef;
     @ViewChild('volume', { static: false }) volumeSliderElem: ElementRef;
@@ -193,16 +194,16 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         );
 
         const mouseEnter = fromEvent(
-            this.playerView.nativeElement,
+            this.videoArea.nativeElement,
             'mouseenter'
         );
-        const mouseMove = fromEvent(this.playerView.nativeElement, 'mousemove');
+        const mouseMove = fromEvent(this.videoArea.nativeElement, 'mousemove');
         const afterMouseMove = mouseMove.pipe(
             map(ev => of(ev).pipe(delay(2000))),
             switchMap(flatten => flatten)
         );
         const mouseLeave = fromEvent(
-            this.playerView.nativeElement,
+            this.videoArea.nativeElement,
             'mouseleave'
         );
 

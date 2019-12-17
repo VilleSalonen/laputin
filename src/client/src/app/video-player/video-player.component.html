@@ -1,6 +1,6 @@
 <div class="container" style="padding: 24px;">
     <div class="column player" #playerView style="flex-grow: 1; margin-right: 24px; position: relative;">
-        <div class="row video-area" [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
+        <div class="row video-area" #videoArea [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
             <div class="filename">
                 <span class="filename-small">{{file.directory}}</span>
                 <br />
