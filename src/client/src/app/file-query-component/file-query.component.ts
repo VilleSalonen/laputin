@@ -27,7 +27,8 @@ import { Router } from '@angular/router';
 enum OptionType {
     Tag,
     Status,
-    File
+    File,
+    SearchOption
 }
 
 class Option {
@@ -46,6 +47,12 @@ class Option {
 })
 @Injectable()
 export class FileQueryComponent implements OnInit {
+    public allSearchOptions: Option[] = [
+        new Option(OptionType.SearchOption, 'tag', 'tag:'),
+        new Option(OptionType.SearchOption, 'tagged, untagged, all', 'status:'),
+        new Option(OptionType.SearchOption, 'file', 'file:')
+    ];
+
     public allStatuses: Option[] = [
         new Option(OptionType.Status, 'Both', 'both'),
         new Option(OptionType.Status, 'Tagged', 'tagged'),
@@ -154,8 +161,8 @@ export class FileQueryComponent implements OnInit {
 
     public async onOptionSelected(event: MatAutocompleteSelectedEvent) {
         if (event && event.option && event.option.value) {
-            if (event.option.value === 'use-tag') {
-                this.termInput.nativeElement.value = 'tag:';
+            if (event.option.value.type === OptionType.SearchOption) {
+                this.termInput.nativeElement.value = event.option.value.value;
             } else if (event.option.value.type === OptionType.Status) {
                 const query = new FileQuery(this.query);
                 query.status = event.option.value.value;

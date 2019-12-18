@@ -69,9 +69,7 @@
 
         <ng-container *ngIf="this.query.isEmpty() && !searchTerm">
             <mat-optgroup [label]="'Search options'">
-                <mat-option value="use-tag"><span style="font-weight: bold;">tag: </span> tag</mat-option>
-                <mat-option value="use-status"><span style="font-weight: bold;">status: </span> tagged, untagged, all</mat-option>
-                <mat-option value="use-file"><span style="font-weight: bold;">file: </span> file</mat-option>
+                <mat-option *ngFor="let searchOption of allSearchOptions" [value]="searchOption"><span style="font-weight: bold;">{{ searchOption.value }}</span> {{ searchOption.text }}</mat-option>
             </mat-optgroup>
         </ng-container>
 
