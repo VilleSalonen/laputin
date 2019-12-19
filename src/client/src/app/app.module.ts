@@ -19,7 +19,8 @@ import {
     MatMenuModule,
     MatTooltipModule,
     MatChipsModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -92,6 +93,7 @@ import { DurationPipe } from './file/duration.pipe';
         MatChipsModule,
         MatIconModule,
         LazyLoadImageModule,
+        MatProgressSpinnerModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },

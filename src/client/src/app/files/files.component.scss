@@ -26,6 +26,11 @@
     overflow: auto;
 }
 
+.files-loading {
+    align-items: center;
+    justify-content: center;
+}
+
 .files-grid {
     flex: 1;
     display: grid;
