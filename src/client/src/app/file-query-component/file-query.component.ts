@@ -6,7 +6,8 @@ import {
     Output,
     EventEmitter,
     OnInit,
-    Injectable
+    Injectable,
+    HostListener
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
@@ -254,4 +255,11 @@ export class FileQueryComponent implements OnInit {
     }
 
     public showHelp() {}
+
+    @HostListener('document:keypress', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent) {
+        if (event.code === 'KeyF' && event.ctrlKey && event.shiftKey) {
+            this.termInput.nativeElement.focus();
+        }
+    }
 }
