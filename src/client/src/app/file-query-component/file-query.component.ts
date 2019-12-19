@@ -254,8 +254,6 @@ export class FileQueryComponent implements OnInit {
         this.queryUpdatedSubject.next(query);
     }
 
-    public showHelp() {}
-
     @HostListener('document:keypress', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent) {
         if (event.code === 'KeyF' && event.ctrlKey && event.shiftKey) {

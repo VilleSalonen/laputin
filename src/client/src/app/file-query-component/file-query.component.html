@@ -57,8 +57,7 @@
             [matChipInputFor]="chipList"
             [matChipInputAddOnBlur]="addOnBlur"
             (input)="onValueChange($event)"
-            (keyup)="onKeyUp($event)"
-            (focus)="showHelp()" />
+            (keyup)="onKeyUp($event)" />
         <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInputAndQuery()">
             <mat-icon>close</mat-icon>
         </button>
