@@ -22,6 +22,8 @@ export class FilesComponent implements OnInit, OnDestroy {
     public files: File[] = [];
     public loading = false;
     public query: FileQuery;
+    public totalDuration: string;
+    public totalSize: string;
 
     private sub: any;
 
@@ -115,6 +117,19 @@ export class FilesComponent implements OnInit, OnDestroy {
             .then((files: File[]) => {
                 localStorage.setItem('query', JSON.stringify(this.query));
                 this.filesSubscription.next(files);
+                let totalSeconds = 0.0;
+                let totalSize = 0.0;
+                files.forEach(f => {
+                    const duration = parseFloat(f.metadata.duration);
+                    if (!isNaN(duration)) {
+                        totalSeconds += parseFloat(f.metadata.duration);
+                    }
+                    totalSize += f.size;
+                });
+
+                this.totalDuration = this.humanDuration(totalSeconds);
+                this.totalSize = this.humanFileSize(totalSize);
+
                 this.loading = false;
             });
     }
@@ -133,5 +148,36 @@ export class FilesComponent implements OnInit, OnDestroy {
 
     showMore(): void {
         this.files = this.allFiles.slice(0, this.files.length + 100);
+    }
+
+    humanDuration(seconds: number): string {
+        const days = Math.floor(seconds / (3600 * 24));
+        seconds -= days * 3600 * 24;
+        const hours = Math.floor(seconds / 3600);
+        seconds -= hours * 3600;
+        const mins = Math.floor(seconds / 60);
+        seconds -= mins * 60;
+
+        if (days > 0) {
+            return days + ' d ' + hours + ' h';
+        } else if (hours > 0) {
+            return hours + ' h ' + mins + ' min';
+        } else {
+            return mins + ' min ' + Math.floor(seconds) + ' s';
+        }
+    }
+
+    humanFileSize(bytes: number): string {
+        const threshold = 1000;
+        if (Math.abs(bytes) < threshold) {
+            return bytes + ' B';
+        }
+        const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        let unit = -1;
+        do {
+            bytes = bytes / threshold;
+            ++unit;
+        } while (Math.abs(bytes) >= threshold && unit < units.length - 1);
+        return bytes.toFixed(1) + ' ' + units[unit];
     }
 }

@@ -17,6 +17,11 @@ import { Screenshotter } from './screenshotter';
 import { Library } from './library';
 import { Query } from './query.model';
 
+const probe = require('node-ffprobe')
+const ffprobeInstaller = require('@ffprobe-installer/ffprobe')
+
+probe.FFPROBE_PATH = ffprobeInstaller.path;
+
 export class FileLibrary extends events.EventEmitter {
     private _existingFiles: {[path: string]: File} = {};
 
@@ -99,7 +104,9 @@ export class FileLibrary extends events.EventEmitter {
             winston.log('verbose', 'File found in same path with same size: ' + filePath);
         } else {
             const hash = await this._hasher.hash(filePath, stats);
-            const file = new File(hash, filePath, [], stats.size);
+            const metadata = await this.readMetadata(filePath);
+
+            const file = new File(hash, filePath, [], stats.size, metadata);
             this.addFileToBookkeeping(file);
 
             if (!this._screenshotter.exists(file)) {
@@ -112,6 +119,35 @@ export class FileLibrary extends events.EventEmitter {
         }
 
         delete this._existingFiles[escapedFilePath];
+    }
+
+    private async readMetadata(filePath: string): Promise<any> {
+        const data = await probe(filePath);
+        if (data) {
+            let isVideo = false;
+            let primaryVideoStream;
+            for (const stream of data.streams) {
+                isVideo = isVideo || stream.codec_type === 'video';
+                primaryVideoStream = stream;
+                break;
+            }
+
+            if (!isVideo) {
+                return {};
+            }
+
+            return {
+                type: 'video',
+                codec: primaryVideoStream.codec_name,
+                width: primaryVideoStream.width,
+                height: primaryVideoStream.height,
+                duration: data.format.duration,
+                bitrate: data.format.bit_rate,
+                framerate: primaryVideoStream.avg_frame_rate
+            };
+        } else {
+            return {};
+        }
     }
 
     private addFileToBookkeeping(file: File): void {

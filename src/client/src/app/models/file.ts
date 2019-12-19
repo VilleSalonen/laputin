@@ -8,12 +8,14 @@ export class File implements TagContainer {
     public directory: string;
     public nameSansSuffix: string;
     public suffix: string;
+    public metadata: any;
 
     constructor(
         public hash: string,
         public path: string,
         public tags: Tag[],
-        public size: number
+        public size: number,
+        metadata?: any
     ) {
         this.name = this.path.substring(this.path.lastIndexOf('/') + 1);
         this.escapedUrl = this.path.replace('#', '%23');
@@ -21,6 +23,7 @@ export class File implements TagContainer {
         this.nameSansSuffix = this.name.substr(0, this.name.lastIndexOf('.'));
         this.suffix = this.name.substr(this.name.lastIndexOf('.'));
         this.humanSize = this.formatHumanSize();
+        this.metadata = metadata || {};
     }
 
     private formatHumanSize(): string {

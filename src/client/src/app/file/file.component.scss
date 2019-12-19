@@ -18,7 +18,7 @@ a, a:hover {
     background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .filename {
@@ -42,6 +42,13 @@ a, a:hover {
 }
 
 ::ng-deep .tooltip {
+    font-size: 14px;
+    max-width: 800px !important;
+    background: #0F1937;
+}
+
+::ng-deep .metadata-tooltip {
+    white-space: pre-line;
     font-size: 14px;
     max-width: 800px !important;
     background: #0F1937;

@@ -134,7 +134,8 @@ export class LaputinService {
             file.hash,
             file.path,
             this._convertTags(file.tags),
-            file.size
+            file.size,
+            file.metadata
         );
     }
 

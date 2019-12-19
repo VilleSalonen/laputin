@@ -21,7 +21,7 @@ export class Library {
     public async createTables(): Promise<void> {
         await this._db.runAsync('CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);');
         await this._db.runAsync('CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));');
-        await this._db.runAsync('CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER, size INTEGER);');
+        await this._db.runAsync('CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER, size INTEGER, metadata BLOB);');
         await this._db.runAsync(`CREATE TABLE files_timecodes (
             id INTEGER PRIMARY KEY autoincrement,
             hash TEXT,
@@ -39,8 +39,8 @@ export class Library {
     }
 
     public addFile(file: File): Promise<void> {
-        const stmt = this._db.prepare('INSERT OR REPLACE INTO files (hash, path, active, size) VALUES (?, ?, 1, ?)');
-        return stmt.runAsync(file.hash, file.path, file.size);
+        const stmt = this._db.prepare('INSERT OR REPLACE INTO files (hash, path, active, size, metadata) VALUES (?, ?, 1, ?, ?)');
+        return stmt.runAsync(file.hash, file.path, file.size, JSON.stringify(file.metadata));
     }
 
     public deactivateFile(file: File): Promise<void> {
@@ -61,7 +61,7 @@ export class Library {
 
         const params: any[] = [];
 
-        let sql1 = 'SELECT files.hash, files.path, files.size FROM files WHERE 1 = 1';
+        let sql1 = 'SELECT files.hash, files.path, files.size, files.metadata FROM files WHERE 1 = 1';
         if (!query.includeInactive) {
             sql1 += ' AND active = 1';
         }
@@ -91,7 +91,7 @@ export class Library {
         sql1 += ' ORDER BY path ';
 
         const each1 = (err: any, row: any) => {
-            files[row.hash] = new File(row.hash, row.path, [], row.size);
+            files[row.hash] = new File(row.hash, row.path, [], row.size, row.metadata ? JSON.parse(row.metadata) : {});
         };
 
         const stmt = this._db.prepare(sql1);

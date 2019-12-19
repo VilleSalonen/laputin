@@ -58,16 +58,15 @@
 .files-search {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    margin-left: 15%;
-    margin-right: 15%;
+    align-items: baseline;
     margin-top: 0.5 * $standard-margin;
+    margin-left: auto;
+    margin-right: auto;
+    width: 2448px;
 
-    h2 {
-        margin-top: 0;
-        margin-bottom: 0;
-        align-self: center;
-        margin-right: 5 * $standard-margin;
+    span {
+        margin-left: 2 * $standard-margin;
+        font-weight: bold;
     }
 }
 
