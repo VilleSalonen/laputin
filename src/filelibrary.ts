@@ -168,7 +168,7 @@ export class FileLibrary extends events.EventEmitter {
             return true;
         }
 
-        const extension = filePath.substr(filePath.lastIndexOf('.') + 1);
+        const extension = path.extname(filePath);
         if (this._configuration.ignoredExtensions.indexOf(extension) > -1) {
             return true;
         }

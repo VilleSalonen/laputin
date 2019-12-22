@@ -346,7 +346,7 @@ async function initializeLaputin(path: string): Promise<Laputin> {
     }
 
     const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
-    const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null, ['tmp']), fakeScreenshotter);
+    const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null, ['.tmp']), fakeScreenshotter);
 
     await l.library.createTables();
 
