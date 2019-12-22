@@ -1,0 +1,33 @@
+{
+    "posthtml": {
+      "plugins": {
+        "posthtml-attrs-sorter": {
+            "order": [
+                "\\*ng.*",
+                "\\#.*",
+                "id",
+                "\\[id\\]",
+                "class",
+                "name",
+                "type",
+                "\\[\\(.+",
+                "\\[ng.+",
+                "\\[.+",
+                "\\(.+",
+                "data-.+",
+                "ng-.+",
+                "src",
+                "for",
+                "type",
+                "href",
+                "values",
+                "title",
+                "alt",
+                "role",
+                "aria-.+",
+                "$unknown$"
+            ]
+        }
+      }
+    }
+  }
