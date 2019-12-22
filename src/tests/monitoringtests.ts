@@ -85,6 +85,34 @@ describe('File Library', function() {
         });
     });
 
+    describe('Ignored files are ignored', () => {
+        it('Offline', async () => {
+            // Initial startup and shutdown
+            laputin = await initializeLaputin(currentPath);
+            shutdownLaputin(laputin);
+
+            await copyFile('tests/test-content/Thumbs.db', 'deploy-tests/' + currentPath + '/Thumbs.db');
+            await copyFile('tests/test-content/.ignored', 'deploy-tests/' + currentPath + '/.ignored');
+            await copyFile('tests/test-content/ignored.tmp', 'deploy-tests/' + currentPath + '/ignored.tmp');
+
+            // Detecting changes after second startup
+            await startLaputin(laputin);
+
+            return shouldContainFiles(laputin, []);
+        });
+
+        it('Online', async function() {
+            // Start monitoring before file is copied
+            laputin = await initializeLaputin(currentPath);
+
+            await copyFile('tests/test-content/Thumbs.db', 'deploy-tests/' + currentPath + '/Thumbs.db');
+            await copyFile('tests/test-content/.ignored', 'deploy-tests/' + currentPath + '/.ignored');
+            await copyFile('tests/test-content/ignored.tmp', 'deploy-tests/' + currentPath + '/ignored.tmp');
+
+            return shouldContainFiles(laputin, []);
+        });
+    });
+
     describe('File path change detected', () => {
         it('Offline', async () => {
             const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/automobile.jpg', [], 39031);
@@ -318,7 +346,7 @@ async function initializeLaputin(path: string): Promise<Laputin> {
     }
 
     const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
-    const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null, []), fakeScreenshotter);
+    const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null, ['tmp']), fakeScreenshotter);
 
     await l.library.createTables();
 
