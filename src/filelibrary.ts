@@ -28,7 +28,7 @@ export class FileLibrary extends events.EventEmitter {
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
 
-    constructor(private library: Library, private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter) {
+    constructor(private library: Library, private _libraryPath: string, private _hasher: IHasher, private _screenshotter: Screenshotter, private skipMetadataExtraction: boolean) {
         super();
     }
 
@@ -104,7 +104,10 @@ export class FileLibrary extends events.EventEmitter {
             winston.log('verbose', 'File found in same path with same size: ' + filePath);
         } else {
             const hash = await this._hasher.hash(filePath, stats);
-            const metadata = await this.readMetadata(filePath);
+            let metadata = {};
+            if (!this.skipMetadataExtraction) {
+                metadata = await this.readMetadata(filePath);
+            }
 
             const file = new File(hash, filePath, [], stats.size, metadata);
             this.addFileToBookkeeping(file);
