@@ -17,8 +17,8 @@ import { Screenshotter } from './screenshotter';
 import { Library } from './library';
 import { Query } from './query.model';
 
-const probe = require('node-ffprobe')
-const ffprobeInstaller = require('@ffprobe-installer/ffprobe')
+const probe = require('node-ffprobe');
+const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
 
 probe.FFPROBE_PATH = ffprobeInstaller.path;
 
