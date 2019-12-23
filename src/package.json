@@ -12,7 +12,6 @@
     "command-line-args": "~5.0.2",
     "command-line-usage": "^5.0.4",
     "express": "4.16.3",
-    "hammerjs": "^2.0.8",
     "lodash": "^4.17.15",
     "node-ffprobe": "^3.0.0",
     "sqlite3": "4.1.0",
