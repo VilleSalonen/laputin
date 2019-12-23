@@ -38,9 +38,9 @@ export class LaputinService {
 
     public queryTimecodes(query: FileQuery): Observable<Timecode[]> {
         const params = this.compileParams(query);
-        return this._http.get<Timecode[]>(
-            this._baseUrl + '/timecodes' + params
-        );
+        return this._http
+            .get<any[]>(this._baseUrl + '/timecodes' + params)
+            .pipe(map(timecodes => this.mapTimecodes(timecodes)));
     }
 
     public getTags(): Observable<Tag[]> {
@@ -64,9 +64,11 @@ export class LaputinService {
     }
 
     public getTimecodes(file: File): Observable<Timecode[]> {
-        return this._http.get<Timecode[]>(
-            this._baseUrl + '/files/' + file.hash + '/timecodes'
-        );
+        return this._http
+            .get<Timecode[]>(
+                this._baseUrl + '/files/' + file.hash + '/timecodes'
+            )
+            .pipe(map(timecodes => this.mapTimecodes(timecodes)));
     }
 
     public createTagTimecode(
@@ -309,5 +311,19 @@ export class LaputinService {
         }
 
         return paramsStr;
+    }
+
+    private mapTimecodes(timecodes: any[]): Timecode[] {
+        return timecodes.map(
+            t =>
+                new Timecode(
+                    t.timecodeId,
+                    t.hash,
+                    t.path,
+                    t.timecodeTags,
+                    t.start,
+                    t.end
+                )
+        );
     }
 }

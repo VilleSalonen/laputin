@@ -2,9 +2,9 @@
     <img mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" />
 </div>
 
-<p>{{ formatPreciseDuration(timecode.start) }} - {{ formatPreciseDuration(timecode.end) }}</p>
+<p>{{ timecode.start | preciseDuration }} - {{ timecode.end | preciseDuration }}</p>
 
-<p>{{ formatTimecodeDuration() }}</p>
+<p>{{ timecode.durationInSeconds | duration }}</p>
 
 <button color="primary" *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
     mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>

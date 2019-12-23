@@ -46,6 +46,7 @@ import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screen
 import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
 import { FileQueryComponent } from './file-query-component/file-query.component';
 import { DurationPipe } from './file/duration.pipe';
+import { PreciseDurationPipe } from './file/precise-duration.pipe';
 
 @NgModule({
     declarations: [
@@ -66,7 +67,8 @@ import { DurationPipe } from './file/duration.pipe';
         TimecodesComponent,
         TimecodeSearchComponent,
         VideoPlayerComponent,
-        DurationPipe
+        DurationPipe,
+        PreciseDurationPipe
     ],
     entryComponents: [
         TagScreenshotDialogComponent,

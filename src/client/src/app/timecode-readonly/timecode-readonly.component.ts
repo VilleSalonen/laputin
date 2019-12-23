@@ -9,8 +9,7 @@ import {
 import { File } from './../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
-import { Timecode, TimecodeTag } from '../models';
-import { Utils } from '../utils';
+import { Timecode } from '../models';
 
 @Component({
     selector: 'app-timecode-readonly',
@@ -27,8 +26,6 @@ export class TimecodeReadonlyComponent {
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
 
     public addingTags: boolean;
-
-    public formatTimecodeDuration = Utils.formatTimecodeDuration;
 
     constructor(private _playerService: PlayerService) {}
 

@@ -9,7 +9,6 @@ import {
     AfterViewInit,
     OnDestroy
 } from '@angular/core';
-import * as moment from 'moment';
 
 import {
     File,
@@ -25,7 +24,6 @@ import { LaputinService } from './../laputin.service';
 import { PlayerService } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
-import { Utils } from '../utils';
 import { fromEvent, merge, of } from 'rxjs';
 import {
     takeUntil,
@@ -35,6 +33,7 @@ import {
     switchMap,
     distinctUntilChanged
 } from 'rxjs/operators';
+import { formatPreciseDuration } from '../file/precise-duration.pipe';
 
 @Component({
     selector: 'app-video-player',
@@ -359,24 +358,23 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    private formatDuration(durationInSeconds: number): string {
-        const duration = moment.duration(durationInSeconds, 'seconds');
-
-        let result = '';
-
-        const hours = duration.hours();
-        const minutes = duration.minutes();
-        const seconds = duration.seconds();
-
-        if (hours) {
-            result += (hours >= 10 ? hours : '0' + hours) + ':';
+    private formatDuration(secondsWithDecimals: number): string {
+        // Pad to 2 or 3 digits, default is 2
+        function pad(n: number, z?: number) {
+            z = z || 2;
+            return ('00' + n).slice(-z);
         }
 
-        result += minutes >= 10 ? minutes : '0' + minutes;
-        result += ':';
-        result += seconds >= 10 ? seconds : '0' + seconds;
+        let milliseconds = secondsWithDecimals * 1000;
 
-        return result;
+        const ms = milliseconds % 1000;
+        milliseconds = (milliseconds - ms) / 1000;
+        const secs = milliseconds % 60;
+        milliseconds = (milliseconds - secs) / 60;
+        const mins = milliseconds % 60;
+        const hrs = (milliseconds - mins) / 60;
+
+        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
     }
 
     private setPlayheadTo(playPercent: number) {
@@ -564,11 +562,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public setTagStart(): void {
-        this.tagStart = Utils.formatPreciseDuration(this.player.currentTime);
+        this.tagStart = formatPreciseDuration(this.player.currentTime);
     }
 
     public setTagEnd(): void {
-        this.tagEnd = Utils.formatPreciseDuration(this.player.currentTime);
+        this.tagEnd = formatPreciseDuration(this.player.currentTime);
     }
 
     public goToTagStart(): void {
@@ -634,7 +632,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private convertFromSeparatedTimecodeToSeconds(
         separatedTimecode: string
     ): number {
-        return moment.duration(separatedTimecode).asSeconds();
+        const components = separatedTimecode.split(':');
+        return +components[0] * 3600 + +components[1] * 60 + +components[2];
     }
 
     private addTagTimecode(timecode: Timecode): void {

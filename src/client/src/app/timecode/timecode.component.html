@@ -1,7 +1,7 @@
 <div class="container">
     <div class="screenshot">
         <img (click)="goToTimecode()" mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
-            [matTooltip]="formatTimecodeDuration() + ': ' + formattedTags()" />
+            matTooltip="{{ timecode.durationInSeconds | duration }}: {{ formattedTags() }}" />
     </div>
 
     <div class="controls edit-control" (click)="edit()" title="Edit...">
@@ -12,11 +12,11 @@
         <i class="fas fa-camera"></i>
     </div>
 
-    <div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{formatPreciseDuration(timecode.start)}}">
+    <div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{ timecode.start | preciseDuration }}">
         <i class="fas fa-sign-out-alt"></i>
     </div>
 
-    <div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{formatPreciseDuration(timecode.end)}}">
+    <div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{ timecode.end | preciseDuration }}">
         <i class="fas fa-sign-in-alt"></i>
     </div>
 </div>

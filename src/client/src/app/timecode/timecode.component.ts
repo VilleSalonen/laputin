@@ -6,13 +6,12 @@ import {
     Injectable
 } from '@angular/core';
 
-import { File, Timecode, TimecodeTag } from './../models';
+import { File, Timecode } from './../models';
 import { LaputinService } from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { TimecodeEditDialogComponent } from '../timecode-edit-dialog/timecode-edit-dialog.component';
 import { MatDialog } from '@angular/material';
-import { Utils } from '../utils';
 
 @Component({
     selector: 'app-timecode',
@@ -28,9 +27,6 @@ export class TimecodeComponent {
     @Input() timecode: Timecode;
     @Input() currentTime: number;
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
-
-    public formatTimecodeDuration = Utils.formatTimecodeDuration;
-    public formatPreciseDuration = Utils.formatPreciseDuration;
 
     constructor(
         private _service: LaputinService,

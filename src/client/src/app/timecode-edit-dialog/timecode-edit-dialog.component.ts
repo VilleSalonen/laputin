@@ -5,7 +5,6 @@ import { File, Timecode, Tag, TimecodeTag } from './../models';
 import { AutocompleteType } from '../models/autocompletetype';
 import { LaputinService } from '../laputin.service';
 import { PlayerService } from '../player.service';
-import { Utils } from '../utils';
 
 export interface TimecodeEditDialogData {
     file: File;
@@ -23,9 +22,6 @@ export class TimecodeEditDialogComponent {
     public timecode: Timecode;
 
     public alreadySelectedTags: Tag[];
-
-    public formatTimecodeDuration = Utils.formatTimecodeDuration;
-    public formatPreciseDuration = Utils.formatPreciseDuration;
 
     constructor(
         public dialogRef: MatDialogRef<TimecodeEditDialogData>,
