@@ -1,6 +1,6 @@
 <div class="container">
     <div class="screenshot">
-        <img (click)="goToTimecode()" mat-card-image src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
+        <img (click)="goToTimecode()" src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
             matTooltip="{{ timecode.durationInSeconds | duration }}: {{ formattedTags() }}" />
     </div>
 

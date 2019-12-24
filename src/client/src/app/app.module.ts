@@ -12,8 +12,6 @@ import {
     MatSlideToggleModule,
     MatInputModule,
     MatBadgeModule,
-    MatSelectModule,
-    MatCardModule,
     MatSliderModule,
     MatDialogModule,
     MatMenuModule,
@@ -31,7 +29,6 @@ import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { FileComponent } from './file/file.component';
 import { FilesComponent } from './files/files.component';
 import { SearchTagComponent } from './search-tag/search-tag.component';
-import { TagAutocompleteComponent } from './tag-autocomplete/tag-autocomplete.component';
 import { TagsComponent } from './tags/tags.component';
 import { TagFilterPipe } from './tag-filter.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
@@ -47,6 +44,7 @@ import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edi
 import { FileQueryComponent } from './file-query-component/file-query.component';
 import { DurationPipe } from './file/duration.pipe';
 import { PreciseDurationPipe } from './file/precise-duration.pipe';
+import { TagAutocompleteModule } from './tag-autocomplete/tag-autocomplete.module';
 
 @NgModule({
     declarations: [
@@ -56,7 +54,6 @@ import { PreciseDurationPipe } from './file/precise-duration.pipe';
         FileQueryComponent,
         FilesComponent,
         SearchTagComponent,
-        TagAutocompleteComponent,
         TagFilterPipe,
         TagRowComponent,
         TagsComponent,
@@ -86,8 +83,6 @@ import { PreciseDurationPipe } from './file/precise-duration.pipe';
         MatSlideToggleModule,
         MatInputModule,
         MatBadgeModule,
-        MatSelectModule,
-        MatCardModule,
         MatSliderModule,
         MatDialogModule,
         MatMenuModule,
@@ -96,6 +91,7 @@ import { PreciseDurationPipe } from './file/precise-duration.pipe';
         MatIconModule,
         LazyLoadImageModule,
         MatProgressSpinnerModule,
+        TagAutocompleteModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },
