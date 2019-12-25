@@ -50,7 +50,7 @@ export class Laputin {
 
     public startListening(): Promise<void> {
         let done: Function;
-        const promise = new Promise<void>((resolve, reject) => done = resolve);
+        const promise = new Promise<void>((resolve) => done = resolve);
 
         this._server = this.app.listen(this._port, done);
 
@@ -58,10 +58,10 @@ export class Laputin {
     }
 
     public stopListening(): Promise<void> {
-        let done: Function;
-        const promise = new Promise<void>((resolve, reject) => done = resolve);
+        let onError: (err?: Error) => void;
+        const promise = new Promise<void>((_, reject) => onError = reject);
 
-        this._server.close(done);
+        this._server.close(onError);
 
         return promise;
     }
