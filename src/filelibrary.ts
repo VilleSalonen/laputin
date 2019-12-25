@@ -114,7 +114,7 @@ export class FileLibrary extends events.EventEmitter {
             this.addFileToBookkeeping(file);
 
             if (!this._screenshotter.exists(file)) {
-                await this._screenshotter.screenshot(file, 180);
+                 await this._screenshotter.screenshot(file, 180);
             }
 
             this.emit('found', file);
@@ -127,8 +127,10 @@ export class FileLibrary extends events.EventEmitter {
 
     private async readMetadata(filePath: string): Promise<any> {
         const data = await probe(filePath);
-        if (data) {
+        if (data && data.streams) {
             let isVideo = false;
+            let isAudio = false;
+
             let primaryVideoStream;
             for (const stream of data.streams) {
                 isVideo = isVideo || stream.codec_type === 'video';
@@ -136,22 +138,40 @@ export class FileLibrary extends events.EventEmitter {
                 break;
             }
 
-            if (!isVideo) {
-                return {};
+            if (isVideo) {
+                return {
+                    type: 'video',
+                    video: {
+                        codec: primaryVideoStream.codec_name,
+                        width: primaryVideoStream.width,
+                        height: primaryVideoStream.height,
+                        duration: data.format.duration,
+                        bitrate: data.format.bit_rate,
+                        framerate: primaryVideoStream.avg_frame_rate
+                    }
+                };
             }
 
-            return {
-                type: 'video',
-                codec: primaryVideoStream.codec_name,
-                width: primaryVideoStream.width,
-                height: primaryVideoStream.height,
-                duration: data.format.duration,
-                bitrate: data.format.bit_rate,
-                framerate: primaryVideoStream.avg_frame_rate
-            };
-        } else {
-            return {};
+            let primaryAudioStream;
+            for (const stream of data.streams) {
+                isAudio = isAudio || stream.codec_type === 'audio';
+                primaryAudioStream = stream;
+                break;
+            }
+
+            if (isAudio) {
+                return {
+                    type: 'audio',
+                    video: {
+                        codec: primaryVideoStream.codec_name,
+                        duration: data.format.duration,
+                        bitrate: data.format.bit_rate
+                    }
+                };
+            }
         }
+
+        return {};
     }
 
     private addFileToBookkeeping(file: File): void {
