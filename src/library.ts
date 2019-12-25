@@ -39,8 +39,8 @@ export class Library {
     }
 
     public addFile(file: File): Promise<void> {
-        const stmt = this._db.prepare('INSERT OR REPLACE INTO files (hash, path, active, size, metadata) VALUES (?, ?, 1, ?, ?)');
-        return stmt.runAsync(file.hash, file.path, file.size, JSON.stringify(file.metadata));
+        const stmt = this._db.prepare('INSERT OR REPLACE INTO files (hash, path, active, size, metadata, type) VALUES (?, ?, 1, ?, ?, ?)');
+        return stmt.runAsync(file.hash, file.path, file.size, JSON.stringify(file.metadata), file.type);
     }
 
     public deactivateFile(file: File): Promise<void> {
