@@ -15,7 +15,7 @@ import {
     MatAutocomplete,
     MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
-import { distinctUntilChanged, tap } from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { Tag } from './../models/tag';
 import { File } from './../models/file';

@@ -41,17 +41,16 @@ import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly
 import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
 import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
-import { FileQueryComponent } from './file-query-component/file-query.component';
 import { DurationPipe } from './file/duration.pipe';
 import { PreciseDurationPipe } from './file/precise-duration.pipe';
 import { TagAutocompleteModule } from './tag-autocomplete/tag-autocomplete.module';
+import { FileQueryModule } from './file-query-component/file-query.module';
 
 @NgModule({
     declarations: [
         AppComponent,
         DuplicatesComponent,
         FileComponent,
-        FileQueryComponent,
         FilesComponent,
         SearchTagComponent,
         TagFilterPipe,
@@ -92,6 +91,7 @@ import { TagAutocompleteModule } from './tag-autocomplete/tag-autocomplete.modul
         LazyLoadImageModule,
         MatProgressSpinnerModule,
         TagAutocompleteModule,
+        FileQueryModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },
