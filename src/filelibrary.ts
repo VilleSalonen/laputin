@@ -169,7 +169,7 @@ export class FileLibrary extends events.EventEmitter {
         }
 
         const extension = path.extname(filePath);
-        if (this._configuration.ignoredExtensions.indexOf(extension) > -1) {
+        if (this._configuration.ignoredExtensions && this._configuration.ignoredExtensions.indexOf(extension) > -1) {
             return true;
         }
 
