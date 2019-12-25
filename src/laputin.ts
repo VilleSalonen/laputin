@@ -248,7 +248,7 @@ export class Laputin {
             if (i === components.length) {
                 current.use('/' + currentPath, express.static(this._libraryPath));
             } else {
-                current.use('/' + currentPath, previous);
+                current.use('/' + currentPath.replace(' ', '%20'), previous);
             }
 
             previous = current;
