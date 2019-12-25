@@ -12,6 +12,7 @@ import {
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LaputinService } from '../laputin.service';
+import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
     imports: [
@@ -24,7 +25,8 @@ import { LaputinService } from '../laputin.service';
         MatChipsModule,
         MatIconModule,
         BrowserModule,
-        MatButtonModule
+        MatButtonModule,
+        PipesModule
     ],
     exports: [FileQueryComponent],
     declarations: [FileQueryComponent],

@@ -33,7 +33,7 @@ import {
     switchMap,
     distinctUntilChanged
 } from 'rxjs/operators';
-import { formatPreciseDuration } from '../file/precise-duration.pipe';
+import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
 
 @Component({
     selector: 'app-video-player',

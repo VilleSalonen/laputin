@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { TagAutocompleteComponent } from './tag-autocomplete.component';
+import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
     imports: [
@@ -22,7 +23,8 @@ import { TagAutocompleteComponent } from './tag-autocomplete.component';
         MatInputModule,
         MatChipsModule,
         MatIconModule,
-        BrowserModule
+        BrowserModule,
+        PipesModule
     ],
     exports: [TagAutocompleteComponent],
     declarations: [TagAutocompleteComponent],

@@ -2,7 +2,7 @@ import { Component, OnInit, Injectable } from '@angular/core';
 
 import { File, Timecode, FileQuery } from './../models';
 import { LaputinService } from './../laputin.service';
-import { formatPreciseDuration } from '../file/precise-duration.pipe';
+import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
 
 class TimecodeItem {
     constructor(
