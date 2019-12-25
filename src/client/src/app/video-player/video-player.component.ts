@@ -507,11 +507,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public async screenshotTimecode(timecode: Timecode): Promise<void> {
-        await this._service.screenshotTimecode(
-            this.file,
-            timecode,
-            this.player.currentTime
-        );
+        await this._service
+            .screenshotTimecode(this.file, timecode, this.player.currentTime)
+            .toPromise();
         timecode.cacheBuster = '?cachebuster=' + new Date().toISOString();
     }
 
