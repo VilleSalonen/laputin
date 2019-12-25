@@ -125,7 +125,7 @@ export class FileLibrary extends events.EventEmitter {
             const file = new File(hash, filePath, [], stats.size, type.mime, metadata);
             this.addFileToBookkeeping(file);
 
-            if (type.mime.startsWith('video') && !this._screenshotter.exists(file)) {
+            if ((type.mime.startsWith('video') || type.mime.startsWith('image')) && !this._screenshotter.exists(file)) {
                 await this._screenshotter.screenshot(file, 180);
             }
 

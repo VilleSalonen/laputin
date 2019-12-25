@@ -34,23 +34,38 @@ export class Screenshotter {
     public async screenshot(file: File, timeInSeconds: number): Promise<void> {
         this.initialize();
 
-        const command = 'ffmpeg -y -ss ' + timeInSeconds +
-            ' -i "' + file.path +
-            '" -vframes 1 ' +
-            '"' + this.getThumbPath(file) + '"';
+        if (file.type.startsWith('video')) {
+            const command = 'ffmpeg -y -ss ' + timeInSeconds +
+                ' -i "' + file.path +
+                '" -vframes 1 ' +
+                '"' + this.getThumbPath(file) + '"';
 
-        const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
-            ' -i "' + file.path +
-            '" -vframes 1 -vf scale=800:-1 ' +
-            '"' + this.getThumbSmallPath(file) + '"';
+            const commandSmall = 'ffmpeg -y -ss ' + timeInSeconds +
+                ' -i "' + file.path +
+                '" -vframes 1 -vf scale=800:-1 ' +
+                '"' + this.getThumbSmallPath(file) + '"';
 
-        try {
-            child_process.execSync(command);
-            child_process.execSync(commandSmall);
-            this._library.storeTimeForFileScreenshot(file, timeInSeconds);
-            winston.log('verbose', 'Created screenshot for ' + file.path + '.');
-        } catch (err) {
-            winston.log('error', 'Could not create screenshot for ' + file.path + '!');
+            try {
+                child_process.execSync(command);
+                child_process.execSync(commandSmall);
+                this._library.storeTimeForFileScreenshot(file, timeInSeconds);
+                winston.log('verbose', 'Created screenshot for ' + file.path + '.');
+            } catch (err) {
+                winston.log('error', 'Could not create screenshot for ' + file.path + '!');
+            }
+        } else if (file.type.startsWith('image')) {
+            const commandSmall = 'ffmpeg -y ' +
+                ' -i "' + file.path + '"' +
+                ' -vf scale=800:-1 ' +
+                '"' + this.getThumbSmallPath(file) + '"';
+
+            try {
+                child_process.execSync(commandSmall);
+                this._library.storeTimeForFileScreenshot(file, timeInSeconds);
+                winston.log('verbose', 'Created screenshot for ' + file.path + '.');
+            } catch (err) {
+                winston.log('error', 'Could not create screenshot for ' + file.path + '!');
+            }
         }
     }
 
