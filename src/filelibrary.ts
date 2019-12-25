@@ -18,6 +18,9 @@ import { Library } from './library';
 import { Query } from './query.model';
 import {LaputinConfiguration} from './laputinconfiguration';
 
+const readChunk = require('read-chunk');
+const fileType = require('file-type');
+
 const probe = require('node-ffprobe');
 const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
 
@@ -105,16 +108,25 @@ export class FileLibrary extends events.EventEmitter {
             winston.log('verbose', 'File found in same path with same size: ' + filePath);
         } else {
             const hash = await this._hasher.hash(filePath, stats);
+
+            const buffer = readChunk.sync(filePath, 0, fileType.minimumBytes);
+            const type = fileType(buffer);
+
+            if (!type) {
+                winston.log('warn', `Could not read mime type from file ${filePath}. Skipping the file!`);
+                return;
+            }
+
             let metadata = {};
             if (!this.skipMetadataExtraction) {
                 metadata = await this.readMetadata(filePath);
             }
 
-            const file = new File(hash, filePath, [], stats.size, metadata);
+            const file = new File(hash, filePath, [], stats.size, type.mime, metadata);
             this.addFileToBookkeeping(file);
 
-            if (!this._screenshotter.exists(file)) {
-                 await this._screenshotter.screenshot(file, 180);
+            if (type.mime.startsWith('video') && !this._screenshotter.exists(file)) {
+                await this._screenshotter.screenshot(file, 180);
             }
 
             this.emit('found', file);
@@ -141,14 +153,12 @@ export class FileLibrary extends events.EventEmitter {
             if (isVideo) {
                 return {
                     type: 'video',
-                    video: {
-                        codec: primaryVideoStream.codec_name,
-                        width: primaryVideoStream.width,
-                        height: primaryVideoStream.height,
-                        duration: data.format.duration,
-                        bitrate: data.format.bit_rate,
-                        framerate: primaryVideoStream.avg_frame_rate
-                    }
+                    codec: primaryVideoStream.codec_name,
+                    width: primaryVideoStream.width,
+                    height: primaryVideoStream.height,
+                    duration: data.format.duration,
+                    bitrate: data.format.bit_rate,
+                    framerate: primaryVideoStream.avg_frame_rate
                 };
             }
 
@@ -162,11 +172,9 @@ export class FileLibrary extends events.EventEmitter {
             if (isAudio) {
                 return {
                     type: 'audio',
-                    video: {
-                        codec: primaryVideoStream.codec_name,
-                        duration: data.format.duration,
-                        bitrate: data.format.bit_rate
-                    }
+                    codec: primaryVideoStream.codec_name,
+                    duration: data.format.duration,
+                    bitrate: data.format.bit_rate
                 };
             }
         }

@@ -9,13 +9,15 @@ export class File {
     public tags: Tag[];
     public size: number;
     public metadata: any;
+    public type: string;
 
-    constructor(hash: string, filePath: string, tags: Tag[], size: number, metadata?: any) {
+    constructor(hash: string, filePath: string, tags: Tag[], size: number, type: string, metadata?: any) {
         this.hash = hash;
         this.path = filePath.replace(/\\/g, '/');
         this.name = this.cleanPath();
         this.tags = tags;
         this.size = size;
+        this.type = type;
         this.metadata = metadata || {};
     }
 
