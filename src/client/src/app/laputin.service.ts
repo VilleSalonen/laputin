@@ -114,7 +114,13 @@ export class LaputinService {
                     const current = duplicates[hash];
                     const files = current.map(
                         (file: any) =>
-                            new File(file.hash, file.path, [], file.size)
+                            new File(
+                                file.hash,
+                                file.path,
+                                [],
+                                file.size,
+                                file.type
+                            )
                     );
                     result.push(new Duplicate(hash, files));
                 }
@@ -137,6 +143,7 @@ export class LaputinService {
             file.path,
             this._convertTags(file.tags),
             file.size,
+            file.type,
             file.metadata
         );
     }

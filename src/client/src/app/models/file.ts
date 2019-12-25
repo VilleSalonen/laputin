@@ -15,6 +15,7 @@ export class File implements TagContainer {
         public path: string,
         public tags: Tag[],
         public size: number,
+        public type: string,
         metadata?: any
     ) {
         this.name = this.path.substring(this.path.lastIndexOf('/') + 1);

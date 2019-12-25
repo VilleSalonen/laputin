@@ -99,7 +99,7 @@ export class TimecodesComponent implements OnInit {
                     timecodeItems.push(
                         new TimecodeItem(
                             TimecodeItemType.File,
-                            new File(codes[0].hash, codes[0].path, [], 0),
+                            new File(codes[0].hash, codes[0].path, [], 0, ''),
                             codes
                         )
                     );

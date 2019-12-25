@@ -21,6 +21,11 @@ a, a:hover {
     justify-content: flex-end;
 }
 
+.image-file {
+    background-size: contain;
+    background-position-y: center;
+}
+
 .filename {
     padding-bottom: 0;
     font-weight: bold;

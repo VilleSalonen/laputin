@@ -1,5 +1,5 @@
 <a [routerLink]="['/files', file.hash]">
-    <div class="container" [lazyLoad]="image">
+    <div class="container" [lazyLoad]="image" [ngClass]="{ 'image-file': file.type && file.type.startsWith('image') }">
         <div style="display: flex; flex-direction: row; justify-content: space-between;">
             <div
                 class="filename"
