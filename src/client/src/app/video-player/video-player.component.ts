@@ -382,6 +382,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
 
     public close(): void {
+        this._playerService.clearPlayer();
         this.fileClosed.emit();
     }
 

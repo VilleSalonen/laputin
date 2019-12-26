@@ -9,14 +9,30 @@ export class PlayerService {
     }
 
     public getCurrentTime(): number {
+        if (!this.player) {
+            throw new Error('Player element not set!');
+        }
+
         return this.player.currentTime;
     }
 
     public setCurrentTime(currentTime: number): void {
-        this.player.currentTime = currentTime;
+        if (this.player) {
+            this.player.currentTime = currentTime;
+        }
     }
 
     public play(): void {
-        this.player.play();
+        if (this.player) {
+            this.player.play();
+        }
+    }
+
+    public clearPlayer(): void {
+        if (this.player) {
+            this.player.remove();
+        }
+
+        this.player = null;
     }
 }
