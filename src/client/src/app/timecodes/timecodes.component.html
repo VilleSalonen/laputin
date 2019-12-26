@@ -12,13 +12,13 @@
         </div>
     </div>
 
-    <div class="files-list" style="flex-grow: 1;">
+    <div class="files-list">
         <h2>Showing {{timecodeAmount}} matching timecodes</h2>
 
         <virtual-scroller #scroll [items]="timecodeItems">
             <div *ngFor="let timecodeItem of scroll.viewPortItems">
                 <a [routerLink]="['/files', timecodeItem.item.hash]">
-                    <div style="display: flex; margin-bottom: 12px;">
+                    <div class="timecode-overlay">
                         <div class="filename">
                             <span class="filename-small">{{timecodeItem.item.directory}}</span>
                             <br />
@@ -28,7 +28,7 @@
                     </div>
                 </a>
 
-                <div style="display: flex; flex-direction: row; overflow-y: hidden; max-width: 100%; margin-bottom: 24px;">
+                <div class="timecode-timeline">
                     <ng-container *ngFor="let code of timecodeItem.codes; let i = index">
                         <app-timecode-readonly *ngIf="i < 7" [timecode]="code"></app-timecode-readonly>
                     </ng-container>
