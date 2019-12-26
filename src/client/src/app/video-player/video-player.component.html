@@ -1,5 +1,5 @@
-<div class="container" style="padding: 24px;">
-    <div class="column player" #playerView style="flex-grow: 1; margin-right: 24px; position: relative;">
+<div class="container">
+    <div class="column player" #playerView>
         <div class="row video-area" #videoArea [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
             <div class="filename">
                 <span class="filename-small">{{file.directory}}</span>
@@ -25,7 +25,7 @@
                     <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="setProgress($event)"
                         #slider></mat-slider>
 
-                    <div style="display: flex; flex-direction: row; align-items: center;">
+                    <div class="buttons">
                         <button *ngIf="!playing" mat-button (click)="play()">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </button>
@@ -54,7 +54,7 @@
                             <i class="fa fa-arrows-alt" aria-hidden="true"></i>
                         </button>
 
-                        <span style="margin-right: 48px;">{{progressText}}</span>
+                        <span class="progress-text">{{progressText}}</span>
 
                         <mat-menu #appMenu="matMenu">
                             <button mat-menu-item (click)="playbackHasBeenStarted && screenshot()">
@@ -90,27 +90,23 @@
         </div>
     </div>
 
-    <div class="column" style="min-width: 500px; max-width: 500px; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="margin-bottom: 24px;">
-            <div class="row">
-                <div class="tag-tools">
-                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
-                </div>
-            </div>
+    <div class="column sidecolumn">
+        <div class="tag-tools">
+            <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
         </div>
 
-        <div>
-            <div class="row" style="margin-bottom: 6px; flex-wrap: wrap;" *ngIf="selectedTagsForTimecode">
+        <div class="timecode-tools">
+            <div class="row timecode-tags" *ngIf="selectedTagsForTimecode">
                 <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
                     mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
             </div>
 
-            <div class="row" style="margin-bottom: 6px;">
+            <div class="row">
                 <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
                 [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
             </div>
 
-            <div class="row" style="margin-bottom: 6px;">
+            <div class="row">
                 <button mat-mini-fab color="primary" (click)="setTagStart()" title="Set tag timecode start">
                     <i class="fas fa-stopwatch"></i>
                 </button>
@@ -119,11 +115,11 @@
                 </button>
 
                 <mat-form-field>
-                    <input matInput placeholder="Start time" [(ngModel)]="tagStart" style="width: 6em;" />
+                    <input matInput placeholder="Start time" [(ngModel)]="tagStart" />
                 </mat-form-field>
             </div>
 
-            <div class="row" style="margin-bottom: 6px;">
+            <div class="row">
                 <button mat-mini-fab color="primary" (click)="setTagEnd()" title="Set tag timecode end">
                     <i class="fas fa-stopwatch"></i>
                 </button>
@@ -132,7 +128,7 @@
                 </button>
 
                 <mat-form-field>
-                    <input matInput [(ngModel)]="tagEnd" placeholder="End time" style="width: 6em;" />
+                    <input matInput [(ngModel)]="tagEnd" placeholder="End time" />
                 </mat-form-field>
             </div>
 

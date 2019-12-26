@@ -16,6 +16,7 @@
     @include g-layout__row;
     flex: 2;
     overflow: auto;
+    padding: $standard-margin;
 }
 
 .row {
@@ -24,6 +25,14 @@
 
 .column {
     @include g-layout__column;
+}
+
+.sidecolumn {
+    min-width: 500px;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .video-container {
@@ -101,6 +110,12 @@
     display: none;
 }
 
+.player {
+    flex-grow: 1;
+    margin-right: $standard-margin;
+    position: relative;
+}
+
 .player-view {
     display: flex;
     flex-direction: column;
@@ -137,7 +152,7 @@
 }
 
 .tag-tools {
-    margin-right: $standard-margin;
+    margin-bottom: $standard-margin;
 }
 
 .tag {
@@ -211,6 +226,16 @@
                         supported by Chrome and Opera */
 }
 
+.buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.progress-text {
+    margin-right: 2 * $standard-margin;
+}
+
 .fa {
     cursor: pointer;
 }
@@ -235,4 +260,16 @@ a, a:hover {
 
 app-timecode {
     max-height: 150px;
+}
+
+.timecode-tools .row {
+    margin-bottom: 0.25 * $standard-margin;
+}
+
+.timecode-tools input {
+    width: 6em;
+}
+
+.timecode-tags {
+    flex-wrap: wrap;
 }
