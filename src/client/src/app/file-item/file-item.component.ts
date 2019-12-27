@@ -4,12 +4,12 @@ import { File } from './../models/file';
 import { LaputinService } from './../laputin.service';
 
 @Component({
-    selector: 'app-file',
-    styleUrls: ['./file.component.scss'],
-    templateUrl: './file.component.html'
+    selector: 'app-file-item',
+    styleUrls: ['./file-item.component.scss'],
+    templateUrl: './file-item.component.html'
 })
 @Injectable()
-export class FileComponent implements OnInit {
+export class FileItemComponent implements OnInit {
     @Input()
     public file: File;
 

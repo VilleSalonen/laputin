@@ -18,7 +18,7 @@
                 <virtual-scroller #scroll [items]="files">
                     <div class="files-grid" #container>
                         <div class="grid-item" *ngFor="let file of scroll.viewPortItems">
-                            <app-file [file]="file"></app-file>
+                            <app-file-item [file]="file"></app-file-item>
                         </div>
                     </div>
                 </virtual-scroller>

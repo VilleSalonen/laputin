@@ -26,7 +26,7 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
-import { FileComponent } from './file/file.component';
+import { FileItemComponent } from './file-item/file-item.component';
 import { FilesComponent } from './files/files.component';
 import { SearchTagComponent } from './search-tag/search-tag.component';
 import { TagsComponent } from './tags/tags.component';
@@ -49,7 +49,7 @@ import { PipesModule } from './pipes/pipes.module';
     declarations: [
         AppComponent,
         DuplicatesComponent,
-        FileComponent,
+        FileItemComponent,
         FilesComponent,
         SearchTagComponent,
         TagFilterPipe,
