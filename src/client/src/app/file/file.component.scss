@@ -3,6 +3,7 @@
 :host {
     display: flex;
     flex: 1;
+    background-color: black;
 }
 
 a,
@@ -17,6 +18,8 @@ a:hover {
 .container {
     display: flex;
     background-repeat: no-repeat;
+    background-size: contain;
+    background-position-x: center;
     flex: 1;
     flex-direction: column;
     justify-content: flex-end;

@@ -4,6 +4,7 @@
     @include g-layout__row;
 
     flex: 2;
+    max-height: 100%;
 }
 
 .container {
@@ -33,38 +34,37 @@
 }
 
 .files-grid {
-    display: grid;
-    flex: 1;
-    grid-template-columns: 800px 800px 800px;
-    column-gap: $standard-margin;
-    row-gap: $standard-margin;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .grid-item {
+    $height: 300px;
+
     display: flex;
-    height: 450px;
+    height: $height;
+    width: $height * (16 / 9);
+    margin-right: $standard-margin;
+    margin-bottom: $standard-margin;
 }
 
 .files-list {
     display: flex;
     margin-top: 0;
-    margin-right: auto;
     margin-bottom: $standard-margin;
-    margin-left: auto;
     overflow: auto;
     flex-grow: 1;
     flex: 1;
-    flex-direction: column;
+    justify-content: center;
 }
 
 .files-search {
     display: flex;
     margin-top: 0.5 * $standard-margin;
-    margin-right: auto;
-    margin-left: auto;
-    width: 2448px;
     flex-direction: row;
     align-items: baseline;
+    justify-content: center;
 
     span {
         margin-left: 2 * $standard-margin;
@@ -77,11 +77,6 @@
     max-height: 100%;
 }
 
-.files-table {
-    flex: 2;
-    overflow-y: scroll;
-}
-
 .row {
     @include g-layout__row;
 }
@@ -91,9 +86,5 @@
 }
 
 virtual-scroller {
-    height: 100%;
-}
-
-.show-more {
-    margin-top: $standard-margin;
+    flex-basis: 100%;
 }

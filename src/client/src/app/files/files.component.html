@@ -15,16 +15,13 @@
             </div>
     
             <div class="files-list">
-                <div class="files-grid">
-                    <div class="grid-item" *ngFor="let file of files">
-                        <app-file [file]="file"></app-file>
+                <virtual-scroller #scroll [items]="files">
+                    <div class="files-grid" #container>
+                        <div class="grid-item" *ngFor="let file of scroll.viewPortItems">
+                            <app-file [file]="file"></app-file>
+                        </div>
                     </div>
-                </div>
-    
-                <button mat-button *ngIf="files.length != allFiles.length" (click)="showMore()" class="show-more">
-                    <i class="fas fa-sync"></i>
-                    Show more...
-                </button>
+                </virtual-scroller>
             </div>
         </ng-container>
     </div>

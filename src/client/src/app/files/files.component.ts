@@ -38,7 +38,7 @@ export class FilesComponent implements OnInit, OnDestroy {
 
         this.filesSubscription.subscribe((files: File[]) => {
             this.allFiles = files;
-            this.files = files.slice(0, 100);
+            this.files = files;
         });
 
         this._service
@@ -144,10 +144,6 @@ export class FilesComponent implements OnInit, OnDestroy {
 
     closeFile(): void {
         this.router.navigate(['/files']);
-    }
-
-    showMore(): void {
-        this.files = this.allFiles.slice(0, this.files.length + 100);
     }
 
     humanDuration(seconds: number): string {
