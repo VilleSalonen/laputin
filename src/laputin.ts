@@ -58,10 +58,12 @@ export class Laputin {
     }
 
     public stopListening(): Promise<void> {
-        let onError: (err?: Error) => void;
-        const promise = new Promise<void>((_, reject) => onError = reject);
+        let done: Function;
+        const promise = new Promise<void>((resolve) => {
+            done = resolve;
+        });
 
-        this._server.close(onError);
+        this._server.close(<any>done);
 
         return promise;
     }
