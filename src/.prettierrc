@@ -1,5 +1,7 @@
 {
-    "printWidth": 100,
-    "parser": "flow",
-    "singleQuote": true
+    "parser": "typescript",
+    "singleQuote": true,
+    "semi": true,
+    "tabWidth": 4,
+    "useTabs": false
 }
