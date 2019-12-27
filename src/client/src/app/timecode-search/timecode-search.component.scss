@@ -2,6 +2,7 @@
 
 .row {
     @include g-layout__row;
+
     align-items: center;
 }
 
@@ -13,7 +14,9 @@ label {
     margin-right: calc(0.5 * #{$standard-margin});
 }
 
-input, select, button {
+input,
+select,
+button {
     @include rounded-borders;
 
     background: $color-complement-1;
@@ -22,8 +25,8 @@ input, select, button {
 }
 
 input::placeholder {
-    color: $color-complement-2;
     opacity: 1;
+    color: $color-complement-2;
 }
 
 .tag {

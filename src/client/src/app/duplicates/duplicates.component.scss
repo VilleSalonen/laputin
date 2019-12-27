@@ -2,15 +2,16 @@
 
 :host {
     @include g-layout__row;
-    flex: 2;
+
     overflow: auto;
+    flex: 2;
 }
 
 .container {
     background: $color-primary-1;
-    flex-basis: 100%;
-    overflow: auto;
     padding: $standard-margin;
+    overflow: auto;
+    flex-basis: 100%;
 }
 
 .hidden {
@@ -29,6 +30,6 @@
 
 .filename-big {
     margin-top: 0;
-    margin-bottom: 0; 
+    margin-bottom: 0;
     font-size: 20px;
 }

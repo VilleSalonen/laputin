@@ -1,34 +1,35 @@
 @import './../../styles/styles.scss';
 
-img, .screenshot {
+img,
+.screenshot {
     max-height: 150px;
 }
 
 .container {
+    position: relative;
     max-height: 150px;
-    position: relative; 
 }
 
 .controls {
+    display: none;
     position: absolute;
     color: white;
     text-shadow: 1px 1px 0 black;
-    display: none;
     flex-direction: row;
 }
 
 .edit-control {
-    left: 0.25 * $standard-margin; 
     top: 0.25 * $standard-margin;
+    left: 0.25 * $standard-margin;
 }
 
 .timecode-start-control {
-    left: 0.25 * $standard-margin; 
     bottom: 0.25 * $standard-margin;
+    left: 0.25 * $standard-margin;
 }
 
 .timecode-end-control {
-    right: 0.25 * $standard-margin; 
+    right: 0.25 * $standard-margin;
     bottom: 0.25 * $standard-margin;
 }
 

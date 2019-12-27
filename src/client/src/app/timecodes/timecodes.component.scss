@@ -2,36 +2,34 @@
 
 :host {
     @include g-layout__row;
-    flex: 2;
+
     overflow: auto;
+    flex: 2;
 }
 
 .container {
     @include g-layout__column;
-    flex: 2;
-    overflow: auto;
+
     background: $color-primary-1;
     padding: $standard-margin;
+    overflow: auto;
+    flex: 2;
 }
 
 .files-list {
-    flex: 1;
-    flex-grow: 1;
-
     display: flex;
-    flex-direction: column;
-
-    padding: $standard-margin;
-
-    overflow: auto;
-
     margin-top: 0;
     margin-bottom: $standard-margin;
+    padding: $standard-margin;
+    overflow: auto;
+    flex: 1;
+    flex-grow: 1;
+    flex-direction: column;
 }
 
 .files-search {
-    overflow-y: auto;
     padding: $standard-margin;
+    overflow-y: auto;
 }
 
 .row {
@@ -46,9 +44,10 @@ virtual-scroller {
     height: 100%;
 }
 
-a, a:hover {
-    color: $color-primary-4;
+a,
+a:hover {
     text-decoration: none;
+    color: $color-primary-4;
 }
 
 .filename {
@@ -63,7 +62,7 @@ a, a:hover {
 
 .filename-big {
     margin-top: 0;
-    margin-bottom: 0; 
+    margin-bottom: 0;
     font-size: 20px;
 }
 
@@ -71,14 +70,13 @@ textarea {
     @include rounded-borders;
 
     background: $color-complement-1;
-    color: $color-primary-4;
-
     width: 100%;
     height: 100%;
-
+    color: $color-primary-4;
 }
 
-app-timecode-search, .export-button {
+app-timecode-search,
+.export-button {
     margin-right: $standard-margin;
 }
 
@@ -88,10 +86,10 @@ app-timecode-search, .export-button {
 
 .timecode-timeline {
     display: flex;
+    margin-bottom: $standard-margin;
+    max-width: 100%;
     flex-direction: row;
     overflow-y: hidden;
-    max-width: 100%;
-    margin-bottom: $standard-margin;
 }
 
 .timecode-overlay {

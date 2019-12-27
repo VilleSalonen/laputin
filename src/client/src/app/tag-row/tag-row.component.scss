@@ -1,22 +1,22 @@
 @import './../../styles/styles.scss';
 
 :host {
-    flex: 1;
     display: flex;
+    flex: 1;
 }
 
 .container {
-    flex: 1;
-    background-repeat: no-repeat;
-    background-size: cover;
     display: flex;
+    background-repeat: no-repeat;
+    flex: 1;
+    background-size: cover;
     flex-direction: column;
     justify-content: space-between;
 }
 
 .tag-name {
     margin: 0.25 * $standard-margin;
+    text-decoration: none;
     color: white;
     text-shadow: 1px 1px 0 black;
-    text-decoration: none;
 }

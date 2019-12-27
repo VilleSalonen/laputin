@@ -2,11 +2,13 @@
 
 :host {
     @include g-layout__row;
+
     flex: 2;
 }
 
 .container {
     @include g-layout__row;
+
     flex: 2;
 }
 
@@ -22,33 +24,30 @@
 }
 
 .tags-list {
-    flex: 1;
-
     display: flex;
-    flex-direction: column;
-
-    padding: $standard-margin;
-
     margin-top: 0;
     margin-bottom: $standard-margin;
+    padding: $standard-margin;
+    flex: 1;
+    flex-direction: column;
 }
 
 .tags-grid {
-    flex: 1;
     display: grid;
+    flex: 1;
     grid-template-columns: 800px 800px 800px;
     column-gap: 0.5 * $standard-margin;
     row-gap: 0.5 * $standard-margin;
 }
 
 .grid-item {
-    height: 450px;
     display: flex;
+    height: 450px;
 }
 
 .tags-search {
-    overflow-y: auto;
     padding: $standard-margin;
+    overflow-y: auto;
 }
 
 .full-height {

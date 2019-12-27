@@ -1,22 +1,23 @@
 @import './../../styles/styles.scss';
 
 :host {
-    flex: 1;
     display: flex;
+    flex: 1;
 }
 
-a, a:hover {
+a,
+a:hover {
     display: flex;
-    flex: 1;
-    color: white;
-    text-shadow: 1px 1px 1px black;
     text-decoration: none;
+    color: white;
+    flex: 1;
+    text-shadow: 1px 1px 1px black;
 }
 
 .container {
-    flex: 1;
-    background-repeat: no-repeat;
     display: flex;
+    background-repeat: no-repeat;
+    flex: 1;
     flex-direction: column;
     justify-content: flex-end;
 }
@@ -38,7 +39,7 @@ a, a:hover {
 
 .filename-big {
     margin-top: 0;
-    margin-bottom: 0; 
+    margin-bottom: 0;
     font-size: 20px;
 }
 
@@ -47,24 +48,24 @@ a, a:hover {
 }
 
 ::ng-deep .tooltip {
-    font-size: 14px;
+    background: #0f1937;
     max-width: 800px !important;
-    background: #0F1937;
+    font-size: 14px;
 }
 
 ::ng-deep .metadata-tooltip {
+    background: #0f1937;
+    max-width: 800px !important;
     white-space: pre-line;
     font-size: 14px;
-    max-width: 800px !important;
-    background: #0F1937;
 }
 
 .tags {
-    align-self: flex-end;
     margin: 0.25 * $standard-margin;
+    align-self: flex-end;
 }
 
 ::ng-deep mat-chip.tags {
-    background: #0F1937 !important;
+    background: #0f1937 !important;
     color: white !important;
 }

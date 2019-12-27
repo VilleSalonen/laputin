@@ -8,27 +8,27 @@
 
 .maincontainer {
     @include g-layout__column;
+
     flex: 1;
 }
 
 .content {
     display: flex;
+    overflow: auto;
     flex-direction: column;
     flex-grow: 2;
-    overflow: auto;
 }
 
 .nav {
     @include g-layout__row;
 
     background: $color-primary-4;
-
     padding: calc(#{$standard-margin} * 0.5);
 }
 
 a {
-    color: $color-primary-1;
     text-decoration: none;
+    color: $color-primary-1;
 
     &:hover {
         text-decoration: underline;
@@ -41,8 +41,8 @@ ul {
 }
 
 li {
-    list-style: none;
     margin-right: 1em;
+    list-style: none;
 }
 
 .current-file {
@@ -54,11 +54,11 @@ li {
 }
 
 .fa-play-circle {
-    color: white;
     margin-right: 0.5em;
+    color: white;
 }
 
 span {
-    color: white;
     margin: 0;
+    color: white;
 }
