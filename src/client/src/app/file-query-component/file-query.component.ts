@@ -24,6 +24,7 @@ import { AutocompleteType } from '../models/autocompletetype';
 import { FileQuery } from '../models';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { FileQueryService } from '../file-query.service';
 
 enum OptionType {
     Tag,
@@ -95,7 +96,13 @@ export class FileQueryComponent implements OnInit {
 
     private queryUpdatedSubject = new Subject<FileQuery>();
 
-    constructor(private _service: LaputinService, private router: Router) {
+    constructor(
+        private _service: LaputinService,
+        private router: Router,
+        private fileQueryService: FileQueryService
+    ) {
+        this.fileQueryService.query$.subscribe(query => (this.query = query));
+
         this.queryUpdatedSubject
             .pipe(
                 distinctUntilChanged(
@@ -105,6 +112,7 @@ export class FileQueryComponent implements OnInit {
             .subscribe(query => {
                 this.query = new FileQuery(query);
                 this.queryUpdated.emit(query);
+                this.fileQueryService.emit(query);
             });
     }
 

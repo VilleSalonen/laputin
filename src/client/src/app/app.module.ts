@@ -44,6 +44,7 @@ import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edi
 import { TagAutocompleteModule } from './tag-autocomplete/tag-autocomplete.module';
 import { FileQueryModule } from './file-query-component/file-query.module';
 import { PipesModule } from './pipes/pipes.module';
+import { FileComponent } from './file/file.component';
 
 @NgModule({
     declarations: [
@@ -61,7 +62,8 @@ import { PipesModule } from './pipes/pipes.module';
         TimecodeReadonlyComponent,
         TimecodesComponent,
         TimecodeSearchComponent,
-        VideoPlayerComponent
+        VideoPlayerComponent,
+        FileComponent
     ],
     entryComponents: [
         TagScreenshotDialogComponent,
@@ -93,7 +95,7 @@ import { PipesModule } from './pipes/pipes.module';
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },
-            { path: 'files/:hash', component: FilesComponent },
+            { path: 'files/:hash', component: FileComponent },
             { path: 'timecodes', component: TimecodesComponent },
             { path: 'tags', component: TagsComponent },
             { path: 'duplicates', component: DuplicatesComponent }

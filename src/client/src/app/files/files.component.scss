@@ -14,12 +14,6 @@
     flex: 2;
 }
 
-.player {
-    background: $color-primary-1;
-    overflow: auto;
-    flex-basis: 100%;
-}
-
 .files {
     @include g-layout__column;
 

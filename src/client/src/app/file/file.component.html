@@ -1,0 +1,5 @@
+<ng-container *ngIf="activeFile$ | async as activeFile">
+    <div class="player full-height" *ngIf="activeFile">
+        <app-video-player class="full-height" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
+    </div>
+</ng-container>

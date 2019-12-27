@@ -103,8 +103,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public fileChange: EventEmitter<FileChange> = new EventEmitter<
         FileChange
     >();
-    @Output()
-    public fileClosed: EventEmitter<void> = new EventEmitter<void>();
+
+    private fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(
         private _service: LaputinService,

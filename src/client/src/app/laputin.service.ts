@@ -295,17 +295,17 @@ export class LaputinService {
                 params.push('hash=' + query.hash);
             }
 
-            if (query.andTags.length > 0) {
+            if (query.andTags && query.andTags.length > 0) {
                 params.push(
                     'and=' + query.andTags.map((tag: Tag) => tag.id).join(',')
                 );
             }
-            if (query.orTags.length > 0) {
+            if (query.orTags && query.orTags.length > 0) {
                 params.push(
                     'or=' + query.orTags.map((tag: Tag) => tag.id).join(',')
                 );
             }
-            if (query.notTags.length > 0) {
+            if (query.notTags && query.notTags.length > 0) {
                 params.push(
                     'not=' + query.notTags.map((tag: Tag) => tag.id).join(',')
                 );

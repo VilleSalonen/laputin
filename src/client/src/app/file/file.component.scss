@@ -1,0 +1,26 @@
+@import './../../styles/styles.scss';
+
+:host {
+    @include g-layout__row;
+
+    flex: 2;
+    max-height: 100%;
+}
+
+.container {
+    @include g-layout__row;
+
+    overflow: auto;
+    flex: 2;
+}
+
+.player {
+    background: $color-primary-1;
+    overflow: auto;
+    flex-basis: 100%;
+}
+
+.full-height {
+    min-height: 100%;
+    max-height: 100%;
+}
