@@ -1,4 +1,10 @@
-import { Component, Injectable, Input, OnInit } from '@angular/core';
+import {
+    Component,
+    Injectable,
+    Input,
+    OnInit,
+    ChangeDetectionStrategy
+} from '@angular/core';
 
 import { File } from './../models/file';
 import { LaputinService } from './../laputin.service';
@@ -6,7 +12,8 @@ import { LaputinService } from './../laputin.service';
 @Component({
     selector: 'app-file-item',
     styleUrls: ['./file-item.component.scss'],
-    templateUrl: './file-item.component.html'
+    templateUrl: './file-item.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 @Injectable()
 export class FileItemComponent implements OnInit {
