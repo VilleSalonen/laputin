@@ -34,10 +34,7 @@ export class VLCOpener {
                 process.kill(this._child.pid, 'SIGKILL');
             } catch (err) {
                 console.log(
-                    "Couldn't close " +
-                        this._child.pid +
-                        ' due to error: ' +
-                        err
+                    `Couldn't close ${this._child.pid} due to error: ${err}`
                 );
             }
         }
