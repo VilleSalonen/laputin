@@ -5,10 +5,10 @@ import fs = require('fs');
 import request = require('supertest');
 import events = require('events');
 
-import {File} from './../file';
-import {composeForTests} from './../compose';
-import {Laputin} from './../laputin';
-import {LaputinConfiguration} from './../laputinconfiguration';
+import { File } from './../file';
+import { composeForTests } from './../compose';
+import { Laputin } from './../laputin';
+import { LaputinConfiguration } from './../laputinconfiguration';
 
 describe('File Library', function() {
     // For some reason watching for file changes seems to always take about 5
@@ -27,7 +27,10 @@ describe('File Library', function() {
         '44f332dadcd09cc73c14b30a8334c1bf7d615829dd111f47fa9d3ae212933e32cbf59cd700010bd0e950309d64c23b03badcb990170676e003a0b02b63d3e757';
 
     beforeEach(async function() {
-        currentPath = this.currentTest.fullTitle().toLowerCase().replace(/ /g, '_');
+        currentPath = this.currentTest
+            .fullTitle()
+            .toLowerCase()
+            .replace(/ /g, '_');
     });
 
     afterEach(async () => {
@@ -42,19 +45,50 @@ describe('File Library', function() {
         });
 
         it('Initial files can be found', async () => {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
-            const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', [], 30791, 'image/jpeg');
-            const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 73221, 'image/jpeg');
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
+            const catsFile = new File(
+                catFileHash,
+                'deploy-tests/' + currentPath + '/cats.jpg',
+                [],
+                30791,
+                'image/jpeg'
+            );
+            const landscapeFile = new File(
+                landscapeFileHash,
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg',
+                [],
+                73221,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
-            await copyFile('tests/test-content/cats.jpg', 'deploy-tests/' + currentPath + '/cats.jpg');
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
+            await copyFile(
+                'tests/test-content/cats.jpg',
+                'deploy-tests/' + currentPath + '/cats.jpg'
+            );
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
 
             // Start monitoring after files have been copied
             laputin = await initializeLaputin(currentPath);
 
-            return shouldContainFiles(laputin, [carFile, catsFile, landscapeFile]);
+            return shouldContainFiles(laputin, [
+                carFile,
+                catsFile,
+                landscapeFile
+            ]);
         });
     });
 
@@ -64,8 +98,17 @@ describe('File Library', function() {
             laputin = await initializeLaputin(currentPath);
             shutdownLaputin(laputin);
 
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
 
             // Detecting changes after second startup
             await startLaputin(laputin);
@@ -74,12 +117,21 @@ describe('File Library', function() {
         });
 
         it('Online', async function() {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
 
             // Start monitoring before file is copied
             laputin = await initializeLaputin(currentPath);
 
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
             await waitForEvent(laputin.fileLibrary, 'found', 8000);
             return shouldContainFiles(laputin, [carFile]);
         });
@@ -91,9 +143,18 @@ describe('File Library', function() {
             laputin = await initializeLaputin(currentPath);
             shutdownLaputin(laputin);
 
-            await copyFile('tests/test-content/Thumbs.db', 'deploy-tests/' + currentPath + '/Thumbs.db');
-            await copyFile('tests/test-content/.ignored', 'deploy-tests/' + currentPath + '/.ignored');
-            await copyFile('tests/test-content/ignored.tmp', 'deploy-tests/' + currentPath + '/ignored.tmp');
+            await copyFile(
+                'tests/test-content/Thumbs.db',
+                'deploy-tests/' + currentPath + '/Thumbs.db'
+            );
+            await copyFile(
+                'tests/test-content/.ignored',
+                'deploy-tests/' + currentPath + '/.ignored'
+            );
+            await copyFile(
+                'tests/test-content/ignored.tmp',
+                'deploy-tests/' + currentPath + '/ignored.tmp'
+            );
 
             // Detecting changes after second startup
             await startLaputin(laputin);
@@ -105,9 +166,18 @@ describe('File Library', function() {
             // Start monitoring before file is copied
             laputin = await initializeLaputin(currentPath);
 
-            await copyFile('tests/test-content/Thumbs.db', 'deploy-tests/' + currentPath + '/Thumbs.db');
-            await copyFile('tests/test-content/.ignored', 'deploy-tests/' + currentPath + '/.ignored');
-            await copyFile('tests/test-content/ignored.tmp', 'deploy-tests/' + currentPath + '/ignored.tmp');
+            await copyFile(
+                'tests/test-content/Thumbs.db',
+                'deploy-tests/' + currentPath + '/Thumbs.db'
+            );
+            await copyFile(
+                'tests/test-content/.ignored',
+                'deploy-tests/' + currentPath + '/.ignored'
+            );
+            await copyFile(
+                'tests/test-content/ignored.tmp',
+                'deploy-tests/' + currentPath + '/ignored.tmp'
+            );
 
             return shouldContainFiles(laputin, []);
         });
@@ -115,16 +185,28 @@ describe('File Library', function() {
 
     describe('File path change detected', () => {
         it('Offline', async () => {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/automobile.jpg', [], 39031, 'image/jpeg');
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/automobile.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
 
             // Initial startup and shutdown
             laputin = await initializeLaputin(currentPath);
             shutdownLaputin(laputin);
 
-            fs.renameSync('deploy-tests/' + currentPath + '/car.jpg', 'deploy-tests/' + currentPath + '/automobile.jpg');
+            fs.renameSync(
+                'deploy-tests/' + currentPath + '/car.jpg',
+                'deploy-tests/' + currentPath + '/automobile.jpg'
+            );
 
             // Detecting changes after second startup
             await startLaputin(laputin);
@@ -133,30 +215,69 @@ describe('File Library', function() {
         });
 
         it('Online', async function() {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/automobile.jpg', [], 39031, 'image/jpeg');
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/automobile.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
 
             // Start monitoring before file is copied
             laputin = await initializeLaputin(currentPath);
 
-            fs.renameSync('deploy-tests/' + currentPath + '/car.jpg', 'deploy-tests/' + currentPath + '/automobile.jpg');
+            fs.renameSync(
+                'deploy-tests/' + currentPath + '/car.jpg',
+                'deploy-tests/' + currentPath + '/automobile.jpg'
+            );
             await waitForEvent(laputin.fileLibrary, 'found', 8000);
             return shouldContainFiles(laputin, [carFile]);
         });
     });
 
     describe('File deletion detected', () => {
-        it('Offline', async function () {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
-            const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', [], 30791, 'image/jpeg');
-            const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 73221, 'image/jpeg');
+        it('Offline', async function() {
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
+            const catsFile = new File(
+                catFileHash,
+                'deploy-tests/' + currentPath + '/cats.jpg',
+                [],
+                30791,
+                'image/jpeg'
+            );
+            const landscapeFile = new File(
+                landscapeFileHash,
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg',
+                [],
+                73221,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
-            await copyFile('tests/test-content/cats.jpg', 'deploy-tests/' + currentPath + '/cats.jpg');
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
+            await copyFile(
+                'tests/test-content/cats.jpg',
+                'deploy-tests/' + currentPath + '/cats.jpg'
+            );
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
 
             // Initial startup and shutdown
             laputin = await initializeLaputin(currentPath);
@@ -170,15 +291,42 @@ describe('File Library', function() {
             return await shouldContainFiles(laputin, [carFile, landscapeFile]);
         });
 
-        it('Online', async function () {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
-            const catsFile = new File(catFileHash, 'deploy-tests/' + currentPath + '/cats.jpg', [], 30791, 'image/jpeg');
-            const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 73221, 'image/jpeg');
+        it('Online', async function() {
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
+            const catsFile = new File(
+                catFileHash,
+                'deploy-tests/' + currentPath + '/cats.jpg',
+                [],
+                30791,
+                'image/jpeg'
+            );
+            const landscapeFile = new File(
+                landscapeFileHash,
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg',
+                [],
+                73221,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
-            await copyFile('tests/test-content/cats.jpg', 'deploy-tests/' + currentPath + '/cats.jpg');
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
+            await copyFile(
+                'tests/test-content/cats.jpg',
+                'deploy-tests/' + currentPath + '/cats.jpg'
+            );
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
 
             // Start monitoring after files have been copied
             laputin = await initializeLaputin(currentPath);
@@ -190,26 +338,46 @@ describe('File Library', function() {
     });
 
     describe('Duplicate file detected', () => {
-        it('Offline', async function () {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
-            const duplicateCarFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car-duplicate.jpg', [], 39031, 'image/jpeg');
+        it('Offline', async function() {
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
+            const duplicateCarFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car-duplicate.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
 
             // Initial startup and shutdown
             laputin = await initializeLaputin(currentPath);
             shutdownLaputin(laputin);
 
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car-duplicate.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car-duplicate.jpg'
+            );
 
             // Detecting changes after second startup
             await startLaputin(laputin);
 
             const duplicates = laputin.fileLibrary.getDuplicates();
             expect(duplicates).to.eql({
-            '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592':
-                [carFile, duplicateCarFile]
+                '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592': [
+                    carFile,
+                    duplicateCarFile
+                ]
             });
 
             // Note that Laputin returns newly copied duplicate version of car.
@@ -218,23 +386,43 @@ describe('File Library', function() {
             return await shouldContainFiles(laputin, [duplicateCarFile]);
         });
 
-        it('Online', async function () {
-            const carFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car.jpg', [], 39031, 'image/jpeg');
-            const duplicateCarFile = new File(carFileHash, 'deploy-tests/' + currentPath + '/car-duplicate.jpg', [], 39031, 'image/jpeg');
+        it('Online', async function() {
+            const carFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
+            const duplicateCarFile = new File(
+                carFileHash,
+                'deploy-tests/' + currentPath + '/car-duplicate.jpg',
+                [],
+                39031,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car.jpg'
+            );
 
             // Start monitoring after files have been copied
             laputin = await initializeLaputin(currentPath);
 
-            await copyFile('tests/test-content/car.jpg', 'deploy-tests/' + currentPath + '/car-duplicate.jpg');
+            await copyFile(
+                'tests/test-content/car.jpg',
+                'deploy-tests/' + currentPath + '/car-duplicate.jpg'
+            );
             await waitForEvent(laputin.fileLibrary, 'found', 8000);
 
             const duplicates = laputin.fileLibrary.getDuplicates();
             expect(duplicates).to.eql({
-            '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592':
-                [carFile, duplicateCarFile]
+                '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592': [
+                    carFile,
+                    duplicateCarFile
+                ]
             });
 
             // Note that Laputin returns newly copied duplicate version of car.
@@ -274,15 +462,27 @@ describe('File Library', function() {
 
     describe('Online duplicate detection edge cases', () => {
         it('When a file is overwritten with exact same file to exact same path, it is not detected as duplicate', async function() {
-            const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 73221, 'image/jpeg');
+            const landscapeFile = new File(
+                landscapeFileHash,
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg',
+                [],
+                73221,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
 
             // Start monitoring after initial files have been copied
             laputin = await initializeLaputin(currentPath);
 
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
             await waitForEvent(laputin.fileLibrary, 'found', 8000);
 
             const duplicates = laputin.fileLibrary.getDuplicates();
@@ -292,15 +492,27 @@ describe('File Library', function() {
         });
 
         it('When a file is renamed, it is not detected as duplicate', async function() {
-            const landscapeFile = new File(landscapeFileHash, 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg', [], 73221, 'image/jpeg');
+            const landscapeFile = new File(
+                landscapeFileHash,
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg',
+                [],
+                73221,
+                'image/jpeg'
+            );
 
             fs.mkdirSync('deploy-tests/' + currentPath + '');
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
 
             // Start monitoring after initial files have been copied
             laputin = await initializeLaputin(currentPath);
 
-            await copyFile('tests/test-content/jyvasjarvi.jpg', 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg');
+            await copyFile(
+                'tests/test-content/jyvasjarvi.jpg',
+                'deploy-tests/' + currentPath + '/jyvasjarvi.jpg'
+            );
             await waitForEvent(laputin.fileLibrary, 'found', 8000);
 
             const duplicates = laputin.fileLibrary.getDuplicates();
@@ -325,11 +537,16 @@ function shouldContainDuplicates(l: Laputin, expectedFiles: any): request.Test {
         .expect(expectedFiles);
 }
 
-function waitForEvent(emitter: events.EventEmitter, eventName: string, timeoutMs: number): Promise<void> {
+function waitForEvent(
+    emitter: events.EventEmitter,
+    eventName: string,
+    timeoutMs: number
+): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         const errTimeout = setTimeout(
             () => reject(new Error('Event ' + eventName + ' was not emitted')),
-            timeoutMs);
+            timeoutMs
+        );
 
         emitter.on(eventName, () => {
             clearTimeout(errTimeout);
@@ -345,8 +562,16 @@ async function initializeLaputin(path: string): Promise<Laputin> {
         fs.mkdirSync(archivePath);
     }
 
-    const fakeScreenshotter: any = {exists: () => {}, screenshot: () => {}, screenshotTimecode: () => {}};
-    const l = composeForTests(archivePath, new LaputinConfiguration(1234, 'accurate', null, ['.tmp']), fakeScreenshotter);
+    const fakeScreenshotter: any = {
+        exists: () => {},
+        screenshot: () => {},
+        screenshotTimecode: () => {}
+    };
+    const l = composeForTests(
+        archivePath,
+        new LaputinConfiguration(1234, 'accurate', null, ['.tmp']),
+        fakeScreenshotter
+    );
 
     await l.library.createTables();
 

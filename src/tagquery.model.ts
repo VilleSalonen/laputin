@@ -1,5 +1,5 @@
-import {Tag} from './tag';
+import { Tag } from './tag';
 
 export class TagQuery {
-    constructor(public selectedTags: Tag[], public unassociated: boolean) { }
+    constructor(public selectedTags: Tag[], public unassociated: boolean) {}
 }

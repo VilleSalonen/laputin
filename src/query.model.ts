@@ -6,6 +6,6 @@ export class Query {
         public and: string,
         public or: string,
         public not: string,
-        public includeInactive: boolean) {
-    }
+        public includeInactive: boolean
+    ) {}
 }

@@ -8,7 +8,10 @@ import { FileLibrary } from './filelibrary';
 import { VLCOpener } from './vlcopener';
 import { Screenshotter } from './screenshotter';
 
-export function compose(libraryPath: string, configuration: LaputinConfiguration): Laputin {
+export function compose(
+    libraryPath: string,
+    configuration: LaputinConfiguration
+): Laputin {
     const library = new Library(libraryPath);
 
     const screenshotter = new Screenshotter(libraryPath, library);
@@ -65,5 +68,7 @@ export function composeForTests(
 }
 
 function composeHasher(configuration: LaputinConfiguration): IHasher {
-    return configuration.identification === 'quick' ? new QuickMD5Hasher() : new Sha512Hasher();
+    return configuration.identification === 'quick'
+        ? new QuickMD5Hasher()
+        : new Sha512Hasher();
 }

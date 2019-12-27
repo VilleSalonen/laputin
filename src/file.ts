@@ -1,6 +1,6 @@
 import path = require('path');
 
-import {Tag} from './tag';
+import { Tag } from './tag';
 
 export class File {
     public hash: string;
@@ -11,7 +11,14 @@ export class File {
     public metadata: any;
     public type: string;
 
-    constructor(hash: string, filePath: string, tags: Tag[], size: number, type: string, metadata?: any) {
+    constructor(
+        hash: string,
+        filePath: string,
+        tags: Tag[],
+        size: number,
+        type: string,
+        metadata?: any
+    ) {
         this.hash = hash;
         this.path = filePath.replace(/\\/g, '/');
         this.name = this.cleanPath();

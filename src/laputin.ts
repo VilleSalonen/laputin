@@ -4,11 +4,11 @@ import path = require('path');
 import http = require('http');
 import fs = require('fs');
 
-import {Library} from './library';
-import {FileLibrary} from './filelibrary';
-import {VLCOpener} from './vlcopener';
-import {File} from './file';
-import {Tag, Timecode, TimecodeTag} from './tag';
+import { Library } from './library';
+import { FileLibrary } from './filelibrary';
+import { VLCOpener } from './vlcopener';
+import { File } from './file';
+import { Tag, Timecode, TimecodeTag } from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
 
@@ -22,9 +22,14 @@ export class Laputin {
         public fileLibrary: FileLibrary,
         private _opener: VLCOpener,
         private _port: number,
-        private _proxyDirectory: string) {
-        this.fileLibrary.on('found', (file: File) => this.library.addFile(file));
-        this.fileLibrary.on('lost', (file: File) => this.library.deactivateFile(file));
+        private _proxyDirectory: string
+    ) {
+        this.fileLibrary.on('found', (file: File) =>
+            this.library.addFile(file)
+        );
+        this.fileLibrary.on('lost', (file: File) =>
+            this.library.deactivateFile(file)
+        );
     }
 
     public initializeRoutes(): void {
@@ -33,12 +38,18 @@ export class Laputin {
         this.app.use(bodyParser.json({}));
 
         this.app.use(express.static(path.join(__dirname, '../client/dist')));
-        this.app.use('/node_modules', express.static(path.join(__dirname, '../node_modules')));
+        this.app.use(
+            '/node_modules',
+            express.static(path.join(__dirname, '../node_modules'))
+        );
 
         this.app.use('/api', this._createApiRoutes());
         this.app.use('/media', this._createMediaRoutes());
 
-        this.app.use('/laputin', express.static(path.join(this._libraryPath, '/.laputin')));
+        this.app.use(
+            '/laputin',
+            express.static(path.join(this._libraryPath, '/.laputin'))
+        );
 
         const mediaCatchAll = express();
         this.app.use('/media/', mediaCatchAll);
@@ -50,7 +61,7 @@ export class Laputin {
 
     public startListening(): Promise<void> {
         let done: Function;
-        const promise = new Promise<void>((resolve) => done = resolve);
+        const promise = new Promise<void>(resolve => (done = resolve));
 
         this._server = this.app.listen(this._port, done);
 
@@ -59,7 +70,7 @@ export class Laputin {
 
     public stopListening(): Promise<void> {
         let done: Function;
-        const promise = new Promise<void>((resolve) => {
+        const promise = new Promise<void>(resolve => {
             done = resolve;
         });
 
@@ -105,43 +116,71 @@ export class Laputin {
         });
 
         api.route('/tags/:tagId').put(async (req, res) => {
-            const tag = await this.library.renameTag(req.params.tagId, req.body.name);
+            const tag = await this.library.renameTag(
+                req.params.tagId,
+                req.body.name
+            );
             res.send(tag);
         });
 
         api.route('/files/:hash/tags').post((req, res) => {
             const selectedTags = req.body.selectedTags;
             selectedTags.forEach((tag: Tag) => {
-                this.library.createNewLinkBetweenTagAndFile(tag, req.params.hash);
+                this.library.createNewLinkBetweenTagAndFile(
+                    tag,
+                    req.params.hash
+                );
             });
             res.status(200).end();
         });
 
         api.route('/files/:hash/timecodes').get(async (req, res) => {
-            const tags = await this.library.getTimecodesForFile(req.params.hash);
+            const tags = await this.library.getTimecodesForFile(
+                req.params.hash
+            );
             res.send(tags);
         });
 
         api.route('/files/:hash/timecodes').post(async (req, res) => {
             const timecode: Timecode = req.body.timecode;
 
-            const query = new Query(undefined, undefined, req.params.hash, undefined, undefined, undefined, undefined);
+            const query = new Query(
+                undefined,
+                undefined,
+                req.params.hash,
+                undefined,
+                undefined,
+                undefined,
+                undefined
+            );
             const files = await this.library.getFiles(query);
 
             if (files.length > 0) {
                 timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
-                    this.library.createNewLinkBetweenTagAndFile(timecodeTag.tag, req.params.hash);
+                    this.library.createNewLinkBetweenTagAndFile(
+                        timecodeTag.tag,
+                        req.params.hash
+                    );
                 });
 
                 const result = await this.library.addTimecodeToFile(
                     timecode,
-                    req.params.hash);
+                    req.params.hash
+                );
 
                 if (!timecode.timecodeId) {
-                    const screenshotTime = timecode.start + (timecode.end - timecode.start) * 0.66;
+                    const screenshotTime =
+                        timecode.start + (timecode.end - timecode.start) * 0.66;
 
-                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
-                    await screenshotter.screenshotTimecode(files[0], result, screenshotTime);
+                    const screenshotter = new Screenshotter(
+                        this._libraryPath,
+                        this.library
+                    );
+                    await screenshotter.screenshotTimecode(
+                        files[0],
+                        result,
+                        screenshotTime
+                    );
                 }
 
                 res.send(result);
@@ -151,18 +190,33 @@ export class Laputin {
             }
         });
 
-        api.route('/files/:hash/timecodes/:timecodeId').put(async (req, res) => {
-            await this.library.updateTimecodeStartAndEnd(req.params.hash, req.params.timecodeId, req.body.timecode);
-            res.status(200).end();
-        });
+        api.route('/files/:hash/timecodes/:timecodeId').put(
+            async (req, res) => {
+                await this.library.updateTimecodeStartAndEnd(
+                    req.params.hash,
+                    req.params.timecodeId,
+                    req.body.timecode
+                );
+                res.status(200).end();
+            }
+        );
 
-        api.route('/files/:hash/timecodes/:timecodeId/tags/:timecodeTagId').delete(async (req, res) => {
-            const result = await this.library.removeTagFromTimecode(req.params.hash, req.params.timecodeId, req.params.timecodeTagId);
+        api.route(
+            '/files/:hash/timecodes/:timecodeId/tags/:timecodeTagId'
+        ).delete(async (req, res) => {
+            const result = await this.library.removeTagFromTimecode(
+                req.params.hash,
+                req.params.timecodeId,
+                req.params.timecodeTagId
+            );
             res.status(200).end();
         });
 
         api.route('/files/:hash/tags/:tagId').delete(async (req, res) => {
-            await this.library.deleteLinkBetweenTagAndFile(req.params.tagId, req.params.hash);
+            await this.library.deleteLinkBetweenTagAndFile(
+                req.params.tagId,
+                req.params.hash
+            );
             res.status(200).end();
         });
 
@@ -178,11 +232,22 @@ export class Laputin {
 
         api.route('/screenshot').post(async (req, res) => {
             try {
-                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined, undefined);
+                const query = new Query(
+                    undefined,
+                    undefined,
+                    req.body.hash,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined
+                );
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
+                    const screenshotter = new Screenshotter(
+                        this._libraryPath,
+                        this.library
+                    );
                     await screenshotter.screenshot(files[0], req.body.time);
                 }
 
@@ -194,12 +259,27 @@ export class Laputin {
 
         api.route('/screenshotTimecode').post(async (req, res) => {
             try {
-                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined, undefined);
+                const query = new Query(
+                    undefined,
+                    undefined,
+                    req.body.hash,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined
+                );
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
-                    await screenshotter.screenshotTimecode(files[0], req.body.timecode, req.body.time);
+                    const screenshotter = new Screenshotter(
+                        this._libraryPath,
+                        this.library
+                    );
+                    await screenshotter.screenshotTimecode(
+                        files[0],
+                        req.body.timecode,
+                        req.body.time
+                    );
                 }
 
                 res.status(200).end();
@@ -210,12 +290,27 @@ export class Laputin {
 
         api.route('/screenshotTag').post(async (req, res) => {
             try {
-                const query = new Query(undefined, undefined, req.body.hash, undefined, undefined, undefined, undefined);
+                const query = new Query(
+                    undefined,
+                    undefined,
+                    req.body.hash,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined
+                );
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
-                    await screenshotter.screenshotTag(req.body.tag, files[0], req.body.time);
+                    const screenshotter = new Screenshotter(
+                        this._libraryPath,
+                        this.library
+                    );
+                    await screenshotter.screenshotTag(
+                        req.body.tag,
+                        files[0],
+                        req.body.time
+                    );
                 }
 
                 res.status(200).end();
@@ -225,11 +320,17 @@ export class Laputin {
         });
 
         api.route('/proxyExists/:hash').get(async (req, res) => {
-            if (!(this._proxyDirectory)) {
+            if (!this._proxyDirectory) {
                 res.send(false);
             } else {
                 try {
-                    fs.accessSync(path.join(this._proxyDirectory, req.params.hash + '.mp4'), fs.constants.R_OK);
+                    fs.accessSync(
+                        path.join(
+                            this._proxyDirectory,
+                            req.params.hash + '.mp4'
+                        ),
+                        fs.constants.R_OK
+                    );
                     res.send(true);
                 } catch (error) {
                     res.send(false);
@@ -248,7 +349,10 @@ export class Laputin {
             const current: express.Express = express();
 
             if (i === components.length) {
-                current.use('/' + currentPath, express.static(this._libraryPath));
+                current.use(
+                    '/' + currentPath,
+                    express.static(this._libraryPath)
+                );
             } else {
                 current.use('/' + currentPath.replace(' ', '%20'), previous);
             }

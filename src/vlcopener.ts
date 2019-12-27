@@ -3,7 +3,7 @@ import child_process = require('child_process');
 import path = require('path');
 import os = require('os');
 
-import {File} from './file';
+import { File } from './file';
 
 export class VLCOpener {
     private _binaryPath: string;
@@ -33,7 +33,12 @@ export class VLCOpener {
             try {
                 process.kill(this._child.pid, 'SIGKILL');
             } catch (err) {
-                console.log('Couldn\'t close ' + this._child.pid + ' due to error: ' + err);
+                console.log(
+                    "Couldn't close " +
+                        this._child.pid +
+                        ' due to error: ' +
+                        err
+                );
             }
         }
     }
@@ -41,9 +46,9 @@ export class VLCOpener {
     private _writeVideosToPlaylist(files: File[]): void {
         let playlist = '#EXTM3U\n';
 
-        files = files.sort((a, b) => (a.path > b.path) ? 1 : -1);
+        files = files.sort((a, b) => (a.path > b.path ? 1 : -1));
 
-        files.forEach((video) => {
+        files.forEach(video => {
             let videoPath;
             if (os.platform() === 'win32') {
                 videoPath = video.path.replace(/\//g, '\\');
@@ -61,6 +66,8 @@ export class VLCOpener {
     private _openPlayer() {
         console.log('executing');
         console.log(`"${this._binaryPath}" "${this._playlistPath}"`);
-        this._child = child_process.exec(`"${this._binaryPath}" "${this._playlistPath}"`);
+        this._child = child_process.exec(
+            `"${this._binaryPath}" "${this._playlistPath}"`
+        );
     }
 }

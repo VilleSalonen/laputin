@@ -6,14 +6,19 @@ import fs = require('fs');
 import path = require('path');
 import winston = require('winston');
 
-import {Library} from './library';
-import {LaputinConfiguration} from './laputinconfiguration';
-import {compose} from './compose';
+import { Library } from './library';
+import { LaputinConfiguration } from './laputinconfiguration';
+import { compose } from './compose';
 import { ProxyGenerator } from './proxygenerator';
 
 (async function() {
     const argumentDefinitions = [
-        { name: 'libraryPath', type: String, multiple: false, defaultOption: true },
+        {
+            name: 'libraryPath',
+            type: String,
+            multiple: false,
+            defaultOption: true
+        },
         { name: 'initialize', type: Boolean, multiple: false },
         { name: 'createProxies', type: Boolean, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
@@ -41,18 +46,27 @@ import { ProxyGenerator } from './proxygenerator';
         const library = new Library(options.libraryPath);
         await library.createTables();
 
-        console.log(options.libraryPath + ' has been initialized as Laputin library. You can now start Laputin without --initialize.');
+        console.log(
+            options.libraryPath +
+                ' has been initialized as Laputin library. You can now start Laputin without --initialize.'
+        );
         process.exit(0);
     }
 
-    if (!fs.existsSync(options.libraryPath) || !fs.statSync(options.libraryPath).isDirectory()) {
+    if (
+        !fs.existsSync(options.libraryPath) ||
+        !fs.statSync(options.libraryPath).isDirectory()
+    ) {
         console.log(options.libraryPath + ' is not a valid directory.');
         process.exit(-2);
     }
 
     const dbFilePath = path.join(options.libraryPath, '.laputin.db');
     if (!fs.existsSync(dbFilePath)) {
-        console.log(options.libraryPath + ' has not been initialized as Laputin library.');
+        console.log(
+            options.libraryPath +
+                ' has not been initialized as Laputin library.'
+        );
         console.log(usage);
         process.exit(-1);
     }
@@ -60,7 +74,7 @@ import { ProxyGenerator } from './proxygenerator';
     winston.info('Library path: ' + options.libraryPath);
 
     const configFilePath = path.join(options.libraryPath, '.laputin.json');
-    const configuration: LaputinConfiguration = (fs.existsSync(configFilePath))
+    const configuration: LaputinConfiguration = fs.existsSync(configFilePath)
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
         : new LaputinConfiguration(3200, 'accurate', null, []);
 
@@ -77,7 +91,11 @@ import { ProxyGenerator } from './proxygenerator';
     laputin.initializeRoutes();
 
     if (!options.bypassHashing) {
-        winston.info('Hashing files with performFullCheck=' + options.performFullCheck + '...');
+        winston.info(
+            'Hashing files with performFullCheck=' +
+                options.performFullCheck +
+                '...'
+        );
         const timer = winston.startTimer();
         await laputin.loadFiles(options.performFullCheck);
         timer.done('Hashing');
