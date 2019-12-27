@@ -196,8 +196,6 @@ export class FileQueryComponent implements OnInit {
         this.searchTerm = value ? value.toLowerCase() : '';
 
         if (this.searchTerm.length === 0) {
-            // this.query = new FileQuery();
-            // this.queryUpdated.emit(this.query);
             return;
         }
 
