@@ -25,15 +25,20 @@ export class FileItemComponent implements OnInit {
 
     public showMyElement: boolean;
 
-    constructor(service: LaputinService) {
-        service.thumbnailChanged.subscribe((changed: File) => {
+    constructor(private service: LaputinService) {}
+
+    public ngOnInit() {
+        this.setImageUrl();
+
+        this.service.thumbnailChanged.subscribe((changed: File) => {
             if (changed.hash === this.file.hash) {
                 this.cacheBuster = '?cachebuster=' + new Date().toISOString();
+                this.setImageUrl();
             }
         });
     }
 
-    public ngOnInit() {
+    private setImageUrl(): void {
         this.image = `/laputin/thumbs-small/${this.file.hash}.jpg${this.cacheBuster}`;
     }
 
