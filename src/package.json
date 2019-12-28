@@ -1,8 +1,8 @@
 {
-  "name": "laputin-server",
-  "version": "1.0.0",
+  "name": "@laputin/laputin",
+  "version": "0.0.1",
   "description": "MIT",
-  "main": "index.js",
+  "main": "deploy/index.js",
   "author": "Ville Salonen <ville.salonen@iki.fi>",
   "license": "ISC",
   "dependencies": {
