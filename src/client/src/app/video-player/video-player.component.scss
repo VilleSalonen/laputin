@@ -19,22 +19,8 @@
     padding: $standard-margin;
     overflow: auto;
     flex: 2;
-}
 
-.row {
-    @include g-layout__row;
-}
-
-.column {
-    @include g-layout__column;
-}
-
-.sidecolumn {
-    display: flex;
-    min-width: 500px;
-    max-width: 500px;
-    flex-direction: column;
-    justify-content: space-between;
+    position: relative;
 }
 
 .video-container {
@@ -47,7 +33,6 @@
 }
 
 .video-container video {
-
     /* Center the video */
     position: absolute;
     top: 50%;
@@ -88,10 +73,6 @@
     background-size: contain;
 }
 
-.video-hero-shot {
-    position: relative;
-}
-
 .video-hero-play {
     display: flex;
     position: absolute;
@@ -109,25 +90,6 @@
     display: none;
 }
 
-.player {
-    position: relative;
-    margin-right: $standard-margin;
-    flex-grow: 1;
-}
-
-.player-view {
-    display: flex;
-    background: $color-primary-1;
-    width: 1000px;
-    min-height: 100%;
-    max-height: 100%;
-    flex-direction: column;
-}
-
-.full-screen .player-view {
-    width: 100%;
-}
-
 .player-controls {
     display: none;
     display: none;
@@ -138,24 +100,6 @@
     max-width: 100%;
     color: white;
     flex-direction: row;
-}
-
-.player-main-button {
-    display: flex;
-    margin-right: 0.5 * $standard-margin;
-    margin-left: 0.5 * $standard-margin;
-    font-size: 180%;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.tag-tools {
-    margin-bottom: $standard-margin;
-}
-
-.tag {
-    margin-right: 0.25 * $standard-margin;
-    margin-bottom: 0.25 * $standard-margin;
 }
 
 .show .filename {
@@ -235,39 +179,4 @@
 
 .fa {
     cursor: pointer;
-}
-
-.sidebar {
-    padding: $standard-margin;
-}
-
-a,
-a:hover {
-    color: $color-primary-4;
-}
-
-.timecodes {
-    display: flex;
-    margin-top: $standard-margin;
-    max-width: 2000px;
-    min-height: 167px;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
-
-app-timecode {
-    max-height: 150px;
-}
-
-.timecode-tools .row {
-    margin-bottom: 0.25 * $standard-margin;
-}
-
-.timecode-tools input {
-    width: 6em;
-}
-
-.timecode-tags {
-    flex-wrap: wrap;
 }

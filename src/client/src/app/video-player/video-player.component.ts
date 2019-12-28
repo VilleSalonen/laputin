@@ -15,9 +15,7 @@ import {
     FileQuery,
     FileChange,
     ChangeDirection,
-    Tag,
     Timecode,
-    TimecodeTag,
     AutocompleteType
 } from './../models';
 import { LaputinService } from './../laputin.service';
@@ -31,9 +29,9 @@ import {
     map,
     delay,
     switchMap,
-    distinctUntilChanged
+    distinctUntilChanged,
+    tap
 } from 'rxjs/operators';
-import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
 
 @Component({
     selector: 'app-video-player',
@@ -83,11 +81,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             }
         });
     }
-
-    public timecodes: Timecode[] = [];
-    public selectedTagsForTimecode: Tag[] = [];
-    public tagStart: string;
-    public tagEnd: string;
 
     public sliderMin = 0;
     public sliderMax = 1000000;
@@ -139,6 +132,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
         const timeUpdates = fromEvent(this.player, 'timeupdate').pipe(
             takeUntil(this.fileClosed),
+            tap(() => (this.playbackHasBeenStarted = true)),
+            tap(() => {
+                if (!this.playing && this.player.currentTime > 0) {
+                    this.play();
+                }
+            }),
             throttleTime(500),
             map(() => this.player.currentTime / this.player.duration)
         );
@@ -153,13 +152,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         fromEvent(this.player, 'durationchange')
             .pipe(takeUntil(this.fileClosed))
             .subscribe(() => {
-                this._service
-                    .getTimecodes(this.file)
-                    .toPromise()
-                    .then(timecodes => {
-                        this.timecodes = timecodes;
-                    });
-
                 this.playbackHasBeenStarted = false;
                 this.playing = false;
                 this.duration = this.formatDuration(this.player.duration);
@@ -284,20 +276,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     break;
                 case 'd':
                     this.goToNext();
-                    break;
-                case 'q':
-                    if (event.shiftKey) {
-                        this.goToTagStart();
-                    } else {
-                        this.setTagStart();
-                    }
-                    break;
-                case 'e':
-                    if (event.shiftKey) {
-                        this.goToTagEnd();
-                    } else {
-                        this.setTagEnd();
-                    }
                     break;
                 case 's':
                     this.toggleRandom();
@@ -463,30 +441,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.tagCreationOpen = !this.tagCreationOpen;
     }
 
-    public addTag(tag: Tag): void {
-        this.addTags([tag]);
-    }
-
-    public addTags(tags: Tag[]): void {
-        this._service
-            .addTags(this.file, tags)
-            .subscribe(() => this.addTagsToFile(tags));
-    }
-
-    public removeTag(tag: Tag): void {
-        this.file.tags = this.file.tags.filter(
-            (t: Tag): boolean => t.id !== tag.id
-        );
-        this._service.deleteTagFileAssoc(this.file, tag).subscribe(() => {});
-    }
-
-    private addTagsToFile(tags: Tag[]): void {
-        const currentTags = this.file.tags;
-        tags.forEach((tag: Tag) => currentTags.push(tag));
-        const sorted = currentTags.sort((a, b) => (a.name > b.name ? 1 : -1));
-        this.file.tags = sorted;
-    }
-
     public openFile(): void {
         const query = new FileQuery();
         query.hash = this.file.hash;
@@ -529,125 +483,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     .toPromise();
             }
         });
-    }
-
-    public copy(): void {
-        localStorage.setItem('tagClipboard', JSON.stringify(this.file.tags));
-    }
-
-    public paste(): void {
-        const tags = JSON.parse(localStorage.getItem('tagClipboard'));
-        this.addTags(tags);
-    }
-
-    public goToTimecode(timecode: Timecode): void {
-        this.setCurrentTime(timecode.start);
-        this.play();
-    }
-
-    public addTagSelectionToTimecode(tag: Tag): void {
-        const alreadyAddedOnFile = this.file.tags.find(t => t.id === tag.id);
-        if (!alreadyAddedOnFile) {
-            this.addTag(tag);
-        }
-
-        this.selectedTagsForTimecode.push(tag);
-    }
-
-    public removeTagSelectionFromTimecode(tag: Tag): void {
-        this.selectedTagsForTimecode = this.selectedTagsForTimecode.filter(
-            t => t.id !== tag.id
-        );
-    }
-
-    public setTagStart(): void {
-        this.tagStart = formatPreciseDuration(this.player.currentTime);
-    }
-
-    public setTagEnd(): void {
-        this.tagEnd = formatPreciseDuration(this.player.currentTime);
-    }
-
-    public goToTagStart(): void {
-        if (!this.tagStart) {
-            return;
-        }
-
-        this.setCurrentTime(
-            this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
-        );
-        if (!this.playing) {
-            this.play();
-        }
-    }
-
-    public goToTagEnd(): void {
-        if (!this.tagEnd) {
-            return;
-        }
-
-        this.setCurrentTime(
-            this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
-        );
-        if (!this.playing) {
-            this.play();
-        }
-    }
-
-    public async saveTagTimecode(): Promise<void> {
-        const tagStart = this.convertFromSeparatedTimecodeToSeconds(
-            this.tagStart
-        );
-        const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
-
-        const selectedTimecodeTags = this.selectedTagsForTimecode.map(
-            t => new TimecodeTag(null, null, t)
-        );
-
-        const tagTimecode = new Timecode(
-            null,
-            this.file.hash,
-            this.file.path,
-            selectedTimecodeTags,
-            tagStart,
-            tagEnd
-        );
-        const result = await this._service
-            .createTagTimecode(this.file, tagTimecode)
-            .toPromise();
-        this.addTagTimecode(result);
-
-        this.selectedTagsForTimecode = [];
-        this.tagStart = null;
-        this.tagEnd = null;
-    }
-
-    public removeTimecode(timecode: Timecode): void {
-        this.timecodes = this.timecodes.filter(
-            t => t.timecodeId !== timecode.timecodeId
-        );
-    }
-
-    private convertFromSeparatedTimecodeToSeconds(
-        separatedTimecode: string
-    ): number {
-        const components = separatedTimecode.split(':');
-        return +components[0] * 3600 + +components[1] * 60 + +components[2];
-    }
-
-    private addTagTimecode(timecode: Timecode): void {
-        const timecodes = this.timecodes.slice();
-        timecodes.push(timecode);
-        timecodes.sort((a, b) => {
-            if (a.start < b.start) {
-                return -1;
-            } else if (a.start > b.start) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        this.timecodes = timecodes;
     }
 
     private setCurrentTime(newCurrentTime: number) {

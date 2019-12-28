@@ -1,5 +1,60 @@
 <ng-container *ngIf="activeFile$ | async as activeFile">
-    <div class="player full-height" *ngIf="activeFile">
-        <app-video-player class="full-height" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
+    <app-video-player [ngClass]="{ 'tall': timecodes.length == 0 }" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>        
+
+    <div class="tag-tools">
+        <div>
+            <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
+
+            <button mat-menu-item (click)="copy()">
+                <i class="fa fa-copy" aria-hidden="true"></i> Copy tags from current file
+            </button>
+            <button mat-menu-item (click)="paste()">
+                <i class="fa fa-paste" aria-hidden="true"></i> Paste tags to current file
+            </button>
+        </div>
+
+        <div class="timecode-tools">
+            <div class="row timecode-tags" *ngIf="selectedTagsForTimecode">
+                <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
+                    mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
+            </div>
+    
+            <div class="row">
+                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
+                [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+            </div>
+    
+            <div class="row">
+                <button mat-mini-fab color="primary" (click)="setTagStart()" title="Set tag timecode start">
+                    <i class="fas fa-stopwatch"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="goToTagStart()" title="Go to tag timecode start">
+                    <i class="far fa-dot-circle"></i>
+                </button>
+    
+                <mat-form-field>
+                    <input matInput placeholder="Start time" [(ngModel)]="tagStart" />
+                </mat-form-field>
+            </div>
+    
+            <div class="row">
+                <button mat-mini-fab color="primary" (click)="setTagEnd()" title="Set tag timecode end">
+                    <i class="fas fa-stopwatch"></i>
+                </button>
+                <button mat-mini-fab color="primary" (click)="goToTagEnd()" title="Go to tag timecode end">
+                    <i class="far fa-dot-circle"></i>
+                </button>
+    
+                <mat-form-field>
+                    <input matInput [(ngModel)]="tagEnd" placeholder="End time" />
+                </mat-form-field>
+            </div>
+    
+            <button (click)="tagStart && tagEnd && saveTagTimecode()" mat-button>Save</button>
+        </div>
+    </div>
+
+    <div class="timecodes" *ngIf="timecodes.length > 0">
+        <app-timecode *ngFor="let timecode of timecodes" [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
     </div>
 </ng-container>
