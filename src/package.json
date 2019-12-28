@@ -19,7 +19,8 @@
     "sqlite3": "4.1.0",
     "walk": "~2.3.9",
     "watch": "~1.0.1",
-    "winston": "~2.4.1"
+    "winston": "~2.4.1",
+    "xxhash": "^0.3.0"
   },
   "devDependencies": {
     "@types/bluebird": "~3.5.20",

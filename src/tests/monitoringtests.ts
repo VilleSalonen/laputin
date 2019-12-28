@@ -19,12 +19,9 @@ describe('File Library', function() {
     let laputin: Laputin;
     let currentPath: string;
 
-    const carFileHash =
-        '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592';
-    const catFileHash =
-        '70342c64bed51a0921b68e2df2fe893bc52c89454ee2dcb47aff436b7259d71805dbaf36838db76a7e919ba6249273d261b0f892b8b4958748350ff1f25d572e';
-    const landscapeFileHash =
-        '44f332dadcd09cc73c14b30a8334c1bf7d615829dd111f47fa9d3ae212933e32cbf59cd700010bd0e950309d64c23b03badcb990170676e003a0b02b63d3e757';
+    const carFileHash = '64f2c393';
+    const catFileHash = '26199938';
+    const landscapeFileHash = 'dee01418';
 
     beforeEach(async function() {
         currentPath = this.currentTest
@@ -85,8 +82,8 @@ describe('File Library', function() {
             laputin = await initializeLaputin(currentPath);
 
             return shouldContainFiles(laputin, [
-                carFile,
                 catsFile,
+                carFile,
                 landscapeFile
             ]);
         });
@@ -250,13 +247,6 @@ describe('File Library', function() {
                 39031,
                 'image/jpeg'
             );
-            const catsFile = new File(
-                catFileHash,
-                'deploy-tests/' + currentPath + '/cats.jpg',
-                [],
-                30791,
-                'image/jpeg'
-            );
             const landscapeFile = new File(
                 landscapeFileHash,
                 'deploy-tests/' + currentPath + '/jyvasjarvi.jpg',
@@ -297,13 +287,6 @@ describe('File Library', function() {
                 'deploy-tests/' + currentPath + '/car.jpg',
                 [],
                 39031,
-                'image/jpeg'
-            );
-            const catsFile = new File(
-                catFileHash,
-                'deploy-tests/' + currentPath + '/cats.jpg',
-                [],
-                30791,
                 'image/jpeg'
             );
             const landscapeFile = new File(
@@ -374,10 +357,7 @@ describe('File Library', function() {
 
             const duplicates = laputin.fileLibrary.getDuplicates();
             expect(duplicates).to.eql({
-                '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592': [
-                    carFile,
-                    duplicateCarFile
-                ]
+                '64f2c393': [carFile, duplicateCarFile]
             });
 
             // Note that Laputin returns newly copied duplicate version of car.
@@ -419,10 +399,7 @@ describe('File Library', function() {
 
             const duplicates = laputin.fileLibrary.getDuplicates();
             expect(duplicates).to.eql({
-                '32f38f740bdeb0ca8fae735b9b149152181d6591303b80fb81cc6f189f3070d4f6b153c136ca8111c9e25c31f670e29983aef866c9055595d6e47764457b2592': [
-                    carFile,
-                    duplicateCarFile
-                ]
+                '64f2c393': [carFile, duplicateCarFile]
             });
 
             // Note that Laputin returns newly copied duplicate version of car.
