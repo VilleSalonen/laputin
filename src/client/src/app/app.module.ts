@@ -45,6 +45,7 @@ import { TagAutocompleteModule } from './tag-autocomplete/tag-autocomplete.modul
 import { FileQueryModule } from './file-query-component/file-query.module';
 import { PipesModule } from './pipes/pipes.module';
 import { FileComponent } from './file/file.component';
+import { ImageFileComponent } from './image-file/image-file.component';
 
 @NgModule({
     declarations: [
@@ -63,7 +64,8 @@ import { FileComponent } from './file/file.component';
         TimecodesComponent,
         TimecodeSearchComponent,
         VideoPlayerComponent,
-        FileComponent
+        FileComponent,
+        ImageFileComponent
     ],
     entryComponents: [
         TagScreenshotDialogComponent,

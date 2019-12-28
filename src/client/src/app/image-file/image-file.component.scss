@@ -1,0 +1,31 @@
+@import './../../styles/styles.scss';
+
+:host {
+    @include g-layout__row;
+
+    overflow: auto;
+    flex: 2;
+}
+
+.container {
+    @include g-layout__row;
+
+    padding: $standard-margin;
+    overflow: auto;
+    flex: 2;
+
+    position: relative;
+}
+
+.image-container {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;
+}
