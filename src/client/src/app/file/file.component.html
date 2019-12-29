@@ -3,7 +3,7 @@
         <app-image-file class="tall" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-image-file>
     </ng-container>
     <ng-container *ngIf="!activeFile.type.startsWith('image')">
-        <app-video-player [ngClass]="{ 'tall': timecodes.length == 0 }" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
+        <app-video-player [ngClass]="{ 'tall': timecodes && timecodes.length == 0 }" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
     </ng-container>
 
     <div class="tag-tools">
@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div class="timecodes" *ngIf="!activeFile.type.startsWith('image') && timecodes.length > 0">
+    <div class="timecodes" *ngIf="!activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
         <app-timecode *ngFor="let timecode of timecodes" [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
     </div>
 </ng-container>
