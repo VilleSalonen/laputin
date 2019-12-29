@@ -14,17 +14,39 @@ import { ProxyGenerator } from './proxygenerator';
 import open = require('open');
 
 (async function() {
+    const sections = [
+        {
+            header: 'Laputin',
+            content: 'Organize your local files with tags.'
+        },
+        {
+            header: 'Options',
+            optionList: [
+                {
+                    name: 'library',
+                    typeLabel: '{underline path}',
+                    description: 'Path to your file library.'
+                },
+                {
+                    name: 'help',
+                    description: 'Print this usage guide.'
+                }
+            ]
+        }
+    ];
+    const usage = commandLineUsage(sections);
+
     const argumentDefinitions = [
         {
-            name: 'libraryPath',
+            name: 'library',
             type: String,
             multiple: false,
             defaultOption: true
         },
+        { name: 'help', type: Boolean, multiple: false },
         { name: 'initialize', type: Boolean, multiple: false },
         { name: 'createProxies', type: Boolean, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
-        { name: 'bypassHashing', type: Boolean, multiple: false },
         { name: 'performFullCheck', type: Boolean, multiple: false },
         {
             name: 'skipBrowserOpen',
@@ -33,89 +55,88 @@ import open = require('open');
             defaultOption: false
         }
     ];
-    const usage = commandLineUsage(argumentDefinitions);
+    const options = commandLineArgs(argumentDefinitions);
 
-    const options: any = commandLineArgs(argumentDefinitions);
-
-    // For some reason " is added only to the end of the path if path contains spaces.
-    options.libraryPath = options.libraryPath.replace(/\"/g, '');
+    if (options.help) {
+        console.log(usage);
+        process.exit(-1);
+    }
 
     if (options.verbose) {
         winston.level = 'verbose';
     }
 
-    if (!options.libraryPath) {
-        console.log('You have to pass library path as an argument.');
+    if (!options.library) {
+        winston.error('You have to pass library path as an argument.');
         console.log(usage);
         process.exit(-1);
     }
 
+    // For some reason " is added only to the end of the path if path contains spaces.
+    options.library = options.library.replace(/\"/g, '');
+
+    if (
+        !fs.existsSync(options.library) ||
+        !fs.statSync(options.library).isDirectory()
+    ) {
+        winston.error(`${options.library} is not a valid directory.`);
+        process.exit(-2);
+    }
+
+    const dbFilePath = path.join(options.library, '.laputin.db');
     if (options.initialize) {
-        const library = new Library(options.libraryPath);
+        if (fs.existsSync(dbFilePath)) {
+            winston.error(
+                `${options.library} has already been initialized as Laputin library. Refusing to re-initialize.`
+            );
+            process.exit(-1);
+        }
+
+        const library = new Library(options.library);
         await library.createTables();
 
-        console.log(
-            options.libraryPath +
-                ' has been initialized as Laputin library. You can now start Laputin without --initialize.'
+        winston.info(
+            `${options.library} has been initialized as Laputin library. You can now start Laputin without --initialize.`
         );
         process.exit(0);
     }
 
-    if (
-        !fs.existsSync(options.libraryPath) ||
-        !fs.statSync(options.libraryPath).isDirectory()
-    ) {
-        console.log(options.libraryPath + ' is not a valid directory.');
-        process.exit(-2);
-    }
-
-    const dbFilePath = path.join(options.libraryPath, '.laputin.db');
     if (!fs.existsSync(dbFilePath)) {
-        console.log(
-            options.libraryPath +
-                ' has not been initialized as Laputin library.'
+        winston.error(
+            `${options.library} has not been initialized as Laputin library.`
         );
         console.log(usage);
         process.exit(-1);
     }
 
-    winston.info('Library path: ' + options.libraryPath);
+    winston.info(`Library path: ${options.library}`);
 
-    const configFilePath = path.join(options.libraryPath, '.laputin.json');
+    const configFilePath = path.join(options.library, '.laputin.json');
     const configuration: LaputinConfiguration = fs.existsSync(configFilePath)
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
         : new LaputinConfiguration(3200, 'accurate', null, []);
 
     if (options.createProxies) {
-        const library = new Library(options.libraryPath);
+        const library = new Library(options.library);
         const proxyGenerator = new ProxyGenerator(library, configuration);
         await proxyGenerator.generateMissingProxies();
 
         process.exit(0);
     }
 
-    const laputin = compose(options.libraryPath, configuration);
+    const laputin = compose(options.library, configuration);
 
     laputin.initializeRoutes();
+    const timer = winston.startTimer();
+    await laputin.loadFiles(options.performFullCheck);
+    timer.done('Hashing');
 
-    if (!options.bypassHashing) {
-        winston.info(
-            'Hashing files with performFullCheck=' +
-                options.performFullCheck +
-                '...'
-        );
-        const timer = winston.startTimer();
-        await laputin.loadFiles(options.performFullCheck);
-        timer.done('Hashing');
-    } else {
-        winston.info('Skipped hashing, starting monitoring.');
-        laputin.startMonitoring();
-    }
+    laputin.startMonitoring();
 
     await laputin.startListening();
     if (options.skipBrowserOpen) {
         winston.info(
-            'Laputin started at http://localhost:' + configuration.port
+            `Laputin started at http://localhost:${configuration.port}`
         );
     } else {
         await open(`http://localhost:${configuration.port}`);
