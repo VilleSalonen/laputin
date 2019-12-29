@@ -7,6 +7,8 @@ import { File } from './file';
 import { Timecode, Tag } from './tag';
 import { Library } from './library';
 
+const options: any = { stdio: 'pipe' };
+
 export class Screenshotter {
     private _thumbsPath: string;
     private _thumbsSmallPath: string;
@@ -53,29 +55,17 @@ export class Screenshotter {
         this.initialize();
 
         if (file.type.startsWith('video')) {
-            const command =
-                'ffmpeg -y -ss ' +
-                timeInSeconds +
-                ' -i "' +
-                file.path +
-                '" -vframes 1 ' +
-                '"' +
-                this.getThumbPath(file) +
-                '"';
+            const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
+                file.path
+            }" -vframes 1 "${this.getThumbPath(file)}"`;
 
-            const commandSmall =
-                'ffmpeg -y -ss ' +
-                timeInSeconds +
-                ' -i "' +
-                file.path +
-                '" -vframes 1 -vf scale=800:-1 ' +
-                '"' +
-                this.getThumbSmallPath(file) +
-                '"';
+            const commandSmall = `ffmpeg -y -ss ${timeInSeconds}  -i "${
+                file.path
+            }" -vframes 1 -vf scale=800:-1 "${this.getThumbSmallPath(file)}"`;
 
             try {
-                child_process.execSync(command);
-                child_process.execSync(commandSmall);
+                child_process.execSync(command, options);
+                child_process.execSync(commandSmall, options);
                 this._library.storeTimeForFileScreenshot(file, timeInSeconds);
                 winston.log(
                     'verbose',
@@ -88,15 +78,9 @@ export class Screenshotter {
                 );
             }
         } else if (file.type.startsWith('image')) {
-            const commandSmall =
-                'ffmpeg -y ' +
-                ' -i "' +
-                file.path +
-                '"' +
-                ' -vf scale=800:-1 ' +
-                '"' +
-                this.getThumbSmallPath(file) +
-                '"';
+            const commandSmall = `ffmpeg -y  -i "${
+                file.path
+            }" -vf scale=800:-1 "${this.getThumbSmallPath(file)}"`;
 
             try {
                 child_process.execSync(commandSmall);
@@ -121,29 +105,19 @@ export class Screenshotter {
     ): Promise<void> {
         this.initialize();
 
-        const command =
-            'ffmpeg -y -ss ' +
-            timeInSeconds +
-            ' -i "' +
-            file.path +
-            '" -vframes 1 ' +
-            '"' +
-            this.getTagTimecodeThumbPath(timecode) +
-            '"';
+        const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
+            file.path
+        }" -vframes 1 "${this.getTagTimecodeThumbPath(timecode)}"`;
 
-        const commandSmall =
-            'ffmpeg -y -ss ' +
-            timeInSeconds +
-            ' -i "' +
-            file.path +
-            '" -vframes 1 -vf scale=800:-1 ' +
-            '"' +
-            this.getTagTimecodeThumbSmallPath(timecode) +
-            '"';
+        const commandSmall = `ffmpeg -y -ss ${timeInSeconds} -i "${
+            file.path
+        }" -vframes 1 -vf scale=800:-1 "${this.getTagTimecodeThumbSmallPath(
+            timecode
+        )}"`;
 
         try {
-            child_process.execSync(command);
-            child_process.execSync(commandSmall);
+            child_process.execSync(command, options);
+            child_process.execSync(commandSmall, options);
             this._library.storeTimeForTimecodeScreenshot(
                 timecode,
                 timeInSeconds
@@ -171,29 +145,17 @@ export class Screenshotter {
     ): Promise<void> {
         this.initialize();
 
-        const command =
-            'ffmpeg -y -ss ' +
-            timeInSeconds +
-            ' -i "' +
-            file.path +
-            '" -vframes 1 ' +
-            '"' +
-            this.getTagThumbPath(tag) +
-            '"';
+        const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
+            file.path
+        }" -vframes 1 "${this.getTagThumbPath(tag)}"`;
 
-        const commandSmall =
-            'ffmpeg -y -ss ' +
-            timeInSeconds +
-            ' -i "' +
-            file.path +
-            '" -vframes 1 -vf scale=800:-1 ' +
-            '"' +
-            this.getTagThumbSmallPath(tag) +
-            '"';
+        const commandSmall = `ffmpeg -y -ss ${timeInSeconds} -i "${
+            file.path
+        }" -vframes 1 -vf scale=800:-1 "${this.getTagThumbSmallPath(tag)}"`;
 
         try {
-            child_process.execSync(command);
-            child_process.execSync(commandSmall);
+            child_process.execSync(command, options);
+            child_process.execSync(commandSmall, options);
             this._library.storeTimeForTagScreenshot(tag, file, timeInSeconds);
             winston.log(
                 'verbose',
