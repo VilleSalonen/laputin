@@ -1,6 +1,5 @@
 language: node_js
 node_js:
-- '13'
 - '12'
 env:
   - CXX=g++-4.8
@@ -10,4 +9,4 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-script: cd src && npm install && npm run test-server && cd client && npm install && npm run lint && cd ..
+script: cd src && npm install && npm run test-server && cd client && npm install && npm run lint && cd .. && npm run build-exe

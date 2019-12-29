@@ -22,9 +22,6 @@ const readChunk = require('read-chunk');
 const fileType = require('file-type');
 
 const probe = require('node-ffprobe');
-const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
-
-probe.FFPROBE_PATH = ffprobeInstaller.path;
 
 export class FileLibrary extends events.EventEmitter {
     private _existingFiles: { [path: string]: File } = {};
