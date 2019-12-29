@@ -180,10 +180,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 );
             });
 
-        const windowKeyups = fromEvent(window, 'keyup').pipe(
-            takeUntil(this.fileClosed)
-        );
-
         const mouseEnter = fromEvent(
             this.videoArea.nativeElement,
             'mouseenter'
@@ -210,85 +206,91 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 }
             });
 
-        windowKeyups.subscribe((event: KeyboardEvent) => {
-            if ((<any>event.srcElement).nodeName === 'INPUT') {
-                if (event.key === 'Escape') {
-                    (<any>event.srcElement).blur();
-                }
-
-                return;
-            }
-
-            switch (event.key) {
-                case 'PageUp':
-                    this.megaStepForward();
-                    break;
-                case 'PageDown':
-                    this.megaStepBackward();
-                    break;
-                case 'ArrowLeft':
-                    if (event.shiftKey) {
-                        this.tinyStepBackward();
-                    } else {
-                        this.largeStepBackward();
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (event.shiftKey) {
-                        this.tinyStepForward();
-                    } else {
-                        this.largeStepForward();
-                    }
-                    break;
-                case 'ArrowUp':
-                    if (event.shiftKey) {
-                        this.smallStepForward();
-                    } else {
-                        this.hugeStepForward();
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (event.shiftKey) {
-                        this.smallStepBackward();
-                    } else {
-                        this.hugeStepBackward();
-                    }
-                    break;
-                case 'Enter':
-                    if (event.altKey) {
-                        this.toggleFullScreen();
-                    }
-                    break;
-                case 'Escape':
-                    if (this.isFullScreen) {
-                        this.toggleFullScreen();
-                    }
-                    break;
-                case ' ':
-                    if (this.playing) {
-                        this.pause();
-                    } else {
-                        this.play();
-                    }
-                    break;
-                case 'a':
-                    this.goToPrevious();
-                    break;
-                case 'd':
-                    this.goToNext();
-                    break;
-                case 's':
-                    this.toggleRandom();
-                    break;
-                case 'PrintScreen':
-                    this.screenshot();
-                    break;
-            }
-        });
+        this.bindKeyboardShortcuts();
     }
 
     ngOnDestroy(): void {
         this.close();
+    }
+
+    private bindKeyboardShortcuts(): void {
+        fromEvent(window, 'keyup')
+            .pipe(takeUntil(this.fileClosed))
+            .subscribe((event: KeyboardEvent) => {
+                if ((<any>event.srcElement).nodeName === 'INPUT') {
+                    if (event.key === 'Escape') {
+                        (<any>event.srcElement).blur();
+                    }
+
+                    return;
+                }
+
+                switch (event.key) {
+                    case 'PageUp':
+                        this.megaStepForward();
+                        break;
+                    case 'PageDown':
+                        this.megaStepBackward();
+                        break;
+                    case 'ArrowLeft':
+                        if (event.shiftKey) {
+                            this.tinyStepBackward();
+                        } else {
+                            this.largeStepBackward();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (event.shiftKey) {
+                            this.tinyStepForward();
+                        } else {
+                            this.largeStepForward();
+                        }
+                        break;
+                    case 'ArrowUp':
+                        if (event.shiftKey) {
+                            this.smallStepForward();
+                        } else {
+                            this.hugeStepForward();
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (event.shiftKey) {
+                            this.smallStepBackward();
+                        } else {
+                            this.hugeStepBackward();
+                        }
+                        break;
+                    case 'Enter':
+                        if (event.altKey) {
+                            this.toggleFullScreen();
+                        }
+                        break;
+                    case 'Escape':
+                        if (this.isFullScreen) {
+                            this.toggleFullScreen();
+                        }
+                        break;
+                    case ' ':
+                        if (this.playing) {
+                            this.pause();
+                        } else {
+                            this.play();
+                        }
+                        break;
+                    case 'a':
+                        this.goToPrevious();
+                        break;
+                    case 'd':
+                        this.goToNext();
+                        break;
+                    case 's':
+                        this.toggleRandom();
+                        break;
+                    case 'PrintScreen':
+                        this.screenshot();
+                        break;
+                }
+            });
     }
 
     public setProgress(sliderChangeEvent: MatSliderChange) {
