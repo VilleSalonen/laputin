@@ -114,7 +114,7 @@ import open = require('open');
     const configFilePath = path.join(options.library, '.laputin.json');
     const configuration: LaputinConfiguration = fs.existsSync(configFilePath)
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-        : new LaputinConfiguration(3200, 'accurate', null, []);
+        : new LaputinConfiguration(3200, 'quick', null, []);
 
     if (options.createProxies) {
         const library = new Library(options.library);
