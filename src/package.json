@@ -6,7 +6,6 @@
   "author": "Ville Salonen <ville.salonen@iki.fi>",
   "license": "ISC",
   "dependencies": {
-    "@ffprobe-installer/ffprobe": "^1.0.12",
     "bluebird": "3.5.1",
     "body-parser": "1.18.2",
     "command-line-args": "~5.0.2",
@@ -37,7 +36,9 @@
     "@types/watch": "~1.0.0",
     "@types/winston": "~2.3.9",
     "chai": "~4.1.2",
+    "copyfiles": "^2.1.1",
     "mocha": "~5.0.5",
+    "pkg": "^4.4.2",
     "rimraf": "^2.6.3",
     "supertest": "~3.0.0",
     "tslint": "^5.20.1",
@@ -46,6 +47,7 @@
   "scripts": {
     "build": "npm run build-server && npm run build-client",
     "build-client": "cd client && npx ng build --aot",
+    "build-exe": "rimraf deploy-exe && mkdir deploy-exe && pkg package.json --targets node12-win-x64 --out-path deploy-exe && npx copyfiles --flat node_modules/xxhash/build/Release/hash.node deploy-exe/",
     "prebuild-server": "rimraf deploy",
     "build-server": "tsc -p tsconfig.json --outDir deploy",
     "pretest-server": "npm run lint && rimraf deploy-tests && mkdir deploy-tests",
@@ -54,5 +56,10 @@
     "start": "node deploy/index.js",
     "test": "npm run test-server && npm run test-client",
     "lint": "tslint --project tsconfig.json"
-  }
+  },
+  "pkg": {
+    "scripts": "deploy/**/*.js",
+    "assets": "client/dist/*"
+  },
+  "bin": "deploy/index.js"
 }
