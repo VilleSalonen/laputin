@@ -133,11 +133,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const timeUpdates = fromEvent(this.player, 'timeupdate').pipe(
             takeUntil(this.fileClosed),
             tap(() => (this.playbackHasBeenStarted = true)),
-            tap(() => {
-                if (!this.playing && this.player.currentTime > 0) {
-                    this.play();
-                }
-            }),
             throttleTime(500),
             map(() => this.player.currentTime / this.player.duration)
         );
