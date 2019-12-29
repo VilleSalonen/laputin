@@ -46,7 +46,8 @@
   },
   "scripts": {
     "build": "npm run build-server && npm run build-client",
-    "build-client": "cd client && npx ng build --aot",
+    "build-client": "cd client && npx ng build --prod",
+    "prebuild-exe": "npm run build",
     "build-exe": "rimraf deploy-exe && mkdir deploy-exe && pkg package.json --targets node12-win-x64 --out-path deploy-exe && npx copyfiles --flat node_modules/xxhash/build/Release/hash.node deploy-exe/",
     "prebuild-server": "rimraf deploy",
     "build-server": "tsc -p tsconfig.json --outDir deploy",
