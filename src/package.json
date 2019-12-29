@@ -14,6 +14,7 @@
     "file-type": "^12.4.2",
     "lodash": "^4.17.15",
     "node-ffprobe": "^3.0.0",
+    "open": "^7.0.0",
     "read-chunk": "^3.2.0",
     "sqlite3": "4.1.0",
     "walk": "~2.3.9",

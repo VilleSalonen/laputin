@@ -11,6 +11,8 @@ import { LaputinConfiguration } from './laputinconfiguration';
 import { compose } from './compose';
 import { ProxyGenerator } from './proxygenerator';
 
+import open = require('open');
+
 (async function() {
     const argumentDefinitions = [
         {
@@ -23,7 +25,13 @@ import { ProxyGenerator } from './proxygenerator';
         { name: 'createProxies', type: Boolean, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
         { name: 'bypassHashing', type: Boolean, multiple: false },
-        { name: 'performFullCheck', type: Boolean, multiple: false }
+        { name: 'performFullCheck', type: Boolean, multiple: false },
+        {
+            name: 'skipBrowserOpen',
+            type: Boolean,
+            multiple: false,
+            defaultOption: false
+        }
     ];
     const usage = commandLineUsage(argumentDefinitions);
 
@@ -105,5 +113,11 @@ import { ProxyGenerator } from './proxygenerator';
     }
 
     await laputin.startListening();
-    winston.info('Laputin started at http://localhost:' + configuration.port);
+    if (options.skipBrowserOpen) {
+        winston.info(
+            'Laputin started at http://localhost:' + configuration.port
+        );
+    } else {
+        await open(`http://localhost:${configuration.port}`);
+    }
 })();
