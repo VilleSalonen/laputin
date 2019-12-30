@@ -3,13 +3,15 @@
         <ng-container *ngIf="files$ | async as files; else loading">
             <div class="files-search">
                 <app-file-query></app-file-query>
-    
-                <span *ngIf="files.length > 0">
-                    {{files.length}} files, {{ totalDuration$ | async }}, {{ totalSize$ | async }}
-                    <a (click)="openFiles()" title="Open in external player">
-                        <i class="fa fa-film" aria-hidden="true"></i>
-                    </a>
-                </span>
+
+                <div *ngIf="files.length > 0">
+                    <span>
+                        {{files.length}} files, {{ totalDuration$ | async }}, {{ totalSize$ | async }}
+                        <a (click)="openFiles()" title="Open in external player">
+                            <i class="fa fa-film" aria-hidden="true"></i>
+                        </a>
+                    </span>
+                </div>
             </div>
 
             <div class="files-list">
