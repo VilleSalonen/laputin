@@ -450,11 +450,13 @@ export class Library {
                 files_timecodes.id,
                 files_timecodes.hash AS hash,
                 files.path,
+                files.active,
                 files_timecodes.start,
                 files_timecodes.end
             FROM files_timecodes
             JOIN files
             ON files.hash = files_timecodes.hash
+            WHERE files.active = 1
             ORDER BY files.hash, start
         `;
 
