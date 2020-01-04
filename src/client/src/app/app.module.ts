@@ -30,7 +30,6 @@ import { AppComponent } from './app.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { FileItemComponent } from './file-item/file-item.component';
 import { FilesComponent } from './files/files.component';
-import { SearchTagComponent } from './search-tag/search-tag.component';
 import { TagsComponent } from './tags/tags.component';
 import { TagFilterPipe } from './tag-filter.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
@@ -56,7 +55,6 @@ import { TimecodeMobileReadonlyComponent } from './timecode-mobile-readonly/time
         DuplicatesComponent,
         FileItemComponent,
         FilesComponent,
-        SearchTagComponent,
         TagFilterPipe,
         TagRowComponent,
         TagsComponent,
