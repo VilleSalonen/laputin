@@ -1,65 +1,128 @@
-<ng-container *ngIf="activeFile$ | async as activeFile">
-    <ng-container *ngIf="activeFile.type.startsWith('image')">
-        <app-image-file class="tall" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-image-file>
-    </ng-container>
-    <ng-container *ngIf="!activeFile.type.startsWith('image')">
-        <app-video-player [ngClass]="{ 'tall': timecodes && timecodes.length == 0 }" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-video-player>
-    </ng-container>
+<div class="container" [ngClass]="{ 'mobile': isMobile }" #fileElement>
+    <ng-container *ngIf="activeFile$ | async as activeFile">
+        <div class="video-container" [ngClass]="{ 'video-container-desktop': !isMobile }">
+            <div class="filename" *ngIf="!isMobile">
+                <span>{{file.name}}</span>
 
-    <div class="tag-tools">
-        <div>
-            <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
+                <span class="file-open-link">
+                    <a (click)="openFile()" title="Open in external player" *ngIf="!isMobile">
+                        <i class="fa fa-film" aria-hidden="true"></i>
+                    </a>
+                    <!-- TODO: explorer.exe /select,"path" -->
+    
+                    <a [href]="sanitize('intent://' + baseMediaPath + file.path + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
+                        <i class="fa fa-film" aria-hidden="true"></i>
+                    </a>
+                </span>
 
-            <button mat-button (click)="copy()">
-                <i class="fa fa-copy" aria-hidden="true"></i> Copy tags from current file
-            </button>
-            <button mat-button (click)="paste()">
-                <i class="fa fa-paste" aria-hidden="true"></i> Paste tags to current file
-            </button>
+                <mat-menu #appMenu="matMenu">
+                    <button mat-menu-item (click)="copy()">
+                        <i class="fa fa-copy" aria-hidden="true"></i> Copy tags from current file
+                    </button>
+                    <button mat-menu-item (click)="paste()">
+                        <i class="fa fa-paste" aria-hidden="true"></i> Paste tags to current file
+                    </button>
+                </mat-menu>
+
+                <button mat-icon-button [matMenuTriggerFor]="appMenu">
+                    Menu
+                </button>
+            </div>
+
+            <ng-container *ngIf="activeFile.type.startsWith('image')">
+                <app-image-file class="tall" [file]="activeFile" (fileChange)="changeActiveFile($event)"></app-image-file>
+            </ng-container>
+            <ng-container *ngIf="!activeFile.type.startsWith('image')">
+                <app-video-player [file]="activeFile" (fileChange)="changeActiveFile($event)" [ngStyle]="isMobile && videoPlayerStyle"></app-video-player>
+            </ng-container>
+
+            <div class="filename" *ngIf="isMobile">
+                <span>{{file.name}}</span>
+
+                <span class="file-open-link">
+                    <a (click)="openFile()" title="Open in external player" *ngIf="!isMobile">
+                        <i class="fa fa-film" aria-hidden="true"></i>
+                    </a>
+    
+                    <a [href]="sanitize('intent://' + baseMediaPath + file.path + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
+                        <i class="fa fa-film" aria-hidden="true"></i>
+                    </a>
+                </span>
+            </div>
         </div>
 
-        <div class="timecode-tools" *ngIf="!activeFile.type.startsWith('image')">
-            <div class="row timecode-tags" *ngIf="selectedTagsForTimecode">
-                <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
-                    mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
-            </div>
-    
-            <div class="row">
-                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
-                [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
-            </div>
-    
-            <div class="row">
-                <button mat-mini-fab color="primary" (click)="setTagStart()" title="Set tag timecode start">
-                    <i class="fas fa-stopwatch"></i>
-                </button>
-                <button mat-mini-fab color="primary" (click)="goToTagStart()" title="Go to tag timecode start">
-                    <i class="far fa-dot-circle"></i>
-                </button>
-    
-                <mat-form-field>
-                    <input matInput placeholder="Start time" [(ngModel)]="tagStart" />
-                </mat-form-field>
-            </div>
-    
-            <div class="row">
-                <button mat-mini-fab color="primary" (click)="setTagEnd()" title="Set tag timecode end">
-                    <i class="fas fa-stopwatch"></i>
-                </button>
-                <button mat-mini-fab color="primary" (click)="goToTagEnd()" title="Go to tag timecode end">
-                    <i class="far fa-dot-circle"></i>
-                </button>
-    
-                <mat-form-field>
-                    <input matInput [(ngModel)]="tagEnd" placeholder="End time" />
-                </mat-form-field>
-            </div>
-    
-            <button (click)="tagStart && tagEnd && saveTagTimecode()" mat-button>Save</button>
-        </div>
-    </div>
+        <div class="tag-tools" *ngIf="!isMobile">
+            <mat-tab-group>
+                <mat-tab label="Tags">
+                    <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
+                </mat-tab>
 
-    <div class="timecodes" *ngIf="!activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
-        <app-timecode *ngFor="let timecode of timecodes" [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
-    </div>
-</ng-container>
+                <mat-tab label="Timecodes">
+                    <div class="timecode-tools-and-timecodes">
+                        <div class="timecode-tools" *ngIf="!activeFile.type.startsWith('image')">
+                            <div class="row timecode-tags" *ngIf="selectedTagsForTimecode">
+                                <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
+                                    mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
+                            </div>
+                    
+                            <div class="row">
+                                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
+                                [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                            </div>
+                    
+                            <div class="timecode-time-controls">
+                                <div (click)="setTagStart()" title="Set tag timecode start">
+                                    <i class="fas fa-stopwatch"></i>
+                                </div>
+                                <div (click)="goToTagStart()" title="Go to tag timecode start">
+                                    <i class="far fa-dot-circle"></i>
+                                </div>
+                    
+                                <mat-form-field>
+                                    <input matInput placeholder="Start time" [(ngModel)]="tagStart" />
+                                </mat-form-field>
+
+                                <div (click)="setTagEnd()" title="Set tag timecode end">
+                                    <i class="fas fa-stopwatch"></i>
+                                </div>
+                                <div (click)="goToTagEnd()" title="Go to tag timecode end">
+                                    <i class="far fa-dot-circle"></i>
+                                </div>
+                    
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="tagEnd" placeholder="End time" />
+                                </mat-form-field>
+
+                                <button (click)="tagStart && tagEnd && saveTagTimecode()" mat-button>Save</button>
+                            </div>
+                        </div>
+
+                        <div class="timecodes" #timecodesElement *ngIf="!activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
+                            <virtual-scroller #scroll [items]="timecodes">
+                                <div *ngFor="let timecode of scroll.viewPortItems" class="timecode">
+                                    <app-timecode [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
+                                </div>
+                            </virtual-scroller>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+        <div class="tags" *ngIf="isMobile">
+            <mat-tab-group>
+                <mat-tab label="Tags">
+                    <div style="padding-top: 6px">
+                        {{ formattedTags(activeFile) }}
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Timecodes" *ngIf="isMobile && !activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
+                    <virtual-scroller #mobileScroll [items]="timecodes">
+                        <app-timecode-mobile-readonly *ngFor="let timecode of mobileScroll.viewPortItems" [file]="activeFile" [timecode]="timecode"></app-timecode-mobile-readonly>
+                    </virtual-scroller>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </ng-container>    
+</div>

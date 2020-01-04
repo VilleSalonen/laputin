@@ -32,6 +32,7 @@ import {
     distinctUntilChanged,
     tap
 } from 'rxjs/operators';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
     selector: 'app-video-player',
@@ -40,11 +41,12 @@ import {
 })
 @Injectable()
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
-    public playbackHasBeenStarted: boolean;
+    public playbackHasBeenStarted = false;
     public showScreenshotPreview: boolean;
     public playing: boolean;
     public random: boolean;
     public progressText: string;
+    public duration: string;
     public resolution: string;
     public isFullScreen: boolean;
     public cacheBuster = '';
@@ -55,8 +57,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public mouseOverVideo: boolean;
 
     private player: HTMLVideoElement;
-
-    private duration: string;
 
     @ViewChild('playerView', { static: false }) playerView: ElementRef;
     @ViewChild('videoArea', { static: false }) videoArea: ElementRef;
@@ -97,13 +97,20 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         FileChange
     >();
 
+    public isMobile: boolean;
+
     private fileClosed: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(
         private _service: LaputinService,
         private _playerService: PlayerService,
-        private dialog: MatDialog
-    ) {}
+        private dialog: MatDialog,
+        breakpointObserver: BreakpointObserver
+    ) {
+        breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
+            this.isMobile = result.matches;
+        });
+    }
 
     public ngAfterViewInit(): void {
         this.player = this.playerElem.nativeElement;
@@ -327,9 +334,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             this.duration &&
             this.duration.indexOf('NaN') === -1
         ) {
-            this.progressText = currentTime + '/' + this.duration;
+            this.progressText = currentTime;
         } else {
-            this.progressText = '00:00/00:00';
+            this.progressText = '00:00';
         }
     }
 

@@ -19,7 +19,7 @@ export class File implements TagContainer {
         metadata?: any
     ) {
         this.name = this.path.substring(this.path.lastIndexOf('/') + 1);
-        this.escapedUrl = this.path.replace('#', '%23');
+        this.escapedUrl = this.path.replace('#', '%23').replace(/ /g, '%20');
         this.directory = this.path.replace(this.name, '').replace(/\//g, '\\');
         this.nameSansSuffix = this.name.substr(0, this.name.lastIndexOf('.'));
         this.suffix = this.name.substr(this.name.lastIndexOf('.'));

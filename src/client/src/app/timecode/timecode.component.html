@@ -1,22 +1,21 @@
-<div class="container">
-    <div class="screenshot">
-        <img (click)="goToTimecode()" src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}"
-            matTooltip="{{ timecode.durationInSeconds | duration }}: {{ formattedTags() }}" />
-    </div>
+<div class="screenshot"
+    [ngStyle]="{'background-image': 'url(/laputin/tag-timecode-thumbs/' + timecode.timecodeId + '.jpg' + timecode.cacheBuster + ')'}"
+    (click)="goToTimecode()"
+    matTooltip="{{ timecode.durationInSeconds | duration }}: {{ formattedTags() }}">
+</div>
 
-    <div class="controls edit-control" (click)="edit()" title="Edit...">
-        <i class="fas fa-edit"></i>
-    </div>
+<div class="controls edit-control" (click)="edit()" title="Edit...">
+    <i class="fas fa-edit"></i>
+</div>
 
-    <div class="controls screenshot-control" (click)="screenshotTimecode()" title="Set screenshot to timecode">
-        <i class="fas fa-camera"></i>
-    </div>
+<div class="controls screenshot-control" (click)="screenshotTimecode()" title="Set screenshot to timecode">
+    <i class="fas fa-camera"></i>
+</div>
 
-    <div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{ timecode.start | preciseDuration }}">
-        <i class="fas fa-sign-out-alt"></i>
-    </div>
+<div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{ timecode.start | preciseDuration }}">
+    <i class="fas fa-sign-out-alt"></i>
+</div>
 
-    <div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{ timecode.end | preciseDuration }}">
-        <i class="fas fa-sign-in-alt"></i>
-    </div>
+<div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{ timecode.end | preciseDuration }}">
+    <i class="fas fa-sign-in-alt"></i>
 </div>

@@ -1,0 +1,16 @@
+@import './../../styles/styles.scss';
+
+:host {
+    // display: flex;
+}
+
+img {
+    max-width: 300px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.tag {
+    margin-right: 0.25 * $standard-margin;
+    margin-bottom: 0.25 * $standard-margin;
+}

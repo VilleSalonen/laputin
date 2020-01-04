@@ -18,7 +18,9 @@ import {
     MatTooltipModule,
     MatChipsModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatExpansionModule,
+    MatTabsModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -46,6 +48,7 @@ import { FileQueryModule } from './file-query-component/file-query.module';
 import { PipesModule } from './pipes/pipes.module';
 import { FileComponent } from './file/file.component';
 import { ImageFileComponent } from './image-file/image-file.component';
+import { TimecodeMobileReadonlyComponent } from './timecode-mobile-readonly/timecode-mobile-readonly.component';
 
 @NgModule({
     declarations: [
@@ -65,7 +68,8 @@ import { ImageFileComponent } from './image-file/image-file.component';
         TimecodeSearchComponent,
         VideoPlayerComponent,
         FileComponent,
-        ImageFileComponent
+        ImageFileComponent,
+        TimecodeMobileReadonlyComponent
     ],
     entryComponents: [
         TagScreenshotDialogComponent,
@@ -94,6 +98,8 @@ import { ImageFileComponent } from './image-file/image-file.component';
         TagAutocompleteModule,
         FileQueryModule,
         PipesModule,
+        MatExpansionModule,
+        MatTabsModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },

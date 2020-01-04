@@ -3,7 +3,9 @@ import {
     Input,
     Output,
     EventEmitter,
-    Injectable
+    Injectable,
+    ChangeDetectionStrategy,
+    OnInit
 } from '@angular/core';
 
 import { File, Timecode } from './../models';
@@ -17,7 +19,8 @@ import { MatDialog } from '@angular/material';
     selector: 'app-timecode',
     styleUrls: ['./timecode.component.scss'],
     templateUrl: './timecode.component.html',
-    providers: [LaputinService]
+    providers: [LaputinService],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 @Injectable()
 export class TimecodeComponent {

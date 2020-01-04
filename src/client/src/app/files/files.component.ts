@@ -1,4 +1,10 @@
-import { Component, Injectable } from '@angular/core';
+import {
+    Component,
+    Injectable,
+    ElementRef,
+    ViewChild,
+    AfterViewInit
+} from '@angular/core';
 
 import { File } from './../models/file';
 import { LaputinService } from './../laputin.service';
@@ -11,7 +17,7 @@ import { switchMap, take, map, shareReplay } from 'rxjs/operators';
     templateUrl: './files.component.html'
 })
 @Injectable()
-export class FilesComponent {
+export class FilesComponent implements AfterViewInit {
     public allFilesSubscription: Subject<File[]> = new Subject<File[]>();
     public filesSubscription: Subject<File[]> = new Subject<File[]>();
     public hashParamSubscription: Subject<string> = new Subject<string>();
@@ -20,6 +26,11 @@ export class FilesComponent {
 
     public totalDuration$: Observable<string>;
     public totalSize$: Observable<string>;
+
+    public fileStyle: any;
+
+    @ViewChild('files', { static: false })
+    public filesElement: ElementRef<HTMLDivElement>;
 
     constructor(
         private _service: LaputinService,
@@ -54,6 +65,27 @@ export class FilesComponent {
                 return this.humanFileSize(totalSize);
             })
         );
+    }
+
+    public ngAfterViewInit(): void {
+        const totalWidth = this.filesElement.nativeElement.scrollWidth - 10;
+        const aspectRatio = 16 / 9;
+
+        let columns: number;
+        if (totalWidth < 960) {
+            columns = 1;
+        } else if (totalWidth >= 960 && totalWidth < 1280) {
+            columns = 2;
+        } else if (totalWidth >= 1280 && totalWidth < 1920) {
+            columns = 3;
+        } else {
+            columns = 4;
+        }
+
+        this.fileStyle = {
+            width: Math.floor(totalWidth / columns) + 'px',
+            height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+        };
     }
 
     public openFiles(): void {

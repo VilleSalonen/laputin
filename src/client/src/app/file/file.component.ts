@@ -1,4 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    HostBinding,
+    AfterViewInit,
+    ViewChild,
+    ElementRef
+} from '@angular/core';
 import { LaputinService } from '../laputin.service';
 import { FileQueryService } from '../file-query.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,29 +23,52 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { PlayerService } from '../player.service';
 import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-file',
     templateUrl: './file.component.html',
     styleUrls: ['./file.component.scss']
 })
-export class FileComponent implements OnInit {
+export class FileComponent implements OnInit, AfterViewInit {
     public file: File;
     public activeFile$: Observable<File>;
+
+    public selectable = false;
+    public removable = false;
+
+    public allTagsShown = false;
 
     public timecodes: Timecode[];
     public selectedTagsForTimecode: Tag[] = [];
     public tagStart: string;
     public tagEnd: string;
 
+    public vlcIntentUrl: string;
+
     public AutocompleteType = AutocompleteType;
+
+    public isMobile: boolean;
+
+    @HostBinding('class.desktopHost')
+    public isDesktop: boolean;
+
+    public baseMediaPath = `${window.location.hostname}:${window.location.port}/media/`;
+
+    @ViewChild('fileElement', { static: false })
+    public fileElement: ElementRef<HTMLDivElement>;
+
+    public videoPlayerStyle: any;
 
     constructor(
         private laputinService: LaputinService,
         private fileQueryService: FileQueryService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private playerService: PlayerService
+        private playerService: PlayerService,
+        private sanitizer: DomSanitizer,
+        breakpointObserver: BreakpointObserver
     ) {
         this.activeFile$ = this.activatedRoute.params.pipe(
             map(params => params['hash']),
@@ -51,9 +81,28 @@ export class FileComponent implements OnInit {
         this.activeFile$
             .pipe(switchMap(file => this.laputinService.getTimecodes(file)))
             .subscribe(timecodes => (this.timecodes = timecodes));
+
+        breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
+            this.isMobile = result.matches;
+            this.isDesktop = !this.isMobile;
+        });
     }
 
     ngOnInit() {}
+
+    public ngAfterViewInit(): void {
+        const width = this.fileElement.nativeElement.clientWidth;
+        const height = Math.floor(width / (16 / 9));
+        this.videoPlayerStyle = {
+            width: width + 'px',
+            'min-height': height + 'px',
+            'max-height': height + 'px'
+        };
+    }
+
+    public sanitize(url: string) {
+        return this.sanitizer.bypassSecurityTrustUrl(url);
+    }
 
     public changeActiveFile(fileChange: FileChange): void {
         this.fileQueryService.query$
@@ -208,6 +257,12 @@ export class FileComponent implements OnInit {
         this.tagEnd = null;
     }
 
+    public openFile(): void {
+        this.laputinService
+            .openFiles(new FileQuery({ hash: this.file.hash }))
+            .toPromise();
+    }
+
     private convertFromSeparatedTimecodeToSeconds(
         separatedTimecode: string
     ): number {
@@ -232,5 +287,9 @@ export class FileComponent implements OnInit {
 
     private setCurrentTime(newCurrentTime: number) {
         this.playerService.player.currentTime = newCurrentTime;
+    }
+
+    public formattedTags(file: File): string {
+        return file ? file.tags.map(tag => tag.name).join(', ') : null;
     }
 }

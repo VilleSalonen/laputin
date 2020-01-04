@@ -7,6 +7,20 @@
     max-height: 100%;
 }
 
+::ng-deep {
+    ::-webkit-scrollbar {
+        width: 10px;
+      }
+       
+      ::-webkit-scrollbar-thumb {
+        background: #666;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #ddd;
+      }      
+}
+
 .container {
     @include g-layout__row;
 
@@ -20,6 +34,7 @@
     background: $color-primary-1;
     overflow: auto;
     flex-basis: 100%;
+    justify-content: center;
 }
 
 .files-loading {
@@ -35,10 +50,10 @@
 
 .grid-item {
     $height: 300px;
-
-    display: flex;
     height: $height;
     width: $height * (16 / 9);
+
+    display: flex;
 }
 
 .files-list {
@@ -51,6 +66,8 @@
 }
 
 .files-search {
+    display: flex;
+    flex-direction: column;
     text-align: center;
     margin-bottom: 0.5 * $standard-margin;
 
@@ -66,4 +83,8 @@
 
 virtual-scroller {
     flex-basis: 100%;
+}
+
+mat-spinner {
+    align-self: center;
 }

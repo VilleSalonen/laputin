@@ -1,14 +1,41 @@
 <div class="container" #playerView>
     <div class="video-area" #videoArea [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
-        <div class="filename">
-            <span class="filename-small">{{file.directory}}</span>
-            <br />
-            <span class="filename-big">{{file.nameSansSuffix}}</span>
-            <span class="filename-small">{{file.suffix}}</span>
+        <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-play large-icon" (click)="play()" *ngIf="!playing">
+            <i class="material-icons">
+                play_arrow
+            </i>
         </div>
 
-        <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-play" (click)="play()" *ngIf="!playing">
-            <i class="far fa-play-circle" aria-hidden="true"></i>
+        <div class="video-overlay-controls" *ngIf="playbackHasBeenStarted">
+            <div (click)="goToPrevious()" title="Go to previous" class="small-icon">
+                <i class="material-icons">
+                    skip_previous
+                </i>
+            </div>
+
+            <div (click)="play()" *ngIf="!playing" class="medium-icon">
+                <i class="material-icons">
+                    play_arrow
+                </i>
+            </div>
+
+            <div (click)="pause()" *ngIf="playing" class="medium-icon">
+                <i class="material-icons">
+                    pause
+                </i>
+            </div>
+
+            <div (click)="goToNext()" title="Go to next" class="small-icon">
+                <i class="material-icons">
+                    skip_next
+                </i>
+            </div>
+
+            <div (click)="toggleRandom()" title="Toggle random" class="small-icon random" [ngClass]="{ 'active-icon': random }">
+                <i class="material-icons" color="primary">
+                    shuffle
+                </i>
+            </div>
         </div>
 
         <div [ngClass]="{ 'hidden': !playbackHasBeenStarted }" class="video-container">
@@ -21,40 +48,16 @@
 
         <div class="player-controls">
             <div class="timeline-and-buttons">
-                <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="setProgress($event)"
-                    #slider></mat-slider>
-
-                <div class="buttons">
-                    <button *ngIf="!playing" mat-button (click)="play()">
-                        <i class="fa fa-play" aria-hidden="true"></i>
-                    </button>
-
-                    <button *ngIf="playing" mat-button (click)="pause()">
-                        <i class="fa fa-pause" aria-hidden="true"></i>
-                    </button>
-
-                    <button *ngIf="!random" mat-button (click)="toggleRandom()" title="Toggle random">
-                        <i class="fa fa-random" aria-hidden="true"></i>
-                    </button>
-
-                    <button *ngIf="random" mat-button (click)="toggleRandom()" color="primary" title="Toggle random">
-                        <i class="fa fa-random" aria-hidden="true"></i>
-                    </button>
-
-                    <button mat-button (click)="goToPrevious()" title="Go to previous">
-                        <i class="fa fa-fast-backward" aria-hidden="true"></i>
-                    </button>
-
-                    <button mat-button (click)="goToNext()" title="Go to next">
-                        <i class="fa fa-fast-forward" aria-hidden="true"></i>
-                    </button>
-
-                    <button mat-button (click)="toggleFullScreen()">
-                        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-                    </button>
-
+                <div class="timeline-controls">
                     <span class="progress-text">{{progressText}}</span>
-
+                    <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="setProgress($event)" #slider></mat-slider>
+                    <span class="progress-text">{{duration}}</span>
+                    <button mat-button (click)="toggleFullScreen()">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </button>
+                    <button mat-button [matMenuTriggerFor]="appMenu" *ngIf="!isMobile">
+                        <i class="fas fa-camera"></i>
+                    </button>
                     <mat-menu #appMenu="matMenu">
                         <button mat-menu-item (click)="playbackHasBeenStarted && screenshot()">
                             <i class="fa fa-camera" aria-hidden="true"></i> Set file screenshot
@@ -62,17 +65,7 @@
                         <button mat-menu-item (click)="playbackHasBeenStarted && openTagScreenshotDialog()">
                             <i class="fa fa-camera" aria-hidden="true"></i> Set tag screenshot...
                         </button>
-                        <button mat-menu-item (click)="openFile()">
-                            <i class="fa fa-film" aria-hidden="true"></i> Open file in external player
-                        </button>
                     </mat-menu>
-
-                    <button mat-icon-button [matMenuTriggerFor]="appMenu">
-                        Menu
-                    </button>
-
-                    <mat-slider [min]="volumeMin" [max]="volumeMax" [value]="volumeValue" (change)="setVolume($event)" #volume>
-                    </mat-slider>
                 </div>
             </div>
         </div>

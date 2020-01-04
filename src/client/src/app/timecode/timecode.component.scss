@@ -1,13 +1,30 @@
 @import './../../styles/styles.scss';
 
-img,
-.screenshot {
-    max-height: 150px;
+:host {
+    position: relative;
+    flex: 1;
+    display: flex;
 }
 
-.container {
-    position: relative;
-    max-height: 150px;
+::ng-deep {
+    ::-webkit-scrollbar {
+        width: 10px;
+      }
+       
+      ::-webkit-scrollbar-thumb {
+        background: #666;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #ddd;
+      }      
+}
+
+.screenshot {
+    flex: 1;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .controls {
@@ -16,6 +33,7 @@ img,
     color: white;
     text-shadow: 1px 1px 0 black;
     flex-direction: row;
+    z-index: 20;
 }
 
 .edit-control {
@@ -38,6 +56,6 @@ img,
     right: 0.25 * $standard-margin;
 }
 
-.container:hover .controls {
+:host:hover .controls {
     display: flex;
 }

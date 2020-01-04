@@ -4,7 +4,7 @@
     @include g-layout__row;
 
     overflow: auto;
-    flex: 2;
+    flex: 1;
 }
 
 ::ng-deep {
@@ -15,8 +15,6 @@
 
 .container {
     @include g-layout__row;
-
-    padding: $standard-margin;
     overflow: auto;
     flex: 2;
 
@@ -92,9 +90,8 @@
 
 .player-controls {
     display: none;
-    display: none;
     position: absolute;
-    bottom: $standard-margin;
+    bottom: 0;
     z-index: 20;
     width: 100%;
     max-width: 100%;
@@ -102,11 +99,33 @@
     flex-direction: row;
 }
 
+.video-overlay-controls {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 5em;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+
+    div {
+        z-index: 20;
+    }
+}
+
+.show .video-overlay-controls {
+    display: flex !important;
+}
+
 .show .filename {
     display: block !important;
 }
 
-.show .player-controls {
+.show .player-controls, .show .video-overlay-controls {
     display: flex !important;
 }
 
@@ -167,16 +186,64 @@
                         supported by Chrome and Opera */
 }
 
+.timeline-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    padding-left: 0.25 * $standard-margin;
+    padding-right: 0.25 * $standard-margin;
+
+    mat-slider {
+        flex: 1;
+        margin-left: 0.25 * $standard-margin;
+        margin-right: 0.25 * $standard-margin;
+    }
+}
+
+i {
+    text-shadow: 1px 1px 1px black;
+}
+
+.random {
+    position: absolute;
+    bottom: 2 * $standard-margin;
+}
+
 .buttons {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.progress-text {
-    margin-right: 2 * $standard-margin;
+i {
+    cursor: pointer;
 }
 
-.fa {
-    cursor: pointer;
+div.large-icon {
+    line-height: 96px;
+
+    i {
+        font-size: 96px;
+    }
+}
+
+div.medium-icon {
+    line-height: 64px;
+
+    i {
+        font-size: 64px;
+    }
+}
+
+div.small-icon {
+    line-height: 48px;
+
+    i {
+        font-size: 48px;
+    }
+}
+
+.active-icon {
+    color: $color-primary-1;
 }

@@ -81,11 +81,13 @@ export class LaputinService {
             'Content-Type': 'application/json'
         });
 
-        return this._http.post<Timecode>(
-            this._baseUrl + '/files/' + file.hash + '/timecodes',
-            body,
-            { headers: headers }
-        );
+        return this._http
+            .post<Timecode>(
+                this._baseUrl + '/files/' + file.hash + '/timecodes',
+                body,
+                { headers: headers }
+            )
+            .pipe(map(t => this.mapTimecode(t)));
     }
 
     public deleteTimecodeTag(
@@ -321,16 +323,17 @@ export class LaputinService {
     }
 
     private mapTimecodes(timecodes: any[]): Timecode[] {
-        return timecodes.map(
-            t =>
-                new Timecode(
-                    t.timecodeId,
-                    t.hash,
-                    t.path,
-                    t.timecodeTags,
-                    t.start,
-                    t.end
-                )
+        return timecodes.map(t => this.mapTimecode(t));
+    }
+
+    private mapTimecode(timecode: any): Timecode {
+        return new Timecode(
+            timecode.timecodeId,
+            timecode.hash,
+            timecode.path,
+            timecode.timecodeTags,
+            timecode.start,
+            timecode.end
         );
     }
 }
