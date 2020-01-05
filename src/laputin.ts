@@ -11,6 +11,7 @@ import { File } from './file';
 import { Tag, Timecode, TimecodeTag } from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
+import { ExplorerOpener } from './exploreropener';
 
 export class Laputin {
     public app: express.Express;
@@ -227,6 +228,16 @@ export class Laputin {
         api.route('/open/files').get(async (req, res) => {
             const files = await this.library.getFiles(req.query);
             this._opener.open(files);
+            res.status(200).end();
+        });
+
+        api.route('/showInExplorer').get(async (req, res) => {
+            const explorerOpener = new ExplorerOpener();
+
+            const files = await this.library.getFiles(req.query);
+            if (files && files.length > 0) {
+                explorerOpener.open(files);
+            }
             res.status(200).end();
         });
 

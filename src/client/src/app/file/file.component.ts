@@ -263,6 +263,12 @@ export class FileComponent implements OnInit, AfterViewInit {
             .toPromise();
     }
 
+    public showFileInExplorer(): void {
+        this.laputinService
+            .showFileInExplorer(new FileQuery({ hash: this.file.hash }))
+            .toPromise();
+    }
+
     private convertFromSeparatedTimecodeToSeconds(
         separatedTimecode: string
     ): number {

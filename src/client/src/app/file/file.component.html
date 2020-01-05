@@ -8,7 +8,9 @@
                     <a (click)="openFile()" title="Open in external player" *ngIf="!isMobile">
                         <i class="fa fa-film" aria-hidden="true"></i>
                     </a>
-                    <!-- TODO: explorer.exe /select,"path" -->
+                    <a (click)="showFileInExplorer()" title="Show file in Windows Explorer" *ngIf="!isMobile">
+                        <i class="fa fa-folder" aria-hidden="true"></i>
+                    </a>
     
                     <a [href]="sanitize('intent://' + baseMediaPath + file.path + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
                         <i class="fa fa-film" aria-hidden="true"></i>

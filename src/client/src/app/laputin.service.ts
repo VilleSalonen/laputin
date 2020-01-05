@@ -207,6 +207,11 @@ export class LaputinService {
         return this._http.get(this._baseUrl + '/open/files' + params);
     }
 
+    public showFileInExplorer(query: FileQuery): Observable<any> {
+        const params = this.compileParams(query);
+        return this._http.get(this._baseUrl + '/showInExplorer' + params);
+    }
+
     public createTag(newTagName: string): Observable<Tag> {
         const body = JSON.stringify({ tagName: newTagName });
         const headers = new HttpHeaders({
