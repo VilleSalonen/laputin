@@ -1,26 +1,32 @@
 <div class="container">
-    <div class="tags">
-        <div class="tags-search">
-            <form>
-                <mat-form-field>
-                    <input matInput type="text" placeholder="Filter tags" name="filter" (keyup)="onKeyUp($event)"
-                        [(ngModel)]="term" />
-                </mat-form-field>
-            </form>
+    <div class="tags full-height" #tags>
+        <ng-container *ngIf="filteredTags$ | async as tags; else loading">
+            <div class="tags-search">
+                <form>
+                    <mat-form-field>
+                        <input matInput type="text" placeholder="Filter tags" name="filter" (keyup)="onKeyUp($event)"
+                            [(ngModel)]="term" />
+                    </mat-form-field>
+                </form>
 
-            <h1>Showing {{filteredTags.length}} matching tags</h1>
-        </div>
-
-        <div class="tags-list">
-            <div [ngClass]="{'hidden': !loading}">
-                <i class="fa fa-spinner"></i>
+                <span>
+                    {{tags.length}} tags
+                </span>
             </div>
-
-            <div class="tags-grid">
-                <div class="grid-item" *ngFor="let tag of filteredTags">
-                    <app-tag-row [tag]="tag"></app-tag-row>
-                </div>
+    
+            <div class="tags-list">
+                <virtual-scroller #scroll [items]="tags">
+                    <div class="tags-grid" #container>
+                        <div class="grid-item" *ngFor="let tag of scroll.viewPortItems" [ngStyle]="tagStyle">
+                            <app-tag-row [tag]="tag"></app-tag-row>
+                        </div>
+                    </div>
+                </virtual-scroller>
             </div>
-        </div>
+        </ng-container>
+
+        <ng-template #loading>
+            <mat-spinner></mat-spinner>
+        </ng-template>
     </div>
 </div>

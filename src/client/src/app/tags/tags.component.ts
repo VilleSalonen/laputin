@@ -1,14 +1,22 @@
-import { Component, OnInit, Injectable, Inject } from '@angular/core';
+import {
+    Component,
+    Injectable,
+    ViewChild,
+    ElementRef,
+    AfterViewInit
+} from '@angular/core';
 
 import { Tag } from './../models/tag';
 import { LaputinService } from './../laputin.service';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { shareReplay, map } from 'rxjs/operators';
 
 @Component({
     styleUrls: ['./tags.component.scss'],
     templateUrl: './tags.component.html'
 })
 @Injectable()
-export class TagsComponent implements OnInit {
+export class TagsComponent implements AfterViewInit {
     public tags: Tag[] = [];
     public filteredTags: Tag[] = [];
     public filteredOrphanedTags: Tag[] = [];
@@ -16,25 +24,51 @@ export class TagsComponent implements OnInit {
 
     public term = '';
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {}
+    public tags$: Observable<Tag[]>;
+    public filteredTags$: Observable<Tag[]>;
 
-    ngOnInit(): void {
-        this.loading = true;
-        this._service
-            .getAllTags()
-            .toPromise()
-            .then(tags => {
-                this.tags = tags;
-                this.filteredTags = tags;
-                this.loading = false;
-            });
+    @ViewChild('tags', { static: false })
+    public tagsElement: ElementRef<HTMLDivElement>;
+
+    public tagStyle: any;
+
+    private searchTerm = new BehaviorSubject<string>('');
+
+    constructor(private _service: LaputinService) {
+        this.tags$ = this._service.getTags().pipe(shareReplay(1));
+
+        this.filteredTags$ = combineLatest(
+            this.tags$,
+            this.searchTerm.asObservable()
+        ).pipe(
+            map(([tags, searchTerm]: [Tag[], string]) =>
+                tags.filter(
+                    tag => tag.name.toUpperCase().indexOf(searchTerm) >= 0
+                )
+            )
+        );
     }
 
-    filter(term: string) {
-        const termUpperCase = term.toUpperCase();
-        this.filteredTags = this.tags.filter(
-            tag => tag.name.toUpperCase().indexOf(termUpperCase) >= 0
-        );
+    public ngAfterViewInit(): void {
+        const totalWidth = this.tagsElement.nativeElement.scrollWidth - 10;
+
+        const aspectRatio = 16 / 9;
+
+        let columns: number;
+        if (totalWidth < 960) {
+            columns = 1;
+        } else if (totalWidth >= 960 && totalWidth < 1280) {
+            columns = 2;
+        } else if (totalWidth >= 1280 && totalWidth < 1920) {
+            columns = 3;
+        } else {
+            columns = 4;
+        }
+
+        this.tagStyle = {
+            width: Math.floor(totalWidth / columns) + 'px',
+            height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+        };
     }
 
     public onKeyUp($event: KeyboardEvent): void {
@@ -42,11 +76,12 @@ export class TagsComponent implements OnInit {
         const ESC = 27;
 
         if ($event.which === ENTER) {
-            this.filter(this.term);
+            this.searchTerm.next(this.term.toUpperCase());
         }
 
         if ($event.which === ESC) {
             this.term = '';
+            this.searchTerm.next(this.term);
         }
     }
 }

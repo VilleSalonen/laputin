@@ -1,3 +1,16 @@
-<div class="container" [lazyLoad]="image">
-    <span class="tag-name">{{tag.name}}</span>
+<div class="container" [lazyLoad]="image" (click)="goToTag()">
+    <span class="tag-name" *ngIf="!isEditing">{{tag.name}}</span>
+
+    <div *ngIf="isEditing">
+        <input type="text" [(ngModel)]="name" (keyup)="onKeyUp($event)" />
+        <button (click)="save()">
+            <i class="fas fa-save"></i>
+            Save
+        </button>
+        <button (click)="cancelEdit()">Cancel</button>
+    </div>
+</div>
+
+<div class="controls edit-control" (click)="edit()" title="Edit...">
+    <i class="fas fa-edit"></i>
 </div>

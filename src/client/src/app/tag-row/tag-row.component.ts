@@ -1,7 +1,17 @@
-import { Component, OnInit, Input, Injectable, Inject } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Input,
+    Injectable,
+    Inject,
+    Query
+} from '@angular/core';
 
 import { LaputinService } from './../laputin.service';
 import { Tag } from '../models/tag';
+import { FileQueryService } from '../file-query.service';
+import { FileQuery } from '../models';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-tag-row',
@@ -17,7 +27,11 @@ export class TagRowComponent implements OnInit {
 
     public image: string;
 
-    constructor(@Inject(LaputinService) private _service: LaputinService) {}
+    constructor(
+        private _service: LaputinService,
+        private fileQueryService: FileQueryService,
+        private router: Router
+    ) {}
 
     ngOnInit() {
         this.image = `/laputin/tag-thumbs/${this.tag.id}.jpg`;
@@ -50,5 +64,12 @@ export class TagRowComponent implements OnInit {
     public cancelEdit(): void {
         this.isEditing = false;
         this.name = '';
+    }
+
+    public goToTag(): void {
+        const query = new FileQuery();
+        query.andTag(this.tag);
+        this.fileQueryService.emit(query);
+        this.router.navigate(['/files']);
     }
 }

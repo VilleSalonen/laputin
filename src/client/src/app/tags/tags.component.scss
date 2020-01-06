@@ -4,50 +4,69 @@
     @include g-layout__row;
 
     flex: 2;
+    max-height: 100%;
+}
+
+::ng-deep {
+    ::-webkit-scrollbar {
+        width: 10px;
+      }
+       
+      ::-webkit-scrollbar-thumb {
+        background: #666;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #ddd;
+      }      
 }
 
 .container {
     @include g-layout__row;
 
+    overflow: auto;
     flex: 2;
-}
-
-.hidden {
-    display: none;
 }
 
 .tags {
     @include g-layout__column;
 
     background: $color-primary-1;
+    overflow: auto;
     flex-basis: 100%;
+    justify-content: center;
 }
 
 .tags-list {
     display: flex;
     margin-top: 0;
-    margin-bottom: $standard-margin;
-    padding: $standard-margin;
+    overflow: auto;
+    flex-grow: 1;
     flex: 1;
-    flex-direction: column;
+    justify-content: center;
 }
 
 .tags-grid {
-    display: grid;
-    flex: 1;
-    grid-template-columns: 800px 800px 800px;
-    column-gap: 0.5 * $standard-margin;
-    row-gap: 0.5 * $standard-margin;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .grid-item {
+    $height: 300px;
+    height: $height;
+    width: $height * (16 / 9);
+
     display: flex;
-    height: 450px;
 }
 
 .tags-search {
     padding: $standard-margin;
     overflow-y: auto;
+
+    span {
+        font-weight: bold;
+    }
 }
 
 .full-height {
@@ -56,5 +75,9 @@
 }
 
 virtual-scroller {
-    height: 100%;
+    flex-basis: 100%;
+}
+
+mat-spinner {
+    align-self: center;
 }

@@ -3,15 +3,18 @@
 :host {
     display: flex;
     flex: 1;
+    background-color: black;
+    position: relative;
 }
 
 .container {
     display: flex;
     background-repeat: no-repeat;
+    background-size: contain;
+    background-position-x: center;
     flex: 1;
-    background-size: cover;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .tag-name {
@@ -19,4 +22,22 @@
     text-decoration: none;
     color: white;
     text-shadow: 1px 1px 0 black;
+}
+
+.controls {
+    display: none;
+    position: absolute;
+    color: white;
+    text-shadow: 1px 1px 0 black;
+    flex-direction: row;
+    z-index: 20;
+}
+
+.edit-control {
+    top: 0.25 * $standard-margin;
+    left: 0.25 * $standard-margin;
+}
+
+:host:hover .controls {
+    display: flex;
 }
