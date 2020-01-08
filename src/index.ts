@@ -12,6 +12,12 @@ import { compose } from './compose';
 import { ProxyGenerator } from './proxygenerator';
 
 import open = require('open');
+import { IHasher } from './ihasher';
+
+import { promisify } from 'util';
+import { QuickMD5Hasher } from './quickmd5hasher';
+import { XxhashHasher } from './xxhashhasher';
+const stat = promisify(fs.stat);
 
 (async function() {
     const sections = [
@@ -48,6 +54,8 @@ import open = require('open');
         { name: 'createProxies', type: Boolean, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
         { name: 'performFullCheck', type: Boolean, multiple: false },
+        { name: 'hashFile', type: String, multiple: false },
+        { name: 'hasher', type: String, multiple: false },
         {
             name: 'skipBrowserOpen',
             type: Boolean,
@@ -64,6 +72,18 @@ import open = require('open');
 
     if (options.verbose) {
         winston.level = 'verbose';
+    }
+
+    if (options.hashFile) {
+        let hasher: IHasher = new QuickMD5Hasher();
+        if (options.hasher && options.hasher === 'accurate') {
+            hasher = new XxhashHasher();
+        }
+
+        const fileStats = await stat(options.hashFile);
+        const hash = await hasher.hash(options.hashFile, fileStats);
+        console.log(hash);
+        process.exit(0);
     }
 
     if (!options.library) {
@@ -109,8 +129,6 @@ import open = require('open');
         process.exit(-1);
     }
 
-    winston.info(`Library path: ${options.library}`);
-
     const configFilePath = path.join(options.library, '.laputin.json');
     const configuration: LaputinConfiguration = fs.existsSync(configFilePath)
         ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
@@ -133,12 +151,10 @@ import open = require('open');
 
     laputin.startMonitoring();
 
+    winston.info(`Library path: ${options.library}`);
     await laputin.startListening();
-    if (options.skipBrowserOpen) {
-        winston.info(
-            `Laputin started at http://localhost:${configuration.port}`
-        );
-    } else {
+    winston.info(`Laputin started at http://localhost:${configuration.port}`);
+    if (!options.skipBrowserOpen) {
         await open(`http://localhost:${configuration.port}`);
     }
 })();
