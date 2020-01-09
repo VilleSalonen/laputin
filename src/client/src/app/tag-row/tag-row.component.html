@@ -1,4 +1,4 @@
-<div class="container" [lazyLoad]="image" (click)="goToTag()">
+<div class="container" [lazyLoad]="image" (click)="!isEditing && goToTag()">
     <span class="tag-name" *ngIf="!isEditing">{{tag.name}}</span>
 
     <div *ngIf="isEditing">

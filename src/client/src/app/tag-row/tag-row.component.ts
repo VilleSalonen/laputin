@@ -1,11 +1,4 @@
-import {
-    Component,
-    OnInit,
-    Input,
-    Injectable,
-    Inject,
-    Query
-} from '@angular/core';
+import { Component, OnInit, Input, Injectable } from '@angular/core';
 
 import { LaputinService } from './../laputin.service';
 import { Tag } from '../models/tag';
@@ -62,8 +55,11 @@ export class TagRowComponent implements OnInit {
     }
 
     public cancelEdit(): void {
-        this.isEditing = false;
-        this.name = '';
+        // Hack to prevent navigating to tag when saved or canceled editing.
+        setTimeout(() => {
+            this.isEditing = false;
+            this.name = '';
+        });
     }
 
     public goToTag(): void {
