@@ -4,6 +4,7 @@ import path = require('path');
 import os = require('os');
 
 import { File } from './file';
+import winston = require('winston');
 
 export class VLCOpener {
     private _binaryPath: string;
@@ -19,7 +20,8 @@ export class VLCOpener {
             this._binaryPath = '/Applications/VLC.app/Contents/MacOS/VLC';
         }
 
-        this._playlistPath = path.join(libraryPath, '.playlist.m3u');
+        const laputinDirectory = path.join(libraryPath, '.laputin/');
+        this._playlistPath = path.join(laputinDirectory, '.playlist.m3u');
     }
 
     public open(files: File[]): void {
@@ -61,8 +63,9 @@ export class VLCOpener {
     }
 
     private _openPlayer() {
-        console.log('executing');
-        console.log(`"${this._binaryPath}" "${this._playlistPath}"`);
+        winston.verbose(
+            `Executing: "${this._binaryPath}" "${this._playlistPath}"`
+        );
         this._child = child_process.exec(
             `"${this._binaryPath}" "${this._playlistPath}"`
         );
