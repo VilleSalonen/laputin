@@ -1,6 +1,5 @@
 import {
     Component,
-    OnInit,
     HostBinding,
     AfterViewInit,
     ViewChild,
@@ -19,19 +18,27 @@ import {
     AutocompleteType,
     TimecodeTag
 } from '../models';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {
+    map,
+    switchMap,
+    take,
+    tap,
+    distinctUntilChanged,
+    shareReplay
+} from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
 import { PlayerService } from '../player.service';
 import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DomSanitizer } from '@angular/platform-browser';
+import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 
 @Component({
     selector: 'app-file',
     templateUrl: './file.component.html',
     styleUrls: ['./file.component.scss']
 })
-export class FileComponent implements OnInit, AfterViewInit {
+export class FileComponent implements AfterViewInit {
     public file: File;
     public activeFile$: Observable<File>;
 
@@ -41,7 +48,6 @@ export class FileComponent implements OnInit, AfterViewInit {
     public allTagsShown = false;
 
     public timecodes: Timecode[];
-    public selectedTagsForTimecode: Tag[] = [];
     public tagStart: string;
     public tagEnd: string;
 
@@ -60,6 +66,17 @@ export class FileComponent implements OnInit, AfterViewInit {
     public fileElement: ElementRef<HTMLDivElement>;
 
     public videoPlayerStyle: any;
+
+    public detectedScenes$: Observable<any[]>;
+    public activeScene$: Observable<any>;
+
+    @ViewChild('timecodesScroll', { static: false })
+    private timecodesScroller: VirtualScrollerComponent;
+
+    @ViewChild('scenesScroll', { static: false })
+    private scenesScroller: VirtualScrollerComponent;
+
+    public timecodeTags: { tags: Tag[] } = { tags: [] };
 
     constructor(
         private laputinService: LaputinService,
@@ -86,9 +103,39 @@ export class FileComponent implements OnInit, AfterViewInit {
             this.isMobile = result.matches;
             this.isDesktop = !this.isMobile;
         });
-    }
 
-    ngOnInit() {}
+        this.detectedScenes$ = <Observable<any[]>>(
+            this.activeFile$.pipe(
+                switchMap(file => this.laputinService.getDetectedScenes(file))
+            )
+        );
+
+        this.activeScene$ = combineLatest(
+            this.detectedScenes$,
+            this.playerService.currentTime
+        ).pipe(
+            map(([scenes, currentTime]: [any[], number]) =>
+                scenes.find(
+                    s =>
+                        s.startSeconds <= currentTime &&
+                        currentTime <= s.endSeconds
+                )
+            ),
+            distinctUntilChanged(),
+            shareReplay(1)
+        );
+
+        this.activeScene$.subscribe(scene => {
+            if (this.scenesScroller) {
+                const item = this.scenesScroller.items.find(
+                    i => i.index === scene.index
+                );
+                if (item) {
+                    this.scenesScroller.scrollInto(item);
+                }
+            }
+        });
+    }
 
     public ngAfterViewInit(): void {
         const width = this.fileElement.nativeElement.clientWidth;
@@ -148,25 +195,11 @@ export class FileComponent implements OnInit, AfterViewInit {
     }
 
     public addTags(tags: Tag[]): void {
-        this.laputinService
-            .addTags(this.file, tags)
-            .subscribe(() => this.addTagsToFile(tags));
+        this.laputinService.addTags(this.file, tags).toPromise();
     }
 
     public removeTag(tag: Tag): void {
-        this.file.tags = this.file.tags.filter(
-            (t: Tag): boolean => t.id !== tag.id
-        );
-        this.laputinService
-            .deleteTagFileAssoc(this.file, tag)
-            .subscribe(() => {});
-    }
-
-    private addTagsToFile(tags: Tag[]): void {
-        const currentTags = this.file.tags;
-        tags.forEach((tag: Tag) => currentTags.push(tag));
-        const sorted = currentTags.sort((a, b) => (a.name > b.name ? 1 : -1));
-        this.file.tags = sorted;
+        this.laputinService.deleteTagFileAssoc(this.file, tag).toPromise();
     }
 
     public copy(): void {
@@ -182,19 +215,29 @@ export class FileComponent implements OnInit, AfterViewInit {
         this.setCurrentTime(timecode.start);
     }
 
+    public goToScene(scene: any): void {
+        const up = parseInt(this.file.metadata.framerate, 10);
+        const down = parseInt(
+            this.file.metadata.framerate.substr(
+                this.file.metadata.framerate.indexOf('/') + 1
+            ),
+            10
+        );
+
+        const frameRate = up / down;
+
+        const adjustment = 0.5;
+        const targetTime = (scene.startFrame + adjustment) / frameRate;
+        const roundedUp = Math.ceil(targetTime * 10000) / 10000;
+
+        this.setCurrentTime(roundedUp);
+    }
+
     public addTagSelectionToTimecode(tag: Tag): void {
         const alreadyAddedOnFile = this.file.tags.find(t => t.id === tag.id);
         if (!alreadyAddedOnFile) {
             this.addTag(tag);
         }
-
-        this.selectedTagsForTimecode.push(tag);
-    }
-
-    public removeTagSelectionFromTimecode(tag: Tag): void {
-        this.selectedTagsForTimecode = this.selectedTagsForTimecode.filter(
-            t => t.id !== tag.id
-        );
     }
 
     public setTagStart(): void {
@@ -235,7 +278,7 @@ export class FileComponent implements OnInit, AfterViewInit {
         );
         const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
 
-        const selectedTimecodeTags = this.selectedTagsForTimecode.map(
+        const selectedTimecodeTags = this.timecodeTags.tags.map(
             t => new TimecodeTag(null, null, t)
         );
 
@@ -252,9 +295,20 @@ export class FileComponent implements OnInit, AfterViewInit {
             .toPromise();
         this.addTagTimecode(result);
 
-        this.selectedTagsForTimecode = [];
+        this.timecodeTags.tags = [];
         this.tagStart = null;
         this.tagEnd = null;
+
+        setTimeout(() => {
+            if (this.timecodesScroller) {
+                const foundItem = this.timecodesScroller.items.find(
+                    i =>
+                        i.hash === result.hash &&
+                        i.timecodeId === result.timecodeId
+                );
+                this.timecodesScroller.scrollInto(foundItem);
+            }
+        });
     }
 
     public openFile(): void {

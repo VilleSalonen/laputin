@@ -1,6 +1,6 @@
 <mat-form-field class="example-chip-list">
     <mat-chip-list #chipList aria-label="Tag selection">
-        <ng-container *ngIf="type !== AutocompleteType.FileTimecodeTagging">
+        <ng-container>
             <mat-chip
                 *ngFor="let tag of tagContainer.tags"
                 [selectable]="selectable"

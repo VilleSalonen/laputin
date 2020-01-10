@@ -8,11 +8,21 @@
     max-height: 100%;
 }
 
-// :host(.desktopHost) {
-//     max-height: 100%;
-// }
-
 ::ng-deep {
+    .scenes {
+        ::-webkit-scrollbar {
+            height: 10px;
+        }
+           
+        ::-webkit-scrollbar-thumb {
+            background: #666;
+        }
+          
+        ::-webkit-scrollbar-track {
+            background: #ddd;
+        }      
+    }
+
     .mat-tab-body-wrapper {
         flex-grow: 1;
     }
@@ -44,6 +54,7 @@
 .video-container {
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 .video-container-desktop {
@@ -82,6 +93,16 @@
     flex-direction: column;
     flex: 1;
     overflow-y: hidden;
+}
+
+.scenes {
+    margin-top: $standard-margin;
+    max-width: 100%;
+
+    virtual-scroller {
+        max-width: 100%;
+        height: 99px;
+    }
 }
 
 .tag-tools {
@@ -124,9 +145,11 @@
     overflow-y: hidden;
 }
 
-virtual-scroller {
-    // TODO: needs to be fixed
-    // height: 970px;
+.timecodes-scroll {
+    flex: 2;
+}
+
+.scenes-scroll {
     flex: 1;
 }
 
@@ -146,4 +169,13 @@ mat-tab-group, mat-tab-body {
     div, mat-form-field {
         margin-right: 0.25 * $standard-margin;
     }
+}
+
+.scenes-grid {
+    display: flex;
+    flex-direction: row;
+}
+
+app-scene + app-scene {
+    margin-left: 0.125 * $standard-margin;
 }

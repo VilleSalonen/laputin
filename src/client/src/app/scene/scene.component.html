@@ -1,0 +1,9 @@
+<div
+    class="scene"
+    [ngClass]="{ active: active }"
+    matTooltip="{{ scene.index }} {{ scene.start }}-{{ scene.end }}, {{ scene.length | duration}}"
+>
+    <img src="/laputin/scenes/{{ file.hash }}/{{ file.hash }}_{{ scene.index }}_1.jpg" />
+    <img src="/laputin/scenes/{{ file.hash }}/{{ file.hash }}_{{ scene.index }}_2.jpg" />
+    <img src="/laputin/scenes/{{ file.hash }}/{{ file.hash }}_{{ scene.index }}_3.jpg" />
+</div>

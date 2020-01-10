@@ -51,6 +51,23 @@
                     </a>
                 </span>
             </div>
+
+            <div class="scenes" *ngIf="!isMobile">
+                <ng-container *ngIf="detectedScenes$ | async as detectedScenes">
+                    <ng-container *ngIf="activeScene$ | async as activeScene">
+                        <virtual-scroller class="scenes-scroll" #scenesScroll [items]="detectedScenes" [horizontal]="true">
+                            <app-scene
+                                *ngFor="let detectedScene of scenesScroll.viewPortItems"
+                                (click)="goToScene(detectedScene)"
+                                style="width: 352px;"
+                                [file]="activeFile"
+                                [scene]="detectedScene"
+                                [active]="activeScene.index === detectedScene.index">
+                            </app-scene>
+                        </virtual-scroller>
+                    </ng-container>
+                </ng-container>
+            </div>
         </div>
 
         <div class="tag-tools" *ngIf="!isMobile">
@@ -62,14 +79,8 @@
                 <mat-tab label="Timecodes">
                     <div class="timecode-tools-and-timecodes">
                         <div class="timecode-tools" *ngIf="!activeFile.type.startsWith('image')">
-                            <div class="row timecode-tags" *ngIf="selectedTagsForTimecode">
-                                <button class="tag" *ngFor="let tag of selectedTagsForTimecode" (click)="removeTagSelectionFromTimecode(tag)"
-                                    mat-flat-button title="Click to reset tag selection">{{tag.name}}</button>
-                            </div>
-                    
                             <div class="row">
-                                <app-tag-autocomplete [tagContainer]="file" [exclude]="selectedTagsForTimecode" (tagSelected)="addTagSelectionToTimecode($event)"
-                                [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                                <app-tag-autocomplete [tagContainer]="timecodeTags" [include]="file.tags" (tagSelected)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
                             </div>
                     
                             <div class="timecode-time-controls">
@@ -100,8 +111,8 @@
                         </div>
 
                         <div class="timecodes" #timecodesElement *ngIf="!activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
-                            <virtual-scroller #scroll [items]="timecodes">
-                                <div *ngFor="let timecode of scroll.viewPortItems" class="timecode">
+                            <virtual-scroller class="timecodes-scroll" #timecodesScroll [items]="timecodes">
+                                <div *ngFor="let timecode of timecodesScroll.viewPortItems" class="timecode">
                                     <app-timecode [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
                                 </div>
                             </virtual-scroller>
@@ -120,7 +131,7 @@
                 </mat-tab>
 
                 <mat-tab label="Timecodes" *ngIf="isMobile && !activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
-                    <virtual-scroller #mobileScroll [items]="timecodes">
+                    <virtual-scroller class="timecodes-scroll" #mobileScroll [items]="timecodes">
                         <app-timecode-mobile-readonly *ngFor="let timecode of mobileScroll.viewPortItems" [file]="activeFile" [timecode]="timecode"></app-timecode-mobile-readonly>
                     </virtual-scroller>
                 </mat-tab>

@@ -17,6 +17,7 @@ import { IHasher } from './ihasher';
 import { promisify } from 'util';
 import { QuickMD5Hasher } from './quickmd5hasher';
 import { XxhashHasher } from './xxhashhasher';
+import { SceneDetector } from './scenedetector';
 const stat = promisify(fs.stat);
 
 (async function() {
@@ -52,6 +53,8 @@ const stat = promisify(fs.stat);
         { name: 'help', type: Boolean, multiple: false },
         { name: 'initialize', type: Boolean, multiple: false },
         { name: 'createProxies', type: Boolean, multiple: false },
+        { name: 'detectScenes', type: Boolean, multiple: false },
+        { name: 'detectScenesFilename', type: String, multiple: false },
         { name: 'verbose', type: Boolean, multiple: false },
         { name: 'performFullCheck', type: Boolean, multiple: false },
         { name: 'hashFile', type: String, multiple: false },
@@ -140,6 +143,20 @@ const stat = promisify(fs.stat);
         await proxyGenerator.generateMissingProxies();
 
         process.exit(0);
+    }
+
+    if (options.detectScenes) {
+        const library = new Library(options.library);
+        const sceneDetector = new SceneDetector(options.library, library);
+        try {
+            await sceneDetector.detectMissingScenes(
+                options.detectScenesFilename || ''
+            );
+            process.exit(0);
+        } catch (err) {
+            console.error(err);
+            process.exit(-1);
+        }
     }
 
     const laputin = compose(options.library, configuration);

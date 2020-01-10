@@ -17,7 +17,7 @@ export interface TagScreenshotDialogData {
 export class TagScreenshotDialogComponent {
     public AutocompleteType = AutocompleteType;
 
-    public file: File;
+    public selectedTag: { tags: Tag[] } = { tags: [] };
 
     constructor(
         public dialogRef: MatDialogRef<TagScreenshotDialogComponent>,

@@ -341,4 +341,24 @@ export class LaputinService {
             timecode.end
         );
     }
+
+    public getDetectedScenes(file: File): any {
+        return this._http
+            .get(`/laputin/scenes/${file.hash}/${file.hash}-Scenes.json`)
+            .pipe(
+                map(scenesJson => {
+                    const scenes = <any[]>scenesJson;
+                    return scenes.map(s => ({
+                        index: s['Scene Number'],
+                        start: s['Start Timecode'],
+                        end: s['End Timecode'],
+                        startFrame: parseInt(s['Start Frame'], 10),
+                        endFrame: parseInt(s['End Frame'], 10),
+                        startSeconds: parseInt(s['Start Time (seconds)'], 10),
+                        endSeconds: parseInt(s['End Time (seconds)'], 10),
+                        length: s['Length (seconds)']
+                    }));
+                })
+            );
+    }
 }

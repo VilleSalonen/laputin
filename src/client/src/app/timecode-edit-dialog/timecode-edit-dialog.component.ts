@@ -21,7 +21,7 @@ export class TimecodeEditDialogComponent {
     public file: File;
     public timecode: Timecode;
 
-    public alreadySelectedTags: Tag[];
+    public timecodeTags: { tags: Tag[] } = { tags: [] };
 
     constructor(
         public dialogRef: MatDialogRef<TimecodeEditDialogData>,
@@ -59,17 +59,22 @@ export class TimecodeEditDialogComponent {
         this.updateAlreadySelectedTags();
     }
 
-    public async removeTagFromExistingTimecode(
-        timecodeTag: TimecodeTag
-    ): Promise<void> {
-        await this._service
-            .deleteTimecodeTag(this.timecode, timecodeTag)
-            .toPromise();
-
-        const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(
-            t => t.timecodeTagId !== timecodeTag.timecodeTagId
+    public async removeTagFromExistingTimecode(tag: Tag): Promise<void> {
+        const timecodeTag = this.timecode.timecodeTags.find(
+            t => t.tag.id === tag.id
         );
-        this.timecode.timecodeTags = timecodeTagsAfterDeletion;
+
+        if (timecodeTag) {
+            await this._service
+                .deleteTimecodeTag(this.timecode, timecodeTag)
+                .toPromise();
+
+            const timecodeTagsAfterDeletion = this.timecode.timecodeTags.filter(
+                t => t.timecodeTagId !== timecodeTag.timecodeTagId
+            );
+            this.timecode.timecodeTags = timecodeTagsAfterDeletion;
+            this.updateAlreadySelectedTags();
+        }
     }
 
     public async setTagStart(): Promise<void> {
@@ -95,7 +100,7 @@ export class TimecodeEditDialogComponent {
     }
 
     private updateAlreadySelectedTags(): void {
-        this.alreadySelectedTags = this.timecode.timecodeTags.map(
+        this.timecodeTags.tags = this.timecode.timecodeTags.map(
             timecodeTag => timecodeTag.tag
         );
     }

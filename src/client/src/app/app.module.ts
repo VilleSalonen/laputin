@@ -48,6 +48,7 @@ import { PipesModule } from './pipes/pipes.module';
 import { FileComponent } from './file/file.component';
 import { ImageFileComponent } from './image-file/image-file.component';
 import { TimecodeMobileReadonlyComponent } from './timecode-mobile-readonly/timecode-mobile-readonly.component';
+import { SceneComponent } from './scene/scene.component';
 
 @NgModule({
     declarations: [
@@ -67,7 +68,8 @@ import { TimecodeMobileReadonlyComponent } from './timecode-mobile-readonly/time
         VideoPlayerComponent,
         FileComponent,
         ImageFileComponent,
-        TimecodeMobileReadonlyComponent
+        TimecodeMobileReadonlyComponent,
+        SceneComponent
     ],
     entryComponents: [
         TagScreenshotDialogComponent,

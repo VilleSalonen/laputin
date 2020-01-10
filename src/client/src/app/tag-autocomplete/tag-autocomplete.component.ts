@@ -43,7 +43,7 @@ export class TagAutocompleteComponent implements OnInit {
     @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
 
     @Input() tagContainer: TagContainer;
-    @Input() exclude: Tag[] = [];
+    @Input() include: Tag[] = [];
     @Input() type: AutocompleteType;
 
     @Output()
@@ -83,6 +83,7 @@ export class TagAutocompleteComponent implements OnInit {
         const index = this.tagContainer.tags.indexOf(tag);
 
         if (index >= 0) {
+            this.tagContainer.tags.splice(index);
             this.tagRemoved.emit(tag);
         }
     }
@@ -97,8 +98,10 @@ export class TagAutocompleteComponent implements OnInit {
                     .createTag(this.searchTermOriginalForm)
                     .toPromise();
                 this.tagSelected.emit(tag);
+                this.addToContainer(tag);
             } else {
                 this.tagSelected.emit(event.option.value);
+                this.addToContainer(event.option.value);
             }
         }
 
@@ -134,13 +137,11 @@ export class TagAutocompleteComponent implements OnInit {
             this.searchTermOriginalForm = '';
         }
 
+        const alreadyAdded = this.tagContainer.tags.map((tag: Tag) => tag.id);
+
         switch (this.type) {
             case AutocompleteType.FileSearch:
             case AutocompleteType.FileTagging:
-                const alreadyAdded = this.tagContainer.tags.map(
-                    (tag: Tag) => tag.id
-                );
-
                 this.matchingTags = this.allTags
                     .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
@@ -149,24 +150,29 @@ export class TagAutocompleteComponent implements OnInit {
                     .slice(0, 10);
                 break;
             case AutocompleteType.FileTimecodeTagging:
-                const fileTags = this.tagContainer.tags.map(
-                    (tag: Tag) => tag.id
-                );
-                const excludedTagIds = this.exclude.map((tag: Tag) => tag.id);
+                const fileTags = this.include.map((tag: Tag) => tag.id);
 
-                this.matchingTags = this.tagContainer.tags
+                this.matchingTags = this.include
+                    .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
                         tag.name.toLowerCase().includes(searchTerm)
                     )
-                    .filter((tag: Tag) => excludedTagIds.indexOf(tag.id) === -1)
                     .slice(0, 10);
                 this.otherTags = this.allTags
+                    .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
                         tag.name.toLowerCase().includes(searchTerm)
                     )
                     .filter((tag: Tag) => fileTags.indexOf(tag.id) === -1)
                     .slice(0, 10);
                 break;
+            case AutocompleteType.ScreenshotTagging:
+                this.matchingTags = this.include
+                    .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
+                    .filter((tag: Tag) =>
+                        tag.name.toLowerCase().includes(searchTerm)
+                    )
+                    .slice(0, 10);
         }
     }
 
@@ -183,5 +189,12 @@ export class TagAutocompleteComponent implements OnInit {
         if ($event.which === ESC) {
             this.clear();
         }
+    }
+
+    private addToContainer(tag: Tag): void {
+        const currentTags = this.tagContainer.tags;
+        currentTags.push(tag);
+        const sorted = currentTags.sort((a, b) => (a.name > b.name ? 1 : -1));
+        this.tagContainer.tags = sorted;
     }
 }

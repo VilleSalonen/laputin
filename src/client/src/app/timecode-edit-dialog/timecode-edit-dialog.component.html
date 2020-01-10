@@ -6,11 +6,7 @@
 
 <p>{{ timecode.durationInSeconds | duration }}</p>
 
-<button color="primary" *ngFor="let timecodeTag of timecode.timecodeTags" class="tag" (click)="removeTagFromExistingTimecode(timecodeTag)"
-    mat-flat-button title="Remove {{timecodeTag.tag.name}} tag from timecode">{{timecodeTag.tag.name}}</button>
-
-<app-tag-autocomplete [tagContainer]="file" [exclude]="alreadySelectedTags" (tagSelected)="addTagSelectionToTimecode($event)"
-    [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+<app-tag-autocomplete [tagContainer]="timecodeTags" (tagSelected)="addTagSelectionToTimecode($event)" (tagRemoved)="removeTagFromExistingTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
 
 <div>
     <button mat-button (click)="setTagStart()">

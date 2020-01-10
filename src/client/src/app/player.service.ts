@@ -1,11 +1,25 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { fromEvent, BehaviorSubject, Subscription } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
 
 @Injectable()
 export class PlayerService {
     public player: HTMLVideoElement = null;
 
+    private playerClosed = new EventEmitter<any>();
+
+    public currentTime = new BehaviorSubject<number>(0);
+    public subscription: Subscription;
+
     public setPlayer(player: HTMLVideoElement): void {
         this.player = player;
+
+        this.subscription = fromEvent(this.player, 'timeupdate')
+            .pipe(
+                takeUntil(this.playerClosed),
+                map(() => this.player.currentTime)
+            )
+            .subscribe(value => this.currentTime.next(value));
     }
 
     public getCurrentTime(): number {
@@ -33,6 +47,12 @@ export class PlayerService {
             this.player.remove();
         }
 
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
+
+        this.playerClosed.emit();
         this.player = null;
     }
 }
