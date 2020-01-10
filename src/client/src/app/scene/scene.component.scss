@@ -5,6 +5,7 @@
     flex-direction: row;
     border: 2px solid #0f1937;
     border-radius: 5px;
+    position: relative;
 
     img {
         height: 65px;
@@ -13,4 +14,26 @@
 
 .active {
     border: 2px solid yellow;
+}
+
+.end {
+    position: absolute;
+    width: 20px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 20;
+
+    i {
+        display: hidden;
+    }
+}
+
+.end:hover {
+    background-color: black;
+    opacity: 0.5;
+}
+
+::ng-deep .metadata-tooltip {
+    white-space: pre-line;
 }

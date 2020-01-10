@@ -24,11 +24,12 @@ import {
     take,
     tap,
     distinctUntilChanged,
-    shareReplay
+    shareReplay,
+    filter
 } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
-import { PlayerService } from '../player.service';
-import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
+import { PlayerService, Progress } from '../player.service';
+import { formatPreciseDurationWithMs } from '../pipes/precise-duration-with-ms.pipe';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DomSanitizer } from '@angular/platform-browser';
 import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
@@ -112,26 +113,29 @@ export class FileComponent implements AfterViewInit {
 
         this.activeScene$ = combineLatest(
             this.detectedScenes$,
-            this.playerService.currentTime
+            this.playerService.progress$
         ).pipe(
-            map(([scenes, currentTime]: [any[], number]) =>
+            map(([scenes, progress]: [any[], Progress]) =>
                 scenes.find(
                     s =>
-                        s.startSeconds <= currentTime &&
-                        currentTime <= s.endSeconds
+                        s.startFrame <= progress.frame &&
+                        progress.frame < s.endFrame
                 )
             ),
+            filter(scene => scene),
             distinctUntilChanged(),
             shareReplay(1)
         );
 
         this.activeScene$.subscribe(scene => {
             if (this.scenesScroller) {
-                const item = this.scenesScroller.items.find(
+                const itemIndex = this.scenesScroller.items.findIndex(
                     i => i.index === scene.index
                 );
-                if (item) {
-                    this.scenesScroller.scrollInto(item);
+                if (itemIndex > -1) {
+                    this.scenesScroller.scrollToIndex(
+                        Math.max(0, itemIndex - 1)
+                    );
                 }
             }
         });
@@ -215,24 +219,6 @@ export class FileComponent implements AfterViewInit {
         this.setCurrentTime(timecode.start);
     }
 
-    public goToScene(scene: any): void {
-        const up = parseInt(this.file.metadata.framerate, 10);
-        const down = parseInt(
-            this.file.metadata.framerate.substr(
-                this.file.metadata.framerate.indexOf('/') + 1
-            ),
-            10
-        );
-
-        const frameRate = up / down;
-
-        const adjustment = 0.5;
-        const targetTime = (scene.startFrame + adjustment) / frameRate;
-        const roundedUp = Math.ceil(targetTime * 10000) / 10000;
-
-        this.setCurrentTime(roundedUp);
-    }
-
     public addTagSelectionToTimecode(tag: Tag): void {
         const alreadyAddedOnFile = this.file.tags.find(t => t.id === tag.id);
         if (!alreadyAddedOnFile) {
@@ -241,13 +227,13 @@ export class FileComponent implements AfterViewInit {
     }
 
     public setTagStart(): void {
-        this.tagStart = formatPreciseDuration(
+        this.tagStart = formatPreciseDurationWithMs(
             this.playerService.player.currentTime
         );
     }
 
     public setTagEnd(): void {
-        this.tagEnd = formatPreciseDuration(
+        this.tagEnd = formatPreciseDurationWithMs(
             this.playerService.player.currentTime
         );
     }
@@ -346,7 +332,7 @@ export class FileComponent implements AfterViewInit {
     }
 
     private setCurrentTime(newCurrentTime: number) {
-        this.playerService.player.currentTime = newCurrentTime;
+        this.playerService.setCurrentTime(newCurrentTime);
     }
 
     public formattedTags(file: File): string {

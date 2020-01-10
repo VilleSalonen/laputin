@@ -7,7 +7,8 @@ import {
     ViewChild,
     ElementRef,
     AfterViewInit,
-    OnDestroy
+    OnDestroy,
+    NgZone
 } from '@angular/core';
 
 import {
@@ -19,10 +20,10 @@ import {
     AutocompleteType
 } from './../models';
 import { LaputinService } from './../laputin.service';
-import { PlayerService } from '../player.service';
+import { PlayerService, Progress } from '../player.service';
 import { MatSliderChange, MatDialog } from '@angular/material';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
-import { fromEvent, merge, of } from 'rxjs';
+import { fromEvent, merge, of, Observable } from 'rxjs';
 import {
     takeUntil,
     throttleTime,
@@ -45,9 +46,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public showScreenshotPreview: boolean;
     public playing: boolean;
     public random: boolean;
-    public progressText: string;
     public duration: string;
-    public resolution: string;
     public isFullScreen: boolean;
     public cacheBuster = '';
 
@@ -65,6 +64,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     @ViewChild('volume', { static: false }) volumeSliderElem: ElementRef;
 
     private _file: File;
+    public progress$: Observable<Progress>;
 
     @Input()
     get file(): File {
@@ -92,6 +92,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     public videoSource: string;
 
+    public showPreciseProgress = false;
+
     @Output()
     public fileChange: EventEmitter<FileChange> = new EventEmitter<
         FileChange
@@ -110,11 +112,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
             this.isMobile = result.matches;
         });
+
+        this.progress$ = this._playerService.progress$;
     }
 
     public ngAfterViewInit(): void {
         this.player = this.playerElem.nativeElement;
-        this._playerService.setPlayer(this.player);
+        this._playerService.setPlayer(this.file, this.player);
 
         const playStart = fromEvent(this.player, 'playing').pipe(
             takeUntil(this.fileClosed)
@@ -158,11 +162,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 this.playing = false;
                 this.duration = this.formatDuration(this.player.duration);
                 this.updateProgress(0);
-
-                if (this.player.videoWidth && this.player.videoHeight) {
-                    this.resolution =
-                        this.player.videoWidth + 'x' + this.player.videoHeight;
-                }
             });
 
         fromEvent(window, 'webkitfullscreenchange')
@@ -319,24 +318,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     private updateProgress(playPercent: number) {
         this.setPlayheadTo(playPercent);
-        this.updateTime();
 
         if (this.sliderElem && this.sliderElem.nativeElement) {
             this.sliderElem.nativeElement.blur();
-        }
-    }
-
-    private updateTime(): void {
-        const currentTime = this.formatDuration(this.player.currentTime);
-
-        if (
-            currentTime.indexOf('NaN') === -1 &&
-            this.duration &&
-            this.duration.indexOf('NaN') === -1
-        ) {
-            this.progressText = currentTime;
-        } else {
-            this.progressText = '00:00';
         }
     }
 
@@ -376,44 +360,52 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.player.pause();
     }
 
-    public largeStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - 10);
-    }
-
-    public hugeStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - 60);
-    }
-
-    public megaStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - 600);
-    }
-
-    public largeStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + 10);
-    }
-
-    public hugeStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + 60);
-    }
-
-    public megaStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + 600);
-    }
-
-    public smallStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - 1 / 4.0);
-    }
-
     public tinyStepBackward(): void {
-        this.setCurrentTime(this.player.currentTime - 1 / 20.0);
+        this._playerService.frameBackward(1);
     }
 
     public tinyStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + 1 / 20.0);
+        this._playerService.frameForward(1);
+    }
+
+    public smallStepBackward(): void {
+        this.setCurrentTime(
+            Math.max(0, this._playerService.getCurrentTime() - 1 / 4.0)
+        );
     }
 
     public smallStepForward(): void {
-        this.setCurrentTime(this.player.currentTime + 1 / 4.0);
+        this.setCurrentTime(this._playerService.getCurrentTime() + 1 / 4.0);
+    }
+
+    public largeStepBackward(): void {
+        this.setCurrentTime(
+            Math.max(0, this._playerService.getCurrentTime() - 10)
+        );
+    }
+
+    public largeStepForward(): void {
+        this.setCurrentTime(this._playerService.getCurrentTime() + 10);
+    }
+
+    public hugeStepBackward(): void {
+        this.setCurrentTime(
+            Math.max(0, this._playerService.getCurrentTime() - 60)
+        );
+    }
+
+    public hugeStepForward(): void {
+        this.setCurrentTime(this._playerService.getCurrentTime() + 60);
+    }
+
+    public megaStepBackward(): void {
+        this.setCurrentTime(
+            Math.max(0, this._playerService.getCurrentTime() - 600)
+        );
+    }
+
+    public megaStepForward(): void {
+        this.setCurrentTime(this._playerService.getCurrentTime() + 600);
     }
 
     public goToPrevious(): void {
@@ -454,7 +446,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     public screenshot(): void {
         this._service
-            .screenshotFile(this.file, this.player.currentTime)
+            .screenshotFile(this.file, this._playerService.getCurrentTime())
             .toPromise()
             .then(() => {
                 // Allow for a some delay because user only see this thumbnail when she changes to another file and then back.
@@ -467,7 +459,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     public async screenshotTimecode(timecode: Timecode): Promise<void> {
         await this._service
-            .screenshotTimecode(this.file, timecode, this.player.currentTime)
+            .screenshotTimecode(
+                this.file,
+                timecode,
+                this._playerService.getCurrentTime()
+            )
             .toPromise();
         timecode.cacheBuster = '?cachebuster=' + new Date().toISOString();
     }
@@ -483,14 +479,18 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe(tag => {
             if (tag) {
                 this._service
-                    .screenshotTag(tag, this.file, this.player.currentTime)
+                    .screenshotTag(
+                        tag,
+                        this.file,
+                        this._playerService.getCurrentTime()
+                    )
                     .toPromise();
             }
         });
     }
 
     private setCurrentTime(newCurrentTime: number) {
-        this.player.currentTime = newCurrentTime;
+        this._playerService.setCurrentTime(newCurrentTime);
         this.playbackHasBeenStarted = true;
     }
 }

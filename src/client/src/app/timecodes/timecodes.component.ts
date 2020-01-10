@@ -2,7 +2,7 @@ import { Component, OnInit, Injectable } from '@angular/core';
 
 import { File, Timecode, FileQuery } from './../models';
 import { LaputinService } from './../laputin.service';
-import { formatPreciseDuration } from '../pipes/precise-duration.pipe';
+import { formatPreciseDurationWithMs } from '../pipes/precise-duration-with-ms.pipe';
 
 class TimecodeItem {
     constructor(
@@ -57,24 +57,24 @@ export class TimecodesComponent implements OnInit {
                     this.exportCommands.push(
                         'ffmpeg ' +
                             '-ss ' +
-                            formatPreciseDuration(t.start) +
+                            formatPreciseDurationWithMs(t.start) +
                             ' ' +
                             '-i "' +
                             t.path.replace(/\//g, '\\') +
                             '" ' +
                             '-t ' +
-                            formatPreciseDuration(t.end - t.start) +
+                            formatPreciseDurationWithMs(t.end - t.start) +
                             ' ' +
                             '-map v? -map a? -map s? -c:v hevc_nvenc -c:a copy -profile:v main -preset slow ' +
                             '"TARGET_DIR\\' +
                             name +
                             ' (' +
-                            formatPreciseDuration(t.start).replace(
+                            formatPreciseDurationWithMs(t.start).replace(
                                 /[\:]/g,
                                 '.'
                             ) +
                             '-' +
-                            formatPreciseDuration(t.start).replace(
+                            formatPreciseDurationWithMs(t.start).replace(
                                 /[\:]/g,
                                 '.'
                             ) +

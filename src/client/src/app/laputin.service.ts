@@ -354,8 +354,8 @@ export class LaputinService {
                         end: s['End Timecode'],
                         startFrame: parseInt(s['Start Frame'], 10),
                         endFrame: parseInt(s['End Frame'], 10),
-                        startSeconds: parseInt(s['Start Time (seconds)'], 10),
-                        endSeconds: parseInt(s['End Time (seconds)'], 10),
+                        startSeconds: parseFloat(s['Start Time (seconds)']),
+                        endSeconds: parseFloat(s['End Time (seconds)']),
                         length: s['Length (seconds)']
                     }));
                 })

@@ -2,7 +2,7 @@
     <img src="/laputin/tag-timecode-thumbs/{{timecode.timecodeId}}.jpg{{timecode.cacheBuster}}" />
 </div>
 
-<p>{{ timecode.start | preciseDuration }} - {{ timecode.end | preciseDuration }}</p>
+<p>{{ timecode.start | preciseDurationWithMs }} - {{ timecode.end | preciseDurationWithMs }}</p>
 
 <p>{{ timecode.durationInSeconds | duration }}</p>
 

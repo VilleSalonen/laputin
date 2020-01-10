@@ -49,7 +49,10 @@
         <div class="player-controls">
             <div class="timeline-and-buttons">
                 <div class="timeline-controls">
-                    <span class="progress-text">{{progressText}}</span>
+                    <span class="progress-text" *ngIf="progress$ | async as progress" (click)="showPreciseProgress = !showPreciseProgress">
+                        <ng-container *ngIf="showPreciseProgress">{{ progress.frame }} {{ progress.timecode | preciseDurationWithMs }} {{ progress.currentTime | preciseDurationWithMs }}</ng-container>
+                        <ng-container *ngIf="!showPreciseProgress">{{ progress.currentTime | preciseDuration }}</ng-container>
+                    </span>
                     <mat-slider [min]="sliderMin" [max]="sliderMax" [value]="sliderValue" (change)="setProgress($event)" #slider></mat-slider>
                     <span class="progress-text">{{duration}}</span>
                     <button mat-button (click)="toggleFullScreen()">

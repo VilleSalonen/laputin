@@ -12,10 +12,10 @@
     <i class="fas fa-camera"></i>
 </div>
 
-<div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{ timecode.start | preciseDuration }}">
+<div class="controls timecode-start-control" (click)="goToTimecodeStart()" title="Go to timecode start: {{ timecode.start | preciseDurationWithMs }}">
     <i class="fas fa-sign-out-alt"></i>
 </div>
 
-<div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{ timecode.end | preciseDuration }}">
+<div class="controls timecode-end-control" (click)="goToTimecodeEnd()" title="Go to timecode end: {{ timecode.end | preciseDurationWithMs }}">
     <i class="fas fa-sign-in-alt"></i>
 </div>

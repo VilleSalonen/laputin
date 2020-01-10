@@ -58,7 +58,6 @@
                         <virtual-scroller class="scenes-scroll" #scenesScroll [items]="detectedScenes" [horizontal]="true">
                             <app-scene
                                 *ngFor="let detectedScene of scenesScroll.viewPortItems"
-                                (click)="goToScene(detectedScene)"
                                 style="width: 352px;"
                                 [file]="activeFile"
                                 [scene]="detectedScene"
