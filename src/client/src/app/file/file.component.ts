@@ -219,7 +219,19 @@ export class FileComponent implements AfterViewInit {
         this.setCurrentTime(timecode.start);
     }
 
-    public addTagSelectionToTimecode(tag: Tag): void {
+    public addTagsSelectionToTimecode(tags: Tag[]): void {
+        const tagsMissingFromTimecode = [];
+        tags.forEach(tag => {
+            if (!this.timecodeTags.tags.find(t => t.id === tag.id)) {
+                tagsMissingFromTimecode.push(tag);
+            }
+        });
+        tagsMissingFromTimecode.forEach(tag =>
+            this.timecodeTags.tags.push(tag)
+        );
+    }
+
+    public addTimecodeTagToFile(tag: Tag): void {
         const alreadyAddedOnFile = this.file.tags.find(t => t.id === tag.id);
         if (!alreadyAddedOnFile) {
             this.addTag(tag);

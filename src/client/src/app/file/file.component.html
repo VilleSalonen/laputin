@@ -79,7 +79,7 @@
                     <div class="timecode-tools-and-timecodes">
                         <div class="timecode-tools" *ngIf="!activeFile.type.startsWith('image')">
                             <div class="row">
-                                <app-tag-autocomplete [tagContainer]="timecodeTags" [include]="file.tags" (tagSelected)="addTagSelectionToTimecode($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
+                                <app-tag-autocomplete [tagContainer]="timecodeTags" [include]="file.tags" (tagSelected)="addTimecodeTagToFile($event)" [type]="AutocompleteType.FileTimecodeTagging"></app-tag-autocomplete>
                             </div>
                     
                             <div class="timecode-time-controls">
@@ -112,7 +112,7 @@
                         <div class="timecodes" #timecodesElement *ngIf="!activeFile.type.startsWith('image') && timecodes && timecodes.length > 0">
                             <virtual-scroller class="timecodes-scroll" #timecodesScroll [items]="timecodes">
                                 <div *ngFor="let timecode of timecodesScroll.viewPortItems" class="timecode">
-                                    <app-timecode [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)"></app-timecode>
+                                    <app-timecode [file]="activeFile" [timecode]="timecode" (removed)="removeTimecode($event)" (tagsCopied)="addTagsSelectionToTimecode($event)"></app-timecode>
                                 </div>
                             </virtual-scroller>
                         </div>

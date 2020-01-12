@@ -4,11 +4,10 @@ import {
     Output,
     EventEmitter,
     Injectable,
-    ChangeDetectionStrategy,
-    OnInit
+    ChangeDetectionStrategy
 } from '@angular/core';
 
-import { File, Timecode } from './../models';
+import { File, Timecode, Tag } from './../models';
 import { LaputinService } from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
@@ -30,6 +29,7 @@ export class TimecodeComponent {
     @Input() timecode: Timecode;
     @Input() currentTime: number;
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
+    @Output() tagsCopied: EventEmitter<Tag[]> = new EventEmitter<Tag[]>();
 
     constructor(
         private _service: LaputinService,
@@ -85,5 +85,9 @@ export class TimecodeComponent {
             .sort((a, b) => (a.tag.name > b.tag.name ? 1 : -1))
             .map(timecodeTag => timecodeTag.tag.name)
             .join(', ');
+    }
+
+    public copyTags(): void {
+        this.tagsCopied.emit(this.timecode.timecodeTags.map(t => t.tag));
     }
 }
