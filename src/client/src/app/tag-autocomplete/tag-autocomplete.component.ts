@@ -147,7 +147,7 @@ export class TagAutocompleteComponent implements OnInit {
                     .filter((tag: Tag) =>
                         tag.name.toLowerCase().includes(searchTerm)
                     )
-                    .slice(0, 10);
+                    .slice(0, 25);
                 break;
             case AutocompleteType.FileTimecodeTagging:
                 const fileTags = this.include.map((tag: Tag) => tag.id);
@@ -157,14 +157,14 @@ export class TagAutocompleteComponent implements OnInit {
                     .filter((tag: Tag) =>
                         tag.name.toLowerCase().includes(searchTerm)
                     )
-                    .slice(0, 10);
+                    .slice(0, 25);
                 this.otherTags = this.allTags
                     .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
                         tag.name.toLowerCase().includes(searchTerm)
                     )
                     .filter((tag: Tag) => fileTags.indexOf(tag.id) === -1)
-                    .slice(0, 10);
+                    .slice(0, 25);
                 break;
             case AutocompleteType.ScreenshotTagging:
                 this.matchingTags = this.include
@@ -172,7 +172,7 @@ export class TagAutocompleteComponent implements OnInit {
                     .filter((tag: Tag) =>
                         tag.name.toLowerCase().includes(searchTerm)
                     )
-                    .slice(0, 10);
+                    .slice(0, 25);
         }
     }
 
