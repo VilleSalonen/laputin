@@ -83,7 +83,7 @@ export class TagAutocompleteComponent implements OnInit {
         const index = this.tagContainer.tags.indexOf(tag);
 
         if (index >= 0) {
-            this.tagContainer.tags.splice(index);
+            this.tagContainer.tags.splice(index, 1);
             this.tagRemoved.emit(tag);
         }
     }
