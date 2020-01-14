@@ -97,3 +97,22 @@
         </ng-container>
     </mat-autocomplete>
 </mat-form-field>
+
+<button mat-button [matMenuTriggerFor]="appMenu">
+    <i class="material-icons">sort</i>
+</button>
+
+<mat-menu #appMenu="matMenu">
+    <button mat-menu-item (click)="sortBy(FileQuerySort.FilePath)">
+        File path
+    </button>
+    <button mat-menu-item (click)="sortBy(FileQuerySort.Duration)">
+        Duration
+    </button>
+    <button mat-menu-item (click)="sortBy(FileQuerySort.FileSize)">
+        File size
+    </button>
+    <button mat-menu-item (click)="sortBy(FileQuerySort.ReleaseDate)">
+        Release date
+    </button>
+</mat-menu>

@@ -7,7 +7,8 @@ import {
     MatChipsModule,
     MatInputModule,
     MatAutocompleteModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatMenuModule
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -26,6 +27,7 @@ import { PipesModule } from '../pipes/pipes.module';
         MatIconModule,
         BrowserModule,
         MatButtonModule,
+        MatMenuModule,
         PipesModule
     ],
     exports: [FileQueryComponent],

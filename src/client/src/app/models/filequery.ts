@@ -1,5 +1,6 @@
 import { Tag } from './tag';
 import { TagContainer } from './tagcontainer';
+import { FileQuerySort } from './filequerysort';
 
 export class FileQuery implements TagContainer {
     public filename: string;
@@ -9,6 +10,8 @@ export class FileQuery implements TagContainer {
     public andTags: Tag[] = [];
     public orTags: Tag[] = [];
     public notTags: Tag[] = [];
+
+    public sort = FileQuerySort.FilePath;
 
     public get tags(): Tag[] {
         return [...new Set([...this.andTags, ...this.orTags, ...this.notTags])];
@@ -24,6 +27,7 @@ export class FileQuery implements TagContainer {
             this.andTags = values.andTags;
             this.orTags = values.orTags;
             this.notTags = values.notTags;
+            this.sort = values.sort || FileQuerySort.FilePath;
         }
     }
 
@@ -72,6 +76,7 @@ export class FileQuery implements TagContainer {
         this.andTags = [];
         this.orTags = [];
         this.notTags = [];
+        this.sort = FileQuerySort.FilePath;
     }
 
     public parametersSpecified(): boolean {

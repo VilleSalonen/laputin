@@ -170,7 +170,35 @@ export class FileLibrary extends events.EventEmitter {
 
             let metadata = {};
             if (!this.skipMetadataExtraction) {
-                metadata = await this.readMetadata(filePath);
+                const ffprobeMetadata = await this.readFfprobeMetadata(
+                    filePath
+                );
+                metadata = { ...metadata, ...ffprobeMetadata };
+
+                const releaseDate = escapedFilePath.match(
+                    /.*(\d\d\d\d-\d\d-\d\d).*/
+                );
+                if (releaseDate && releaseDate[1]) {
+                    metadata = {
+                        ...metadata,
+                        releaseDate: releaseDate[1]
+                    };
+                } else {
+                    const releaseYear = escapedFilePath.match(
+                        /.* - (\d\d\d\d) - .*/
+                    );
+                    if (releaseYear && releaseYear[1]) {
+                        metadata = {
+                            ...metadata,
+                            releaseDate: releaseYear[1]
+                        };
+                    }
+                }
+
+                metadata = {
+                    ...metadata,
+                    lastModified: stats.mtime
+                };
             }
 
             const file = new File(
@@ -199,7 +227,7 @@ export class FileLibrary extends events.EventEmitter {
         delete this._existingFiles[escapedFilePath];
     }
 
-    private async readMetadata(filePath: string): Promise<any> {
+    private async readFfprobeMetadata(filePath: string): Promise<any> {
         const data = await probe(filePath);
         if (data && data.streams) {
             let isVideo = false;
@@ -234,7 +262,7 @@ export class FileLibrary extends events.EventEmitter {
             if (isAudio) {
                 return {
                     type: 'audio',
-                    codec: primaryVideoStream.codec_name,
+                    codec: primaryAudioStream.codec_name,
                     duration: data.format.duration,
                     bitrate: data.format.bit_rate
                 };

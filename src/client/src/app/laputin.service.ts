@@ -11,6 +11,7 @@ import {
     TimecodeTag,
     Duplicate
 } from './models';
+import { FileQuerySort } from './models/filequerysort';
 
 @Injectable()
 export class LaputinService {
@@ -32,6 +33,56 @@ export class LaputinService {
                 }
 
                 return result;
+            }),
+            map(files => {
+                if (query.sort === FileQuerySort.FileSize) {
+                    files.sort((a: File, b: File) =>
+                        a.size > b.size ? -1 : 1
+                    );
+                }
+
+                if (query.sort === FileQuerySort.Duration) {
+                    files.sort((a: File, b: File) => {
+                        if (a.metadata.duration && !b.metadata.duration) {
+                            return -1;
+                        }
+
+                        if (!a.metadata.duration && b.metadata.duration) {
+                            return 1;
+                        }
+
+                        if (!a.metadata.release && !b.metadata.duration) {
+                            return a.path > b.path ? 1 : -1;
+                        }
+
+                        const durationA = parseFloat(a.metadata.duration);
+                        const durationB = parseFloat(b.metadata.duration);
+
+                        return durationA > durationB ? 1 : -1;
+                    });
+                }
+
+                if (query.sort === FileQuerySort.ReleaseDate) {
+                    files.sort((a: File, b: File) => {
+                        if (a.metadata.releaseDate && !b.metadata.releaseDate) {
+                            return -1;
+                        }
+
+                        if (!a.metadata.releaseDate && b.metadata.releaseDate) {
+                            return 1;
+                        }
+
+                        if (!a.metadata.release && !b.metadata.releaseDate) {
+                            return a.path > b.path ? 1 : -1;
+                        }
+
+                        return a.metadata.releaseDate > b.metadata.releaseDate
+                            ? 1
+                            : -1;
+                    });
+                }
+
+                return files;
             })
         );
     }

@@ -10,7 +10,8 @@ import { File } from './../models/file';
 import { LaputinService } from './../laputin.service';
 import { Subject, Observable } from 'rxjs';
 import { FileQueryService } from '../file-query.service';
-import { switchMap, take, map, shareReplay } from 'rxjs/operators';
+import { switchMap, take, map, shareReplay, tap } from 'rxjs/operators';
+import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 
 @Component({
     styleUrls: ['./files.component.scss'],
@@ -32,12 +33,25 @@ export class FilesComponent implements AfterViewInit {
     @ViewChild('files', { static: false })
     public filesElement: ElementRef<HTMLDivElement>;
 
+    @ViewChild('scroll', { static: false })
+    private filesScroller: VirtualScrollerComponent;
+
     constructor(
         private _service: LaputinService,
         private fileQueryService: FileQueryService
     ) {
         this.files$ = this.fileQueryService.query$.pipe(
             switchMap(query => this._service.queryFiles(query)),
+            tap(() => {
+                if (this.filesScroller) {
+                    this.filesScroller.scrollToIndex(
+                        0,
+                        undefined,
+                        undefined,
+                        0
+                    );
+                }
+            }),
             shareReplay(1)
         );
 

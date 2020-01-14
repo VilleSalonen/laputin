@@ -25,6 +25,7 @@ import { FileQuery } from '../models';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { FileQueryService } from '../file-query.service';
+import { FileQuerySort } from '../models/filequerysort';
 
 enum OptionType {
     Tag,
@@ -49,6 +50,8 @@ class Option {
 })
 @Injectable()
 export class FileQueryComponent implements OnInit {
+    public FileQuerySort = FileQuerySort;
+
     public allSearchOptions: Option[] = [
         new Option(OptionType.SearchOption, 'tag', 'tag:'),
         new Option(OptionType.SearchOption, 'tagged, untagged, all', 'status:'),
@@ -265,5 +268,11 @@ export class FileQueryComponent implements OnInit {
         if (event.code === 'KeyF' && event.ctrlKey && event.shiftKey) {
             this.termInput.nativeElement.focus();
         }
+    }
+
+    public sortBy(sort: FileQuerySort): void {
+        const query = new FileQuery(this.query);
+        query.sort = sort;
+        this.emitUpdate(query);
     }
 }
