@@ -5,6 +5,8 @@ bluebird.promisifyAll(sqlite3);
 
 import path = require('path');
 import _ = require('lodash');
+import fs = require('fs');
+import winston = require('winston');
 
 import { Query } from './query.model';
 import { File } from './file';
@@ -14,42 +16,74 @@ import { TagQuery } from './tagquery.model';
 export class Library {
     private _db: any;
 
-    constructor(private _libraryPath: string) {
-        this._db = new sqlite3.Database(
-            path.join(this._libraryPath, '.laputin.db')
-        );
-    }
+    static async initialize(libraryPath: string): Promise<void> {
+        if (
+            !fs.existsSync(libraryPath) ||
+            !fs.statSync(libraryPath).isDirectory()
+        ) {
+            throw new Error(
+                `Directory ${libraryPath} is not a valid directory.`
+            );
+        }
 
-    public async createTables(): Promise<void> {
-        await this._db.runAsync(
+        const dbPath = path.join(libraryPath, '.laputin.db');
+        if (fs.existsSync(dbPath)) {
+            throw new Error(
+                `${libraryPath} has already been initialized as Laputin library. Refusing to re-initialize.`
+            );
+        }
+        const db = new sqlite3.Database(dbPath);
+
+        await (<any>db).runAsync(
             'CREATE TABLE tags (id INTEGER PRIMARY KEY autoincrement, name TEXT UNIQUE);'
         );
-        await this._db.runAsync(
+        await (<any>db).runAsync(
             'CREATE TABLE tags_files (id INTEGER, hash TEXT, PRIMARY KEY (id, hash));'
         );
-        await this._db.runAsync(
+        await (<any>db).runAsync(
             'CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER, size INTEGER, metadata BLOB, type TEXT);'
         );
-        await this._db.runAsync(`CREATE TABLE files_timecodes (
+        await (<any>db).runAsync(`CREATE TABLE files_timecodes (
             id INTEGER PRIMARY KEY autoincrement,
             hash TEXT,
             start REAL,
             end REAL
         );`);
-        await this._db.runAsync(`CREATE TABLE files_timecodes_tags (
+        await (<any>db).runAsync(`CREATE TABLE files_timecodes_tags (
             id INTEGER PRIMARY KEY autoincrement,
             timecode_id INTEGER,
             tag_id INTEGER
         );`);
-        await this._db.runAsync(
+        await (<any>db).runAsync(
             'CREATE TABLE screenshot_times_files (hash TEXT PRIMARY KEY, time REAL);'
         );
-        await this._db.runAsync(
+        await (<any>db).runAsync(
             'CREATE TABLE screenshot_times_tags (id INTEGER PRIMARY KEY, hash TEXT, time REAL);'
         );
-        await this._db.runAsync(
+        await (<any>db).runAsync(
             'CREATE TABLE screenshot_times_timecodes (id INTEGER PRIMARY KEY, time REAL);'
         );
+    }
+
+    constructor(private _libraryPath: string) {
+        if (
+            !fs.existsSync(this._libraryPath) ||
+            !fs.statSync(this._libraryPath).isDirectory()
+        ) {
+            throw new Error(
+                `Directory ${this._libraryPath} is not a valid directory.`
+            );
+        }
+
+        const dbPath = path.join(this._libraryPath, '.laputin.db');
+        if (!fs.existsSync(dbPath)) {
+            winston.error(
+                `${this._libraryPath} has not been initialized as Laputin library.`
+            );
+            process.exit(-1);
+        }
+
+        this._db = new sqlite3.Database(dbPath);
     }
 
     public addFile(file: File): Promise<void> {

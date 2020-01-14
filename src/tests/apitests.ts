@@ -9,6 +9,7 @@ import { Tag } from './../tag';
 import { composeForTests } from './../compose';
 import { Laputin } from './../laputin';
 import { LaputinConfiguration } from './../laputinconfiguration';
+import { Library } from '../library';
 
 describe('Laputin API', function() {
     let currentPath: string;
@@ -369,6 +370,8 @@ describe('Laputin API', function() {
         rimraf.sync(archivePath);
         fs.mkdirSync(archivePath);
 
+        await Library.initialize(archivePath);
+
         const fakeScreenshotter: any = {
             exists: () => {},
             screenshot: () => {},
@@ -380,8 +383,6 @@ describe('Laputin API', function() {
             fakeScreenshotter
         );
         l.initializeRoutes();
-
-        await l.library.createTables();
 
         await l.startListening();
 

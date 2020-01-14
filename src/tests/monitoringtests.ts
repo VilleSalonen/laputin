@@ -9,6 +9,7 @@ import { File } from './../file';
 import { composeForTests } from './../compose';
 import { Laputin } from './../laputin';
 import { LaputinConfiguration } from './../laputinconfiguration';
+import { Library } from '../library';
 
 describe('File Library', function() {
     // For some reason watching for file changes seems to always take about 5
@@ -539,6 +540,8 @@ async function initializeLaputin(path: string): Promise<Laputin> {
         fs.mkdirSync(archivePath);
     }
 
+    await Library.initialize(archivePath);
+
     const fakeScreenshotter: any = {
         exists: () => {},
         screenshot: () => {},
@@ -549,8 +552,6 @@ async function initializeLaputin(path: string): Promise<Laputin> {
         new LaputinConfiguration(1234, 'accurate', null, ['.tmp']),
         fakeScreenshotter
     );
-
-    await l.library.createTables();
 
     await startLaputin(l);
 

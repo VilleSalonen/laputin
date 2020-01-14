@@ -1,24 +1,21 @@
-/// <reference path="command-line-args.d.ts" />
-
 import commandLineArgs = require('command-line-args');
 import commandLineUsage = require('command-line-usage');
-import fs = require('fs');
-import path = require('path');
 import winston = require('winston');
 
-import { Library } from './library';
-import { LaputinConfiguration } from './laputinconfiguration';
-import { compose } from './compose';
-import { ProxyGenerator } from './proxygenerator';
+import { HashCommand } from './commands/hash.command';
+import { Command } from './commands/command';
+import { InitializeCommand } from './commands/initialize.command';
+import { QueryCommand } from './commands/query.command';
+import { StartCommand } from './commands/start.command';
+import { DetectScenesCommand } from './commands/detect-scenes.command';
+import { CreateProxiesCommand } from './commands/create-proxies.command';
 
-import open = require('open');
-import { IHasher } from './ihasher';
+export function getLibraryPath(givenLibraryPath?: string): string {
+    const libraryPath = givenLibraryPath || process.cwd();
 
-import { promisify } from 'util';
-import { QuickMD5Hasher } from './quickmd5hasher';
-import { XxhashHasher } from './xxhashhasher';
-import { SceneDetector } from './scenedetector';
-const stat = promisify(fs.stat);
+    // For some reason " is added only to the end of the path if path contains spaces.
+    return libraryPath.replace(/\"/g, '');
+}
 
 (async function() {
     const sections = [
@@ -43,135 +40,50 @@ const stat = promisify(fs.stat);
     ];
     const usage = commandLineUsage(sections);
 
-    const argumentDefinitions = [
-        {
-            name: 'library',
-            type: String,
-            multiple: false,
-            defaultOption: true
-        },
-        { name: 'help', type: Boolean, multiple: false },
-        { name: 'initialize', type: Boolean, multiple: false },
-        { name: 'createProxies', type: Boolean, multiple: false },
-        { name: 'detectScenes', type: Boolean, multiple: false },
-        { name: 'detectScenesFilename', type: String, multiple: false },
-        { name: 'verbose', type: Boolean, multiple: false },
-        { name: 'performFullCheck', type: Boolean, multiple: false },
-        { name: 'hashFile', type: String, multiple: false },
-        { name: 'hasher', type: String, multiple: false },
-        {
-            name: 'skipBrowserOpen',
-            type: Boolean,
-            multiple: false,
-            defaultOption: false
-        }
+    const globalDefinitions = [
+        { name: 'verbose', type: Boolean, multiple: false }
     ];
-    const options = commandLineArgs(argumentDefinitions);
+    const globalOptions = commandLineArgs(globalDefinitions, { partial: true });
 
-    if (options.help) {
-        console.log(usage);
-        process.exit(-1);
-    }
-
-    if (options.verbose) {
+    if (globalOptions.verbose) {
         winston.level = 'verbose';
     }
 
-    if (options.hashFile) {
-        let hasher: IHasher = new QuickMD5Hasher();
-        if (options.hasher && options.hasher === 'accurate') {
-            hasher = new XxhashHasher();
-        }
+    const argvAfterGlobalOptions = globalOptions._unknown || [];
 
-        const fileStats = await stat(options.hashFile);
-        const hash = await hasher.hash(options.hashFile, fileStats);
-        console.log(hash);
-        process.exit(0);
-    }
+    const mainDefinitions = [
+        { name: 'command', defaultOption: true },
+        { name: 'help', type: Boolean, multiple: false }
+    ];
+    const mainOptions = commandLineArgs(mainDefinitions, {
+        argv: argvAfterGlobalOptions,
+        stopAtFirstUnknown: true
+    });
+    const argvAfterMainOptions = mainOptions._unknown || [];
 
-    if (!options.library) {
-        winston.error('You have to pass library path as an argument.');
-        console.log(usage);
-        process.exit(-1);
-    }
+    const commands: { [key: string]: Command } = {
+        initialize: new InitializeCommand(),
+        start: new StartCommand(),
+        hash: new HashCommand(),
+        query: new QueryCommand(),
+        'detect-scenes': new DetectScenesCommand(),
+        'create-proxies': new CreateProxiesCommand()
+    };
 
-    // For some reason " is added only to the end of the path if path contains spaces.
-    options.library = options.library.replace(/\"/g, '');
-
-    if (
-        !fs.existsSync(options.library) ||
-        !fs.statSync(options.library).isDirectory()
-    ) {
-        winston.error(`${options.library} is not a valid directory.`);
-        process.exit(-2);
-    }
-
-    const dbFilePath = path.join(options.library, '.laputin.db');
-    if (options.initialize) {
-        if (fs.existsSync(dbFilePath)) {
-            winston.error(
-                `${options.library} has already been initialized as Laputin library. Refusing to re-initialize.`
-            );
-            process.exit(-1);
-        }
-
-        const library = new Library(options.library);
-        await library.createTables();
-
-        winston.info(
-            `${options.library} has been initialized as Laputin library. You can now start Laputin without --initialize.`
-        );
-        process.exit(0);
-    }
-
-    if (!fs.existsSync(dbFilePath)) {
-        winston.error(
-            `${options.library} has not been initialized as Laputin library.`
-        );
-        console.log(usage);
-        process.exit(-1);
-    }
-
-    const configFilePath = path.join(options.library, '.laputin.json');
-    const configuration: LaputinConfiguration = fs.existsSync(configFilePath)
-        ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-        : new LaputinConfiguration(3200, 'quick', null, []);
-
-    if (options.createProxies) {
-        const library = new Library(options.library);
-        const proxyGenerator = new ProxyGenerator(library, configuration);
-        await proxyGenerator.generateMissingProxies();
-
-        process.exit(0);
-    }
-
-    if (options.detectScenes) {
-        const library = new Library(options.library);
-        const sceneDetector = new SceneDetector(options.library, library);
+    const command = commands[mainOptions.command];
+    if (command) {
         try {
-            await sceneDetector.detectMissingScenes(
-                options.detectScenesFilename || ''
-            );
-            process.exit(0);
+            const commandOptions = commandLineArgs(command.optionDefinitions, {
+                argv: argvAfterMainOptions
+            });
+            await command.execute(commandOptions);
         } catch (err) {
-            console.error(err);
+            winston.error(err);
             process.exit(-1);
         }
-    }
-
-    const laputin = compose(options.library, configuration);
-
-    laputin.initializeRoutes();
-    const timer = winston.startTimer();
-    await laputin.loadFiles(options.performFullCheck);
-    timer.done('Hashing');
-
-    laputin.startMonitoring();
-
-    winston.info(`Library path: ${options.library}`);
-    await laputin.startListening();
-    winston.info(`Laputin started at http://localhost:${configuration.port}`);
-    if (!options.skipBrowserOpen) {
-        await open(`http://localhost:${configuration.port}`);
+    } else {
+        winston.error(`Unknown command "${mainOptions.command}".`);
+        console.log(usage);
+        process.exit(0);
     }
 })();
