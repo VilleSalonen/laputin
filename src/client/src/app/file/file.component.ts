@@ -297,9 +297,9 @@ export class FileComponent implements AfterViewInit {
         this.file.tags = [
             ...new Set([...this.file.tags, ...this.timecodeTags.tags])
         ].sort((a, b) => {
-            if (a.name > b.name) {
+            if (a.name < b.name) {
                 return -1;
-            } else if (a.name < b.name) {
+            } else if (a.name > b.name) {
                 return 1;
             } else {
                 return 0;
