@@ -104,7 +104,10 @@ export class FileComponent implements AfterViewInit {
         );
 
         this.activeFile$
-            .pipe(switchMap(file => this.laputinService.getTimecodes(file)))
+            .pipe(
+                switchMap(file => this.laputinService.getTimecodes(file)),
+                tap(() => this.resetTimecodeTimes())
+            )
             .subscribe(timecodes => {
                 this.timecodes = timecodes;
                 this.setTimecodeStartTimeToNextFrameAfterLastTimecodeEnd();
@@ -308,9 +311,8 @@ export class FileComponent implements AfterViewInit {
 
         this.timecodeTags.tags = [];
 
+        this.resetTimecodeTimes();
         this.setTimecodeStartTimeToNextFrameAfterTimecodeEnd(tagTimecode);
-        this.timecodeEndTime = undefined;
-        this.timecodeScreenshotTime = undefined;
 
         setTimeout(() => {
             if (this.timecodesScroller) {
@@ -322,6 +324,12 @@ export class FileComponent implements AfterViewInit {
                 this.timecodesScroller.scrollInto(foundItem);
             }
         });
+    }
+
+    private resetTimecodeTimes(): void {
+        this.timecodeStartTime = undefined;
+        this.timecodeEndTime = undefined;
+        this.timecodeScreenshotTime = undefined;
     }
 
     public openFile(): void {
