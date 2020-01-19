@@ -101,9 +101,14 @@ export class Screenshotter {
     public async screenshotTimecode(
         file: File,
         timecode: Timecode,
-        timeInSeconds: number
+        timeInSeconds?: number
     ): Promise<void> {
         this.initialize();
+
+        if (!timeInSeconds) {
+            timeInSeconds =
+                timecode.start + (timecode.end - timecode.start) * 0.66;
+        }
 
         const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
             file.path

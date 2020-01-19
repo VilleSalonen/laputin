@@ -124,9 +124,13 @@ export class LaputinService {
 
     public createTagTimecode(
         file: File,
-        timecode: Timecode
+        timecode: Timecode,
+        screenshotTime?: number
     ): Observable<Timecode> {
-        const body = JSON.stringify({ timecode: timecode });
+        const body = JSON.stringify({
+            timecode: timecode,
+            screenshotTime: screenshotTime
+        });
         const headers = new HttpHeaders({
             Accept: 'application/json',
             'Content-Type': 'application/json'

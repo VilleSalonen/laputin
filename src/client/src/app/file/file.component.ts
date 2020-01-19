@@ -51,6 +51,7 @@ export class FileComponent implements AfterViewInit {
     public timecodes: Timecode[];
     public tagStart: string;
     public tagEnd: string;
+    public timecodeScreenshotTime: number;
 
     public vlcIntentUrl: string;
 
@@ -289,7 +290,11 @@ export class FileComponent implements AfterViewInit {
             tagEnd
         );
         const result = await this.laputinService
-            .createTagTimecode(this.file, tagTimecode)
+            .createTagTimecode(
+                this.file,
+                tagTimecode,
+                this.timecodeScreenshotTime
+            )
             .toPromise();
         this.addTagTimecode(result);
         this.file.tags = [
@@ -360,5 +365,9 @@ export class FileComponent implements AfterViewInit {
 
     public formattedTags(file: File): string {
         return file ? file.tags.map(tag => tag.name).join(', ') : null;
+    }
+
+    public setTimecodeScreenshotTime(): void {
+        this.timecodeScreenshotTime = this.playerService.progress$.value.currentTime;
     }
 }

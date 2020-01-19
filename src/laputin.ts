@@ -144,6 +144,7 @@ export class Laputin {
 
         api.route('/files/:hash/timecodes').post(async (req, res) => {
             const timecode: Timecode = req.body.timecode;
+            const screenshotTime: number = req.body.screenshotTime;
 
             const query = new Query(
                 undefined,
@@ -170,9 +171,6 @@ export class Laputin {
                 );
 
                 if (!timecode.timecodeId) {
-                    const screenshotTime =
-                        timecode.start + (timecode.end - timecode.start) * 0.66;
-
                     const screenshotter = new Screenshotter(
                         this._libraryPath,
                         this.library

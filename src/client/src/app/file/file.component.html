@@ -105,6 +105,10 @@
                                     <input matInput [(ngModel)]="tagEnd" placeholder="End time" />
                                 </mat-form-field>
 
+                                <div (click)="setTimecodeScreenshotTime()" title="Save initial timecode screenshot time">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+
                                 <button (click)="tagStart && tagEnd && saveTagTimecode()" mat-button>Save</button>
                             </div>
                         </div>
