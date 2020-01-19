@@ -360,7 +360,7 @@ export class FileComponent implements AfterViewInit {
     }
 
     private setTimecodeStartTimeToNextFrameAfterLastTimecodeEnd(): void {
-        if (this.timecodes) {
+        if (this.timecodes && this.timecodes.length > 0) {
             const lastTimecode = this.timecodes[this.timecodes.length - 1];
             this.setTimecodeStartTimeToNextFrameAfterTimecodeEnd(lastTimecode);
         } else {
