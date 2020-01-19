@@ -29,7 +29,6 @@ import {
 } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import { PlayerService, Progress } from '../player.service';
-import { formatPreciseDurationWithMs } from '../pipes/precise-duration-with-ms.pipe';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DomSanitizer } from '@angular/platform-browser';
 import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
@@ -49,9 +48,11 @@ export class FileComponent implements AfterViewInit {
     public allTagsShown = false;
 
     public timecodes: Timecode[];
-    public tagStart: string;
-    public tagEnd: string;
-    public timecodeScreenshotTime: number;
+    public timecodeStartTime?: number = undefined;
+    public timecodeEndTime?: number = undefined;
+    public timecodeScreenshotTime?: number;
+
+    private fps: number;
 
     public vlcIntentUrl: string;
 
@@ -94,12 +95,20 @@ export class FileComponent implements AfterViewInit {
             map(hash => new FileQuery({ hash: hash })),
             switchMap(query => this.laputinService.queryFiles(query)),
             map(files => files[0]),
-            tap(file => (this.file = file))
+            tap(file => {
+                this.file = file;
+                const components = this.file.metadata.framerate.split('/');
+                this.fps =
+                    parseInt(components[0], 10) / parseInt(components[1], 10);
+            })
         );
 
         this.activeFile$
             .pipe(switchMap(file => this.laputinService.getTimecodes(file)))
-            .subscribe(timecodes => (this.timecodes = timecodes));
+            .subscribe(timecodes => {
+                this.timecodes = timecodes;
+                this.setTimecodeStartTimeToNextFrameAfterLastTimecodeEnd();
+            });
 
         breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
             this.isMobile = result.matches;
@@ -239,43 +248,31 @@ export class FileComponent implements AfterViewInit {
         }
     }
 
-    public setTagStart(): void {
-        this.tagStart = formatPreciseDurationWithMs(
-            this.playerService.player.currentTime
-        );
+    public setTimecodeStartTime(): void {
+        this.timecodeStartTime = this.playerService.progress$.value.timecode;
     }
 
-    public setTagEnd(): void {
-        this.tagEnd = formatPreciseDurationWithMs(
-            this.playerService.player.currentTime
-        );
+    public setTimecodeEndTime(): void {
+        this.timecodeEndTime = this.playerService.progress$.value.timecode;
     }
 
-    public goToTagStart(): void {
-        if (!this.tagStart) {
+    public goToTimecodeStart(): void {
+        if (this.timecodeStartTime) {
+            this.setCurrentTime(this.timecodeStartTime);
+        }
+    }
+
+    public goToTimecodeEnd(): void {
+        if (!this.timecodeEndTime) {
             return;
         }
 
-        this.setCurrentTime(
-            this.convertFromSeparatedTimecodeToSeconds(this.tagStart)
-        );
-    }
-
-    public goToTagEnd(): void {
-        if (!this.tagEnd) {
-            return;
-        }
-
-        this.setCurrentTime(
-            this.convertFromSeparatedTimecodeToSeconds(this.tagEnd)
-        );
+        this.setCurrentTime(this.timecodeEndTime);
     }
 
     public async saveTagTimecode(): Promise<void> {
-        const tagStart = this.convertFromSeparatedTimecodeToSeconds(
-            this.tagStart
-        );
-        const tagEnd = this.convertFromSeparatedTimecodeToSeconds(this.tagEnd);
+        const timecodeStartTime = this.timecodeStartTime;
+        const timecodeEndTime = this.timecodeEndTime;
 
         const selectedTimecodeTags = this.timecodeTags.tags.map(
             t => new TimecodeTag(null, null, t)
@@ -286,8 +283,8 @@ export class FileComponent implements AfterViewInit {
             this.file.hash,
             this.file.path,
             selectedTimecodeTags,
-            tagStart,
-            tagEnd
+            timecodeStartTime,
+            timecodeEndTime
         );
         const result = await this.laputinService
             .createTagTimecode(
@@ -310,8 +307,10 @@ export class FileComponent implements AfterViewInit {
         });
 
         this.timecodeTags.tags = [];
-        this.tagStart = null;
-        this.tagEnd = null;
+
+        this.setTimecodeStartTimeToNextFrameAfterTimecodeEnd(tagTimecode);
+        this.timecodeEndTime = undefined;
+        this.timecodeScreenshotTime = undefined;
 
         setTimeout(() => {
             if (this.timecodesScroller) {
@@ -337,13 +336,6 @@ export class FileComponent implements AfterViewInit {
             .toPromise();
     }
 
-    private convertFromSeparatedTimecodeToSeconds(
-        separatedTimecode: string
-    ): number {
-        const components = separatedTimecode.split(':');
-        return +components[0] * 3600 + +components[1] * 60 + +components[2];
-    }
-
     private addTagTimecode(timecode: Timecode): void {
         const timecodes = this.timecodes.slice();
         timecodes.push(timecode);
@@ -365,6 +357,21 @@ export class FileComponent implements AfterViewInit {
 
     public formattedTags(file: File): string {
         return file ? file.tags.map(tag => tag.name).join(', ') : null;
+    }
+
+    private setTimecodeStartTimeToNextFrameAfterLastTimecodeEnd(): void {
+        if (this.timecodes) {
+            const lastTimecode = this.timecodes[this.timecodes.length - 1];
+            this.setTimecodeStartTimeToNextFrameAfterTimecodeEnd(lastTimecode);
+        } else {
+            this.timecodeStartTime = 0;
+        }
+    }
+
+    private setTimecodeStartTimeToNextFrameAfterTimecodeEnd(
+        timecode: Timecode
+    ): void {
+        this.timecodeStartTime = timecode.end + 1 / this.fps;
     }
 
     public setTimecodeScreenshotTime(): void {

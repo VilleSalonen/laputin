@@ -166,7 +166,7 @@ mat-tab-group, mat-tab-body {
     flex-direction: row;
     align-items: center;
 
-    div, mat-form-field {
+    div, span {
         margin-right: 0.25 * $standard-margin;
     }
 }
