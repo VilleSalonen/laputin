@@ -292,6 +292,17 @@ export class FileComponent implements AfterViewInit {
             .createTagTimecode(this.file, tagTimecode)
             .toPromise();
         this.addTagTimecode(result);
+        this.file.tags = [
+            ...new Set([...this.file.tags, ...this.timecodeTags.tags])
+        ].sort((a, b) => {
+            if (a.name > b.name) {
+                return -1;
+            } else if (a.name < b.name) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
 
         this.timecodeTags.tags = [];
         this.tagStart = null;
