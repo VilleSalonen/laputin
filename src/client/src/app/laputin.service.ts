@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { tap, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, ReplaySubject } from 'rxjs';
 
 import {
     File,
@@ -17,7 +17,7 @@ import { FileQuerySort } from './models/filequerysort';
 export class LaputinService {
     private _baseUrl = '/api';
 
-    public thumbnailChanged: Subject<File> = new Subject<File>();
+    public thumbnailChanged: ReplaySubject<File> = new ReplaySubject<File>(5);
 
     constructor(private _http: HttpClient) {}
 
