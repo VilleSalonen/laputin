@@ -1,17 +1,15 @@
-<a [routerLink]="['/files', file.hash]">
-    <div class="container" [lazyLoad]="image" [ngClass]="{ 'image-file': file.type && file.type.startsWith('image') }">
-        <div style="display: flex; flex-direction: row; justify-content: space-between;">
-            <div
-                class="filename"
-                matTooltip="{{ file.path }}&#13;{{ file.metadata.duration | duration }} - {{file.humanSize}}&#13;{{ file.metadata.width }}x{{ file.metadata.height }}&#13;{{ file.metadata.codec }}"
-                matTooltipClass="metadata-tooltip">
-                <span class="filename-small">{{file.directory}}</span>
-                <br />
-                <span class="filename-big">{{file.nameSansSuffix}}</span>
-                <span class="filename-small">{{file.suffix}}</span>
-            </div>
-
-            <mat-chip class="tags" *ngIf="file.tags.length > 0" [matTooltip]="formattedTags(file)" matTooltipClass="tooltip">{{file.tags.length}}</mat-chip>
+<div class="container" [lazyLoad]="image" [ngClass]="{ 'image-file': file.type && file.type.startsWith('image') }">
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        <div
+            class="filename"
+            matTooltip="{{ file.path }}&#13;{{ file.metadata.duration | duration }} - {{file.humanSize}}&#13;{{ file.metadata.width }}x{{ file.metadata.height }}&#13;{{ file.metadata.codec }}"
+            matTooltipClass="metadata-tooltip">
+            <span class="filename-small">{{file.directory}}</span>
+            <br />
+            <span class="filename-big">{{file.nameSansSuffix}}</span>
+            <span class="filename-small">{{file.suffix}}</span>
         </div>
+
+        <mat-chip class="tags" *ngIf="file.tags.length > 0" [matTooltip]="formattedTags(file)" matTooltipClass="tooltip">{{file.tags.length}}</mat-chip>
     </div>
-</a>
+</div>

@@ -6,13 +6,13 @@
     background-color: black;
 }
 
-a,
-a:hover {
-    display: flex;
+:host,
+:host:hover {
     text-decoration: none;
     color: white;
     flex: 1;
     text-shadow: 1px 1px 1px black;
+    cursor: pointer;
 }
 
 .container {

@@ -10,8 +10,9 @@ import { File } from './../models/file';
 import { LaputinService } from './../laputin.service';
 import { Subject, Observable } from 'rxjs';
 import { FileQueryService } from '../file-query.service';
-import { switchMap, take, map, shareReplay, tap } from 'rxjs/operators';
+import { switchMap, take, map, shareReplay } from 'rxjs/operators';
 import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
+import { Router } from '@angular/router';
 
 @Component({
     styleUrls: ['./files.component.scss'],
@@ -38,20 +39,11 @@ export class FilesComponent implements AfterViewInit {
 
     constructor(
         private _service: LaputinService,
-        private fileQueryService: FileQueryService
+        private fileQueryService: FileQueryService,
+        private router: Router
     ) {
         this.files$ = this.fileQueryService.query$.pipe(
             switchMap(query => this._service.queryFiles(query)),
-            tap(() => {
-                if (this.filesScroller) {
-                    this.filesScroller.scrollToIndex(
-                        0,
-                        undefined,
-                        undefined,
-                        0
-                    );
-                }
-            }),
             shareReplay(1)
         );
 
@@ -100,12 +92,44 @@ export class FilesComponent implements AfterViewInit {
             width: Math.floor(totalWidth / columns) + 'px',
             height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
         };
+
+        this.files$.pipe(take(1)).subscribe((files: File[]) => {
+            setTimeout(() => {
+                let index = 0;
+
+                const previousFileHash = sessionStorage.getItem(
+                    'previousFileHash'
+                );
+                sessionStorage.removeItem('previousFileHash');
+
+                if (previousFileHash) {
+                    const foundIndex = files.findIndex(
+                        f => f.hash === previousFileHash
+                    );
+                    if (foundIndex > -1) {
+                        index = foundIndex;
+                    }
+                }
+
+                this.filesScroller.scrollToIndex(
+                    index,
+                    undefined,
+                    undefined,
+                    0
+                );
+            });
+        });
     }
 
     public openFiles(): void {
         this.fileQueryService.query$
             .pipe(take(1))
             .subscribe(query => this._service.openFiles(query).toPromise());
+    }
+
+    public openFile(file: File): void {
+        sessionStorage.setItem('previousFileHash', file.hash);
+        this.router.navigate(['/files', file.hash]);
     }
 
     private humanDuration(seconds: number): string {

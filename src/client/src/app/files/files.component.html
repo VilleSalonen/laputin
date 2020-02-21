@@ -17,8 +17,8 @@
             <div class="files-list">
                 <virtual-scroller #scroll [items]="files">
                     <div class="files-grid" #container>
-                        <div class="grid-item" *ngFor="let file of scroll.viewPortItems" [ngStyle]="fileStyle">
-                            <app-file-item [file]="file"></app-file-item>
+                        <div class="grid-item" *ngFor="let file of scroll.viewPortItems" [ngStyle]="fileStyle" role="button">
+                            <app-file-item [file]="file" (click)="openFile(file)"></app-file-item>
                         </div>
                     </div>
                 </virtual-scroller>
