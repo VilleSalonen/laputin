@@ -97,9 +97,13 @@ export class FileComponent implements AfterViewInit {
             map(files => files[0]),
             tap(file => {
                 this.file = file;
-                const components = this.file.metadata.framerate.split('/');
-                this.fps =
-                    parseInt(components[0], 10) / parseInt(components[1], 10);
+
+                if (this.file.metadata.framerate) {
+                    const components = this.file.metadata.framerate.split('/');
+                    this.fps =
+                        parseInt(components[0], 10) /
+                        parseInt(components[1], 10);
+                }
             })
         );
 
