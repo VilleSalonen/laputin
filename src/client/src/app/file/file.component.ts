@@ -32,6 +32,8 @@ import { PlayerService, Progress } from '../player.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DomSanitizer } from '@angular/platform-browser';
 import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
+import { MatDialog } from '@angular/material';
+import { MigrateFileDataDialogComponent } from '../migrate-file-data-dialog/migrate-file-data-dialog.component';
 
 @Component({
     selector: 'app-file',
@@ -88,6 +90,7 @@ export class FileComponent implements AfterViewInit {
         private router: Router,
         private playerService: PlayerService,
         private sanitizer: DomSanitizer,
+        private dialog: MatDialog,
         breakpointObserver: BreakpointObserver
     ) {
         this.activeFile$ = this.activatedRoute.params.pipe(
@@ -328,6 +331,17 @@ export class FileComponent implements AfterViewInit {
                 this.timecodesScroller.scrollInto(foundItem);
             }
         });
+    }
+
+    public migrateAllData(): void {
+        const dialogRef = this.dialog.open(MigrateFileDataDialogComponent, {
+            width: '500px',
+            data: {
+                file: this.file
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(data => console.log(data));
     }
 
     private resetTimecodeTimes(): void {

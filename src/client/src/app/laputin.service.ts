@@ -160,6 +160,32 @@ export class LaputinService {
         );
     }
 
+    public migrateAllData(
+        sourceFile: File,
+        targetFile: File
+    ): Observable<void> {
+        const body = JSON.stringify({
+            sourceHash: sourceFile.hash,
+            targetFile: targetFile.hash
+        });
+        const headers = new HttpHeaders({
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        });
+
+        return this._http
+            .post<void>(
+                this._baseUrl +
+                    '/files/' +
+                    sourceFile.hash +
+                    '/migrate/' +
+                    targetFile.hash,
+                body,
+                { headers: headers }
+            )
+            .pipe(tap(() => this.thumbnailChanged.next(targetFile)));
+    }
+
     public getDuplicates(): Observable<Duplicate[]> {
         return this._http.get(this._baseUrl + '/duplicates').pipe(
             map((duplicates: any): any[] => {

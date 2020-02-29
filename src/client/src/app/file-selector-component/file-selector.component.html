@@ -1,0 +1,28 @@
+<mat-form-field class="example-chip-list">
+    <mat-chip-list #chipList aria-label="Tag selection">
+        <input
+            role="searchbox"
+            #termInput
+            #trigger="matAutocompleteTrigger"
+            [formControl]="termCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputAddOnBlur]="addOnBlur"
+            (input)="onValueChange($event)"
+            (keyup)="onKeyUp($event)" />
+        <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-chip-list>
+
+    <mat-autocomplete class="file-query-autocomplete" #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [panelWidth]="'1024px'">
+        <mat-option disabled *ngIf="searchTerm">Search for: {{ searchTerm }}</mat-option>
+
+        <ng-container *ngIf="searchTerm && matchingFiles.length > 0">
+            <mat-option *ngFor="let file of matchingFiles" [value]="file">
+                <img *ngIf="file" class="tag-preview" aria-hidden src="/laputin/thumbs-small/{{file.hash}}.jpg" onerror="this.style.display = 'none'" />
+                {{file.name}}
+            </mat-option>
+        </ng-container>
+    </mat-autocomplete>
+</mat-form-field>

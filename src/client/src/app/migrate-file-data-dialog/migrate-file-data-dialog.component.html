@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Migrate all metadata from file to file</h1>
+<div mat-dialog-content>
+    <p><strong>Source file: </strong> {{ data.file.name }}</p>
+    <p>
+        <strong>Target file: </strong>
+        <ng-container *ngIf="selectedFile">
+            {{ selectedFile.name }}
+        </ng-container>
+    </p>
+
+    <ng-container *ngIf="!selectedFile">
+        <app-file-selector [exclude]="data.file" (fileSelected)="fileSelected($event)"></app-file-selector>
+    </ng-container>
+
+    <p><strong>Note:</strong> This will overwrite all Laputin metadata on target file!</p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="migrate()" [disabled]="!selectedFile">Migrate</button>
+    <button mat-button (click)="cancel()">Cancel</button>
+</div>

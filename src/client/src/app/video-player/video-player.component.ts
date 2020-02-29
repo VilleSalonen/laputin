@@ -7,8 +7,7 @@ import {
     ViewChild,
     ElementRef,
     AfterViewInit,
-    OnDestroy,
-    NgZone
+    OnDestroy
 } from '@angular/core';
 
 import {

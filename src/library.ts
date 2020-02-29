@@ -111,6 +111,30 @@ export class Library {
         return stmt.runAsync();
     }
 
+    public async getFile(hash: string): Promise<File> {
+        const query = new Query(
+            undefined,
+            undefined,
+            hash,
+            undefined,
+            undefined,
+            undefined,
+            undefined
+        );
+
+        const matchingFiles = await this.getFiles(query);
+        if (matchingFiles.length > 1) {
+            throw new Error(
+                `Found ${matchingFiles.length} files with hash ${hash}! A single file was expected!`
+            );
+        }
+        if (matchingFiles.length === 0) {
+            throw new Error(`Could not find file with hash ${hash}!`);
+        }
+
+        return matchingFiles[0];
+    }
+
     public async getFiles(query: Query): Promise<File[]> {
         let done: Function;
         const promise = new Promise<File[]>(
@@ -188,6 +212,29 @@ export class Library {
         done(_.values(files));
 
         return promise;
+    }
+
+    public async clearAllTagsAndTimecodesFromFile(hash: string): Promise<void> {
+        const stmt1 = this._db.prepare('DELETE FROM tags_files WHERE hash = ?');
+        await stmt1.runAsync(hash);
+
+        const stmt2 = this._db.prepare(
+            'DELETE FROM files_timecodes_tags WHERE id IN (SELECT id FROM files_timecodes WHERE hash = ?)'
+        );
+        await stmt2.runAsync(hash);
+
+        const stmt3 = this._db.prepare(
+            'DELETE FROM files_timecodes WHERE hash = ?'
+        );
+        await stmt3.runAsync(hash);
+    }
+
+    public async getScreenshotTime(hash: string): Promise<number> {
+        const stmt = this._db.prepare(
+            'SELECT time FROM screenshot_times_files WHERE hash = ?'
+        );
+        const result = await stmt.getAsync(hash);
+        return result.time;
     }
 
     private _generateTagFilterQuery(

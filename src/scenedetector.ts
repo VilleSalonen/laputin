@@ -14,11 +14,16 @@ const options: any = { stdio: 'pipe' };
 export class SceneDetector {
     constructor(private libraryPath: string, private library: Library) {}
 
+    public getScenesDirectory(): string {
+        return path.join(this.libraryPath, '//.laputin//scenes//');
+    }
+
+    public getSceneDirectory(file: File): string {
+        return path.join(this.getScenesDirectory(), file.hash + '/');
+    }
+
     public async detectMissingScenes(filenameForQuery: string) {
-        const scenesDirectory = path.join(
-            this.libraryPath,
-            '//.laputin//scenes//'
-        );
+        const scenesDirectory = this.getScenesDirectory();
 
         if (!fs.existsSync(scenesDirectory)) {
             fs.mkdirSync(scenesDirectory);
@@ -32,10 +37,7 @@ export class SceneDetector {
             try {
                 winston.verbose(`${file.hash} = ${file.path}`);
 
-                const sceneDirectory = path.join(
-                    scenesDirectory,
-                    file.hash + '/'
-                );
+                const sceneDirectory = this.getSceneDirectory(file);
                 if (!fs.existsSync(sceneDirectory)) {
                     fs.mkdirSync(sceneDirectory);
                 }

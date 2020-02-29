@@ -12,6 +12,8 @@ import { Tag, Timecode, TimecodeTag } from './tag';
 import { Screenshotter } from './screenshotter';
 import { Query } from './query.model';
 import { ExplorerOpener } from './exploreropener';
+import { FileDataMigrator } from './filedatamigrator';
+import { SceneDetector } from './scenedetector';
 
 export class Laputin {
     public app: express.Express;
@@ -218,6 +220,31 @@ export class Laputin {
             );
             res.status(200).end();
         });
+
+        api.route('/files/:sourceHash/migrate/:targetHash').post(
+            async (req, res) => {
+                // await this.library.migrateAllData(
+                //     req.params.sourceHash,
+                //     req.params.targetHash
+                // );
+
+                const sourceFile: File = await this.library.getFile(
+                    req.params.sourceHash
+                );
+                const targetFile: File = await this.library.getFile(
+                    req.params.targetHash
+                );
+
+                const fileDataMigrator = new FileDataMigrator(
+                    this.library,
+                    new Screenshotter(this._libraryPath, this.library),
+                    new SceneDetector(this._libraryPath, this.library)
+                );
+                await fileDataMigrator.migrateAllData(sourceFile, targetFile);
+
+                res.status(200).end();
+            }
+        );
 
         api.route('/duplicates').get((req, res) => {
             res.send(this.fileLibrary.getDuplicates());

@@ -49,6 +49,8 @@ import { FileComponent } from './file/file.component';
 import { ImageFileComponent } from './image-file/image-file.component';
 import { TimecodeMobileReadonlyComponent } from './timecode-mobile-readonly/timecode-mobile-readonly.component';
 import { SceneComponent } from './scene/scene.component';
+import { FileSelectorModule } from './file-selector-component/file-selector.module';
+import { MigrateFileDataDialogComponent } from './migrate-file-data-dialog/migrate-file-data-dialog.component';
 
 @NgModule({
     declarations: [
@@ -69,11 +71,13 @@ import { SceneComponent } from './scene/scene.component';
         FileComponent,
         ImageFileComponent,
         TimecodeMobileReadonlyComponent,
-        SceneComponent
+        SceneComponent,
+        MigrateFileDataDialogComponent
     ],
     entryComponents: [
         TagScreenshotDialogComponent,
-        TimecodeEditDialogComponent
+        TimecodeEditDialogComponent,
+        MigrateFileDataDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -100,6 +104,7 @@ import { SceneComponent } from './scene/scene.component';
         PipesModule,
         MatExpansionModule,
         MatTabsModule,
+        FileSelectorModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'files', pathMatch: 'full' },
             { path: 'files', component: FilesComponent },

@@ -236,14 +236,14 @@ export class Screenshotter {
         return path.join(this._thumbsSmallPath, file.hash + '.jpg');
     }
 
-    private getTagTimecodeThumbPath(timecode: Timecode) {
+    public getTagTimecodeThumbPath(timecode: Timecode) {
         return path.join(
             this._tagTimecodeThumbsPath,
             timecode.timecodeId + '.jpg'
         );
     }
 
-    private getTagTimecodeThumbSmallPath(timecode: Timecode) {
+    public getTagTimecodeThumbSmallPath(timecode: Timecode) {
         return path.join(
             this._tagTimecodeThumbsSmallPath,
             timecode.timecodeId + '.jpg'
