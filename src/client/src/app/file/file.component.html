@@ -78,7 +78,7 @@
                     <app-tag-autocomplete [tagContainer]="file" (tagSelected)="addTag($event)" (tagRemoved)="removeTag($event)" [type]="AutocompleteType.FileTagging"></app-tag-autocomplete>
                 </mat-tab>
 
-                <mat-tab label="Timecodes">
+                <mat-tab label="Timecodes{{ timecodes && timecodes.length > 0 ? ' (' + timecodes.length + ')' : '' }}">
                     <div class="timecode-tools-and-timecodes">
                         <div class="timecode-tools" *ngIf="!activeFile.type.startsWith('image')">
                             <div class="row">
