@@ -15,6 +15,9 @@
     <p><strong>Note:</strong> This will overwrite all Laputin metadata on target file!</p>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="migrate()" [disabled]="!selectedFile">Migrate</button>
+    <button mat-button (click)="migrate()" [disabled]="!selectedFile || migrating">
+        <ng-container *ngIf="!migrating">Migrate</ng-container>
+        <ng-container *ngIf="migrating">Migrating...</ng-container>
+    </button>
     <button mat-button (click)="cancel()">Cancel</button>
 </div>

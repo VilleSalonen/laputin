@@ -17,6 +17,7 @@ export class MigrateFileDataDialogComponent {
     public AutocompleteType = AutocompleteType;
 
     public selectedFile: File;
+    public migrating = false;
 
     constructor(
         public dialogRef: MatDialogRef<MigrateFileDataDialogComponent>,
@@ -29,6 +30,7 @@ export class MigrateFileDataDialogComponent {
     }
 
     migrate(): void {
+        this.migrating = true;
         this.laputinService
             .migrateAllData(this.data.file, this.selectedFile)
             .toPromise()
