@@ -538,7 +538,7 @@ export class Library {
             JOIN files
             ON files.hash = files_timecodes.hash
             WHERE files.active = 1
-            ORDER BY files.hash, start
+            ORDER BY files.path, start
         `;
 
         const each1 = (err: Error, row: any) => {
