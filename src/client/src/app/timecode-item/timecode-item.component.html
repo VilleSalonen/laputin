@@ -1,0 +1,7 @@
+<div class="container image-file" [lazyLoad]="image">
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        &nbsp;
+
+        <mat-chip class="tags" matTooltip="{{ timecode.path }}&#13;{{ formattedTags(timecode) }}" matTooltipClass="metadata-tooltip">{{timecode.timecodeTags.length}}</mat-chip>
+    </div>
+</div>

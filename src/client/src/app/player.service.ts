@@ -1,5 +1,12 @@
 import { Injectable, EventEmitter, NgZone } from '@angular/core';
-import { fromEvent, BehaviorSubject, Subscription, merge, zip } from 'rxjs';
+import {
+    fromEvent,
+    BehaviorSubject,
+    Subscription,
+    merge,
+    zip,
+    Subject
+} from 'rxjs';
 
 import { File } from '../app/models/file';
 import { map } from 'rxjs/operators';
@@ -18,6 +25,7 @@ export class PlayerService {
     public player: HTMLVideoElement = null;
 
     public progress$ = new BehaviorSubject<Progress>(new Progress(0, 0, 0));
+    public initialized = new Subject<void>();
 
     private timeDrift: number = null;
     private fps: number;
@@ -54,6 +62,7 @@ export class PlayerService {
             fromEvent(this.player, 'canplay')
         ).subscribe(([_durationChange, canPlay]: [any, any]) => {
             this.timeDrift = (<any>canPlay.target).currentTime;
+            this.initialized.next();
         });
 
         this.durationSubscription = fromEvent(

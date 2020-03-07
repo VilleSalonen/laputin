@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { LaputinService } from '../laputin.service';
 import { FileQueryService } from '../file-query.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import {
     FileQuery,
     File,
@@ -109,6 +109,20 @@ export class FileComponent implements AfterViewInit {
                 }
             })
         );
+
+        combineLatest(
+            this.activatedRoute.params,
+            this.playerService.initialized
+        )
+            .pipe(
+                map(([params, _]: [Params, void]) => params),
+                map(params => parseFloat(params['start'])),
+                filter(startTime => !isNaN(startTime)),
+                take(1)
+            )
+            .subscribe(startTime => {
+                this.setCurrentTime(startTime);
+            });
 
         this.activeFile$
             .pipe(

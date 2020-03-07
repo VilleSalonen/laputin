@@ -3,96 +3,88 @@
 :host {
     @include g-layout__row;
 
+    flex: 2;
+    max-height: 100%;
+}
+
+::ng-deep {
+    ::-webkit-scrollbar {
+        width: 10px;
+      }
+       
+      ::-webkit-scrollbar-thumb {
+        background: #666;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #ddd;
+      }      
+}
+
+.container {
+    @include g-layout__row;
+
     overflow: auto;
     flex: 2;
 }
 
-.container {
+.files {
     @include g-layout__column;
 
     background: $color-primary-1;
-    padding: $standard-margin;
     overflow: auto;
-    flex: 2;
+    flex-basis: 100%;
+    justify-content: center;
+}
+
+.files-loading {
+    align-items: center;
+    justify-content: center;
+}
+
+.files-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.grid-item {
+    $height: 300px;
+    height: $height;
+    width: $height * (16 / 9);
+
+    display: flex;
 }
 
 .files-list {
     display: flex;
     margin-top: 0;
-    margin-bottom: $standard-margin;
-    padding: $standard-margin;
     overflow: auto;
-    flex: 1;
     flex-grow: 1;
-    flex-direction: column;
+    flex: 1;
+    justify-content: center;
 }
 
 .files-search {
-    padding: $standard-margin;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 0.5 * $standard-margin;
+
+    span {
+        font-weight: bold;
+    }
 }
 
-.row {
-    @include g-layout__row;
-}
-
-.hidden {
-    display: none;
+.full-height {
+    min-height: 100%;
+    max-height: 100%;
 }
 
 virtual-scroller {
-    height: 100%;
+    flex-basis: 100%;
 }
 
-a,
-a:hover {
-    text-decoration: none;
-    color: $color-primary-4;
-}
-
-.filename {
-    padding-bottom: 0;
-    font-weight: bold;
-}
-
-.filename-small {
-    margin: 0;
-    font-size: 14px;
-}
-
-.filename-big {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 20px;
-}
-
-textarea {
-    @include rounded-borders;
-
-    background: $color-complement-1;
-    width: 100%;
-    height: 100%;
-    color: $color-primary-4;
-}
-
-app-timecode-search,
-.export-button {
-    margin-right: $standard-margin;
-}
-
-.export-commands {
-    flex-grow: 1;
-}
-
-.timecode-timeline {
-    display: flex;
-    margin-bottom: $standard-margin;
-    max-width: 100%;
-    flex-direction: row;
-    overflow-y: hidden;
-}
-
-.timecode-overlay {
-    display: flex;
-    margin-bottom: 0.5 * $standard-margin;
+mat-spinner {
+    align-self: center;
 }

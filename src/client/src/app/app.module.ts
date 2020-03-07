@@ -51,12 +51,15 @@ import { TimecodeMobileReadonlyComponent } from './timecode-mobile-readonly/time
 import { SceneComponent } from './scene/scene.component';
 import { FileSelectorModule } from './file-selector-component/file-selector.module';
 import { MigrateFileDataDialogComponent } from './migrate-file-data-dialog/migrate-file-data-dialog.component';
+import { TimecodeItemComponent } from './timecode-item/timecode-item.component';
+import { TimecodeQueryModule } from './timecode-query-component/timecode-query.module';
 
 @NgModule({
     declarations: [
         AppComponent,
         DuplicatesComponent,
         FileItemComponent,
+        TimecodeItemComponent,
         FilesComponent,
         TagFilterPipe,
         TagRowComponent,
@@ -101,6 +104,7 @@ import { MigrateFileDataDialogComponent } from './migrate-file-data-dialog/migra
         MatProgressSpinnerModule,
         TagAutocompleteModule,
         FileQueryModule,
+        TimecodeQueryModule,
         PipesModule,
         MatExpansionModule,
         MatTabsModule,

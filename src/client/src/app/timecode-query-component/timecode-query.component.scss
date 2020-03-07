@@ -1,0 +1,26 @@
+@import './../../styles/styles.scss';
+
+:host {
+    display: flex;
+    padding-left: 0.25 * $standard-margin;
+    padding-right: 0.25 * $standard-margin;
+}
+
+mat-form-field {
+    flex: 1;
+}
+
+.mat-option {
+    height: 72px;
+}
+
+.tag-preview {
+    height: 50px;
+    vertical-align: middle;
+}
+
+::ng-deep {
+    .mat-autocomplete-panel {
+        max-height: 800px !important;
+    }
+}

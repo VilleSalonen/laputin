@@ -464,7 +464,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 this._playerService.getCurrentTime()
             )
             .toPromise();
-        timecode.cacheBuster = '?cachebuster=' + new Date().toISOString();
     }
 
     public openTagScreenshotDialog(): void {

@@ -592,6 +592,12 @@ export class Library {
             t => t.timecodeTags.length > 0
         );
 
+        if (query.filename) {
+            timecodesWithTags = timecodesWithTags.filter(
+                t => t.path.toLocaleLowerCase().indexOf(query.filename) > -1
+            );
+        }
+
         if (query.and && query.and.length > 0) {
             const queryTagIds = query.and
                 .split(',')

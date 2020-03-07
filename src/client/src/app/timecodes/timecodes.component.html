@@ -1,40 +1,31 @@
 <div class="container">
-    <div class="files-search">
-        <div class="row">
-            <app-timecode-search (update)="filterFiles($event)"></app-timecode-search>
-            <div class="export-button">
-                <span (click)="export()" style="cursor: pointer;">
-                    <i class="fas fa-share-square"></i> Export</span>
-            </div>
-            <div class="export-commands" *ngIf="exporting">
-                <textarea *ngIf="exporting">{{exportCommands}}</textarea>
-            </div>
-        </div>
-    </div>
+    <div class="files full-height" #files>
+        <ng-container *ngIf="timecodes$ | async as timecodes; else loading">
+            <div class="files-search">
+                <div class="row">
+                    <app-timecode-query></app-timecode-query>
 
-    <div class="files-list">
-        <h2>Showing {{timecodeAmount}} matching timecodes</h2>
-
-        <virtual-scroller #scroll [items]="timecodeItems">
-            <div *ngFor="let timecodeItem of scroll.viewPortItems">
-                <a [routerLink]="['/files', timecodeItem.item.hash]">
-                    <div class="timecode-overlay">
-                        <div class="filename">
-                            <span class="filename-small">{{timecodeItem.item.directory}}</span>
-                            <br />
-                            <span class="filename-big">{{timecodeItem.item.nameSansSuffix}}</span>
-                            <span class="filename-small">{{timecodeItem.item.suffix}}</span>
-                        </div>
+                    <div *ngIf="timecodesSummary$ | async as timecodesSummary">
+                        <span>
+                            {{ timecodesSummary.fileCount }} files, {{timecodesSummary.timecodeCount}} timecodes, {{ timecodesSummary.duration }}
+                        </span>
                     </div>
-                </a>
-
-                <div class="timecode-timeline">
-                    <ng-container *ngFor="let code of timecodeItem.codes; let i = index">
-                        <app-timecode-readonly *ngIf="i < 7" [timecode]="code"></app-timecode-readonly>
-                    </ng-container>
-                    <div *ngIf="timecodeItem.codes.length >= 7">...</div>
                 </div>
             </div>
-        </virtual-scroller>
+    
+            <div class="files-list">
+                <virtual-scroller #scroll [items]="timecodes">
+                    <div class="files-grid" #container>
+                        <div class="grid-item" *ngFor="let timecode of scroll.viewPortItems" [ngStyle]="fileStyle" role="button">
+                            <app-timecode-item [timecode]="timecode" (click)="openTimecode(timecode)"></app-timecode-item>
+                        </div>
+                    </div>
+                </virtual-scroller>
+            </div>
+        </ng-container>
+
+        <ng-template #loading>
+            <mat-spinner></mat-spinner>
+        </ng-template>
     </div>
 </div>

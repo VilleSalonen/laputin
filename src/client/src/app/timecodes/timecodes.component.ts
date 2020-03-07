@@ -1,123 +1,146 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import {
+    Component,
+    Injectable,
+    AfterViewInit,
+    ElementRef,
+    ViewChild
+} from '@angular/core';
 
-import { File, Timecode, FileQuery } from './../models';
+import { Timecode } from './../models';
 import { LaputinService } from './../laputin.service';
-import { formatPreciseDurationWithMs } from '../pipes/precise-duration-with-ms.pipe';
-
-class TimecodeItem {
-    constructor(
-        public type: TimecodeItemType,
-        public item: any,
-        public codes: Timecode[]
-    ) {}
-}
-
-enum TimecodeItemType {
-    File,
-    Timecode
-}
+import { Router } from '@angular/router';
+import { TimecodeQueryService } from '../timecode-query.service';
+import { switchMap, shareReplay, take, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 
 @Component({
     styleUrls: ['./timecodes.component.scss'],
     templateUrl: './timecodes.component.html'
 })
 @Injectable()
-export class TimecodesComponent implements OnInit {
-    public TimecodeItemType = TimecodeItemType;
+export class TimecodesComponent implements AfterViewInit {
+    public timecodes$: Observable<Timecode[]>;
+    public timecodesSummary$: Observable<any>;
 
-    public timecodeAmount = 0;
-    public timecodeItems: TimecodeItem[] = [];
-    public loading = false;
-    public exporting = false;
-    public exportCommands: string[] = [];
-    public exportCommandsStr = '';
-    private _query: FileQuery = new FileQuery();
+    public fileStyle: any;
 
-    constructor(private _service: LaputinService) {}
+    @ViewChild('files', { static: false })
+    public filesElement: ElementRef<HTMLDivElement>;
 
-    ngOnInit(): void {
-        this.loadTimecodes();
+    @ViewChild('scroll', { static: false })
+    private timecodesScroller: VirtualScrollerComponent;
+
+    constructor(
+        private _service: LaputinService,
+        private router: Router,
+        private timecodeQueryService: TimecodeQueryService
+    ) {
+        this.timecodes$ = this.timecodeQueryService.query$.pipe(
+            switchMap(query => this._service.queryTimecodes(query)),
+            shareReplay(1)
+        );
+
+        this.timecodesSummary$ = this.timecodes$.pipe(
+            map(timecodes => {
+                const files = {};
+                let fileCount = 0;
+                timecodes.forEach(timecode => {
+                    if (!files[timecode.hash]) {
+                        files[timecode.hash] = true;
+                        fileCount++;
+                    }
+                });
+
+                let totalSeconds = 0.0;
+                timecodes.forEach(t => {
+                    const duration = t.end - t.start;
+                    if (!isNaN(duration)) {
+                        totalSeconds += duration;
+                    }
+                });
+
+                return {
+                    timecodeCount: timecodes.length,
+                    fileCount: fileCount,
+                    duration: this.humanDuration(totalSeconds)
+                };
+            })
+        );
     }
 
-    loadTimecodes(): void {
-        this.timecodeItems = [];
-        this.loading = true;
-        this._service
-            .queryTimecodes(this._query)
-            .toPromise()
-            .then((timecodes: Timecode[]) => {
-                this.exportCommands = [];
-                timecodes.forEach(t => {
-                    const name = t.path.substring(t.path.lastIndexOf('/') + 1);
+    public ngAfterViewInit(): void {
+        const totalWidth = this.filesElement.nativeElement.scrollWidth - 10;
+        const aspectRatio = 16 / 9;
 
-                    const tags = t.timecodeTags
-                        .map(ta => ta.tag.name)
-                        .join(', ');
+        let columns: number;
+        if (totalWidth < 960) {
+            columns = 2;
+        } else if (totalWidth >= 960 && totalWidth < 1280) {
+            columns = 4;
+        } else if (totalWidth >= 1280 && totalWidth < 1920) {
+            columns = 6;
+        } else {
+            columns = 8;
+        }
 
-                    this.exportCommands.push(
-                        'ffmpeg ' +
-                            '-ss ' +
-                            formatPreciseDurationWithMs(t.start) +
-                            ' ' +
-                            '-i "' +
-                            t.path.replace(/\//g, '\\') +
-                            '" ' +
-                            '-t ' +
-                            formatPreciseDurationWithMs(t.end - t.start) +
-                            ' ' +
-                            '-map v? -map a? -map s? -c:v hevc_nvenc -c:a copy -profile:v main -preset slow ' +
-                            '"TARGET_DIR\\' +
-                            name +
-                            ' (' +
-                            formatPreciseDurationWithMs(t.start).replace(
-                                /[\:]/g,
-                                '.'
-                            ) +
-                            '-' +
-                            formatPreciseDurationWithMs(t.start).replace(
-                                /[\:]/g,
-                                '.'
-                            ) +
-                            ') [' +
-                            tags +
-                            '].mp4"'
+        this.fileStyle = {
+            width: Math.floor(totalWidth / columns) + 'px',
+            height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+        };
+
+        this.timecodes$.pipe(take(1)).subscribe((timecodes: Timecode[]) => {
+            setTimeout(() => {
+                let index = 0;
+
+                const previousTimecodeId = parseInt(
+                    sessionStorage.getItem('previousTimecodeId'),
+                    10
+                );
+                sessionStorage.removeItem('previousTimecodeId');
+
+                if (previousTimecodeId) {
+                    const foundIndex = timecodes.findIndex(
+                        t => t.timecodeId === previousTimecodeId
                     );
-                });
-
-                const timecodesByFiles = {};
-                timecodes.forEach(timecode => {
-                    if (!timecodesByFiles[timecode.path]) {
-                        timecodesByFiles[timecode.path] = [];
+                    if (foundIndex > -1) {
+                        index = foundIndex;
                     }
-
-                    timecodesByFiles[timecode.path].push(timecode);
-                });
-
-                const timecodeItems: TimecodeItem[] = [];
-                for (const key of Object.keys(timecodesByFiles)) {
-                    const codes = timecodesByFiles[key];
-                    timecodeItems.push(
-                        new TimecodeItem(
-                            TimecodeItemType.File,
-                            new File(codes[0].hash, codes[0].path, [], 0, ''),
-                            codes
-                        )
-                    );
                 }
 
-                this.timecodeAmount = timecodes.length;
-                this.timecodeItems = timecodeItems;
-                this.loading = false;
+                this.timecodesScroller.scrollToIndex(
+                    index,
+                    undefined,
+                    undefined,
+                    0
+                );
             });
+        });
     }
 
-    filterFiles(query: FileQuery): void {
-        this._query = query;
-        this.loadTimecodes();
+    public openTimecode(timecode: Timecode): void {
+        sessionStorage.setItem('previousTimecodeId', '' + timecode.timecodeId);
+        this.router.navigate([
+            '/files',
+            timecode.hash,
+            { start: timecode.start }
+        ]);
     }
 
-    public export(): void {
-        this.exporting = true;
-        this.exportCommandsStr = this.exportCommands.join('\r\n');
+    private humanDuration(seconds: number): string {
+        const days = Math.floor(seconds / (3600 * 24));
+        seconds -= days * 3600 * 24;
+        const hours = Math.floor(seconds / 3600);
+        seconds -= hours * 3600;
+        const mins = Math.floor(seconds / 60);
+        seconds -= mins * 60;
+
+        if (days > 0) {
+            return days + ' d ' + hours + ' h';
+        } else if (hours > 0) {
+            return hours + ' h ' + mins + ' min';
+        } else {
+            return mins + ' min ' + Math.floor(seconds) + ' s';
+        }
     }
 }

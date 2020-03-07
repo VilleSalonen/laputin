@@ -1,0 +1,74 @@
+@import './../../styles/styles.scss';
+
+:host {
+    display: flex;
+    flex: 1;
+    background-color: black;
+}
+
+:host,
+:host:hover {
+    text-decoration: none;
+    color: white;
+    flex: 1;
+    text-shadow: 1px 1px 1px black;
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-x: center;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.image-file {
+    background-size: contain;
+    background-position-y: center;
+}
+
+.filename {
+    padding-bottom: 0;
+    font-weight: bold;
+}
+
+.filename-small {
+    margin: 0;
+    font-size: 12px;
+}
+
+.filename-big {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.filename {
+    margin: 0.25 * $standard-margin;
+}
+
+::ng-deep .tooltip {
+    background: #0f1937;
+    max-width: 800px !important;
+    font-size: 14px;
+}
+
+::ng-deep .metadata-tooltip {
+    background: #0f1937;
+    max-width: 800px !important;
+    white-space: pre-line;
+    font-size: 14px;
+}
+
+.tags {
+    margin: 0.25 * $standard-margin;
+    align-self: flex-end;
+}
+
+::ng-deep mat-chip.tags {
+    background: #0f1937 !important;
+    color: white !important;
+}
