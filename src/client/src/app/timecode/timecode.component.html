@@ -1,5 +1,5 @@
 <div class="screenshot"
-    [ngStyle]="{'background-image': 'url(/laputin/tag-timecode-thumbs/' + timecode.timecodeId + '.jpg' + timecode.cacheBuster + ')'}"
+    [ngStyle]="{'background-image': 'url(/laputin/tag-timecode-thumbs/' + timecode.timecodeId + '.jpg' + cacheBuster + ')'}"
     (click)="goToTimecode()"
     matTooltip="{{ timecode.durationInSeconds | duration }}: {{ formattedTags() }}">
 </div>

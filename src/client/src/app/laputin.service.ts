@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { tap, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Subject, Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 
 import {
     File,
@@ -18,6 +18,9 @@ export class LaputinService {
     private _baseUrl = '/api';
 
     public thumbnailChanged: ReplaySubject<File> = new ReplaySubject<File>(5);
+    public timecodeThumbnailChanged: ReplaySubject<
+        Timecode
+    > = new ReplaySubject<Timecode>(5);
 
     constructor(private _http: HttpClient) {}
 
@@ -258,9 +261,11 @@ export class LaputinService {
             'Content-Type': 'application/json'
         });
 
-        return this._http.post(this._baseUrl + '/screenshotTimecode', body, {
-            headers: headers
-        });
+        return this._http
+            .post(this._baseUrl + '/screenshotTimecode', body, {
+                headers: headers
+            })
+            .pipe(tap(() => this.timecodeThumbnailChanged.next(timecode)));
     }
 
     public screenshotTag(

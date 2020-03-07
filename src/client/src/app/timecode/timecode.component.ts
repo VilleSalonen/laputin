@@ -4,7 +4,8 @@ import {
     Output,
     EventEmitter,
     Injectable,
-    ChangeDetectionStrategy
+    ChangeDetectionStrategy,
+    OnInit
 } from '@angular/core';
 
 import { File, Timecode, Tag } from './../models';
@@ -22,7 +23,7 @@ import { MatDialog } from '@angular/material';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @Injectable()
-export class TimecodeComponent {
+export class TimecodeComponent implements OnInit {
     public AutocompleteType = AutocompleteType;
 
     @Input() file: File;
@@ -31,11 +32,24 @@ export class TimecodeComponent {
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
     @Output() tagsCopied: EventEmitter<Tag[]> = new EventEmitter<Tag[]>();
 
+    public cacheBuster = '';
+
     constructor(
         private _service: LaputinService,
         private _playerService: PlayerService,
         private editDialog: MatDialog
     ) {}
+
+    public ngOnInit() {
+        this._service.timecodeThumbnailChanged.subscribe(
+            (changed: Timecode) => {
+                if (changed.timecodeId === this.timecode.timecodeId) {
+                    this.cacheBuster =
+                        '?cachebuster=' + new Date().toISOString();
+                }
+            }
+        );
+    }
 
     public edit(): void {
         const dialogRef = this.editDialog.open(TimecodeEditDialogComponent, {
@@ -62,8 +76,6 @@ export class TimecodeComponent {
                     this._playerService.player.currentTime
                 )
                 .toPromise();
-            this.timecode.cacheBuster =
-                '?cachebuster=' + new Date().toISOString();
         }
     }
 
