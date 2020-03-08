@@ -99,6 +99,19 @@
 </mat-form-field>
 
 <button mat-button [matMenuTriggerFor]="appMenu">
+    <ng-container *ngIf="query.sort === FileQuerySort.FilePath">
+        File path
+    </ng-container>
+    <ng-container *ngIf="query.sort === FileQuerySort.Duration">
+        Duration
+    </ng-container>
+    <ng-container *ngIf="query.sort === FileQuerySort.FileSize">
+        File size
+    </ng-container>
+    <ng-container *ngIf="query.sort === FileQuerySort.ReleaseDate">
+        Release date
+    </ng-container>
+
     <i class="material-icons">sort</i>
 </button>
 
