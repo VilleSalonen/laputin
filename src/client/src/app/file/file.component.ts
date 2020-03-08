@@ -83,6 +83,8 @@ export class FileComponent implements AfterViewInit {
 
     public timecodeTags: { tags: Tag[] } = { tags: [] };
 
+    public sceneStyle: any = { width: '352px' };
+
     constructor(
         private laputinService: LaputinService,
         private fileQueryService: FileQueryService,
@@ -106,6 +108,14 @@ export class FileComponent implements AfterViewInit {
                     this.fps =
                         parseInt(components[0], 10) /
                         parseInt(components[1], 10);
+                }
+
+                if (this.file.metadata.width && this.file.metadata.height) {
+                    const aspectRatio =
+                        this.file.metadata.width / this.file.metadata.height;
+                    if (Math.abs(1.33 - aspectRatio) < 0.05) {
+                        this.sceneStyle = { width: '263px' };
+                    }
                 }
             })
         );
