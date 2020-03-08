@@ -576,12 +576,6 @@ export class Library {
                         new Tag(row.tag_id, row.tag_name, 0)
                     )
                 );
-            } else {
-                console.log(
-                    'No timecode found with ' +
-                        row.timecode_id +
-                        '! Cannot add timecode tag.'
-                );
             }
         };
 
