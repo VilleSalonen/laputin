@@ -38,7 +38,6 @@ import { LaputinService } from './laputin.service';
 import { PlayerService } from './player.service';
 import { TimecodeComponent } from './timecode/timecode.component';
 import { TimecodesComponent } from './timecodes/timecodes.component';
-import { TimecodeReadonlyComponent } from './timecode-readonly/timecode-readonly.component';
 import { TimecodeSearchComponent } from './timecode-search/timecode-search.component';
 import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
@@ -67,7 +66,6 @@ import { TimecodeQueryModule } from './timecode-query-component/timecode-query.m
         TagScreenshotDialogComponent,
         TimecodeComponent,
         TimecodeEditDialogComponent,
-        TimecodeReadonlyComponent,
         TimecodesComponent,
         TimecodeSearchComponent,
         VideoPlayerComponent,
