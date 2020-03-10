@@ -136,11 +136,6 @@ export class Library {
     }
 
     public async getFiles(query: Query): Promise<File[]> {
-        let done: Function;
-        const promise = new Promise<File[]>(
-            (resolve, reject) => (done = resolve)
-        );
-
         const files: { [hash: string]: File } = {};
 
         const params: any[] = [];
@@ -151,8 +146,11 @@ export class Library {
             sql1 += ' AND active = 1';
         }
         if (query.filename) {
-            sql1 += ' AND path LIKE ? COLLATE NOCASE';
-            params.push('%' + query.filename + '%');
+            const words = query.filename.split(' ');
+            for (const word of words) {
+                sql1 += ' AND path LIKE ? COLLATE NOCASE';
+                params.push('%' + word + '%');
+            }
         }
         if (query.status) {
             if (query.status === 'tagged' || query.status === 'untagged') {
@@ -209,9 +207,7 @@ export class Library {
         };
         await this._db.eachAsync(sql2, each2);
 
-        done(_.values(files));
-
-        return promise;
+        return _.values(files);
     }
 
     public async clearAllTagsAndTimecodesFromFile(hash: string): Promise<void> {

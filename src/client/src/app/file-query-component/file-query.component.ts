@@ -208,7 +208,11 @@ export class FileQueryComponent implements OnInit {
 
         this.matchingFiles = this.allFiles
             .filter((option: Option) =>
-                option.value.name.toLowerCase().includes(this.searchTerm)
+                this.searchTerm
+                    .split(' ')
+                    .every(word =>
+                        option.value.name.toLowerCase().includes(word)
+                    )
             )
             .slice(0, 5);
 
