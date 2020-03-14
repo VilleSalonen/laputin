@@ -30,9 +30,11 @@ import {
     delay,
     switchMap,
     distinctUntilChanged,
-    tap
+    tap,
+    filter
 } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { tag } from 'rxjs-spy/operators';
 
 @Component({
     selector: 'app-video-player',
@@ -120,31 +122,39 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this._playerService.setPlayer(this.file, this.player);
 
         const playStart = fromEvent(this.player, 'playing').pipe(
+            tag('VideoPlayerComponent.playStart'),
             takeUntil(this.fileClosed)
         );
         const paused = fromEvent(this.player, 'pause').pipe(
+            tag('VideoPlayerComponent.pause'),
             takeUntil(this.fileClosed)
         );
         const ended = fromEvent(this.player, 'ended').pipe(
+            tag('VideoPlayerComponent.ended'),
             takeUntil(this.fileClosed)
         );
-        const playEnd = merge(paused, ended);
+        const playEnd = merge(paused, ended).pipe(
+            tag('VideoPlayerComponent.playEnd')
+        );
 
         const playerDoubleClicked = fromEvent(this.player, 'dblclick').pipe(
             takeUntil(this.fileClosed)
         );
         playerDoubleClicked.subscribe(() => this.toggleFullScreen());
 
-        playStart.subscribe(() => (this.playing = true));
+        playStart.subscribe(() => {
+            this.playbackHasBeenStarted = true;
+            this.playing = true;
+        });
         playEnd.subscribe(() => (this.playing = false));
-
-        playStart.subscribe(() => (this.playbackHasBeenStarted = true));
 
         const timeUpdates = fromEvent(this.player, 'timeupdate').pipe(
             takeUntil(this.fileClosed),
             tap(() => (this.playbackHasBeenStarted = true)),
             throttleTime(500),
-            map(() => this.player.currentTime / this.player.duration)
+            map(() => this.player.currentTime / this.player.duration),
+            filter(time => !isNaN(time)),
+            tag('VideoPlayerComponent.timeUpdates')
         );
 
         timeUpdates.subscribe((playPercent: number) =>
@@ -155,7 +165,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         // Without forced update, these changes will be seen with a
         // delay.
         fromEvent(this.player, 'durationchange')
-            .pipe(takeUntil(this.fileClosed))
+            .pipe(
+                tag('VideoPlayerComponent.durationchange'),
+                takeUntil(this.fileClosed)
+            )
             .subscribe(() => {
                 this.playbackHasBeenStarted = false;
                 this.playing = false;
@@ -164,7 +177,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             });
 
         fromEvent(window, 'webkitfullscreenchange')
-            .pipe(takeUntil(this.fileClosed))
+            .pipe(
+                tag('VideoPlayerComponent.webkitfullscreenchange'),
+                takeUntil(this.fileClosed)
+            )
             .subscribe(() => {
                 this.isFullScreen = !this.isFullScreen;
 
@@ -187,7 +203,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const mouseMove = fromEvent(this.videoArea.nativeElement, 'mousemove');
         const afterMouseMove = mouseMove.pipe(
             map(ev => of(ev).pipe(delay(2000))),
-            switchMap(flatten => flatten)
+            switchMap(flatten => flatten),
+            tag('VideoPlayerComponent.afterMouseMove')
         );
         const mouseLeave = fromEvent(
             this.videoArea.nativeElement,
@@ -197,13 +214,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const starts = merge(mouseEnter, mouseMove).pipe(map(() => 'start'));
         const ends = merge(afterMouseMove, mouseLeave).pipe(map(() => 'end'));
         merge(starts, ends)
-            .pipe(distinctUntilChanged(), takeUntil(this.fileClosed))
-            .subscribe(val => {
-                if (val === 'start') {
-                    this.mouseOverVideo = true;
-                } else {
-                    this.mouseOverVideo = false;
-                }
+            .pipe(
+                map(val => val === 'start'),
+                distinctUntilChanged(),
+                tag('VideoPlayerComponent.mouseOverVideo'),
+                takeUntil(this.fileClosed)
+            )
+            .subscribe(mouseOverVideo => {
+                this.mouseOverVideo = mouseOverVideo;
             });
 
         this.bindKeyboardShortcuts();
@@ -215,7 +233,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     private bindKeyboardShortcuts(): void {
         fromEvent(window, 'keyup')
-            .pipe(takeUntil(this.fileClosed))
+            .pipe(takeUntil(this.fileClosed), tag('VideoPlayerComponent.keyup'))
             .subscribe((event: KeyboardEvent) => {
                 if ((<any>event.srcElement).nodeName === 'INPUT') {
                     if (event.key === 'Escape') {
