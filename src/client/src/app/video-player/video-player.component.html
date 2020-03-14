@@ -1,12 +1,6 @@
 <div class="container" #playerView>
     <div class="video-area" #videoArea [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
-        <div [ngClass]="{ 'hidden': playbackHasBeenStarted }" class="video-hero-play large-icon" (click)="play()" *ngIf="!playing">
-            <i class="material-icons">
-                play_arrow
-            </i>
-        </div>
-
-        <div class="video-overlay-controls" *ngIf="playbackHasBeenStarted">
+        <div class="video-overlay-controls">
             <div (click)="goToPrevious()" title="Go to previous" class="small-icon">
                 <i class="material-icons">
                     skip_previous
