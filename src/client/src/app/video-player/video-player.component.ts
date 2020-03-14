@@ -72,14 +72,19 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         return this._file;
     }
     set file(value: File) {
+        if (this._file) {
+            this.player.pause();
+            this.player.removeAttribute('src');
+            this.player.load();
+        }
+
         this._file = value;
 
         this._service.proxyExists(this.file).subscribe(proxyExists => {
-            if (proxyExists) {
-                this.videoSource = `/proxies/${this.file.hash}.mp4`;
-            } else {
-                this.videoSource = `/media/${this.file.escapedUrl}`;
-            }
+            const sourceFile = !proxyExists
+                ? `/media/${this.file.escapedUrl}`
+                : `/proxies/${this.file.hash}.mp4`;
+            this.player.setAttribute('src', sourceFile);
         });
     }
 
@@ -90,8 +95,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     public volumeMin = 0;
     public volumeMax = 100;
     public volumeValue = 100;
-
-    public videoSource: string;
 
     public showPreciseProgress = false;
 
