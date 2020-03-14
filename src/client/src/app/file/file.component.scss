@@ -179,3 +179,11 @@ mat-tab-group, mat-tab-body {
 app-scene + app-scene {
     margin-left: 0.125 * $standard-margin;
 }
+
+.screenshot-set {
+    color: white;
+}
+
+.timecode-time, .timecode-button {
+    cursor: pointer;
+}
