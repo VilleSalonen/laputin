@@ -229,6 +229,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                     return;
                 }
 
+                event.preventDefault();
+
                 switch (event.key) {
                     case 'PageUp':
                         this.megaStepForward();
