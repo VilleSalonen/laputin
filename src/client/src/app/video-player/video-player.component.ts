@@ -476,6 +476,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe(tag => {
             if (tag) {
+                this._service.addTag(this.file, tag).toPromise();
                 this._service
                     .screenshotTag(
                         tag,
