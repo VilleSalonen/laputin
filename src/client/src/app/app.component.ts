@@ -1,5 +1,5 @@
 // Uncomment to enable rxjs-spy
-import { create } from 'rxjs-spy';
+// import { create } from 'rxjs-spy';
 
 import { Component } from '@angular/core';
 import { LaputinService } from './laputin.service';
@@ -38,8 +38,8 @@ export class AppComponent {
 
     constructor(laputinService: LaputinService) {
         // Uncomment to enable rxjs-spy
-        const spy = create();
-        spy.log();
+        // const spy = create();
+        // spy.log();
 
         this.duplicates$ = laputinService.getDuplicates();
     }
