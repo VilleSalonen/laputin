@@ -37,9 +37,7 @@ export class TagAutocompleteComponent implements OnInit {
     public addOnBlur = false;
     public termCtrl = new FormControl();
 
-    @ViewChild('termInput') termInput: ElementRef<
-        HTMLInputElement
-    >;
+    @ViewChild('termInput') termInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
     @Input() tagContainer: TagContainer;
@@ -137,6 +135,8 @@ export class TagAutocompleteComponent implements OnInit {
             this.searchTermOriginalForm = '';
         }
 
+        const searchTermTrimmed = searchTerm.trim();
+
         const alreadyAdded = this.tagContainer.tags.map((tag: Tag) => tag.id);
 
         switch (this.type) {
@@ -145,7 +145,7 @@ export class TagAutocompleteComponent implements OnInit {
                 this.matchingTags = this.allTags
                     .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
-                        tag.name.toLowerCase().includes(searchTerm)
+                        tag.name.toLowerCase().includes(searchTermTrimmed)
                     )
                     .slice(0, 25);
                 break;
@@ -155,13 +155,13 @@ export class TagAutocompleteComponent implements OnInit {
                 this.matchingTags = this.include
                     .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
-                        tag.name.toLowerCase().includes(searchTerm)
+                        tag.name.toLowerCase().includes(searchTermTrimmed)
                     )
                     .slice(0, 25);
                 this.otherTags = this.allTags
                     .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
-                        tag.name.toLowerCase().includes(searchTerm)
+                        tag.name.toLowerCase().includes(searchTermTrimmed)
                     )
                     .filter((tag: Tag) => fileTags.indexOf(tag.id) === -1)
                     .slice(0, 25);
@@ -170,7 +170,7 @@ export class TagAutocompleteComponent implements OnInit {
                 this.matchingTags = this.include
                     .filter((tag: Tag) => alreadyAdded.indexOf(tag.id) === -1)
                     .filter((tag: Tag) =>
-                        tag.name.toLowerCase().includes(searchTerm)
+                        tag.name.toLowerCase().includes(searchTermTrimmed)
                     )
                     .slice(0, 25);
         }
