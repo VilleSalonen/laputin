@@ -3,13 +3,15 @@ import {
     Input,
     Output,
     EventEmitter,
-    Injectable
+    Injectable,
+    OnInit
 } from '@angular/core';
 
 import { File } from '../models/file';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { Timecode } from '../models';
+import { LaputinService } from '../laputin.service';
 
 @Component({
     selector: 'app-timecode-mobile-readonly',
@@ -17,7 +19,7 @@ import { Timecode } from '../models';
     templateUrl: './timecode-mobile-readonly.component.html'
 })
 @Injectable()
-export class TimecodeMobileReadonlyComponent {
+export class TimecodeMobileReadonlyComponent implements OnInit {
     public AutocompleteType = AutocompleteType;
 
     @Input() file: File;
@@ -26,8 +28,23 @@ export class TimecodeMobileReadonlyComponent {
     @Output() removed: EventEmitter<Timecode> = new EventEmitter<Timecode>();
 
     public addingTags: boolean;
+    public cacheBuster: string;
 
-    constructor(private _playerService: PlayerService) {}
+    constructor(
+        private _playerService: PlayerService,
+        private laputinService: LaputinService
+    ) {}
+
+    public ngOnInit() {
+        this.laputinService.timecodeThumbnailChanged.subscribe(
+            (changed: Timecode) => {
+                if (changed.timecodeId === this.timecode.timecodeId) {
+                    this.cacheBuster =
+                        '?cachebuster=' + new Date().toISOString();
+                }
+            }
+        );
+    }
 
     public goToTimecode(timecode: Timecode): void {
         this._playerService.setCurrentTime(timecode.start);
