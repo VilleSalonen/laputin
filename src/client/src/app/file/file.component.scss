@@ -165,10 +165,6 @@ mat-tab-group, mat-tab-body {
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    div, span {
-        margin-right: 0.25 * $standard-margin;
-    }
 }
 
 .scenes-grid {
@@ -182,6 +178,18 @@ app-scene + app-scene {
 
 .screenshot-set {
     color: white;
+}
+
+.timecode-button {
+    margin-right: 0.25 * $standard-margin;
+}
+
+.timecode-time {
+    margin-right: $standard-margin;
+}
+
+.timecode-time-unset {
+    opacity: 0;
 }
 
 .timecode-time, .timecode-button {

@@ -90,13 +90,13 @@
                                     <i class="fas fa-stopwatch"></i>
                                 </div>
                     
-                                <span (click)="goToTimecodeStart()" class="timecode-time" title="Go to tag timecode start">{{ timecodeStartTime | preciseDurationWithMs }}</span>
+                                <span (click)="goToTimecodeStart()" class="timecode-time" [ngClass]="{ 'timecode-time-unset': timecodeStartTime === undefined }" title="Go to tag timecode start">{{ timecodeStartTime | preciseDurationWithMs }}</span>
 
                                 <div (click)="setTimecodeEndTime()" class="timecode-button" title="Set tag timecode end">
                                     <i class="fas fa-stopwatch"></i>
                                 </div>
                     
-                                <span (click)="goToTimecodeEnd()" class="timecode-time" title="Go to tag timecode end">{{ timecodeEndTime | preciseDurationWithMs }}</span>
+                                <span (click)="goToTimecodeEnd()" class="timecode-time" [ngClass]="{ 'timecode-time-unset': timecodeEndTime === undefined }" title="Go to tag timecode end">{{ timecodeEndTime | preciseDurationWithMs }}</span>
 
                                 <div (click)="setTimecodeScreenshotTime()" class="timecode-button" [ngClass]="{ 'screenshot-set': timecodeScreenshotTime }" title="Save initial timecode screenshot time">
                                     <i class="fas fa-camera"></i>
