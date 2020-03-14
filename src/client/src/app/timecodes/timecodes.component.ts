@@ -25,10 +25,10 @@ export class TimecodesComponent implements AfterViewInit {
 
     public fileStyle: any;
 
-    @ViewChild('files', { static: false })
+    @ViewChild('files')
     public filesElement: ElementRef<HTMLDivElement>;
 
-    @ViewChild('scroll', { static: false })
+    @ViewChild('scroll')
     private timecodesScroller: VirtualScrollerComponent;
 
     constructor(

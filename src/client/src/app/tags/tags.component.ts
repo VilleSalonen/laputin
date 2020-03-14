@@ -27,7 +27,7 @@ export class TagsComponent implements AfterViewInit {
     public tags$: Observable<Tag[]>;
     public filteredTags$: Observable<Tag[]>;
 
-    @ViewChild('tags', { static: false })
+    @ViewChild('tags')
     public tagsElement: ElementRef<HTMLDivElement>;
 
     public tagStyle: any;

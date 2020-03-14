@@ -42,7 +42,7 @@ export class ImageFileComponent implements OnDestroy, AfterViewInit {
     public random: boolean;
     public isFullScreen: boolean;
 
-    @ViewChild('imageViewer', { static: false }) imageViewer: ElementRef;
+    @ViewChild('imageViewer') imageViewer: ElementRef;
 
     ngOnDestroy(): void {
         this.close();

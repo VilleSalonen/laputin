@@ -67,7 +67,7 @@ export class FileComponent implements AfterViewInit {
 
     public baseMediaPath = `${window.location.hostname}:${window.location.port}/media/`;
 
-    @ViewChild('fileElement', { static: false })
+    @ViewChild('fileElement')
     public fileElement: ElementRef<HTMLDivElement>;
 
     public videoPlayerStyle: any;
@@ -75,10 +75,10 @@ export class FileComponent implements AfterViewInit {
     public detectedScenes$: Observable<any[]>;
     public activeScene$: Observable<any>;
 
-    @ViewChild('timecodesScroll', { static: false })
+    @ViewChild('timecodesScroll')
     private timecodesScroller: VirtualScrollerComponent;
 
-    @ViewChild('scenesScroll', { static: false })
+    @ViewChild('scenesScroll')
     private scenesScroller: VirtualScrollerComponent;
 
     public timecodeTags: { tags: Tag[] } = { tags: [] };

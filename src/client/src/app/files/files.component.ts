@@ -31,10 +31,10 @@ export class FilesComponent implements AfterViewInit {
 
     public fileStyle: any;
 
-    @ViewChild('files', { static: false })
+    @ViewChild('files')
     public filesElement: ElementRef<HTMLDivElement>;
 
-    @ViewChild('scroll', { static: false })
+    @ViewChild('scroll')
     private filesScroller: VirtualScrollerComponent;
 
     constructor(

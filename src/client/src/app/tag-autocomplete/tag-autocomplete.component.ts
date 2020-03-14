@@ -37,10 +37,10 @@ export class TagAutocompleteComponent implements OnInit {
     public addOnBlur = false;
     public termCtrl = new FormControl();
 
-    @ViewChild('termInput', { static: false }) termInput: ElementRef<
+    @ViewChild('termInput') termInput: ElementRef<
         HTMLInputElement
     >;
-    @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
+    @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
     @Input() tagContainer: TagContainer;
     @Input() include: Tag[] = [];

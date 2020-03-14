@@ -78,11 +78,11 @@ export class FileQueryComponent implements OnInit {
 
     public searchTerm: string;
 
-    @ViewChild('termInput', { static: false }) termInput: ElementRef<
+    @ViewChild('termInput') termInput: ElementRef<
         HTMLInputElement
     >;
-    @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
-    @ViewChild('trigger', { static: false })
+    @ViewChild('auto') matAutocomplete: MatAutocomplete;
+    @ViewChild('trigger')
     autocompleteTrigger: MatAutocompleteTrigger;
 
     @Input() query: FileQuery;

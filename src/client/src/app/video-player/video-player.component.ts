@@ -56,11 +56,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     private player: HTMLVideoElement;
 
-    @ViewChild('playerView', { static: false }) playerView: ElementRef;
-    @ViewChild('videoArea', { static: false }) videoArea: ElementRef;
-    @ViewChild('player', { static: false }) playerElem: ElementRef;
-    @ViewChild('slider', { static: false }) sliderElem: ElementRef;
-    @ViewChild('volume', { static: false }) volumeSliderElem: ElementRef;
+    @ViewChild('playerView') playerView: ElementRef;
+    @ViewChild('videoArea') videoArea: ElementRef;
+    @ViewChild('player') playerElem: ElementRef;
+    @ViewChild('slider') sliderElem: ElementRef;
+    @ViewChild('volume') volumeSliderElem: ElementRef;
 
     private _file: File;
     public progress$: Observable<Progress>;
