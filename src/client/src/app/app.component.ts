@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { LaputinService } from './laputin.service';
+import { Duplicate } from './models';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-root',
@@ -11,7 +14,13 @@ import { Component } from '@angular/core';
                     <li><a routerLink="/files">Files</a></li>
                     <li><a routerLink="/timecodes">Timecodes</a></li>
                     <li><a routerLink="/tags">Tags</a></li>
-                    <li><a routerLink="/duplicates">Duplicates</a></li>
+                    <ng-container *ngIf="duplicates$ | async as duplicates">
+                        <li *ngIf="duplicates.length > 0">
+                            <a routerLink="/duplicates"
+                                >Duplicates ({{ duplicates.length }})</a
+                            >
+                        </li>
+                    </ng-container>
                 </ul>
             </nav>
 
@@ -21,4 +30,10 @@ import { Component } from '@angular/core';
         </div>
     `
 })
-export class AppComponent {}
+export class AppComponent {
+    public duplicates$: Observable<Duplicate[]>;
+
+    constructor(laputinService: LaputinService) {
+        this.duplicates$ = laputinService.getDuplicates();
+    }
+}
