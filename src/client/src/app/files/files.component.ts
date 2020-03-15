@@ -14,12 +14,22 @@ import { switchMap, take, map, shareReplay, tap } from 'rxjs/operators';
 import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 import { Router } from '@angular/router';
 
+enum ViewMode {
+    Thumbnails,
+    SmallThumbnails,
+    Details
+}
+
 @Component({
     styleUrls: ['./files.component.scss'],
     templateUrl: './files.component.html'
 })
 @Injectable()
 export class FilesComponent implements AfterViewInit {
+    public ViewMode = ViewMode;
+
+    public activeViewMode = ViewMode.Thumbnails;
+
     public allFilesSubscription: Subject<File[]> = new Subject<File[]>();
     public filesSubscription: Subject<File[]> = new Subject<File[]>();
     public hashParamSubscription: Subject<string> = new Subject<string>();
@@ -42,6 +52,8 @@ export class FilesComponent implements AfterViewInit {
         private fileQueryService: FileQueryService,
         private router: Router
     ) {
+        this.restorePreviousViewMode();
+
         this.files$ = this.fileQueryService.query$.pipe(
             switchMap(query => this._service.queryFiles(query)),
             shareReplay(1),
@@ -75,24 +87,7 @@ export class FilesComponent implements AfterViewInit {
     }
 
     public ngAfterViewInit(): void {
-        const totalWidth = this.filesElement.nativeElement.scrollWidth - 10;
-        const aspectRatio = 16 / 9;
-
-        let columns: number;
-        if (totalWidth < 960) {
-            columns = 1;
-        } else if (totalWidth >= 960 && totalWidth < 1280) {
-            columns = 2;
-        } else if (totalWidth >= 1280 && totalWidth < 1920) {
-            columns = 3;
-        } else {
-            columns = 4;
-        }
-
-        this.fileStyle = {
-            width: Math.floor(totalWidth / columns) + 'px',
-            height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
-        };
+        this.calculateStyle();
 
         this.files$
             .pipe(
@@ -122,6 +117,63 @@ export class FilesComponent implements AfterViewInit {
                     this.scrollToIndex(index);
                 })
             );
+    }
+
+    public activateViewMode(newViewMode: ViewMode): void {
+        this.activeViewMode = newViewMode;
+        sessionStorage.setItem('previousViewMode', newViewMode.toString());
+        this.calculateStyle();
+        this.scrollToIndex(0);
+    }
+
+    private restorePreviousViewMode(): void {
+        const previousViewModeStr = sessionStorage.getItem('previousViewMode');
+        if (!previousViewModeStr) {
+            return;
+        }
+
+        const previousViewModeInt = parseInt(previousViewModeStr, 10);
+        if (isNaN(previousViewModeInt)) {
+            return;
+        }
+
+        this.activeViewMode = previousViewModeInt;
+    }
+
+    private calculateStyle(): void {
+        if (
+            this.activeViewMode === ViewMode.Thumbnails ||
+            this.activeViewMode === ViewMode.SmallThumbnails
+        ) {
+            const totalWidth = this.filesElement.nativeElement.scrollWidth - 10;
+            const aspectRatio = 16 / 9;
+
+            let columns = 1;
+
+            if (totalWidth < 960) {
+                columns = 1;
+            } else if (totalWidth >= 960 && totalWidth < 1280) {
+                columns = 2;
+            } else if (totalWidth >= 1280 && totalWidth < 1920) {
+                columns = 3;
+            } else {
+                columns = 4;
+            }
+
+            if (this.activeViewMode === ViewMode.SmallThumbnails) {
+                columns *= 2;
+            }
+
+            this.fileStyle = {
+                width: Math.floor(totalWidth / columns) + 'px',
+                height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+            };
+        } else {
+            this.fileStyle = {
+                height: '200px',
+                width: '100%'
+            };
+        }
     }
 
     public openFiles(): void {

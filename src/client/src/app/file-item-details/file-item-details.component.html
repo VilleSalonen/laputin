@@ -1,0 +1,17 @@
+<div [lazyLoad]="image" class="image-file" [ngStyle]="imageStyle">
+</div>
+
+<div style="display: flex; flex-direction: column;">
+    <div style="margin-bottom: 6px;">
+        <span>{{file.directory}}</span>
+        <span>{{file.nameSansSuffix}}</span>
+        <span>{{file.suffix}}</span>
+        <span> - {{ file.metadata.duration | duration }} - {{file.humanSize}} - {{ file.metadata.width }}x{{ file.metadata.height }}</span>
+    </div>
+
+    <mat-chip-list aria-label="Tag selection">
+        <mat-chip *ngFor="let tag of file.tags">
+            {{ tag.name }}
+        </mat-chip>
+    </mat-chip-list>
+</div>

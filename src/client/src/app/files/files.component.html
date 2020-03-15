@@ -11,6 +11,32 @@
                             <i class="fa fa-film" aria-hidden="true"></i>
                         </a>
                     </span>
+
+                    <button mat-button [matMenuTriggerFor]="appMenu">
+                        <i class="material-icons">list</i>
+
+                        <ng-container *ngIf="activeViewMode === ViewMode.Thumbnails">
+                            Thumbnails
+                        </ng-container>
+                        <ng-container *ngIf="activeViewMode === ViewMode.SmallThumbnails">
+                            Small thumbnails
+                        </ng-container>
+                        <ng-container *ngIf="activeViewMode === ViewMode.Details">
+                            Details
+                        </ng-container>
+                    </button>
+                    
+                    <mat-menu #appMenu="matMenu">
+                        <button mat-menu-item (click)="activateViewMode(ViewMode.Thumbnails)">
+                            Thumbnails
+                        </button>
+                        <button mat-menu-item (click)="activateViewMode(ViewMode.SmallThumbnails)">
+                            Small thumbnails
+                        </button>
+                        <button mat-menu-item (click)="activateViewMode(ViewMode.Details)">
+                            Details
+                        </button>
+                    </mat-menu>
                 </div>
             </div>
 
@@ -18,7 +44,12 @@
                 <virtual-scroller #scroll [items]="files">
                     <div class="files-grid" #container>
                         <div class="grid-item" *ngFor="let file of scroll.viewPortItems" [ngStyle]="fileStyle" role="button">
-                            <app-file-item [file]="file" (click)="openFile(file)"></app-file-item>
+                            <ng-container *ngIf="activeViewMode === ViewMode.Thumbnails || activeViewMode === ViewMode.SmallThumbnails">
+                                <app-file-item [file]="file" (click)="openFile(file)"></app-file-item>
+                            </ng-container>
+                            <ng-container *ngIf="activeViewMode === ViewMode.Details">
+                                <app-file-item-details [file]="file" (click)="openFile(file)"></app-file-item-details>
+                            </ng-container>
                         </div>
                     </div>
                 </virtual-scroller>

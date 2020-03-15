@@ -52,12 +52,14 @@ import { FileSelectorModule } from './file-selector-component/file-selector.modu
 import { MigrateFileDataDialogComponent } from './migrate-file-data-dialog/migrate-file-data-dialog.component';
 import { TimecodeItemComponent } from './timecode-item/timecode-item.component';
 import { TimecodeQueryModule } from './timecode-query-component/timecode-query.module';
+import { FileItemDetailsComponent } from './file-item-details/file-item-details.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         DuplicatesComponent,
         FileItemComponent,
+        FileItemDetailsComponent,
         TimecodeItemComponent,
         FilesComponent,
         TagFilterPipe,
