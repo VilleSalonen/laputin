@@ -78,9 +78,7 @@ export class FileQueryComponent implements OnInit {
 
     public searchTerm: string;
 
-    @ViewChild('termInput') termInput: ElementRef<
-        HTMLInputElement
-    >;
+    @ViewChild('termInput') termInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
     @ViewChild('trigger')
     autocompleteTrigger: MatAutocompleteTrigger;
@@ -238,6 +236,7 @@ export class FileQueryComponent implements OnInit {
         this.termInput.nativeElement.value = '';
         this.termCtrl.setValue(null);
         this.matchingTags = [];
+        setTimeout(() => this.autocompleteTrigger.closePanel());
     }
 
     public clearQuery(): void {
