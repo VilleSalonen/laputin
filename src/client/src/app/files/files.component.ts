@@ -44,17 +44,8 @@ export class FilesComponent implements AfterViewInit {
     ) {
         this.files$ = this.fileQueryService.query$.pipe(
             switchMap(query => this._service.queryFiles(query)),
-            tap(() => {
-                if (this.filesScroller) {
-                    this.filesScroller.scrollToIndex(
-                        0,
-                        undefined,
-                        undefined,
-                        0
-                    );
-                }
-            }),
-            shareReplay(1)
+            shareReplay(1),
+            tap(() => this.scrollToIndex(0))
         );
 
         this.totalDuration$ = this.files$.pipe(
@@ -103,32 +94,34 @@ export class FilesComponent implements AfterViewInit {
             height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
         };
 
-        this.files$.pipe(take(1)).subscribe((files: File[]) => {
-            setTimeout(() => {
-                let index = 0;
+        this.files$
+            .pipe(
+                take(1),
+                map(files => {
+                    let index = 0;
 
-                const previousFileHash = sessionStorage.getItem(
-                    'previousFileHash'
-                );
-                sessionStorage.removeItem('previousFileHash');
-
-                if (previousFileHash) {
-                    const foundIndex = files.findIndex(
-                        f => f.hash === previousFileHash
+                    const previousFileHash = sessionStorage.getItem(
+                        'previousFileHash'
                     );
-                    if (foundIndex > -1) {
-                        index = foundIndex;
-                    }
-                }
+                    sessionStorage.removeItem('previousFileHash');
 
-                this.filesScroller.scrollToIndex(
-                    index,
-                    undefined,
-                    undefined,
-                    0
-                );
-            });
-        });
+                    if (previousFileHash) {
+                        const foundIndex = files.findIndex(
+                            f => f.hash === previousFileHash
+                        );
+                        if (foundIndex > -1) {
+                            index = foundIndex;
+                        }
+                    }
+
+                    return index;
+                })
+            )
+            .subscribe((index: number) =>
+                setTimeout(() => {
+                    this.scrollToIndex(index);
+                })
+            );
     }
 
     public openFiles(): void {
@@ -171,5 +164,11 @@ export class FilesComponent implements AfterViewInit {
             ++unit;
         } while (Math.abs(bytes) >= threshold && unit < units.length - 1);
         return bytes.toFixed(1) + ' ' + units[unit];
+    }
+
+    private scrollToIndex(index: number): void {
+        if (this.filesScroller) {
+            this.filesScroller.scrollToIndex(index, undefined, undefined, 0);
+        }
     }
 }
