@@ -10,7 +10,7 @@ import { Timecode } from './../models';
 import { LaputinService } from './../laputin.service';
 import { Router } from '@angular/router';
 import { TimecodeQueryService } from '../timecode-query.service';
-import { switchMap, shareReplay, take, map } from 'rxjs/operators';
+import { switchMap, shareReplay, take, map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 
@@ -38,7 +38,8 @@ export class TimecodesComponent implements AfterViewInit {
     ) {
         this.timecodes$ = this.timecodeQueryService.query$.pipe(
             switchMap(query => this._service.queryTimecodes(query)),
-            shareReplay(1)
+            shareReplay(1),
+            tap(() => this.scrollToIndex(0))
         );
 
         this.timecodesSummary$ = this.timecodes$.pipe(
@@ -89,33 +90,35 @@ export class TimecodesComponent implements AfterViewInit {
             height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
         };
 
-        this.timecodes$.pipe(take(1)).subscribe((timecodes: Timecode[]) => {
-            setTimeout(() => {
-                let index = 0;
+        this.timecodes$
+            .pipe(
+                take(1),
+                map(timecodes => {
+                    let index = 0;
 
-                const previousTimecodeId = parseInt(
-                    sessionStorage.getItem('previousTimecodeId'),
-                    10
-                );
-                sessionStorage.removeItem('previousTimecodeId');
-
-                if (previousTimecodeId) {
-                    const foundIndex = timecodes.findIndex(
-                        t => t.timecodeId === previousTimecodeId
+                    const previousTimecodeId = parseInt(
+                        sessionStorage.getItem('previousTimecodeId'),
+                        10
                     );
-                    if (foundIndex > -1) {
-                        index = foundIndex;
-                    }
-                }
+                    sessionStorage.removeItem('previousTimecodeId');
 
-                this.timecodesScroller.scrollToIndex(
-                    index,
-                    undefined,
-                    undefined,
-                    0
-                );
-            });
-        });
+                    if (previousTimecodeId) {
+                        const foundIndex = timecodes.findIndex(
+                            t => t.timecodeId === previousTimecodeId
+                        );
+                        if (foundIndex > -1) {
+                            index = foundIndex;
+                        }
+                    }
+
+                    return index;
+                })
+            )
+            .subscribe((index: number) =>
+                setTimeout(() => {
+                    this.scrollToIndex(index);
+                })
+            );
     }
 
     public openTimecode(timecode: Timecode): void {
@@ -141,6 +144,17 @@ export class TimecodesComponent implements AfterViewInit {
             return hours + ' h ' + mins + ' min';
         } else {
             return mins + ' min ' + Math.floor(seconds) + ' s';
+        }
+    }
+
+    private scrollToIndex(index: number): void {
+        if (this.timecodesScroller) {
+            this.timecodesScroller.scrollToIndex(
+                index,
+                undefined,
+                undefined,
+                0
+            );
         }
     }
 }
