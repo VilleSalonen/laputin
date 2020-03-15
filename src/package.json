@@ -60,7 +60,8 @@
     "test-client": "cd client && npx ng lint --type-check && npx ng test --code-coverage --watch false",
     "start": "node deploy/index.js",
     "test": "npm run test-server && npm run test-client",
-    "lint": "tslint --project tsconfig.json"
+    "lint": "tslint --project tsconfig.json",
+    "release-test": "npm run test-server && npm run test-client && npm run build && npm run build-exe"
   },
   "pkg": {
     "scripts": "deploy/**/*.js",
