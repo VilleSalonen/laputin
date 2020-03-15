@@ -501,12 +501,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             }
         });
 
-        dialogRef.afterClosed().subscribe(tag => {
-            if (tag) {
-                this._service.addTag(this.file, tag).toPromise();
+        dialogRef.afterClosed().subscribe(newTag => {
+            if (newTag) {
+                this._service.addTag(this.file, newTag).toPromise();
                 this._service
                     .screenshotTag(
-                        tag,
+                        newTag,
                         this.file,
                         this._playerService.getCurrentTime()
                     )
