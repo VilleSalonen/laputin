@@ -198,7 +198,7 @@ export class Library {
 
         const sql2 =
             'SELECT tags.id, tags.name, tags_files.hash FROM tags_files JOIN tags ON tags.id = tags_files.id ORDER BY tags.name';
-        const each2 = function(err: Error, row: any) {
+        const each2 = function (err: Error, row: any) {
             // Tag associations exist for inactive files but inactive files are
             // not in files list.
             if (typeof files[row.hash] !== 'undefined') {
@@ -208,6 +208,13 @@ export class Library {
         await this._db.eachAsync(sql2, each2);
 
         return _.values(files);
+    }
+
+    public updateMetadata(file: File, metadata: any): Promise<void> {
+        const stmt = this._db.prepare(
+            'UPDATE files SET metadata = ? WHERE hash = ?'
+        );
+        return stmt.runAsync(JSON.stringify(metadata), file.hash);
     }
 
     public async clearAllTagsAndTimecodesFromFile(hash: string): Promise<void> {
@@ -241,7 +248,7 @@ export class Library {
     ): string {
         if (ids) {
             const splitIds = ids.split(',');
-            splitIds.forEach(id => {
+            splitIds.forEach((id) => {
                 params.push(id);
             });
             const wheres = splitIds.map(() => {
@@ -306,7 +313,7 @@ export class Library {
 
         if (query && query.selectedTags) {
             const wheres: string[] = [];
-            query.selectedTags.forEach(tag => {
+            query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
                 wheres.push(' id = ? ');
             });
@@ -326,7 +333,7 @@ export class Library {
             )`;
 
             const selectedIds: string[] = [];
-            query.selectedTags.forEach(tag => {
+            query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
                 selectedIds.push(' ? ');
             });
@@ -498,7 +505,7 @@ export class Library {
 
         const each2 = (err: Error, row: any) => {
             const timecode = timecodes.find(
-                t => t.timecodeId === row.timecode_id
+                (t) => t.timecodeId === row.timecode_id
             );
 
             timecode.timecodeTags.push(
@@ -514,7 +521,7 @@ export class Library {
         await stmt2.eachAsync(params1, each2);
 
         const timecodesWithTags = timecodes.filter(
-            t => t.timecodeTags.length > 0
+            (t) => t.timecodeTags.length > 0
         );
         return timecodesWithTags;
     }
@@ -562,7 +569,7 @@ export class Library {
 
         const each2 = (err: Error, row: any) => {
             const timecode = timecodes.find(
-                t => t.timecodeId === row.timecode_id
+                (t) => t.timecodeId === row.timecode_id
             );
             if (timecode) {
                 timecode.timecodeTags.push(
@@ -579,35 +586,37 @@ export class Library {
         await stmt2.eachAsync([], each2);
 
         let timecodesWithTags = timecodes.filter(
-            t => t.timecodeTags.length > 0
+            (t) => t.timecodeTags.length > 0
         );
 
         if (query.filename) {
             timecodesWithTags = timecodesWithTags.filter(
-                t => t.path.toLocaleLowerCase().indexOf(query.filename) > -1
+                (t) => t.path.toLocaleLowerCase().indexOf(query.filename) > -1
             );
         }
 
         if (query.and && query.and.length > 0) {
             const queryTagIds = query.and
                 .split(',')
-                .map(id => parseInt(id, 10));
-            timecodesWithTags = timecodesWithTags.filter(t =>
+                .map((id) => parseInt(id, 10));
+            timecodesWithTags = timecodesWithTags.filter((t) =>
                 queryTagIds.every(
-                    queryTagId =>
+                    (queryTagId) =>
                         t.timecodeTags
-                            .map(t2 => t2.tag.id)
+                            .map((t2) => t2.tag.id)
                             .indexOf(queryTagId) >= 0
                 )
             );
         }
         if (query.or && query.or.length > 0) {
-            const queryTagIds = query.or.split(',').map(id => parseInt(id, 10));
-            timecodesWithTags = timecodesWithTags.filter(t =>
+            const queryTagIds = query.or
+                .split(',')
+                .map((id) => parseInt(id, 10));
+            timecodesWithTags = timecodesWithTags.filter((t) =>
                 queryTagIds.some(
-                    queryTagId =>
+                    (queryTagId) =>
                         t.timecodeTags
-                            .map(t2 => t2.tag.id)
+                            .map((t2) => t2.tag.id)
                             .indexOf(queryTagId) >= 0
                 )
             );
@@ -615,12 +624,12 @@ export class Library {
         if (query.not && query.not.length > 0) {
             const queryTagIds = query.not
                 .split(',')
-                .map(id => parseInt(id, 10));
-            timecodesWithTags = timecodesWithTags.filter(t =>
+                .map((id) => parseInt(id, 10));
+            timecodesWithTags = timecodesWithTags.filter((t) =>
                 queryTagIds.every(
-                    queryTagId =>
+                    (queryTagId) =>
                         t.timecodeTags
-                            .map(t2 => t2.tag.id)
+                            .map((t2) => t2.tag.id)
                             .indexOf(queryTagId) < 0
                 )
             );

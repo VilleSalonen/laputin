@@ -11,6 +11,7 @@ import { DetectScenesCommand } from './commands/detect-scenes.command';
 import { CreateProxiesCommand } from './commands/create-proxies.command';
 import { ExportTimecodesCommand } from './commands/export-timecodes.command';
 import { TagCommand } from './commands/tag.command';
+import { MetadataCommand } from './commands/metadata.command';
 
 export function getLibraryPath(givenLibraryPath?: string): string {
     const libraryPath = givenLibraryPath || process.cwd();
@@ -69,6 +70,7 @@ export function getLibraryPath(givenLibraryPath?: string): string {
         hash: new HashCommand(),
         query: new QueryCommand(),
         tag: new TagCommand(),
+        metadata: new MetadataCommand(),
         'detect-scenes': new DetectScenesCommand(),
         'create-proxies': new CreateProxiesCommand(),
         'export-timecodes': new ExportTimecodesCommand(),
