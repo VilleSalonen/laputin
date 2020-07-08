@@ -58,20 +58,21 @@ export class TagCommand implements Command {
         const allTags = await library.getTags(undefined);
 
         const tagNames: string[] = [...(options.tag || [])];
+        const tagNamesLower = tagNames.map((n) => n.toLocaleLowerCase());
 
-        const existingTags = allTags.filter((t) => tagNames.includes(t.name));
-        const existingTagNames = existingTags.map((t) => t.name);
+        const existingTags = allTags.filter((t) =>
+            tagNamesLower.includes(t.name.toLocaleLowerCase())
+        );
+        const existingTagNames = existingTags.map((t) =>
+            t.name.toLocaleLowerCase()
+        );
         const newTagNames = tagNames.filter(
-            (n) => !existingTagNames.includes(n)
+            (n) => !existingTagNames.includes(n.toLocaleLowerCase())
         );
         const newTags = [];
         for (const newTagName of newTagNames) {
             const newTag = await library.createNewTag(newTagName);
             newTags.push(newTag);
-        }
-
-        for (const existingTag of existingTags) {
-            console.log(JSON.stringify(existingTag));
         }
 
         const tagsForAdding = [...newTags, ...existingTags];
