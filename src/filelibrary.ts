@@ -52,11 +52,11 @@ export class FileLibrary extends events.EventEmitter {
                 undefined
             );
             this.library.getFiles(query).then((existingFiles: File[]) => {
-                this._existingFiles = _.keyBy(existingFiles, f => f.path);
+                this._existingFiles = _.keyBy(existingFiles, (f) => f.path);
 
                 const walkerOptions = {
                     followLinks: false,
-                    filters: ['.laputin']
+                    filters: ['.laputin'],
                 };
                 const walker = walk.walk(this._libraryPath, walkerOptions);
                 walker.on('file', (root, walkStat, callback) => {
@@ -69,7 +69,7 @@ export class FileLibrary extends events.EventEmitter {
                 });
                 walker.on('end', () => {
                     const missingFiles = _.values(this._existingFiles);
-                    missingFiles.forEach(file => {
+                    missingFiles.forEach((file) => {
                         this.emit('lost', file);
                     });
 
@@ -91,7 +91,7 @@ export class FileLibrary extends events.EventEmitter {
         watch.createMonitor(
             this._libraryPath,
             { ignoreDotFiles: true },
-            monitor => {
+            (monitor) => {
                 // If files are big or copying is otherwise slow, both created and
                 // changed events might be emitted for a new file. If this is the
                 // case, hashing is not possible during created event and must be
@@ -181,7 +181,7 @@ export class FileLibrary extends events.EventEmitter {
                 if (releaseDate && releaseDate[1]) {
                     metadata = {
                         ...metadata,
-                        releaseDate: releaseDate[1]
+                        releaseDate: releaseDate[1],
                     };
                 } else {
                     const releaseYear = escapedFilePath.match(
@@ -190,14 +190,14 @@ export class FileLibrary extends events.EventEmitter {
                     if (releaseYear && releaseYear[1]) {
                         metadata = {
                             ...metadata,
-                            releaseDate: releaseYear[1]
+                            releaseDate: releaseYear[1],
                         };
                     }
                 }
 
                 metadata = {
                     ...metadata,
-                    lastModified: stats.mtime
+                    lastModified: stats.mtime,
                 };
             }
 
@@ -248,7 +248,7 @@ export class FileLibrary extends events.EventEmitter {
                     height: primaryVideoStream.height,
                     duration: data.format.duration,
                     bitrate: data.format.bit_rate,
-                    framerate: primaryVideoStream.avg_frame_rate
+                    framerate: primaryVideoStream.avg_frame_rate,
                 };
             }
 
@@ -264,7 +264,7 @@ export class FileLibrary extends events.EventEmitter {
                     type: 'audio',
                     codec: primaryAudioStream.codec_name,
                     duration: data.format.duration,
-                    bitrate: data.format.bit_rate
+                    bitrate: data.format.bit_rate,
                 };
             }
         }
@@ -289,15 +289,16 @@ export class FileLibrary extends events.EventEmitter {
             return true;
         }
 
-        const extension = path.extname(filePath).toLocaleLowerCase();
-        if (
+        // This always returns extensions in a format such as ".txt"
+        const extension = path
+            .extname(filePath)
+            .toLocaleLowerCase()
+            .substring(1);
+
+        return (
             this._configuration.ignoredExtensions &&
             this._configuration.ignoredExtensions.indexOf(extension) > -1
-        ) {
-            return true;
-        }
-
-        return false;
+        );
     }
 
     private initializeListForHash(file: File): void {
@@ -347,7 +348,7 @@ export class FileLibrary extends events.EventEmitter {
     public getDuplicates(): any {
         const duplicates: any = {};
 
-        _.forOwn(this._files, function(files: File[], hash: string) {
+        _.forOwn(this._files, function (files: File[], hash: string) {
             if (files.length > 1) {
                 duplicates[hash] = files;
             }
