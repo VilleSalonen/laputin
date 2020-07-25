@@ -86,7 +86,29 @@ export class Library {
         this._db = new sqlite3.Database(dbPath);
     }
 
-    public addFile(file: File): Promise<void> {
+    public async addFile(file: File): Promise<void> {
+        let existingFile;
+        try {
+            const files = await this.getFiles(
+                new Query(null, null, file.hash, null, null, null, true)
+            );
+            if (files.length > 0) {
+                existingFile = files[0];
+            }
+        } catch (e) {
+            // OK
+        }
+
+        console.log('existingFile');
+        console.log(existingFile);
+
+        const metadata = existingFile
+            ? { ...existingFile.metadata, ...file.metadata }
+            : file.metadata;
+
+        console.log('metadata');
+        console.log(metadata);
+
         const stmt = this._db.prepare(
             'INSERT OR REPLACE INTO files (hash, path, active, size, metadata, type) VALUES (?, ?, 1, ?, ?, ?)'
         );
@@ -94,7 +116,7 @@ export class Library {
             file.hash,
             file.path,
             file.size,
-            JSON.stringify(file.metadata),
+            JSON.stringify(metadata),
             file.type
         );
     }
