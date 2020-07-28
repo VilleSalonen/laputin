@@ -99,15 +99,9 @@ export class Library {
             // OK
         }
 
-        console.log('existingFile');
-        console.log(existingFile);
-
         const metadata = existingFile
             ? { ...existingFile.metadata, ...file.metadata }
             : file.metadata;
-
-        console.log('metadata');
-        console.log(metadata);
 
         const stmt = this._db.prepare(
             'INSERT OR REPLACE INTO files (hash, path, active, size, metadata, type) VALUES (?, ?, 1, ?, ?, ?)'
@@ -308,6 +302,52 @@ export class Library {
         const stmt = this._db.prepare('UPDATE tags SET name = ? WHERE id = ?');
         await stmt.runAsync(tagName, tagId);
         return new Tag(tagId, tagName, 0);
+    }
+
+    public async mergeTags(
+        sourceTagId: number,
+        targetTagId: number
+    ): Promise<void> {
+        if (!sourceTagId) {
+            return Promise.reject<void>(new Error('Source tag ID is required'));
+        }
+        if (!targetTagId) {
+            return Promise.reject<void>(new Error('Target tag ID is required'));
+        }
+
+        // Some files might already be associated with both source and target tags. Updating
+        // such tag associations would result in UNIQUE constraint failure.
+        const updateStmt = this._db.prepare(
+            'UPDATE tags_files SET id = ? WHERE id = ? AND hash NOT IN (SELECT hash FROM tags_files WHERE id = ?)'
+        );
+        await updateStmt.runAsync(targetTagId, sourceTagId, targetTagId);
+
+        // Delete remaining associations to source tag. These were left because such files
+        // were already associated with target tag.
+        const deleteStmt = this._db.prepare(
+            'DELETE FROM tags_files WHERE id = ?'
+        );
+        await deleteStmt.runAsync(sourceTagId);
+    }
+
+    public async deleteTag(tagId: number): Promise<void> {
+        if (!tagId) {
+            return Promise.reject<void>(new Error('Tag ID is required'));
+        }
+
+        const allTags = await this.getTags(new TagQuery(undefined, true));
+        const tag = allTags.find((t) => t.id === tagId);
+        if (!tag) {
+            return Promise.reject<void>(`Could not find tag with ID ${tagId}!`);
+        }
+        if (tag.associationCount !== 0) {
+            return Promise.reject<void>(
+                `Refusing to delete tag with ID ${tagId} as it is still associated with ${tag.associationCount} files!`
+            );
+        }
+
+        const stmt = this._db.prepare('DELETE FROM tags WHERE id = ?');
+        await stmt.runAsync(tagId);
     }
 
     public async getTags(query: TagQuery): Promise<Tag[]> {
