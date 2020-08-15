@@ -7,7 +7,7 @@ import {
     ViewChild,
     ElementRef,
     AfterViewInit,
-    OnDestroy
+    OnDestroy,
 } from '@angular/core';
 
 import {
@@ -16,7 +16,7 @@ import {
     FileChange,
     ChangeDirection,
     Timecode,
-    AutocompleteType
+    AutocompleteType,
 } from './../models';
 import { LaputinService } from './../laputin.service';
 import { PlayerService, Progress } from '../player.service';
@@ -31,7 +31,7 @@ import {
     switchMap,
     distinctUntilChanged,
     tap,
-    filter
+    filter,
 } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { tag } from 'rxjs-spy/operators';
@@ -39,7 +39,7 @@ import { tag } from 'rxjs-spy/operators';
 @Component({
     selector: 'app-video-player',
     styleUrls: ['./video-player.component.scss'],
-    templateUrl: './video-player.component.html'
+    templateUrl: './video-player.component.html',
 })
 @Injectable()
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
@@ -81,7 +81,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this._file = value;
         this._playerService.setFile(value);
 
-        this._service.proxyExists(this.file).subscribe(proxyExists => {
+        this._service.proxyExists(this.file).subscribe((proxyExists) => {
             const sourceFile = !proxyExists
                 ? `/media/${this.file.escapedUrl}`
                 : `/proxies/${this.file.hash}.mp4`;
@@ -114,16 +114,18 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         private dialog: MatDialog,
         breakpointObserver: BreakpointObserver
     ) {
-        breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
-            this.isMobile = result.matches;
-        });
+        breakpointObserver
+            .observe([Breakpoints.Handset])
+            .subscribe((result) => {
+                this.isMobile = result.matches;
+            });
 
         this.progress$ = this._playerService.progress$;
     }
 
     public ngAfterViewInit(): void {
         this.player = this.playerElem.nativeElement;
-        this._playerService.setPlayer(this.file, this.player);
+        this._playerService.setPlayer(this.player);
 
         const playStart = fromEvent(this.player, 'playing').pipe(
             tag('VideoPlayerComponent.playStart'),
@@ -157,7 +159,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             tap(() => (this.playbackHasBeenStarted = true)),
             throttleTime(500),
             map(() => this.player.currentTime / this.player.duration),
-            filter(time => !isNaN(time)),
+            filter((time) => !isNaN(time)),
             tag('VideoPlayerComponent.timeUpdates')
         );
 
@@ -206,8 +208,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         );
         const mouseMove = fromEvent(this.videoArea.nativeElement, 'mousemove');
         const afterMouseMove = mouseMove.pipe(
-            map(ev => of(ev).pipe(delay(2000))),
-            switchMap(flatten => flatten),
+            map((ev) => of(ev).pipe(delay(2000))),
+            switchMap((flatten) => flatten),
             tag('VideoPlayerComponent.afterMouseMove')
         );
         const mouseLeave = fromEvent(
@@ -219,12 +221,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const ends = merge(afterMouseMove, mouseLeave).pipe(map(() => 'end'));
         merge(starts, ends)
             .pipe(
-                map(val => val === 'start'),
+                map((val) => val === 'start'),
                 distinctUntilChanged(),
                 tag('VideoPlayerComponent.mouseOverVideo'),
                 takeUntil(this.fileClosed)
             )
-            .subscribe(mouseOverVideo => {
+            .subscribe((mouseOverVideo) => {
                 this.mouseOverVideo = mouseOverVideo;
             });
 
@@ -498,11 +500,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const dialogRef = this.dialog.open(TagScreenshotDialogComponent, {
             width: '500px',
             data: {
-                file: this.file
-            }
+                file: this.file,
+            },
         });
 
-        dialogRef.afterClosed().subscribe(newTag => {
+        dialogRef.afterClosed().subscribe((newTag) => {
             if (newTag) {
                 this._service.addTag(this.file, newTag).toPromise();
                 this._service
