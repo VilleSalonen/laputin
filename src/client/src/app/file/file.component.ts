@@ -100,6 +100,7 @@ export class FileComponent implements AfterViewInit {
             map((hash) => new FileQuery({ hash: hash })),
             switchMap((query) => this.laputinService.queryFiles(query)),
             map((files) => files[0]),
+            shareReplay(1),
             tap((file) => {
                 this.file = file;
 
