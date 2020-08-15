@@ -79,6 +79,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         }
 
         this._file = value;
+        this._playerService.setFile(value);
 
         this._service.proxyExists(this.file).subscribe(proxyExists => {
             const sourceFile = !proxyExists

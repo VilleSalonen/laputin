@@ -5,7 +5,7 @@ import {
     Subscription,
     merge,
     zip,
-    Subject
+    Subject,
 } from 'rxjs';
 
 import { File } from '../app/models/file';
@@ -46,8 +46,11 @@ export class PlayerService {
 
     constructor(private ngZone: NgZone) {}
 
-    public setPlayer(file: File, player: HTMLVideoElement): void {
+    public setFile(file: File) {
         this.file = file;
+    }
+
+    public setPlayer(player: HTMLVideoElement): void {
         this.player = player;
 
         if ((<any>this.player).mozPaintedFrames !== undefined) {
