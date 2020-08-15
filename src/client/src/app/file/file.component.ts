@@ -3,7 +3,7 @@ import {
     HostBinding,
     AfterViewInit,
     ViewChild,
-    ElementRef
+    ElementRef,
 } from '@angular/core';
 import { LaputinService } from '../laputin.service';
 import { FileQueryService } from '../file-query.service';
@@ -16,7 +16,7 @@ import {
     Timecode,
     Tag,
     AutocompleteType,
-    TimecodeTag
+    TimecodeTag,
 } from '../models';
 import {
     map,
@@ -25,7 +25,7 @@ import {
     tap,
     distinctUntilChanged,
     shareReplay,
-    filter
+    filter,
 } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import { PlayerService, Progress } from '../player.service';
@@ -38,7 +38,7 @@ import { MigrateFileDataDialogComponent } from '../migrate-file-data-dialog/migr
 @Component({
     selector: 'app-file',
     templateUrl: './file.component.html',
-    styleUrls: ['./file.component.scss']
+    styleUrls: ['./file.component.scss'],
 })
 export class FileComponent implements AfterViewInit {
     public file: File;
@@ -96,11 +96,11 @@ export class FileComponent implements AfterViewInit {
         breakpointObserver: BreakpointObserver
     ) {
         this.activeFile$ = this.activatedRoute.params.pipe(
-            map(params => params['hash']),
-            map(hash => new FileQuery({ hash: hash })),
-            switchMap(query => this.laputinService.queryFiles(query)),
-            map(files => files[0]),
-            tap(file => {
+            map((params) => params['hash']),
+            map((hash) => new FileQuery({ hash: hash })),
+            switchMap((query) => this.laputinService.queryFiles(query)),
+            map((files) => files[0]),
+            tap((file) => {
                 this.file = file;
 
                 if (this.file.metadata.framerate) {
@@ -126,32 +126,34 @@ export class FileComponent implements AfterViewInit {
         )
             .pipe(
                 map(([params, _]: [Params, void]) => params),
-                map(params => parseFloat(params['start'])),
-                filter(startTime => !isNaN(startTime)),
+                map((params) => parseFloat(params['start'])),
+                filter((startTime) => !isNaN(startTime)),
                 take(1)
             )
-            .subscribe(startTime => {
+            .subscribe((startTime) => {
                 this.setCurrentTime(startTime);
             });
 
         this.activeFile$
             .pipe(
-                switchMap(file => this.laputinService.getTimecodes(file)),
+                switchMap((file) => this.laputinService.getTimecodes(file)),
                 tap(() => this.resetTimecodeTimes())
             )
-            .subscribe(timecodes => {
+            .subscribe((timecodes) => {
                 this.timecodes = timecodes;
                 this.setTimecodeStartTimeToNextFrameAfterLastTimecodeEnd();
             });
 
-        breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
-            this.isMobile = result.matches;
-            this.isDesktop = !this.isMobile;
-        });
+        breakpointObserver
+            .observe([Breakpoints.Handset])
+            .subscribe((result) => {
+                this.isMobile = result.matches;
+                this.isDesktop = !this.isMobile;
+            });
 
         this.detectedScenes$ = <Observable<any[]>>(
             this.activeFile$.pipe(
-                switchMap(file => this.laputinService.getDetectedScenes(file))
+                switchMap((file) => this.laputinService.getDetectedScenes(file))
             )
         );
 
@@ -161,20 +163,20 @@ export class FileComponent implements AfterViewInit {
         ).pipe(
             map(([scenes, progress]: [any[], Progress]) =>
                 scenes.find(
-                    s =>
+                    (s) =>
                         s.startFrame <= progress.frame &&
                         progress.frame < s.endFrame
                 )
             ),
-            filter(scene => scene),
+            filter((scene) => scene),
             distinctUntilChanged(),
             shareReplay(1)
         );
 
-        this.activeScene$.subscribe(scene => {
+        this.activeScene$.subscribe((scene) => {
             if (this.scenesScroller) {
                 const itemIndex = this.scenesScroller.items.findIndex(
-                    i => i.index === scene.index
+                    (i) => i.index === scene.index
                 );
                 if (itemIndex > -1) {
                     this.scenesScroller.scrollToIndex(
@@ -191,7 +193,7 @@ export class FileComponent implements AfterViewInit {
         this.videoPlayerStyle = {
             width: width + 'px',
             'min-height': height + 'px',
-            'max-height': height + 'px'
+            'max-height': height + 'px',
         };
     }
 
@@ -202,10 +204,10 @@ export class FileComponent implements AfterViewInit {
     public changeActiveFile(fileChange: FileChange): void {
         this.fileQueryService.query$
             .pipe(
-                switchMap(query => this.laputinService.queryFiles(query)),
-                map(files => {
+                switchMap((query) => this.laputinService.queryFiles(query)),
+                map((files) => {
                     const activeIndex = files.findIndex(
-                        f => f.hash === fileChange.currentFile.hash
+                        (f) => f.hash === fileChange.currentFile.hash
                     );
 
                     let newIndex: number;
@@ -229,12 +231,12 @@ export class FileComponent implements AfterViewInit {
                 }),
                 take(1)
             )
-            .subscribe(file => this.router.navigate(['/files', file.hash]));
+            .subscribe((file) => this.router.navigate(['/files', file.hash]));
     }
 
     public removeTimecode(timecode: Timecode): void {
         this.timecodes = this.timecodes.filter(
-            t => t.timecodeId !== timecode.timecodeId
+            (t) => t.timecodeId !== timecode.timecodeId
         );
     }
 
@@ -265,18 +267,18 @@ export class FileComponent implements AfterViewInit {
 
     public addTagsSelectionToTimecode(tags: Tag[]): void {
         const tagsMissingFromTimecode = [];
-        tags.forEach(tag => {
-            if (!this.timecodeTags.tags.find(t => t.id === tag.id)) {
+        tags.forEach((tag) => {
+            if (!this.timecodeTags.tags.find((t) => t.id === tag.id)) {
                 tagsMissingFromTimecode.push(tag);
             }
         });
-        tagsMissingFromTimecode.forEach(tag =>
+        tagsMissingFromTimecode.forEach((tag) =>
             this.timecodeTags.tags.push(tag)
         );
     }
 
     public addTimecodeTagToFile(tag: Tag): void {
-        const alreadyAddedOnFile = this.file.tags.find(t => t.id === tag.id);
+        const alreadyAddedOnFile = this.file.tags.find((t) => t.id === tag.id);
         if (!alreadyAddedOnFile) {
             this.addTag(tag);
         }
@@ -309,7 +311,7 @@ export class FileComponent implements AfterViewInit {
         const timecodeEndTime = this.timecodeEndTime;
 
         const selectedTimecodeTags = this.timecodeTags.tags.map(
-            t => new TimecodeTag(null, null, t)
+            (t) => new TimecodeTag(null, null, t)
         );
 
         const tagTimecode = new Timecode(
@@ -329,7 +331,7 @@ export class FileComponent implements AfterViewInit {
             .toPromise();
         this.addTagTimecode(result);
         this.file.tags = [
-            ...new Set([...this.file.tags, ...this.timecodeTags.tags])
+            ...new Set([...this.file.tags, ...this.timecodeTags.tags]),
         ].sort((a, b) => {
             if (a.name < b.name) {
                 return -1;
@@ -348,7 +350,7 @@ export class FileComponent implements AfterViewInit {
         setTimeout(() => {
             if (this.timecodesScroller) {
                 const foundItem = this.timecodesScroller.items.find(
-                    i =>
+                    (i) =>
                         i.hash === result.hash &&
                         i.timecodeId === result.timecodeId
                 );
@@ -361,11 +363,11 @@ export class FileComponent implements AfterViewInit {
         const dialogRef = this.dialog.open(MigrateFileDataDialogComponent, {
             width: '500px',
             data: {
-                file: this.file
-            }
+                file: this.file,
+            },
         });
 
-        dialogRef.afterClosed().subscribe(data => console.log(data));
+        dialogRef.afterClosed().subscribe((data) => console.log(data));
     }
 
     private resetTimecodeTimes(): void {
@@ -406,7 +408,7 @@ export class FileComponent implements AfterViewInit {
     }
 
     public formattedTags(file: File): string {
-        return file ? file.tags.map(tag => tag.name).join(', ') : null;
+        return file ? file.tags.map((tag) => tag.name).join(', ') : null;
     }
 
     private setTimecodeStartTimeToNextFrameAfterLastTimecodeEnd(): void {
