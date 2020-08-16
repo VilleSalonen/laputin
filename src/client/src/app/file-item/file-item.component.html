@@ -1,4 +1,4 @@
-<div class="container" [lazyLoad]="image" [ngClass]="{ 'image-file': file.type && file.type.startsWith('image') }">
+<div class="container {{ cssClasses }}" [lazyLoad]="image">
     <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <div
             class="filename"
@@ -10,6 +10,6 @@
             <span class="filename-small">{{file.suffix}}</span>
         </div>
 
-        <mat-chip class="tags" *ngIf="file.tags.length > 0" [matTooltip]="formattedTags(file)" matTooltipClass="tooltip">{{file.tags.length}}</mat-chip>
+        <mat-chip class="tags" *ngIf="formattedTags" [matTooltip]="formattedTags" matTooltipClass="tooltip">{{file.tags.length}}</mat-chip>
     </div>
 </div>

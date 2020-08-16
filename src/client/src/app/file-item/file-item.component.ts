@@ -3,7 +3,7 @@ import {
     Injectable,
     Input,
     OnInit,
-    ChangeDetectionStrategy
+    ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { File } from './../models/file';
@@ -13,7 +13,7 @@ import { LaputinService } from './../laputin.service';
     selector: 'app-file-item',
     styleUrls: ['./file-item.component.scss'],
     templateUrl: './file-item.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 @Injectable()
 export class FileItemComponent implements OnInit {
@@ -25,10 +25,17 @@ export class FileItemComponent implements OnInit {
 
     public showMyElement: boolean;
 
+    public formattedTags: string = undefined;
+    public cssClasses: string;
+
     constructor(private service: LaputinService) {}
 
     public ngOnInit() {
         this.setImageUrl();
+        this.formattedTags = this.file.tags.map((tag) => tag.name).join(', ');
+        if (this.file.type.startsWith('image')) {
+            this.cssClasses = 'image-file';
+        }
 
         this.service.thumbnailChanged.subscribe((changed: File) => {
             if (changed.hash === this.file.hash) {
@@ -40,9 +47,5 @@ export class FileItemComponent implements OnInit {
 
     private setImageUrl(): void {
         this.image = `/laputin/thumbs-small/${this.file.hash}.jpg${this.cacheBuster}`;
-    }
-
-    public formattedTags(file: File): string {
-        return file.tags.map(tag => tag.name).join(', ');
     }
 }
