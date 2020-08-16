@@ -106,7 +106,7 @@ export class Library {
         const stmt = this._db.prepare(
             'INSERT OR REPLACE INTO files (hash, path, active, size, metadata, type) VALUES (?, ?, 1, ?, ?, ?)'
         );
-        return stmt.runAsync(
+        await stmt.runAsync(
             file.hash,
             file.path,
             file.size,
