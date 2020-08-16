@@ -3,7 +3,8 @@ import {
     Injectable,
     ElementRef,
     ViewChild,
-    AfterViewInit
+    AfterViewInit,
+    ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { File } from './../models/file';
@@ -17,12 +18,13 @@ import { Router } from '@angular/router';
 enum ViewMode {
     Thumbnails,
     SmallThumbnails,
-    Details
+    Details,
 }
 
 @Component({
     styleUrls: ['./files.component.scss'],
-    templateUrl: './files.component.html'
+    templateUrl: './files.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 @Injectable()
 export class FilesComponent implements AfterViewInit {
@@ -55,15 +57,15 @@ export class FilesComponent implements AfterViewInit {
         this.restorePreviousViewMode();
 
         this.files$ = this.fileQueryService.query$.pipe(
-            switchMap(query => this._service.queryFiles(query)),
+            switchMap((query) => this._service.queryFiles(query)),
             shareReplay(1),
             tap(() => this.scrollToIndex(0))
         );
 
         this.totalDuration$ = this.files$.pipe(
-            map(files => {
+            map((files) => {
                 let totalSeconds = 0.0;
-                files.forEach(f => {
+                files.forEach((f) => {
                     const duration = parseFloat(f.metadata.duration);
                     if (!isNaN(duration)) {
                         totalSeconds += parseFloat(f.metadata.duration);
@@ -75,9 +77,9 @@ export class FilesComponent implements AfterViewInit {
         );
 
         this.totalSize$ = this.files$.pipe(
-            map(files => {
+            map((files) => {
                 let totalSize = 0.0;
-                files.forEach(f => {
+                files.forEach((f) => {
                     totalSize += f.size;
                 });
 
@@ -92,7 +94,7 @@ export class FilesComponent implements AfterViewInit {
         this.files$
             .pipe(
                 take(1),
-                map(files => {
+                map((files) => {
                     let index = 0;
 
                     const previousFileHash = sessionStorage.getItem(
@@ -102,7 +104,7 @@ export class FilesComponent implements AfterViewInit {
 
                     if (previousFileHash) {
                         const foundIndex = files.findIndex(
-                            f => f.hash === previousFileHash
+                            (f) => f.hash === previousFileHash
                         );
                         if (foundIndex > -1) {
                             index = foundIndex;
@@ -166,12 +168,12 @@ export class FilesComponent implements AfterViewInit {
 
             this.fileStyle = {
                 width: Math.floor(totalWidth / columns) + 'px',
-                height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+                height: Math.floor(totalWidth / columns / aspectRatio) + 'px',
             };
         } else {
             this.fileStyle = {
                 height: '200px',
-                width: '100%'
+                width: '100%',
             };
         }
     }
@@ -179,7 +181,7 @@ export class FilesComponent implements AfterViewInit {
     public openFiles(): void {
         this.fileQueryService.query$
             .pipe(take(1))
-            .subscribe(query => this._service.openFiles(query).toPromise());
+            .subscribe((query) => this._service.openFiles(query).toPromise());
     }
 
     public openFile(file: File): void {
