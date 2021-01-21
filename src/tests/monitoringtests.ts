@@ -602,6 +602,6 @@ function copyFile(source: string, target: string): Promise<void> {
 
 function delay(milliseconds: number): Promise<any> {
     return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(), milliseconds);
+        setTimeout(() => resolve({}), milliseconds);
     });
 }

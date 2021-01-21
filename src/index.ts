@@ -1,6 +1,7 @@
 import commandLineArgs = require('command-line-args');
 import commandLineUsage = require('command-line-usage');
 import winston = require('winston');
+import { format } from "winston";
 
 import { HashCommand } from './commands/hash.command';
 import { Command } from './commands/command';
@@ -22,6 +23,13 @@ export function getLibraryPath(givenLibraryPath?: string): string {
 }
 
 (async function () {
+    winston.add(new winston.transports.Console({
+        format: format.combine(
+            format.colorize(),
+            format.simple()
+        )})
+    );
+
     const sections = [
         {
             header: 'Laputin',
