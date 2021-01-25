@@ -339,7 +339,7 @@ export class FileLibrary extends events.EventEmitter {
             winston.log('verbose', 'Lost file:  ' + filePath);
         } else {
             winston.log(
-                'warning',
+                'warn',
                 `Tried to remove file ${filePath} but it was not found from file list via hash ${hash}!`
             );
         }
