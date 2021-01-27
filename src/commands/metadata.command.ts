@@ -11,12 +11,13 @@ import { LaputinConfiguration } from '../laputinconfiguration';
 import { IHasher } from '../ihasher';
 import { QuickMD5Hasher } from '../quickmd5hasher';
 import { XxhashHasher } from '../xxhashhasher';
+import winston = require('winston');
 
 export class MetadataCommand implements Command {
     public optionDefinitions: commandLineArgs.OptionDefinition[] = [
         { name: 'libraryPath', type: String },
         { name: 'fileName', type: String },
-        { name: 'metadata', type: String },
+        { name: 'metadataFileName', type: String },
     ];
 
     public async execute(options: any): Promise<void> {
@@ -25,11 +26,21 @@ export class MetadataCommand implements Command {
             !fs.statSync(options.fileName).isFile()
         ) {
             throw new Error(
-                `Directory ${options.fileName} is not a valid file.`
+                `${options.fileName} is not a valid file.`
             );
         }
 
-        const metadataObject = JSON.parse(options.metadata);
+        if (
+            !fs.existsSync(options.metadataFileName) ||
+            !fs.statSync(options.metadataFileName).isFile()
+        ) {
+            throw new Error(
+                `${options.metadataFileName} is not a valid file.`
+            );
+        }
+
+        const metadata = fs.readFileSync(options.metadataFileName, 'utf8').trim();
+        const metadataObject = JSON.parse(metadata);
 
         const libraryPath = getLibraryPath(options.libraryPath);
         const library = new Library(libraryPath);
@@ -60,5 +71,8 @@ export class MetadataCommand implements Command {
             ...file.metadata,
             ...metadataObject,
         });
+
+        winston.log('info', `Target file: ${options.fileName}`)
+        winston.log('info', `Metadata: ${metadata}`)
     }
 }
