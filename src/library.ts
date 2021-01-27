@@ -43,6 +43,12 @@ export class Library {
         await (<any>db).runAsync(
             'CREATE TABLE files (hash TEXT UNIQUE, path TEXT UNIQUE, active INTEGER, size INTEGER, metadata BLOB, type TEXT);'
         );
+        await (<any>db).runAsync(
+            'CREATE INDEX tags_files_id ON tags_files (id);'
+        );
+        await (<any>db).runAsync(
+            'CREATE INDEX tags_files_hash ON tags_files (hash);'
+        );
         await (<any>db).runAsync(`CREATE TABLE files_timecodes (
             id INTEGER PRIMARY KEY autoincrement,
             hash TEXT,
@@ -169,12 +175,11 @@ export class Library {
             }
         }
         if (query.status) {
-            if (query.status === 'tagged' || query.status === 'untagged') {
-                const operator = query.status === 'tagged' ? '>' : '=';
-                sql1 +=
-                    ' AND (SELECT COUNT(*) FROM tags_files WHERE tags_files.hash = files.hash) ' +
-                    operator +
-                    ' 0';
+            if (query.status === 'tagged') {
+                sql1 += ' AND EXISTS (SELECT 1 FROM tags_files WHERE tags_files.hash = files.hash) ';
+            }
+            if (query.status === 'untagged') {
+                sql1 += ' AND NOT EXISTS (SELECT 1 FROM tags_files WHERE tags_files.hash = files.hash) ';
             }
         }
 
