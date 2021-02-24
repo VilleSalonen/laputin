@@ -42,8 +42,16 @@ namespace Laputin
 
             var file = await db.Files
                 .Where(f => f.Hash == hash)
+                .Include(f => f.Tags)
                 .FirstAsync();
+
             Console.WriteLine(file.Path);
+            Console.WriteLine();
+            Console.WriteLine($"Tags: {file.Tags.Count}");
+            foreach (var tag in file.Tags)
+            {
+                Console.WriteLine($"  {tag.Name}");
+            }
 
             return 0;
         }
