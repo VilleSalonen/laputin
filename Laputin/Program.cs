@@ -22,7 +22,7 @@ namespace Laputin
                     description: "File hash"
                 ),
             };
-            fileCommand.Handler = CommandHandler.Create<string, string>(HandleQuery);
+            fileCommand.Handler = CommandHandler.Create<string, string>(HandleFile);
 
             // Create a root command with some options
             var rootCommand = new RootCommand
