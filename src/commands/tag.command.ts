@@ -18,6 +18,7 @@ export class TagCommand implements Command {
         { name: 'libraryPath', type: String },
         { name: 'fileName', type: String },
         { name: 'tag', type: String, multiple: true },
+        { name: 'tagsFileName', type: String },
     ];
 
     public async execute(options: any): Promise<void> {
@@ -55,9 +56,17 @@ export class TagCommand implements Command {
             throw new Error(`Could not find file with hash ${hash}!`);
         }
 
-        const allTags = await library.getTags(undefined);
+        const allTags = await library.getTags({ selectedTags: [], unassociated: true });
 
-        const tagNames: string[] = [...(options.tag || [])];
+        var tagNames: string[];
+        if (options.tagsFileName) {
+            const metadata = fs.readFileSync(options.tagsFileName, 'utf8').trim();
+            const metadataObject = JSON.parse(metadata);
+            tagNames = metadataObject.tags;
+        } else {
+            tagNames = [...(options.tag || [])];
+        }
+
         const tagNamesLower = tagNames.map((n) => n.toLocaleLowerCase());
 
         const existingTags = allTags.filter((t) =>
@@ -71,14 +80,18 @@ export class TagCommand implements Command {
         );
         const newTags = [];
         for (const newTagName of newTagNames) {
+            winston.info(`Creating new tag "${newTagName}"...`)
             const newTag = await library.createNewTag(newTagName);
+            winston.info(`Created new tag "${newTagName}".`)
             newTags.push(newTag);
         }
 
         const tagsForAdding = [...newTags, ...existingTags];
         for (const tag of tagsForAdding) {
-            winston.verbose(`Adding ${tag.name} to ${file.name}`);
-            await library.createNewLinkBetweenTagAndFile(tag, file.hash);
+            const added = await library.createNewLinkBetweenTagAndFile(tag, file.hash);
+            if (added) {
+                winston.info(`Added: ${tag.name} to ${file.name}`);
+            }
         }
     }
 }
