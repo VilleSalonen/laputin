@@ -2,6 +2,7 @@ import commandLineArgs = require('command-line-args');
 import commandLineUsage = require('command-line-usage');
 import winston = require('winston');
 import { format } from "winston";
+const {EOL} = require('os');
 
 import { HashCommand } from './commands/hash.command';
 import { Command } from './commands/command';
@@ -94,7 +95,7 @@ export function getLibraryPath(givenLibraryPath?: string): string {
             });
             await command.execute(commandOptions);
         } catch (err) {
-            winston.error(err);
+            winston.error(`Error while executing "${mainOptions.command}":${EOL}  Parameters ${JSON.stringify(globalOptions)}${EOL}  Error: ${JSON.stringify(err)}`);
             process.exit(-1);
         }
     } else {
