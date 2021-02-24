@@ -24,10 +24,24 @@ namespace Laputin
             };
             fileCommand.Handler = CommandHandler.Create<string, string>(HandleFile);
 
+            var queryCommand = new Command("query")
+            {
+                new Option<string>(
+                    "--library-path",
+                    description: "Laputin path"
+                ),
+                new Option<string>(
+                    "--tag",
+                    description: "Tag"
+                ),
+            };
+            queryCommand.Handler = CommandHandler.Create<string, string>(HandleQuery);
+
             // Create a root command with some options
             var rootCommand = new RootCommand
             {
-                fileCommand
+                fileCommand,
+                queryCommand
             };
 
             rootCommand.Description = "My sample app";
@@ -51,6 +65,23 @@ namespace Laputin
             foreach (var tag in file.Tags.OrderBy(t => t.Name))
             {
                 Console.WriteLine($"  {tag.Name}");
+            }
+
+            return 0;
+        }
+
+        private static async Task<int> HandleQuery(string libraryPath, string tag)
+        {
+            using var db = new LaputinContext(libraryPath);
+
+            Console.WriteLine(tag);
+            var tags = await db.Tags
+                .Where(t => t.Name.Contains(tag))
+                .ToListAsync();
+
+            foreach (var tagObj in tags)
+            {
+                Console.WriteLine(tagObj.Name);
             }
 
             return 0;
