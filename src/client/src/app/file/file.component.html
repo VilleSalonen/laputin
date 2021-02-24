@@ -32,6 +32,9 @@
                 <button mat-icon-button [matMenuTriggerFor]="appMenu">
                     Menu
                 </button>
+
+                <span>{{file.directory}}</span>
+                <span> - {{ file.metadata.duration | duration }} - {{file.humanSize}} - {{ file.metadata.width }}x{{ file.metadata.height }} - {{ file.metadata.codec }}</span>
             </div>
 
             <ng-container *ngIf="activeFile.type.startsWith('image')">
