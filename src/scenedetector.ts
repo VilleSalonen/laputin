@@ -27,11 +27,18 @@ export class SceneDetector {
 
         if (!fs.existsSync(scenesDirectory)) {
             fs.mkdirSync(scenesDirectory);
+            winston.verbose(`Created Laputin scenes directory: ${scenesDirectory}`);
         }
 
         const files = await this.library.getFiles(
             new Query(filenameForQuery, '', '', '', '', '', false)
         );
+        if (files.length === 0) {
+            winston.warn(`Could not find any files with filename query ${filenameForQuery}`);
+            return;
+        }
+
+        winston.verbose(`Found ${files.length} files with filename query ${filenameForQuery}`);
 
         for (const file of files) {
             try {
@@ -40,6 +47,7 @@ export class SceneDetector {
                 const sceneDirectory = this.getSceneDirectory(file);
                 if (!fs.existsSync(sceneDirectory)) {
                     fs.mkdirSync(sceneDirectory);
+                    winston.verbose(`Created scene directory: ${sceneDirectory}`);
                 }
 
                 const analysisCsvPath = path.join(
