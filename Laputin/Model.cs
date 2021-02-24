@@ -19,8 +19,8 @@ namespace Laputin
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>
             options
                 .UseSqlite($"Data Source={LibraryPath}")
-                .EnableSensitiveDataLogging()
-                .LogTo(Console.WriteLine);
+                .EnableSensitiveDataLogging();
+                //.LogTo(Console.WriteLine);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

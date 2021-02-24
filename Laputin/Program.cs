@@ -48,7 +48,7 @@ namespace Laputin
             Console.WriteLine(file.Path);
             Console.WriteLine();
             Console.WriteLine($"Tags: {file.Tags.Count}");
-            foreach (var tag in file.Tags)
+            foreach (var tag in file.Tags.OrderBy(t => t.Name))
             {
                 Console.WriteLine($"  {tag.Name}");
             }
