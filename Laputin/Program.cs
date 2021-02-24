@@ -11,7 +11,7 @@ namespace Laputin
     {
         public static async Task<int> Main(params string[] args)
         {
-            var queryCommand = new Command("file")
+            var fileCommand = new Command("file")
             {
                 new Option<string>(
                     "--library-path",
@@ -22,12 +22,12 @@ namespace Laputin
                     description: "File hash"
                 ),
             };
-            queryCommand.Handler = CommandHandler.Create<string, string>(HandleQuery);
+            fileCommand.Handler = CommandHandler.Create<string, string>(HandleQuery);
 
             // Create a root command with some options
             var rootCommand = new RootCommand
             {
-                queryCommand
+                fileCommand
             };
 
             rootCommand.Description = "My sample app";
@@ -36,7 +36,7 @@ namespace Laputin
             return await rootCommand.InvokeAsync(args);
         }
 
-        private static async Task<int> HandleQuery(string libraryPath, string hash)
+        private static async Task<int> HandleFile(string libraryPath, string hash)
         {
             using var db = new LaputinContext(libraryPath);
 
