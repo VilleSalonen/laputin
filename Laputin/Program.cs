@@ -11,7 +11,7 @@ namespace Laputin
     {
         public static async Task<int> Main(params string[] args)
         {
-            var queryCommand = new Command("query")
+            var queryCommand = new Command("file")
             {
                 new Option<string>(
                     "--library-path",
