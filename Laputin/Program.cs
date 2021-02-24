@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,52 +11,41 @@ namespace Laputin
     {
         public static async Task<int> Main(params string[] args)
         {
-            // Create a root command with some options
-            var rootCommand = new RootCommand
+            var queryCommand = new Command("query")
             {
                 new Option<string>(
                     "--library-path",
-                    description: "Laputin path"),
+                    description: "Laputin path"
+                ),
+                new Option<string>(
+                    "--hash",
+                    description: "File hash"
+                ),
+            };
+            queryCommand.Handler = CommandHandler.Create<string, string>(HandleQuery);
+
+            // Create a root command with some options
+            var rootCommand = new RootCommand
+            {
+                queryCommand
             };
 
             rootCommand.Description = "My sample app";
 
-            // Note that the parameters of the handler method are matched according to the names of the options
-            rootCommand.Handler = CommandHandler.Create<string>((libraryPath) =>
-            {
-                using (var db = new LaputinContext(libraryPath))
-                {
-                    // Note: This sample requires the database to be created before running.
-
-                    // Create
-                    // Console.WriteLine("Inserting a new blog");
-                    // db.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
-                    // db.SaveChanges();
-
-                    // Read
-                    Console.WriteLine("Querying for a file");
-                    var file = db.Files
-                        .First();
-                    Console.WriteLine(file.Path);
-
-                    // Update
-                    //Console.WriteLine("Updating the blog and adding a post");
-                    //blog.Url = "https://devblogs.microsoft.com/dotnet";
-                    //blog.Posts.Add(
-                    //    new Post { Title = "Hello World", Content = "I wrote an app using EF Core!" });
-                    //db.SaveChanges();
-
-                    // Delete
-                    //Console.WriteLine("Delete the blog");
-                    //db.Remove(blog);
-                    //db.SaveChanges();
-                }
-
-                Console.WriteLine($"The value for --library-path is: {libraryPath}");
-            });
-
             // Parse the incoming args and invoke the handler
-            return rootCommand.InvokeAsync(args).Result;
+            return await rootCommand.InvokeAsync(args);
+        }
+
+        private static async Task<int> HandleQuery(string libraryPath, string hash)
+        {
+            using var db = new LaputinContext(libraryPath);
+
+            var file = await db.Files
+                .Where(f => f.Hash == hash)
+                .FirstAsync();
+            Console.WriteLine(file.Path);
+
+            return 0;
         }
     }
 }
