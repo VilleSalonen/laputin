@@ -378,7 +378,7 @@ export class Library {
             sql += ' count > 0 ';
         }
 
-        if (query && query.selectedTags) {
+        if (query && query.selectedTags && query.selectedTags.length > 0) {
             const wheres: string[] = [];
             query.selectedTags.forEach((tag) => {
                 params.push(tag.id);
@@ -422,24 +422,18 @@ export class Library {
     public async createNewLinkBetweenTagAndFile(
         inputTag: Tag,
         hash: string
-    ): Promise<void> {
+    ): Promise<boolean> {
         const stmt = this._db.prepare('INSERT INTO tags_files VALUES (?, ?)');
 
         try {
             await stmt.runAsync(inputTag.id, hash);
+            return true;
         } catch (err) {
             if (err.code !== 'SQLITE_CONSTRAINT') {
-                console.log(err);
-                return;
-            } else {
-                const error =
-                    'File and tag association already exists with tag ID ' +
-                    inputTag.id +
-                    ' and file hash ' +
-                    hash +
-                    '. Refusing to add a duplicate association.';
-                console.log(error);
+                throw err;
             }
+
+            return false;
         }
     }
 
