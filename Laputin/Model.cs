@@ -18,8 +18,8 @@ namespace Laputin
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>
             options
-                //.EnableSensitiveDataLogging()
-                //.LogTo(Console.WriteLine)
+                // .EnableSensitiveDataLogging()
+                // .LogTo(Console.WriteLine)
                 .UseSqlite($"Data Source=Laputin.db");
     }
 }
