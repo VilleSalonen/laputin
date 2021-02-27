@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 
 namespace Laputin
 {
+    // migration from old database
+    // INSERT INTO Tags SELECT * FROM old.tags;
+    // INSERT INTO Files SELECT ROW_NUMBER() OVER (ORDER BY path), * FROM old.files WHERE active = 1;
+    // INSERT INTO FileTag SELECT (SELECT Files.Id FROM Files Where Files.Hash = tags_files.hash), id FROM tags_files WHERE tags_files.id IS NOT NULL AND tags_files.hash IN (SELECT hash FROM files WHERE active = 1);
     public class LaputinContext : DbContext
     {
-        private string LibraryPath;
-
-        public LaputinContext(string libraryPath)
+        public LaputinContext()
         {
-            LibraryPath = libraryPath;
         }
 
         public DbSet<File> Files { get; set; }
@@ -18,20 +18,8 @@ namespace Laputin
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>
             options
-                .UseSqlite($"Data Source={LibraryPath}")
-                .EnableSensitiveDataLogging()
-                .LogTo(Console.WriteLine);
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<File>()
-                .HasMany(f => f.Tags)
-                .WithMany(t => t.Files)
-                .UsingEntity<Dictionary<string, object>>(
-                    "tags_files",
-                    j => j.HasOne<Tag>().WithMany().HasForeignKey("id"),
-                    j => j.HasOne<File>().WithMany().HasForeignKey("hash"),
-                    j => j.ToTable("tags_files", "files"));
-        }
+                //.EnableSensitiveDataLogging()
+                //.LogTo(Console.WriteLine)
+                .UseSqlite($"Data Source=Laputin.db");
     }
 }

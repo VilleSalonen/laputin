@@ -1,18 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Laputin
 {
-    [Table("files")]
     public class File
     {
         [Key]
-        [Column("hash")]
+        public int Id { get; set; }
+
+        [Required]
         public string Hash { get; set; }
 
-        [Column("path")]
+        [Required]
         public string Path { get; set; }
+
+        [Required]
+        public bool Active { get; set; }
+
+        [Required]
+        public long Size { get; set; }
+
+        [Required]
+        public string Metadata { get; set; }
+
+        [Required]
+        public string Type { get; set; }
 
         public ICollection<Tag> Tags { get; set; }
     }
