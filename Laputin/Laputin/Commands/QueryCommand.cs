@@ -32,6 +32,37 @@ namespace Laputin.Commands
             Command.Handler = CommandHandler.Create<string, string>(HandleQuery);
         }
 
+        public async Task<int> QueryFiles(string and)
+        {
+            using var db = new LaputinContext();
+
+            Console.WriteLine(and);
+            var tagObj = await db.Tags
+                .Where(t => t.Name.ToLower() == and.ToLower())
+                .FirstOrDefaultAsync();
+
+            if (and == null)
+            {
+                Console.WriteLine($"Could not find a tag with name {and}");
+                return -1;
+            }
+
+            var files = await db.Files
+                .Include(f => f.Tags)
+                .Where(f => f.Tags.Any(t => t.Id == tagObj.Id))
+                .ToListAsync();
+            foreach (var file in files)
+            {
+                Console.WriteLine($"{file.Id} {file.Path}. Tags: {file.Tags.Count}");
+                /*foreach (var tag1 in file.Tags)
+                {
+                    Console.WriteLine("  " + tag1.Name);
+                }*/
+            }
+
+            return 0;
+        }
+
         private static async Task<int> HandleQuery(string libraryPath, string and)
         {
             using var db = new LaputinContext();

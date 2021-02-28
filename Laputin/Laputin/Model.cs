@@ -20,6 +20,6 @@ namespace Laputin
             options
                 // .EnableSensitiveDataLogging()
                 // .LogTo(Console.WriteLine)
-                .UseSqlite($"Data Source=Laputin.db");
+                .UseSqlite($"Data Source=C:\\Github\\laputin\\Laputin\\Laputin\\Laputin.db");
     }
 }
