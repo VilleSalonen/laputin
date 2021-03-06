@@ -9,17 +9,25 @@ namespace Laputin
     // INSERT INTO FileTag SELECT (SELECT Files.Id FROM Files Where Files.Hash = tags_files.hash), id FROM tags_files WHERE tags_files.id IS NOT NULL AND tags_files.hash IN (SELECT hash FROM files WHERE active = 1);
     public class LaputinContext : DbContext
     {
-        public LaputinContext()
-        {
-        }
+        public string ConnectionString { get; }
 
         public DbSet<File> Files { get; set; }
         public DbSet<Tag> Tags { get; set; }
+
+        public LaputinContext()
+            : this($"Data Source=C:\\Github\\laputin\\Laputin\\Laputin\\Laputin.db")
+        {
+        }
+
+        public LaputinContext(string connectionString)
+        {
+            ConnectionString = connectionString;
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>
             options
                 // .EnableSensitiveDataLogging()
                 // .LogTo(Console.WriteLine)
-                .UseSqlite($"Data Source=C:\\Github\\laputin\\Laputin\\Laputin\\Laputin.db");
+                .UseSqlite(ConnectionString);
     }
 }

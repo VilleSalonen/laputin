@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Laputin;
 using Laputin.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace PSTest
 {
@@ -24,8 +27,15 @@ namespace PSTest
         // This method gets called once for each cmdlet in the pipeline when the pipeline starts executing
         protected override void BeginProcessing()
         {
+
             WriteVerbose("Begin!");
         }
+
+        static IHostBuilder CreateHostBuilder(string[] args) =>
+            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+                .ConfigureServices((_, services) =>
+                    services.AddSingleton<ILaputinRepository, LaputinRepository>());
+
 
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
@@ -38,9 +48,7 @@ namespace PSTest
             }
             catch (Exception ex)
             {
-                WriteWarning("Foobar");
                 WriteWarning(ex.ToString());
-                WriteWarning(ex.InnerException.ToString());
             }
         }
 
