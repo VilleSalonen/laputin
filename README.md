@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/VilleSalonen/laputin.svg?branch=master)](https://travis-ci.org/VilleSalonen/laputin)
+[![Build Status](https://github.com/VilleSalonen/laputin/actions/workflows/laputin.yml/badge.svg)]
 
 Laputin
 =======
