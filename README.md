@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/VilleSalonen/laputin/actions/workflows/laputin.yml/badge.svg)]
+[![Build Status](https://github.com/VilleSalonen/laputin/actions/workflows/laputin.yml/badge.svg)](https://github.com/VilleSalonen/laputin/actions/workflows/laputin.yml)
 
 Laputin
 =======
