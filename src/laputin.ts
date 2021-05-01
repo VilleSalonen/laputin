@@ -66,7 +66,7 @@ export class Laputin {
         let done: Function;
         const promise = new Promise<void>(resolve => (done = resolve));
 
-        this._server = this.app.listen(this._port, done);
+        this._server = this.app.listen(this._port, <any>done);
 
         return promise;
     }
@@ -94,17 +94,17 @@ export class Laputin {
         const api = express();
 
         api.route('/files').get(async (req, res) => {
-            const files = await this.library.getFiles(req.query);
+            const files = await this.library.getFiles(<any>req.query);
             res.send(files);
         });
 
         api.route('/timecodes').get(async (req, res) => {
-            const timecodes = await this.library.getTimecodes(req.query);
+            const timecodes = await this.library.getTimecodes(<any>req.query);
             res.send(timecodes);
         });
 
         api.route('/tags').get(async (req, res) => {
-            const tags = await this.library.getTags(req.query);
+            const tags = await this.library.getTags(<any>req.query);
             res.send(tags);
         });
 
@@ -120,7 +120,7 @@ export class Laputin {
 
         api.route('/tags/:tagId').put(async (req, res) => {
             const tag = await this.library.renameTag(
-                req.params.tagId,
+                Number(req.params.tagId),
                 req.body.name
             );
             res.send(tag);
@@ -195,7 +195,7 @@ export class Laputin {
             async (req, res) => {
                 await this.library.updateTimecodeStartAndEnd(
                     req.params.hash,
-                    req.params.timecodeId,
+                    Number(req.params.timecodeId),
                     req.body.timecode
                 );
                 res.status(200).end();
@@ -215,7 +215,7 @@ export class Laputin {
 
         api.route('/files/:hash/tags/:tagId').delete(async (req, res) => {
             await this.library.deleteLinkBetweenTagAndFile(
-                req.params.tagId,
+                Number(req.params.tagId),
                 req.params.hash
             );
             res.status(200).end();
@@ -251,7 +251,7 @@ export class Laputin {
         });
 
         api.route('/open/files').get(async (req, res) => {
-            const files = await this.library.getFiles(req.query);
+            const files = await this.library.getFiles(<any>req.query);
             this._opener.open(files);
             res.status(200).end();
         });
@@ -259,7 +259,7 @@ export class Laputin {
         api.route('/showInExplorer').get(async (req, res) => {
             const explorerOpener = new ExplorerOpener();
 
-            const files = await this.library.getFiles(req.query);
+            const files = await this.library.getFiles(<any>req.query);
             if (files && files.length > 0) {
                 explorerOpener.open(files);
             }
