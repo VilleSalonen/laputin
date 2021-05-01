@@ -15,8 +15,8 @@ export class HashCommand implements Command {
     ];
 
     public async execute(hashOptions: any): Promise<void> {
-        let hasher: IHasher = new QuickMD5Hasher();
-        
+        const hasher: IHasher = new QuickMD5Hasher();
+
         if (!fs.existsSync(hashOptions.filePath)) {
             winston.error('File not found.');
             process.exit(-1);

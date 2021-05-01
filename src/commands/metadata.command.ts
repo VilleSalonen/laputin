@@ -51,7 +51,7 @@ export class MetadataCommand implements Command {
             ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
             : new LaputinConfiguration(3200, 'quick', null, []);
 
-        let hasher: IHasher = new QuickMD5Hasher();
+        const hasher: IHasher = new QuickMD5Hasher();
 
         const fileStats = await stat(options.fileName);
         const hash = await hasher.hash(options.fileName, fileStats);
@@ -65,7 +65,7 @@ export class MetadataCommand implements Command {
             ...metadataObject,
         });
 
-        winston.log('info', `Target file: ${options.fileName}`)
-        winston.log('info', `Metadata: ${metadata}`)
+        winston.log('info', `Target file: ${options.fileName}`);
+        winston.log('info', `Metadata: ${metadata}`);
     }
 }

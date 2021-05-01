@@ -40,7 +40,7 @@ export class TagCommand implements Command {
             ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
             : new LaputinConfiguration(3200, 'quick', null, []);
 
-        let hasher: IHasher = new QuickMD5Hasher();
+        const hasher: IHasher = new QuickMD5Hasher();
 
         const fileStats = await stat(options.fileName);
         const hash = await hasher.hash(options.fileName, fileStats);
@@ -51,7 +51,7 @@ export class TagCommand implements Command {
 
         const allTags = await library.getTags({ selectedTags: [], unassociated: true });
 
-        var tagNames: string[];
+        let tagNames: string[];
         if (options.tagsFileName) {
             const metadata = fs.readFileSync(options.tagsFileName, 'utf8').trim();
             const metadataObject = JSON.parse(metadata);
@@ -73,9 +73,9 @@ export class TagCommand implements Command {
         );
         const newTags = [];
         for (const newTagName of newTagNames) {
-            winston.info(`Creating new tag "${newTagName}"...`)
+            winston.info(`Creating new tag "${newTagName}"...`);
             const newTag = await library.createNewTag(newTagName);
-            winston.info(`Created new tag "${newTagName}".`)
+            winston.info(`Created new tag "${newTagName}".`);
             newTags.push(newTag);
         }
 

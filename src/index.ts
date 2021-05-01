@@ -1,7 +1,7 @@
 import commandLineArgs = require('command-line-args');
 import commandLineUsage = require('command-line-usage');
 import winston = require('winston');
-import { format } from "winston";
+import { format } from 'winston';
 const {EOL} = require('os');
 
 import { HashCommand } from './commands/hash.command';
