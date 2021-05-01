@@ -20,9 +20,9 @@ describe('File Library', function () {
     let laputin: Laputin;
     let currentPath: string;
 
-    const carFileHash = '64f2c393';
-    const catFileHash = '26199938';
-    const landscapeFileHash = 'dee01418';
+    const carFileHash = '76dc0e4782275a1a878b3b6ec1abe382';
+    const catFileHash = 'ea411d1af31ebb729a37c58c8e34236c';
+    const landscapeFileHash = 'b998da85d8402624769e44622b883597';
 
     beforeEach(async function () {
         currentPath = this.currentTest
@@ -83,8 +83,8 @@ describe('File Library', function () {
             laputin = await initializeLaputin(currentPath);
 
             return shouldContainFiles(laputin, [
-                catsFile,
                 carFile,
+                catsFile,
                 landscapeFile,
             ]);
         });
@@ -360,7 +360,7 @@ describe('File Library', function () {
 
             const duplicates = laputin.fileLibrary.getDuplicates();
             expect(duplicates).to.eql({
-                '64f2c393': [carFile, duplicateCarFile],
+                '76dc0e4782275a1a878b3b6ec1abe382': [carFile, duplicateCarFile],
             });
 
             // Note that Laputin returns newly copied duplicate version of car.
@@ -403,7 +403,7 @@ describe('File Library', function () {
 
             const duplicates = laputin.fileLibrary.getDuplicates();
             expect(duplicates).to.eql({
-                '64f2c393': [carFile, duplicateCarFile],
+                '76dc0e4782275a1a878b3b6ec1abe382': [carFile, duplicateCarFile],
             });
 
             // Note that Laputin returns newly copied duplicate version of car.
