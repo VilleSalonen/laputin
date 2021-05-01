@@ -7,7 +7,6 @@ import commandLineArgs = require('command-line-args');
 import { Command } from './command';
 import { IHasher } from '../ihasher';
 import { QuickMD5Hasher } from '../quickmd5hasher';
-import { XxhashHasher } from '../xxhashhasher';
 
 export class HashCommand implements Command {
     public optionDefinitions: commandLineArgs.OptionDefinition[] = [
@@ -17,10 +16,7 @@ export class HashCommand implements Command {
 
     public async execute(hashOptions: any): Promise<void> {
         let hasher: IHasher = new QuickMD5Hasher();
-        if (hashOptions.hasher && hashOptions.hasher === 'accurate') {
-            hasher = new XxhashHasher();
-        }
-
+        
         if (!fs.existsSync(hashOptions.filePath)) {
             winston.error('File not found.');
             process.exit(-1);

@@ -6,7 +6,6 @@ import { QuickMD5Hasher } from './quickmd5hasher';
 import { FileLibrary } from './filelibrary';
 import { VLCOpener } from './vlcopener';
 import { Screenshotter } from './screenshotter';
-import { XxhashHasher } from './xxhashhasher';
 
 export function compose(
     libraryPath: string,
@@ -68,7 +67,5 @@ export function composeForTests(
 }
 
 function composeHasher(configuration: LaputinConfiguration): IHasher {
-    return configuration.identification === 'quick'
-        ? new QuickMD5Hasher()
-        : new XxhashHasher();
+    return new QuickMD5Hasher();
 }

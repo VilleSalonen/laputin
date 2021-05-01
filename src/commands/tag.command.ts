@@ -11,7 +11,6 @@ import path = require('path');
 import { LaputinConfiguration } from '../laputinconfiguration';
 import { IHasher } from '../ihasher';
 import { QuickMD5Hasher } from '../quickmd5hasher';
-import { XxhashHasher } from '../xxhashhasher';
 
 export class TagCommand implements Command {
     public optionDefinitions: commandLineArgs.OptionDefinition[] = [
@@ -42,12 +41,6 @@ export class TagCommand implements Command {
             : new LaputinConfiguration(3200, 'quick', null, []);
 
         let hasher: IHasher = new QuickMD5Hasher();
-        if (
-            configuration.identification &&
-            configuration.identification === 'accurate'
-        ) {
-            hasher = new XxhashHasher();
-        }
 
         const fileStats = await stat(options.fileName);
         const hash = await hasher.hash(options.fileName, fileStats);

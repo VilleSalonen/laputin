@@ -20,8 +20,7 @@
     "sqlite3": "5.0.0",
     "walk": "^2.3.14",
     "watch": "~1.0.1",
-    "winston": "^3.3.3",
-    "xxhash": "^0.3.0"
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.29",
@@ -51,7 +50,7 @@
     "build": "npm run build-server && npm run build-client",
     "build-client": "cd client && npx ng build --prod",
     "prebuild-exe": "npm run build",
-    "build-exe": "rimraf deploy-exe && mkdir deploy-exe && pkg package.json --targets node12-win-x64 --out-path deploy-exe && npx copyfiles --flat node_modules/xxhash/build/Release/hash.node deploy-exe/",
+    "build-exe": "rimraf deploy-exe && mkdir deploy-exe && pkg package.json --targets node12-win-x64 --out-path deploy-exe",
     "prebuild-server": "rimraf deploy",
     "build-server": "tsc -p tsconfig.json --outDir deploy",
     "pretest-server": "npm run lint && rimraf deploy-tests && mkdir deploy-tests",
