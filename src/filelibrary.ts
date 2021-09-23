@@ -142,7 +142,7 @@ export class FileLibrary extends events.EventEmitter {
     ): Promise<void> {
         const filePath = path.normalize(path.join(root, walkStat.name));
         try {
-        await this.addFileFromPath(filePath, walkStat, performFullCheck);
+            await this.addFileFromPath(filePath, walkStat, performFullCheck);
         }
         catch (e) {
             winston.log(
