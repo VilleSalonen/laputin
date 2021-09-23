@@ -104,12 +104,28 @@ export class FileLibrary extends events.EventEmitter {
                 // Thus each file is hashed and emitted just once even if both
                 // events will be emitted.
                 monitor.on('created', async (createdPath: string) => {
-                    const stats = await stat(createdPath);
-                    this.addFileFromPath(createdPath, stats, false);
+                    try {
+                        const stats = await stat(createdPath);
+                        this.addFileFromPath(createdPath, stats, false);
+                    }
+                    catch (e) {
+                        winston.log(
+                            'debug',
+                            'Error with created file: ' + e
+                        );
+                    }
                 });
                 monitor.on('changed', async (changedPath: string) => {
-                    const stats = await stat(changedPath);
-                    this.addFileFromPath(changedPath, stats, false);
+                    try {
+                        const stats = await stat(changedPath);
+                        this.addFileFromPath(changedPath, stats, false);
+                    }
+                    catch (e) {
+                        winston.log(
+                            'debug',
+                            'Error with changed file: ' + e
+                        );
+                    }
                 });
                 monitor.on('removed', (removedPath: string) =>
                     this.removeFileFromPath(removedPath)
@@ -125,7 +141,15 @@ export class FileLibrary extends events.EventEmitter {
         performFullCheck: boolean
     ): Promise<void> {
         const filePath = path.normalize(path.join(root, walkStat.name));
+        try {
         await this.addFileFromPath(filePath, walkStat, performFullCheck);
+        }
+        catch (e) {
+            winston.log(
+                'debug',
+                'Error while process file: ' + e
+            );
+        }
         next();
     }
 
