@@ -1,10 +1,10 @@
 <h1 mat-dialog-title>Migrate all metadata from file to file</h1>
 <div mat-dialog-content>
-    <p><strong>Source file: </strong> {{ data.file.name }}</p>
+    <p><strong>Source file: </strong> {{ data.file.path }}</p>
     <p>
         <strong>Target file: </strong>
         <ng-container *ngIf="selectedFile">
-            {{ selectedFile.name }}
+            {{ selectedFile.path }}
         </ng-container>
     </p>
 
