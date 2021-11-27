@@ -24,6 +24,11 @@ export function getLibraryPath(givenLibraryPath?: string): string {
 }
 
 (async function () {
+    process.on('unhandledRejection', (reason, p) => {
+        console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+        // application specific logging, throwing an error, or other logic here
+    });
+
     winston.add(new winston.transports.Console({
         format: format.combine(
             format.colorize(),
