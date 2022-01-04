@@ -44,6 +44,12 @@ export class LaputinService {
                     );
                 }
 
+                if (query.sort === FileQuerySort.FileName) {
+                    files.sort((a: File, b: File) =>
+                        a.name < b.name ? -1 : 1
+                    );
+                }
+
                 if (query.sort === FileQuerySort.Duration) {
                     files.sort((a: File, b: File) => {
                         if (a.metadata.duration && !b.metadata.duration) {
