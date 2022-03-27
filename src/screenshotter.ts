@@ -51,6 +51,14 @@ export class Screenshotter {
         );
     }
 
+    public async setScreenshot(file: File, path: string): Promise<void> {
+        const thumbPath = this.getThumbPath(file);
+
+        fs.copyFileSync(path, thumbPath);
+        const command = `ffmpeg -y -i "${thumbPath}" -vf scale=800:-1 "${this.getThumbSmallPath(file)}"`;
+        child_process.execSync(command, options);
+    }
+
     public async screenshot(file: File, timeInSeconds: number): Promise<void> {
         this.initialize();
 
