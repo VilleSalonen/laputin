@@ -17,6 +17,7 @@ export class TagCommand implements Command {
         { name: 'libraryPath', type: String },
         { name: 'fileName', type: String },
         { name: 'tag', type: String, multiple: true },
+        { name: 'tags', type: String },
         { name: 'tagsFileName', type: String },
     ];
 
@@ -56,6 +57,8 @@ export class TagCommand implements Command {
             const metadata = fs.readFileSync(options.tagsFileName, 'utf8').trim();
             const metadataObject = JSON.parse(metadata);
             tagNames = metadataObject.tags;
+        } else if (options.tags) {
+            tagNames = (<string>options.tags).split(", ");
         } else {
             tagNames = [...(options.tag || [])];
         }
