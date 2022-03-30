@@ -16,6 +16,30 @@ import { TagCommand } from './commands/tag.command';
 import { MetadataCommand } from './commands/metadata.command';
 import { MergeTagsCommand } from './commands/merge-tags.command';
 import { SetScreenshotCommand } from './commands/set-screenshot.command';
+import { UntagCommand } from './commands/untag.command';
+import path = require('path');
+import fs = require('fs');
+
+export function getLibraryPathByFile(givenFilePath?: string): string {
+    var libraryPath = '';
+    var libraryPathCandidate = givenFilePath;
+    do {
+        var parentDirectory = path.dirname(libraryPathCandidate);
+        if (parentDirectory === libraryPathCandidate) {
+            throw new Error("Could not find library path based on file path.");
+        }
+
+        const foo = path.join(parentDirectory, '.laputin.db');
+        if (fs.existsSync(foo)) {
+            libraryPath = parentDirectory;
+            break;
+        }
+
+        libraryPathCandidate = parentDirectory;
+    } while (libraryPath === '');
+
+    return getLibraryPath(libraryPath);
+}
 
 export function getLibraryPath(givenLibraryPath?: string): string {
     const libraryPath = givenLibraryPath || process.cwd();
@@ -86,6 +110,7 @@ export function getLibraryPath(givenLibraryPath?: string): string {
         hash: new HashCommand(),
         query: new QueryCommand(),
         tag: new TagCommand(),
+        untag: new UntagCommand(),
         metadata: new MetadataCommand(),
         'detect-scenes': new DetectScenesCommand(),
         'create-proxies': new CreateProxiesCommand(),
