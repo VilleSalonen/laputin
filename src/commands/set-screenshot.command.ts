@@ -5,17 +5,14 @@ const stat = promisify(fs.stat);
 import commandLineArgs = require('command-line-args');
 
 import { Command } from './command';
-import { getLibraryPath } from '..';
+import { getLibraryPathByFile } from '..';
 import { Library } from '../library';
-import path = require('path');
-import { LaputinConfiguration } from '../laputinconfiguration';
 import { IHasher } from '../ihasher';
 import { QuickMD5Hasher } from '../quickmd5hasher';
 import { Screenshotter } from '../screenshotter';
 
 export class SetScreenshotCommand implements Command {
     public optionDefinitions: commandLineArgs.OptionDefinition[] = [
-        { name: 'libraryPath', type: String },
         { name: 'fileName', type: String },
         { name: 'screenshotPath', type: String }
     ];
@@ -39,15 +36,8 @@ export class SetScreenshotCommand implements Command {
             );
         }
 
-        const libraryPath = getLibraryPath(options.libraryPath);
+        const libraryPath = getLibraryPathByFile(options.fileName);
         const library = new Library(libraryPath);
-
-        const configFilePath = path.join(options.libraryPath, '.laputin.json');
-        const configuration: LaputinConfiguration = fs.existsSync(
-            configFilePath
-        )
-            ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-            : new LaputinConfiguration(3200, 'quick', null, []);
 
         const hasher: IHasher = new QuickMD5Hasher();
 
