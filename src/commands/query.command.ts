@@ -45,7 +45,7 @@ export class QueryCommand implements Command {
             andTagNames.forEach((tagName: string) => {
                 const foundTag = allTags.find(tag => tag.name === tagName);
                 if (!foundTag) {
-                    winston.error(`Could not find tag with name ${tagName}.`);
+                    throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
                     andTags.push(foundTag);
                 }
@@ -57,7 +57,7 @@ export class QueryCommand implements Command {
             options.or.forEach((tagName: string) => {
                 const foundTag = allTags.find(tag => tag.name === tagName);
                 if (!foundTag) {
-                    winston.error(`Could not find tag with name ${tagName}.`);
+                    throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
                     orTags.push(foundTag);
                 }
@@ -69,7 +69,7 @@ export class QueryCommand implements Command {
             options.not.forEach((tagName: string) => {
                 const foundTag = allTags.find(tag => tag.name === tagName);
                 if (!foundTag) {
-                    winston.error(`Could not find tag with name ${tagName}.`);
+                    throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
                     notTags.push(foundTag);
                 }
