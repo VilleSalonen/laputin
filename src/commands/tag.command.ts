@@ -5,7 +5,7 @@ const stat = promisify(fs.stat);
 import commandLineArgs = require('command-line-args');
 
 import { Command } from './command';
-import { getLibraryPath } from '..';
+import { getLibraryPathByFile } from '..';
 import { Library } from '../library';
 import path = require('path');
 import { LaputinConfiguration } from '../laputinconfiguration';
@@ -14,7 +14,6 @@ import { QuickMD5Hasher } from '../quickmd5hasher';
 
 export class TagCommand implements Command {
     public optionDefinitions: commandLineArgs.OptionDefinition[] = [
-        { name: 'libraryPath', type: String },
         { name: 'fileName', type: String },
         { name: 'tag', type: String, multiple: true },
         { name: 'tags', type: String },
@@ -31,7 +30,7 @@ export class TagCommand implements Command {
             );
         }
 
-        const libraryPath = getLibraryPath(options.libraryPath);
+        const libraryPath = getLibraryPathByFile(options.fileName);
         const library = new Library(libraryPath);
 
         const configFilePath = path.join(options.libraryPath, '.laputin.json');

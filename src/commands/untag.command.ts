@@ -12,7 +12,6 @@ import { QuickMD5Hasher } from '../quickmd5hasher';
 
 export class UntagCommand implements Command {
     public optionDefinitions: commandLineArgs.OptionDefinition[] = [
-        { name: 'libraryPath', type: String },
         { name: 'fileName', type: String },
         { name: 'tag', type: String, multiple: true },
         { name: 'tags', type: String },
