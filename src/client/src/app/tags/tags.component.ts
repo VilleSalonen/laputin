@@ -9,7 +9,7 @@ import {
 import { Tag } from './../models/tag';
 import { LaputinService } from './../laputin.service';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { shareReplay, map } from 'rxjs/operators';
+import { shareReplay, map, tap } from 'rxjs/operators';
 
 @Component({
     styleUrls: ['./tags.component.scss'],
@@ -37,15 +37,22 @@ export class TagsComponent implements AfterViewInit {
     constructor(private _service: LaputinService) {
         this.tags$ = this._service.getTags().pipe(shareReplay(1));
 
+        const fromLocalStorage = localStorage.getItem('tagsQuery');
+        this.searchTerm.next(fromLocalStorage);
+        this.term = fromLocalStorage;
+
         this.filteredTags$ = combineLatest(
             this.tags$,
             this.searchTerm.asObservable()
         ).pipe(
+            tap(([_, searchTerm]: [Tag[], string]) =>
+                localStorage.setItem('tagsQuery', searchTerm)
+            ),
             map(([tags, searchTerm]: [Tag[], string]) =>
                 tags.filter(
                     tag => tag.name.toUpperCase().indexOf(searchTerm) >= 0
                 )
-            )
+            ),
         );
     }
 
