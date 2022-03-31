@@ -7,8 +7,6 @@ import commandLineArgs = require('command-line-args');
 import { Command } from './command';
 import { getLibraryPathByFile } from '..';
 import { Library } from '../library';
-import path = require('path');
-import { LaputinConfiguration } from '../laputinconfiguration';
 import { IHasher } from '../ihasher';
 import { QuickMD5Hasher } from '../quickmd5hasher';
 
@@ -32,13 +30,6 @@ export class TagCommand implements Command {
 
         const libraryPath = getLibraryPathByFile(options.fileName);
         const library = new Library(libraryPath);
-
-        const configFilePath = path.join(options.libraryPath, '.laputin.json');
-        const configuration: LaputinConfiguration = fs.existsSync(
-            configFilePath
-        )
-            ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-            : new LaputinConfiguration(3200, 'quick', null, []);
 
         const hasher: IHasher = new QuickMD5Hasher();
 
