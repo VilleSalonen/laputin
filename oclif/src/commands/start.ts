@@ -44,9 +44,7 @@ export default class Start extends Command {
         const laputin = compose(libraryPath, configuration);
 
         var app = express();
-        app.use(express.static('C:\\Github\\laputin\\oclif\\client\\dist'));
-
-        // laputin.initializeRoutes(app);
+        laputin.initializeRoutes(app);
         // await laputin.loadFiles(flags.performFullCheck);
 
         // laputin.startMonitoring();

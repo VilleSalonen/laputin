@@ -33,12 +33,12 @@ export class Laputin {
     }
 
     public initializeRoutes(app: express.Express): void {
-        app = express();
-
         app.use(bodyParser.json({}));
 
-        const clientPath = path.join(__dirname, '../../client/dist');
-        console.log(`serving client from ${clientPath}`);
+        const clientPath = path.join(
+            __dirname,
+            '..\\..\\..\\src\\client\\dist'
+        );
         app.use(express.static(clientPath));
         app.use(
             '/node_modules',
