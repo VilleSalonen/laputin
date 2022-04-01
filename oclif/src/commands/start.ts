@@ -2,6 +2,8 @@ import { Command, Flags } from '@oclif/core';
 import express = require('express');
 import fs = require('fs');
 import path = require('path');
+import { format } from 'winston';
+import winston = require('winston');
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
 import { LaputinConfiguration } from '../laputin/laputinconfiguration';
@@ -12,25 +14,29 @@ export default class Start extends Command {
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
     static flags = {
-        // flag with a value (-n, --name=VALUE)
-        name: Flags.string({ char: 'n', description: 'name to print' }),
-        // flag with no value (-f, --force)
-        force: Flags.boolean({ char: 'f' }),
-
         library: Flags.string({
             char: 'l',
             description: 'Laputin library path',
             required: true,
         }),
-        port: Flags.string({ description: 'API port', default: '3000' }),
         performFullCheck: Flags.boolean({ default: false }),
-        skipBrowserOpen: Flags.boolean({ default: false }),
+        verbose: Flags.boolean({ char: 'v', default: false }),
     };
 
     static args = [{ name: 'file' }];
 
     public async run(): Promise<void> {
         const { args, flags } = await this.parse(Start);
+
+        winston.add(
+            new winston.transports.Console({
+                format: format.combine(format.colorize(), format.simple()),
+            })
+        );
+
+        if (flags.verbose) {
+            winston.level = 'verbose';
+        }
 
         const libraryPath = getLibraryPath(flags.library);
 
@@ -45,24 +51,18 @@ export default class Start extends Command {
 
         var app = express();
         laputin.initializeRoutes(app);
-        // await laputin.loadFiles(flags.performFullCheck);
+        await laputin.loadFiles(flags.performFullCheck);
 
-        // laputin.startMonitoring();
-
-        this.log(`Library path: ${libraryPath}`);
-
-        if (!flags.skipBrowserOpen) {
-            // open(`http://localhost:${configuration.port}`);
-        }
+        laputin.startMonitoring();
 
         try {
             app.listen(configuration.port, () => {
-                console.log(
-                    `Laputin started at http://localhost:${configuration.port}`
+                winston.info(
+                    `Laputin in ${libraryPath} at http://localhost:${configuration.port}`
                 );
             });
         } catch (error) {
-            this.log('ERROR:', error);
+            winston.error('ERROR:', error);
         }
     }
 }
