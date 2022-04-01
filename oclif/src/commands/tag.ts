@@ -9,6 +9,29 @@ import { Library } from '../laputin/library';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { initializeWinston } from '../laputin/winston';
 
+/*const readPipe: () => Promise<string | undefined> = () => {
+    return new Promise((resolve) => {
+        const stdin = process.openStdin();
+        stdin.setEncoding('utf-8');
+
+        console.log(`tty=${stdin.isTTY}`);
+        if (stdin.isTTY) {
+            resolve('');
+            stdin.end();
+            return;
+        }
+
+        let data = '';
+        stdin.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        stdin.on('end', () => {
+            resolve(data);
+        });
+    });
+};*/
+
 export default class Tag extends Command {
     static description = 'describe the command here';
 
@@ -28,6 +51,10 @@ export default class Tag extends Command {
         const { args, flags } = await this.parse(Tag);
 
         initializeWinston(flags.verbose);
+
+        /*const stdin = await readPipe();
+        console.log('tty');
+        console.log(stdin);*/
 
         if (
             !fs.existsSync(flags.fileName) ||
