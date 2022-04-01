@@ -1,28 +1,116 @@
-import {Command, Flags} from '@oclif/core'
+import { Command, Flags } from '@oclif/core';
+import { getLibraryPath } from '../laputin/helpers';
+import { Library } from '../laputin/library';
+import { Tag } from '../laputin/tag';
+import { TagQuery } from '../laputin/tagquery.model';
+import { Query as QueryModel } from '../laputin/query.model';
+import { initializeWinston } from '../laputin/winston';
 
 export default class Query extends Command {
-  static description = 'describe the command here'
+    static description = 'describe the command here';
 
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-  ]
+    static examples = ['<%= config.bin %> <%= command.id %>'];
 
-  static flags = {
-    // flag with a value (-n, --name=VALUE)
-    name: Flags.string({char: 'n', description: 'name to print'}),
-    // flag with no value (-f, --force)
-    force: Flags.boolean({char: 'f'}),
-  }
+    static flags = {
+        library: Flags.string({
+            char: 'l',
+            description: 'Laputin library path',
+            required: true,
+        }),
+        fileName: Flags.string(),
+        hash: Flags.string(),
+        tag: Flags.string({ multiple: true }),
+        and: Flags.string({ multiple: true }),
+        or: Flags.string({ multiple: true }),
+        not: Flags.string({ multiple: true }),
+        tagged: Flags.boolean({ exclusive: ['untagged'] }),
+        untagged: Flags.boolean({ exclusive: ['tagged'] }),
+        json: Flags.boolean(),
+        pretty: Flags.boolean(),
+        verbose: Flags.boolean({ char: 'v', default: false }),
+    };
 
-  static args = [{name: 'file'}]
+    static args = [{ name: 'file' }];
 
-  public async run(): Promise<void> {
-    const {args, flags} = await this.parse(Query)
+    public async run(): Promise<void> {
+        const { args, flags } = await this.parse(Query);
 
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from C:\\Github\\laputin\\src\\oclif\\src\\commands\\query.ts`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
+        initializeWinston(flags.verbose);
+
+        const libraryPath = getLibraryPath(flags.library);
+        const library = new Library(libraryPath);
+
+        const allTags = await library.getTags(new TagQuery([], true));
+
+        const andTags: Tag[] = [];
+        const andTagNames: string[] = [
+            ...(flags.tag || []),
+            ...(flags.and || []),
+        ];
+        if (andTagNames) {
+            andTagNames.forEach((tagName: string) => {
+                const foundTag = allTags.find((tag) => tag.name === tagName);
+                if (!foundTag) {
+                    throw new Error(`Could not find tag with name ${tagName}.`);
+                } else {
+                    andTags.push(foundTag);
+                }
+            });
+        }
+
+        const orTags: Tag[] = [];
+        if (flags.or) {
+            flags.or.forEach((tagName: string) => {
+                const foundTag = allTags.find((tag) => tag.name === tagName);
+                if (!foundTag) {
+                    throw new Error(`Could not find tag with name ${tagName}.`);
+                } else {
+                    orTags.push(foundTag);
+                }
+            });
+        }
+
+        const notTags: Tag[] = [];
+        if (flags.not) {
+            flags.not.forEach((tagName: string) => {
+                const foundTag = allTags.find((tag) => tag.name === tagName);
+                if (!foundTag) {
+                    throw new Error(`Could not find tag with name ${tagName}.`);
+                } else {
+                    notTags.push(foundTag);
+                }
+            });
+        }
+
+        let status = '';
+        if (flags.tagged) {
+            status = 'tagged';
+        } else if (flags.untagged) {
+            status = 'untagged';
+        }
+
+        const query = new QueryModel(
+            flags.fileName || '',
+            status,
+            flags.hash || '',
+            andTags.map((tag) => tag.id).join(','),
+            orTags.map((tag) => tag.id).join(','),
+            notTags.map((tag) => tag.id).join(','),
+            false
+        );
+        const files = await library.getFiles(query);
+        if (flags.json) {
+            if (flags.pretty) {
+                files.forEach((file) => {
+                    console.log(file);
+                });
+            } else {
+                console.log(JSON.stringify(files));
+            }
+        } else {
+            files.forEach((file) => {
+                console.log(file.path);
+            });
+        }
     }
-  }
 }

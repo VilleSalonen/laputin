@@ -28,16 +28,6 @@ export default class Start extends Command {
     public async run(): Promise<void> {
         const { args, flags } = await this.parse(Start);
 
-        winston.add(
-            new winston.transports.Console({
-                format: format.combine(format.colorize(), format.simple()),
-            })
-        );
-
-        if (flags.verbose) {
-            winston.level = 'verbose';
-        }
-
         const libraryPath = getLibraryPath(flags.library);
 
         const configFilePath = path.join(flags.library, '.laputin.json');
