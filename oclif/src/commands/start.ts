@@ -7,6 +7,7 @@ import winston = require('winston');
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
 import { LaputinConfiguration } from '../laputin/laputinconfiguration';
+import { initializeWinston } from '../laputin/winston';
 
 export default class Start extends Command {
     static description = 'describe the command here';
@@ -27,6 +28,8 @@ export default class Start extends Command {
 
     public async run(): Promise<void> {
         const { args, flags } = await this.parse(Start);
+
+        initializeWinston(flags.verbose);
 
         const libraryPath = getLibraryPath(flags.library);
 
