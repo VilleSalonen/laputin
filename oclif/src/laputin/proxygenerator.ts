@@ -13,19 +13,19 @@ export class ProxyGenerator {
     ) {}
 
     public async generateMissingProxies() {
+        const proxyDirectory = this.configuration.proxyDirectory;
+        if (!proxyDirectory) {
+            throw new Error('Proxy directory configuration missing!');
+        }
+
         const files = await this.library.getFiles(
             new Query('', '', '', '', '', '', false)
         );
 
-        files.forEach(file => {
-            const proxyPath =
-                path.join(this.configuration.proxyDirectory, file.hash) +
-                '.mp4';
+        files.forEach((file) => {
+            const proxyPath = path.join(proxyDirectory, file.hash) + '.mp4';
             const incompleProxyPath =
-                path.join(
-                    this.configuration.proxyDirectory,
-                    'incomplete_' + file.hash
-                ) + '.mp4';
+                path.join(proxyDirectory, 'incomplete_' + file.hash) + '.mp4';
 
             const proxyExists = fs.existsSync(proxyPath);
 
@@ -39,12 +39,12 @@ export class ProxyGenerator {
                     incompleProxyPath +
                     '"';
 
-                console.log('generating proxy for ' + file.path);
+                console.log('Generating proxy for ' + file.path);
                 child_process.execSync(command);
 
                 fs.renameSync(incompleProxyPath, proxyPath);
 
-                console.log('proxy generated for ' + file.path);
+                console.log('Proxy generated for ' + file.path);
             }
         });
     }
