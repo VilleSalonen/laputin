@@ -50,6 +50,7 @@ import { MigrateFileDataDialogComponent } from './migrate-file-data-dialog/migra
 import { TimecodeItemComponent } from './timecode-item/timecode-item.component';
 import { TimecodeQueryModule } from './timecode-query-component/timecode-query.module';
 import { FileItemDetailsComponent } from './file-item-details/file-item-details.component';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -101,18 +102,25 @@ import { FileItemDetailsComponent } from './file-item-details/file-item-details.
         MatExpansionModule,
         MatTabsModule,
         FileSelectorModule,
-        RouterModule.forRoot([
-            { path: '', redirectTo: 'files', pathMatch: 'full' },
-            { path: 'files', component: FilesComponent },
-            { path: 'files/:hash', component: FileComponent },
-            { path: 'timecodes', component: TimecodesComponent },
-            { path: 'tags', component: TagsComponent },
-            { path: 'duplicates', component: DuplicatesComponent },
-        ], { relativeLinkResolution: 'legacy' }),
+        RouterModule.forRoot(
+            [
+                { path: '', redirectTo: 'files', pathMatch: 'full' },
+                { path: 'files', component: FilesComponent },
+                { path: 'files/:hash', component: FileComponent },
+                { path: 'timecodes', component: TimecodesComponent },
+                { path: 'tags', component: TagsComponent },
+                { path: 'duplicates', component: DuplicatesComponent },
+            ],
+            { relativeLinkResolution: 'legacy' }
+        ),
         VirtualScrollerModule,
         BrowserAnimationsModule,
     ],
-    providers: [LaputinService, PlayerService],
-    bootstrap: [AppComponent]
+    providers: [
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        LaputinService,
+        PlayerService,
+    ],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
