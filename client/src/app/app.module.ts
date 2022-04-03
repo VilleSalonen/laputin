@@ -74,11 +74,6 @@ import { FileItemDetailsComponent } from './file-item-details/file-item-details.
         SceneComponent,
         MigrateFileDataDialogComponent,
     ],
-    entryComponents: [
-        TagScreenshotDialogComponent,
-        TimecodeEditDialogComponent,
-        MigrateFileDataDialogComponent,
-    ],
     imports: [
         BrowserModule,
         HttpClientModule,
@@ -106,21 +101,18 @@ import { FileItemDetailsComponent } from './file-item-details/file-item-details.
         MatExpansionModule,
         MatTabsModule,
         FileSelectorModule,
-        RouterModule.forRoot(
-            [
-                { path: '', redirectTo: 'files', pathMatch: 'full' },
-                { path: 'files', component: FilesComponent },
-                { path: 'files/:hash', component: FileComponent },
-                { path: 'timecodes', component: TimecodesComponent },
-                { path: 'tags', component: TagsComponent },
-                { path: 'duplicates', component: DuplicatesComponent },
-            ],
-            { relativeLinkResolution: 'legacy' }
-        ),
+        RouterModule.forRoot([
+            { path: '', redirectTo: 'files', pathMatch: 'full' },
+            { path: 'files', component: FilesComponent },
+            { path: 'files/:hash', component: FileComponent },
+            { path: 'timecodes', component: TimecodesComponent },
+            { path: 'tags', component: TagsComponent },
+            { path: 'duplicates', component: DuplicatesComponent },
+        ], { relativeLinkResolution: 'legacy' }),
         VirtualScrollerModule,
         BrowserAnimationsModule,
     ],
     providers: [LaputinService, PlayerService],
-    bootstrap: [AppComponent],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
