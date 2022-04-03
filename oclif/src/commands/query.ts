@@ -17,7 +17,7 @@ export default class Query extends Command {
             description: 'Laputin library path',
             required: true,
         }),
-        fileName: Flags.string(),
+        path: Flags.string({ char: 'p' }),
         hash: Flags.string(),
         tag: Flags.string({ multiple: true }),
         and: Flags.string({ multiple: true }),
@@ -30,7 +30,7 @@ export default class Query extends Command {
         verbose: Flags.boolean({ char: 'v', default: false }),
     };
 
-    static args = [{ name: 'file' }];
+    static args = [];
 
     public async run(): Promise<void> {
         const { args, flags } = await this.parse(Query);
@@ -90,7 +90,7 @@ export default class Query extends Command {
         }
 
         const query = new QueryModel(
-            flags.fileName || '',
+            flags.path || '',
             status,
             flags.hash || '',
             andTags.map((tag) => tag.id).join(','),
