@@ -55,7 +55,7 @@
 .grid-item {
     $height: 300px;
     height: $height;
-    width: $height * (16 / 9);
+    width: $height * calc(16 / 9);
 
     display: flex;
 }

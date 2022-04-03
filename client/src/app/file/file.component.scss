@@ -133,7 +133,7 @@
     $width: 500px - 24px - 10px;
 
     width: $width;
-    height: $width / (16 / 9);
+    height: calc($width / calc(16 / 9));
     display: flex;
 }
 
