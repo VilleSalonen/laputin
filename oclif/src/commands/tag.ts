@@ -3,18 +3,18 @@ import fs = require('fs');
 import { promisify } from 'util';
 import winston = require('winston');
 const stat = promisify(fs.stat);
+const { EOL } = require('os');
 import { getLibraryPathByFile } from '../laputin/helpers';
 import { IHasher } from '../laputin/ihasher';
 import { Library } from '../laputin/library';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { initializeWinston } from '../laputin/winston';
 
-/*const readPipe: () => Promise<string | undefined> = () => {
+const readPipe: () => Promise<string | undefined> = () => {
     return new Promise((resolve) => {
         const stdin = process.openStdin();
         stdin.setEncoding('utf-8');
 
-        console.log(`tty=${stdin.isTTY}`);
         if (stdin.isTTY) {
             resolve('');
             stdin.end();
@@ -30,7 +30,7 @@ import { initializeWinston } from '../laputin/winston';
             resolve(data);
         });
     });
-};*/
+};
 
 export default class Tag extends Command {
     static description = 'describe the command here';
@@ -38,7 +38,8 @@ export default class Tag extends Command {
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
     static flags = {
-        fileName: Flags.string({ required: true }),
+        file: Flags.string({ multiple: true, exclusive: ['stdinFile'] }),
+        stdinFile: Flags.boolean({ exclusive: ['file'] }),
         tag: Flags.string({ multiple: true, exclusive: ['tags'] }),
         tags: Flags.string({ exclusive: ['tag'] }),
         tagsFileName: Flags.string(),
@@ -52,29 +53,32 @@ export default class Tag extends Command {
 
         initializeWinston(flags.verbose);
 
-        /*const stdin = await readPipe();
-        console.log('tty');
-        console.log(stdin);*/
+        var files = [];
+        if (flags.stdinFile) {
+            const stdin = await readPipe();
+            if (!stdin) {
+                throw new Error('No files provided via stdin');
+            }
 
-        if (
-            !fs.existsSync(flags.fileName) ||
-            !fs.statSync(flags.fileName).isFile()
-        ) {
-            throw new Error(`File ${flags.fileName} is not a valid file.`);
+            files = stdin.split(EOL).filter((file) => file);
+        } else {
+            if (!flags.file) {
+                throw new Error('No files provided');
+            }
+
+            files = flags.file;
         }
 
-        const libraryPath = getLibraryPathByFile(flags.fileName);
+        for (const file of files) {
+            if (file && (!fs.existsSync(file) || !fs.statSync(file).isFile())) {
+                throw new Error(`File ${file} is not a valid file.`);
+            }
+        }
+
+        const libraryPath = getLibraryPathByFile(files[0]);
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();
-
-        const fileStats = await stat(flags.fileName);
-        const hash = await hasher.hash(flags.fileName, fileStats);
-        const file = await library.getFile(hash);
-        if (!file) {
-            throw new Error(`Could not find file with hash ${hash}!`);
-        }
-
         const allTags = await library.getTags({
             selectedTags: [],
             unassociated: true,
@@ -112,12 +116,21 @@ export default class Tag extends Command {
 
         const tagsForAdding = [...newTags, ...existingTags];
         for (const tag of tagsForAdding) {
-            const added = await library.createNewLinkBetweenTagAndFile(
-                tag,
-                file.hash
-            );
-            if (added) {
-                winston.info(`Added: ${tag.name} to ${file.name}`);
+            for (const file of files) {
+                const fileStats = await stat(file);
+                const hash = await hasher.hash(file, fileStats);
+                const libraryFile = await library.getFile(hash);
+                if (!libraryFile) {
+                    throw new Error(`Could not find file with hash ${hash}!`);
+                }
+
+                const added = await library.createNewLinkBetweenTagAndFile(
+                    tag,
+                    libraryFile.hash
+                );
+                if (added) {
+                    winston.info(`Added: ${tag.name} to ${libraryFile.name}`);
+                }
             }
         }
     }
