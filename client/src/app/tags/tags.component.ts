@@ -3,7 +3,7 @@ import {
     Injectable,
     ViewChild,
     ElementRef,
-    AfterViewInit
+    AfterViewInit,
 } from '@angular/core';
 
 import { Tag } from './../models/tag';
@@ -13,7 +13,7 @@ import { shareReplay, map, tap } from 'rxjs/operators';
 
 @Component({
     styleUrls: ['./tags.component.scss'],
-    templateUrl: './tags.component.html'
+    templateUrl: './tags.component.html',
 })
 @Injectable()
 export class TagsComponent implements AfterViewInit {
@@ -38,8 +38,10 @@ export class TagsComponent implements AfterViewInit {
         this.tags$ = this._service.getTags().pipe(shareReplay(1));
 
         const fromLocalStorage = localStorage.getItem('tagsQuery');
-        this.searchTerm.next(fromLocalStorage);
-        this.term = fromLocalStorage;
+        if (fromLocalStorage) {
+            this.searchTerm.next(fromLocalStorage);
+            this.term = fromLocalStorage;
+        }
 
         this.filteredTags$ = combineLatest(
             this.tags$,
@@ -50,9 +52,9 @@ export class TagsComponent implements AfterViewInit {
             ),
             map(([tags, searchTerm]: [Tag[], string]) =>
                 tags.filter(
-                    tag => tag.name.toUpperCase().indexOf(searchTerm) >= 0
+                    (tag) => tag.name.toUpperCase().indexOf(searchTerm) >= 0
                 )
-            ),
+            )
         );
     }
 
@@ -74,7 +76,7 @@ export class TagsComponent implements AfterViewInit {
 
         this.tagStyle = {
             width: Math.floor(totalWidth / columns) + 'px',
-            height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+            height: Math.floor(totalWidth / columns / aspectRatio) + 'px',
         };
     }
 
