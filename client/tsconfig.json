@@ -8,7 +8,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "downlevelIteration": true,
-    "target": "es2022",
+    "target": "es2021",
     "typeRoots": [
       "node_modules/@types"
     ],
