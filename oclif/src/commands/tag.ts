@@ -17,13 +17,15 @@ const readPipe: () => Promise<string | undefined> = () => {
 
         if (stdin.isTTY) {
             resolve('');
-            stdin.end();
-            return;
         }
 
         let data = '';
         stdin.on('data', (chunk) => {
             data += chunk;
+        });
+
+        stdin.on('error', (error) => {
+            console.log('Error when reading stdin: ', error);
         });
 
         stdin.on('end', () => {
@@ -48,6 +50,15 @@ export default class Tag extends Command {
 
     static args = [{ name: 'file' }];
 
+    private stdin: string | undefined;
+
+    async init(): Promise<void> {
+        // stdin must be read in init
+        if (!process.stdin.isTTY) {
+            this.stdin = await readPipe();
+        }
+    }
+
     public async run(): Promise<void> {
         const { args, flags } = await this.parse(Tag);
 
@@ -55,7 +66,7 @@ export default class Tag extends Command {
 
         var files = [];
         if (flags.stdinFile) {
-            const stdin = await readPipe();
+            const stdin = this.stdin;
             if (!stdin) {
                 throw new Error('No files provided via stdin');
             }
