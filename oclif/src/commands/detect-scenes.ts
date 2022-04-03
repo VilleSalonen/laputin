@@ -8,7 +8,7 @@ import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { SceneDetector } from '../laputin/scenedetector';
 
 export default class DetectScenes extends Command {
-    static description = 'describe the command here';
+    static description = 'Detects individual scenes within video files using PySceneDetect';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
