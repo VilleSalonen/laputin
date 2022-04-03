@@ -2,7 +2,6 @@ export * from './autocompletetype';
 export * from './duplicate';
 export * from './file';
 export * from './filechange';
-export * from './filequery.spec';
 export * from './filequery';
 export * from './tag-status';
 export * from './tag';
