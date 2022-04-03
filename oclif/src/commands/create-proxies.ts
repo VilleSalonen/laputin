@@ -8,7 +8,7 @@ import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { ProxyGenerator } from '../laputin/proxygenerator';
 
 export default class CreateProxies extends Command {
-    static description = 'describe the command here';
+    static description = 'Creates lower quality H.264 proxy files for videos using incompatible codecs such as H.265.';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
