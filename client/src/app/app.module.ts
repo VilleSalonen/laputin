@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -73,12 +72,12 @@ import { FileItemDetailsComponent } from './file-item-details/file-item-details.
         ImageFileComponent,
         TimecodeMobileReadonlyComponent,
         SceneComponent,
-        MigrateFileDataDialogComponent
+        MigrateFileDataDialogComponent,
     ],
     entryComponents: [
         TagScreenshotDialogComponent,
         TimecodeEditDialogComponent,
-        MigrateFileDataDialogComponent
+        MigrateFileDataDialogComponent,
     ],
     imports: [
         BrowserModule,
@@ -107,22 +106,21 @@ import { FileItemDetailsComponent } from './file-item-details/file-item-details.
         MatExpansionModule,
         MatTabsModule,
         FileSelectorModule,
-        RouterModule.forRoot([
-            { path: '', redirectTo: 'files', pathMatch: 'full' },
-            { path: 'files', component: FilesComponent },
-            { path: 'files/:hash', component: FileComponent },
-            { path: 'timecodes', component: TimecodesComponent },
-            { path: 'tags', component: TagsComponent },
-            { path: 'duplicates', component: DuplicatesComponent }
-        ]),
+        RouterModule.forRoot(
+            [
+                { path: '', redirectTo: 'files', pathMatch: 'full' },
+                { path: 'files', component: FilesComponent },
+                { path: 'files/:hash', component: FileComponent },
+                { path: 'timecodes', component: TimecodesComponent },
+                { path: 'tags', component: TagsComponent },
+                { path: 'duplicates', component: DuplicatesComponent },
+            ],
+            { relativeLinkResolution: 'legacy' }
+        ),
         VirtualScrollerModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
     ],
-    providers: [
-        { provide: LocationStrategy, useClass: HashLocationStrategy },
-        LaputinService,
-        PlayerService
-    ],
-    bootstrap: [AppComponent]
+    providers: [LaputinService, PlayerService],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
