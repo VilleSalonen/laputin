@@ -13,7 +13,7 @@ import { LaputinService } from './../laputin.service';
 import { AutocompleteType } from '../models/autocompletetype';
 import { PlayerService } from '../player.service';
 import { TimecodeEditDialogComponent } from '../timecode-edit-dialog/timecode-edit-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-timecode',

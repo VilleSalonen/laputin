@@ -20,7 +20,8 @@ import {
 } from './../models';
 import { LaputinService } from './../laputin.service';
 import { PlayerService, Progress } from '../player.service';
-import { MatSliderChange, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSliderChange } from '@angular/material/slider';
 import { TagScreenshotDialogComponent } from '../tag-screenshot-dialog/tag-screenshot-dialog.component';
 import { fromEvent, merge, of, Observable } from 'rxjs';
 import {
