@@ -355,7 +355,7 @@ export class Laputin {
 
     private _createMediaRoutes(): express.Express {
         let previous: express.Express | undefined = undefined;
-        const components = this._libraryPath.split('\\');
+        const components = this._libraryPath.split(path.sep);
         for (let i = components.length; i > 0; i--) {
             const currentPath = components[i - 1];
             const current: express.Express = express();
