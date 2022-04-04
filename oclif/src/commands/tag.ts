@@ -126,15 +126,15 @@ export default class Tag extends Command {
         }
 
         const tagsForAdding = [...newTags, ...existingTags];
-        for (const tag of tagsForAdding) {
-            for (const file of files) {
-                const fileStats = await stat(file);
-                const hash = await hasher.hash(file, fileStats);
-                const libraryFile = await library.getFile(hash);
-                if (!libraryFile) {
-                    throw new Error(`Could not find file with hash ${hash}!`);
-                }
+        for (const file of files) {
+            const fileStats = await stat(file);
+            const hash = await hasher.hash(file, fileStats);
+            const libraryFile = await library.getFile(hash);
+            if (!libraryFile) {
+                throw new Error(`Could not find file with hash ${hash}!`);
+            }
 
+            for (const tag of tagsForAdding) {
                 const added = await library.createNewLinkBetweenTagAndFile(
                     tag,
                     libraryFile.hash
