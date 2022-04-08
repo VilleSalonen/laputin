@@ -1,0 +1,79 @@
+import { Command, Flags } from '@oclif/core';
+import { getLibraryPath } from '../laputin/helpers';
+import { Library } from '../laputin/library';
+import { TagQuery } from '../laputin/tagquery.model';
+import { initializeWinston } from '../laputin/winston';
+
+export default class MergeTags extends Command {
+    static description = 'Merge tags';
+
+    static examples = ['<%= config.bin %> <%= command.id %>'];
+
+    static flags = {
+        library: Flags.string({
+            char: 'l',
+            description: 'Laputin library path',
+            required: true,
+        }),
+        source: Flags.string({ multiple: true, required: true }),
+        target: Flags.string({ multiple: false, required: true }),
+        verbose: Flags.boolean(),
+    };
+
+    static args = [{ name: 'file' }];
+
+    public async run(): Promise<void> {
+        const { args, flags } = await this.parse(MergeTags);
+
+        initializeWinston(flags.verbose);
+
+        const libraryPath = getLibraryPath(flags.library);
+        const library = new Library(libraryPath);
+
+        const sourceTagNames: string[] = flags.source || [];
+
+        if (
+            sourceTagNames
+                .map((t) => t.toLocaleUpperCase())
+                .includes(flags.target.toLocaleUpperCase())
+        ) {
+            return Promise.reject<void>(
+                `Source and target tags are the same!\r\nSource: ${sourceTagNames}\r\nTarget: ${flags.target}`
+            );
+        }
+
+        const allTags = await library.getTags(new TagQuery([], true));
+
+        for (const sourceTagName of sourceTagNames) {
+            const sourceTagNameUpperCase = sourceTagName.toLocaleUpperCase();
+            const sourceTag = allTags.find(
+                (t) => t.name.toLocaleUpperCase() === sourceTagNameUpperCase
+            );
+            if (!sourceTag) {
+                return Promise.reject<void>(
+                    `Could not find source tag with name ${flags.source}!`
+                );
+            }
+            const targetTagNameUpperCase = flags.target.toLocaleUpperCase();
+            const targetTag = allTags.find(
+                (t) => t.name.toLocaleUpperCase() === targetTagNameUpperCase
+            );
+            if (!targetTag) {
+                return Promise.reject<void>(
+                    `Could not find target tag with name ${flags.target}!`
+                );
+            }
+            if (sourceTag.associationCount === 0) {
+                return Promise.reject<void>(
+                    `No files are associated with source tag ${sourceTag.name}!`
+                );
+            }
+            console.log(
+                `Merging tag ${sourceTag.name} to ${targetTag.name}...`
+            );
+
+            await library.mergeTags(sourceTag.id, targetTag.id);
+            await library.deleteTag(sourceTag.id);
+        }
+    }
+}
