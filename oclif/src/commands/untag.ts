@@ -1,17 +1,15 @@
 import { Command, Flags } from '@oclif/core';
+import { EOL } from 'os';
 import fs = require('fs');
-import { promisify } from 'util';
-import winston = require('winston');
-const stat = promisify(fs.stat);
-const { EOL } = require('os');
-import { getLibraryPathByFile } from '../laputin/helpers';
-import { IHasher } from '../laputin/ihasher';
-import { Library } from '../laputin/library';
-import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { readPipe } from '../laputin/read-pipe';
 import { initializeWinston } from '../laputin/winston';
+import { getLibraryPathByFile } from '../laputin/helpers';
+import { Library } from '../laputin/library';
+import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
+import { IHasher } from '../laputin/ihasher';
+import winston = require('winston');
 
-export default class Tag extends Command {
+export default class Untag extends Command {
     static description = 'describe the command here';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
@@ -37,7 +35,7 @@ export default class Tag extends Command {
     }
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(Tag);
+        const { args, flags } = await this.parse(Untag);
 
         initializeWinston(flags.verbose);
 
@@ -67,6 +65,7 @@ export default class Tag extends Command {
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();
+
         const allTags = await library.getTags({
             selectedTags: [],
             unassociated: true,
@@ -88,37 +87,21 @@ export default class Tag extends Command {
         const existingTags = allTags.filter((t) =>
             tagNamesLower.includes(t.name.toLocaleLowerCase())
         );
-        const existingTagNames = existingTags.map((t) =>
-            t.name.toLocaleLowerCase()
-        );
-        const newTagNames = tagNames.filter(
-            (n) => !existingTagNames.includes(n.toLocaleLowerCase())
-        );
-        const newTags = [];
-        for (const newTagName of newTagNames) {
-            winston.info(`Creating new tag "${newTagName}"...`);
-            const newTag = await library.createNewTag(newTagName);
-            winston.info(`Created new tag "${newTagName}".`);
-            newTags.push(newTag);
-        }
 
-        const tagsForAdding = [...newTags, ...existingTags];
         for (const file of files) {
-            const fileStats = await stat(file);
+            const fileStats = fs.statSync(file);
             const hash = await hasher.hash(file, fileStats);
             const libraryFile = await library.getFile(hash);
             if (!libraryFile) {
                 throw new Error(`Could not find file with hash ${hash}!`);
             }
 
-            for (const tag of tagsForAdding) {
-                const added = await library.createNewLinkBetweenTagAndFile(
-                    tag,
+            for (const tag of existingTags) {
+                await library.deleteLinkBetweenTagAndFile(
+                    tag.id,
                     libraryFile.hash
                 );
-                if (added) {
-                    winston.info(`Added: ${tag.name} to ${libraryFile.name}`);
-                }
+                winston.info(`Removed ${tag.name}.`);
             }
         }
     }
