@@ -101,7 +101,7 @@ export default class Untag extends Command {
                     tag.id,
                     libraryFile.hash
                 );
-                winston.info(`Removed ${tag.name}.`);
+                winston.info(`Removed ${tag.name} from ${libraryFile.name}`);
             }
         }
     }
