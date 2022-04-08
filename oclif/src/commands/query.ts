@@ -49,7 +49,11 @@ export default class Query extends Command {
         ];
         if (andTagNames) {
             andTagNames.forEach((tagName: string) => {
-                const foundTag = allTags.find((tag) => tag.name === tagName);
+                const foundTag = allTags.find(
+                    (tag) =>
+                        tag.name.toLocaleUpperCase() ===
+                        tagName.toLocaleUpperCase()
+                );
                 if (!foundTag) {
                     throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -61,7 +65,11 @@ export default class Query extends Command {
         const orTags: Tag[] = [];
         if (flags.or) {
             flags.or.forEach((tagName: string) => {
-                const foundTag = allTags.find((tag) => tag.name === tagName);
+                const foundTag = allTags.find(
+                    (tag) =>
+                        tag.name.toLocaleUpperCase() ===
+                        tagName.toLocaleUpperCase()
+                );
                 if (!foundTag) {
                     throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -73,7 +81,11 @@ export default class Query extends Command {
         const notTags: Tag[] = [];
         if (flags.not) {
             flags.not.forEach((tagName: string) => {
-                const foundTag = allTags.find((tag) => tag.name === tagName);
+                const foundTag = allTags.find(
+                    (tag) =>
+                        tag.name.toLocaleUpperCase() ===
+                        tagName.toLocaleUpperCase()
+                );
                 if (!foundTag) {
                     throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
