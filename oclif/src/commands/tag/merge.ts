@@ -1,11 +1,11 @@
 import { Command, Flags } from '@oclif/core';
 import winston = require('winston');
-import { getLibraryPath } from '../laputin/helpers';
-import { Library } from '../laputin/library';
-import { TagQuery } from '../laputin/tagquery.model';
-import { initializeWinston } from '../laputin/winston';
+import { getLibraryPath } from '../../laputin/helpers';
+import { Library } from '../../laputin/library';
+import { TagQuery } from '../../laputin/tagquery.model';
+import { initializeWinston } from '../../laputin/winston';
 
-export default class MergeTags extends Command {
+export default class MergeTagsCommand extends Command {
     static description = 'Merge tags';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
@@ -24,7 +24,7 @@ export default class MergeTags extends Command {
     static args = [{ name: 'file' }];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(MergeTags);
+        const { args, flags } = await this.parse(MergeTagsCommand);
 
         initializeWinston(flags.verbose);
 
