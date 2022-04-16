@@ -3,7 +3,7 @@ import express = require('express');
 import * as fs from 'fs';
 import * as path from 'path';
 import { format } from 'winston';
-import winston from 'winston';
+import winston = require('winston');
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
 import { LaputinConfiguration } from '../laputin/laputinconfiguration';

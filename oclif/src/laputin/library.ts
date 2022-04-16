@@ -6,7 +6,7 @@ bluebird.promisifyAll(sqlite3);
 import * as path from 'path';
 import _ = require('lodash');
 import * as fs from 'fs';
-import winston from 'winston';
+import winston = require('winston');
 
 import { Query } from './query.model';
 import { File } from './file';

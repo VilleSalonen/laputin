@@ -3,7 +3,7 @@ import { initializeWinston } from '../laputin/winston';
 import * as fs from 'fs';
 import { IHasher } from '../laputin/ihasher';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
-import winston from 'winston';
+import winston = require('winston');
 
 export default class HashCommand extends Command {
     static description = 'Hashes given file';

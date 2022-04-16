@@ -5,7 +5,7 @@ import walk = require('walk');
 import * as path from 'path';
 import watch = require('watch');
 import events = require('events');
-import winston from 'winston';
+import winston = require('winston');
 
 import * as fs from 'fs';
 import { promisify } from 'util';

@@ -5,7 +5,7 @@ import { initializeWinston } from '../laputin/winston';
 import * as fs from 'fs';
 import child_process = require('child_process');
 import { Tag, Timecode } from '../laputin/tag';
-import winston from 'winston';
+import winston = require('winston');
 import { TagQuery } from '../laputin/tagquery.model';
 import { Query } from '../laputin/query.model';
 

@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { Library } from './library';
 import { Query } from './query.model';
-import winston from 'winston';
+import winston = require('winston');
 import { File } from './file';
 
 import csv = require('csvtojson');

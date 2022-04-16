@@ -4,7 +4,7 @@ import * as path from 'path';
 import os = require('os');
 
 import { File } from './file';
-import winston from 'winston';
+import winston = require('winston');
 
 export class VLCOpener {
     private _binaryPath: string;

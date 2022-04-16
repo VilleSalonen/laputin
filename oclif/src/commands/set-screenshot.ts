@@ -5,7 +5,7 @@ import { initializeWinston } from '../laputin/winston';
 import { IHasher } from '../laputin/ihasher';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { Screenshotter } from '../laputin/screenshotter';
-import winston from 'winston';
+import winston = require('winston');
 import * as fs from 'fs';
 
 export default class SetScreenshot extends Command {

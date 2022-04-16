@@ -7,7 +7,7 @@ import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { IHasher } from '../laputin/ihasher';
-import winston from 'winston';
+import winston = require('winston');
 
 export default class Untag extends Command {
     static description = 'describe the command here';

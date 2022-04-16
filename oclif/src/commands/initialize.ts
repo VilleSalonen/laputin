@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import winston from 'winston';
+import winston = require('winston');
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';

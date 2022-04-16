@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import child_process = require('child_process');
 import * as path from 'path';
-import winston from 'winston';
+import winston = require('winston');
 
 import { File } from './file';
 import { Timecode, Tag } from './tag';

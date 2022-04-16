@@ -1,7 +1,7 @@
 import child_process = require('child_process');
 
 import { File } from './file';
-import winston from 'winston';
+import winston = require('winston');
 import * as path from 'path';
 
 export class ExplorerOpener {
