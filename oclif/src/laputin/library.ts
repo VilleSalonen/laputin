@@ -1,3 +1,8 @@
+// create table Files (FileId INTEGER PRIMARY KEY, Hash TEXT UNIQUE, Path TEXT UNIQUE, Size INTEGER, metadata BLOB, Type TEXT);
+// select hash, path, size, metadata, type from files_old insert into (null, hash, path, size, metadata, type) files;
+//
+// create table FilesTags (FileId INTEGER, TagId INTEGER, PRIMARY KEY (FileId, TagId));
+
 import bluebird = require('bluebird');
 
 import sqlite3 = require('sqlite3');
@@ -350,19 +355,13 @@ export class Library {
             return Promise.reject<void>(new Error('Tag ID is required'));
         }
 
-        const allTags = await this.getTags(new TagQuery([], true));
-        const tag = allTags.find((t) => t.id === tagId);
-        if (!tag) {
-            return Promise.reject<void>(`Could not find tag with ID ${tagId}!`);
-        }
-        if (tag.associationCount !== 0) {
-            return Promise.reject<void>(
-                `Refusing to delete tag with ID ${tagId} as it is still associated with ${tag.associationCount} files!`
-            );
-        }
+        const deleteAssociationsStmt = this._db.prepare(
+            'DELETE FROM tags_files WHERE id = ?'
+        );
+        await deleteAssociationsStmt.runAsync(tagId);
 
-        const stmt = this._db.prepare('DELETE FROM tags WHERE id = ?');
-        await stmt.runAsync(tagId);
+        const deleteTagStmt = this._db.prepare('DELETE FROM tags WHERE id = ?');
+        await deleteTagStmt.runAsync(tagId);
     }
 
     public async getTags(query: TagQuery): Promise<Tag[]> {

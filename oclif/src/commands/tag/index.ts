@@ -4,12 +4,12 @@ import { promisify } from 'util';
 import winston = require('winston');
 const stat = promisify(fs.stat);
 const { EOL } = require('os');
-import { getLibraryPathByFile } from '../laputin/helpers';
-import { IHasher } from '../laputin/ihasher';
-import { Library } from '../laputin/library';
-import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
-import { readPipe } from '../laputin/read-pipe';
-import { initializeWinston } from '../laputin/winston';
+import { getLibraryPathByFile } from '../../laputin/helpers';
+import { IHasher } from '../../laputin/ihasher';
+import { Library } from '../../laputin/library';
+import { QuickMD5Hasher } from '../../laputin/quickmd5hasher';
+import { readPipe } from '../../laputin/read-pipe';
+import { initializeWinston } from '../../laputin/winston';
 
 export default class Tag extends Command {
     static description = 'describe the command here';
