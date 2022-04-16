@@ -52,7 +52,7 @@ export default class MergeTags extends Command {
             );
             if (!sourceTag) {
                 winston.warn(
-                    `Could not find source tag with name ${flags.source}!`
+                    `Could not find source tag with name ${sourceTagName}!`
                 );
                 continue;
             }
