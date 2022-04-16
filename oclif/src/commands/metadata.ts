@@ -8,7 +8,7 @@ import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { IHasher } from '../laputin/ihasher';
 
 export default class MetadataCommand extends Command {
-    static description = 'Get file metadata';
+    static description = 'Set file metadata';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
