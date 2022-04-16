@@ -1,7 +1,7 @@
 import { Command, Flags } from '@oclif/core';
-import fs = require('fs');
+import * as fs from 'fs';
 import { promisify } from 'util';
-import winston = require('winston');
+import winston from 'winston';
 const stat = promisify(fs.stat);
 const { EOL } = require('os');
 import { getLibraryPathByFile } from '../laputin/helpers';

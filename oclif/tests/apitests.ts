@@ -1,6 +1,6 @@
 import chai = require('chai');
 const expect = chai.expect;
-import fs = require('fs');
+import * as fs from 'fs';
 import rimraf = require('rimraf');
 import request = require('supertest');
 
@@ -11,16 +11,16 @@ import { Laputin } from './../laputin';
 import { LaputinConfiguration } from './../laputinconfiguration';
 import { Library } from '../library';
 
-describe('Laputin API', function() {
+describe('Laputin API', function () {
     let currentPath: string;
     let laputin: Laputin;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
         currentPath = this.currentTest.title.toLowerCase().replace(/ /g, '_');
         laputin = await initializeLaputin(currentPath);
     });
 
-    afterEach(async function() {
+    afterEach(async function () {
         await laputin.stopListening();
     });
 
@@ -66,10 +66,7 @@ describe('Laputin API', function() {
     it('Added tag can _not_ be found from associated tags', async () => {
         const tag = await laputin.library.createNewTag('Hilarious');
 
-        return request(laputin.app)
-            .get('/api/tags')
-            .expect(200)
-            .expect([]);
+        return request(laputin.app).get('/api/tags').expect(200).expect([]);
     });
 
     it('Creating duplicate tag returns error', async () => {
@@ -110,7 +107,7 @@ describe('Laputin API', function() {
                 .expect(200);
 
             await shouldContainFiles(laputin, [
-                new File(file.hash, file.path, [tag], 123, 'image/jpeg')
+                new File(file.hash, file.path, [tag], 123, 'image/jpeg'),
             ]);
         });
 
@@ -126,7 +123,7 @@ describe('Laputin API', function() {
                 .expect(200);
 
             await shouldContainFiles(laputin, [
-                new File(file.hash, file.path, [], 123, 'image/jpeg')
+                new File(file.hash, file.path, [], 123, 'image/jpeg'),
             ]);
         });
     });
@@ -172,7 +169,7 @@ describe('Laputin API', function() {
                         123,
                         'image/jpeg'
                     ),
-                    untaggedFile
+                    untaggedFile,
                 ]);
         });
 
@@ -187,7 +184,7 @@ describe('Laputin API', function() {
                         [tag],
                         123,
                         'image/jpeg'
-                    )
+                    ),
                 ]);
         });
 
@@ -375,7 +372,7 @@ describe('Laputin API', function() {
         const fakeScreenshotter: any = {
             exists: () => {},
             screenshot: () => {},
-            screenshotTimecode: () => {}
+            screenshotTimecode: () => {},
         };
         const l = composeForTests(
             archivePath,
@@ -403,7 +400,7 @@ describe('Laputin API', function() {
         res: { body: any[] },
         expectedHashes: string[]
     ) {
-        const hashes = res.body.map(f => f.hash).sort();
+        const hashes = res.body.map((f) => f.hash).sort();
         expect(hashes).to.eql(expectedHashes);
     }
 });

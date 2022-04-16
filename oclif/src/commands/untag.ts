@@ -1,13 +1,13 @@
 import { Command, Flags } from '@oclif/core';
 import { EOL } from 'os';
-import fs = require('fs');
+import * as fs from 'fs';
 import { readPipe } from '../laputin/read-pipe';
 import { initializeWinston } from '../laputin/winston';
 import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { IHasher } from '../laputin/ihasher';
-import winston = require('winston');
+import winston from 'winston';
 
 export default class Untag extends Command {
     static description = 'describe the command here';

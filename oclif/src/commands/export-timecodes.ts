@@ -2,10 +2,10 @@ import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import fs = require('fs');
+import * as fs from 'fs';
 import child_process = require('child_process');
 import { Tag, Timecode } from '../laputin/tag';
-import winston = require('winston');
+import winston from 'winston';
 import { TagQuery } from '../laputin/tagquery.model';
 import { Query } from '../laputin/query.model';
 

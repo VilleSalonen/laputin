@@ -3,10 +3,10 @@ import bluebird = require('bluebird');
 import sqlite3 = require('sqlite3');
 bluebird.promisifyAll(sqlite3);
 
-import path = require('path');
+import * as path from 'path';
 import _ = require('lodash');
-import fs = require('fs');
-import winston = require('winston');
+import * as fs from 'fs';
+import winston from 'winston';
 
 import { Query } from './query.model';
 import { File } from './file';

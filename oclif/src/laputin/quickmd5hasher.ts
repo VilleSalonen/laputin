@@ -1,5 +1,5 @@
 import crypto = require('crypto');
-import fs = require('fs');
+import * as fs from 'fs';
 import { promisify } from 'util';
 const fsOpen = promisify(fs.open);
 

@@ -1,5 +1,5 @@
 import { format } from 'winston';
-import winston = require('winston');
+import winston from 'winston';
 
 export function initializeWinston(verbose: boolean) {
     winston.add(

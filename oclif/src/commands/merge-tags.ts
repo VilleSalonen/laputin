@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import winston = require('winston');
+import winston from 'winston';
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { TagQuery } from '../laputin/tagquery.model';

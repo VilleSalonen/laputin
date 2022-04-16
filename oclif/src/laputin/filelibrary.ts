@@ -2,12 +2,12 @@
 
 import _ = require('lodash');
 import walk = require('walk');
-import path = require('path');
+import * as path from 'path';
 import watch = require('watch');
 import events = require('events');
-import winston = require('winston');
+import winston from 'winston';
 
-import fs = require('fs');
+import * as fs from 'fs';
 import { promisify } from 'util';
 const stat = promisify(fs.stat);
 
@@ -107,24 +107,16 @@ export class FileLibrary extends events.EventEmitter {
                     try {
                         const stats = await stat(createdPath);
                         this.addFileFromPath(createdPath, stats, false);
-                    }
-                    catch (e) {
-                        winston.log(
-                            'debug',
-                            'Error with created file: ' + e
-                        );
+                    } catch (e) {
+                        winston.log('debug', 'Error with created file: ' + e);
                     }
                 });
                 monitor.on('changed', async (changedPath: string) => {
                     try {
                         const stats = await stat(changedPath);
                         this.addFileFromPath(changedPath, stats, false);
-                    }
-                    catch (e) {
-                        winston.log(
-                            'debug',
-                            'Error with changed file: ' + e
-                        );
+                    } catch (e) {
+                        winston.log('debug', 'Error with changed file: ' + e);
                     }
                 });
                 monitor.on('removed', (removedPath: string) =>
@@ -143,12 +135,8 @@ export class FileLibrary extends events.EventEmitter {
         const filePath = path.normalize(path.join(root, walkStat.name));
         try {
             await this.addFileFromPath(filePath, walkStat, performFullCheck);
-        }
-        catch (e) {
-            winston.log(
-                'debug',
-                'Error while process file: ' + e
-            );
+        } catch (e) {
+            winston.log('debug', 'Error while process file: ' + e);
         }
         next();
     }

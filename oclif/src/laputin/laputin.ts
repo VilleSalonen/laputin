@@ -1,8 +1,8 @@
 import express = require('express');
 import bodyParser = require('body-parser');
-import path = require('path');
+import * as path from 'path';
 import http = require('http');
-import fs = require('fs');
+import * as fs from 'fs';
 
 import { Library } from './library';
 import { FileLibrary } from './filelibrary';

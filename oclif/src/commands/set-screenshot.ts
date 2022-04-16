@@ -1,13 +1,12 @@
-import fs = require('fs');
 import { Command, Flags } from '@oclif/core';
 import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import { promisify } from 'bluebird';
 import { IHasher } from '../laputin/ihasher';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
-import winston = require('winston');
 import { Screenshotter } from '../laputin/screenshotter';
+import winston from 'winston';
+import * as fs from 'fs';
 
 export default class SetScreenshot extends Command {
     static description = 'describe the command here';

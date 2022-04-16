@@ -2,13 +2,14 @@ import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import fs = require('fs');
-import path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { SceneDetector } from '../laputin/scenedetector';
 
 export default class DetectScenes extends Command {
-    static description = 'Detects individual scenes within video files using PySceneDetect';
+    static description =
+        'Detects individual scenes within video files using PySceneDetect';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 

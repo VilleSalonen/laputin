@@ -1,9 +1,9 @@
 import { Command, Flags } from '@oclif/core';
 import express = require('express');
-import fs = require('fs');
-import path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 import { format } from 'winston';
-import winston = require('winston');
+import winston from 'winston';
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
 import { LaputinConfiguration } from '../laputin/laputinconfiguration';

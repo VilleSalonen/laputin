@@ -1,9 +1,9 @@
 import { Command, Flags } from '@oclif/core';
 import { initializeWinston } from '../laputin/winston';
-import fs = require('fs');
+import * as fs from 'fs';
 import { IHasher } from '../laputin/ihasher';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
-import winston = require('winston');
+import winston from 'winston';
 
 export default class HashCommand extends Command {
     static description = 'Hashes given file';

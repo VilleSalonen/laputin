@@ -1,10 +1,10 @@
-import fs = require('fs');
+import * as fs from 'fs';
 import child_process = require('child_process');
-import path = require('path');
+import * as path from 'path';
 import os = require('os');
 
 import { File } from './file';
-import winston = require('winston');
+import winston from 'winston';
 
 export class VLCOpener {
     private _binaryPath: string;
