@@ -6,7 +6,7 @@ import { TagQuery } from '../../laputin/tagquery.model';
 import { Query as QueryModel } from '../../laputin/query.model';
 import { initializeWinston } from '../../laputin/winston';
 
-export default class QueryCommand extends Command {
+export default class QueryFilesCommand extends Command {
     static description = 'Query files';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
@@ -33,7 +33,7 @@ export default class QueryCommand extends Command {
     static args = [];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(QueryCommand);
+        const { args, flags } = await this.parse(QueryFilesCommand);
 
         initializeWinston(flags.verbose);
 
