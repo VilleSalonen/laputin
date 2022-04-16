@@ -52,7 +52,10 @@ export class TagsComponent implements AfterViewInit {
             ),
             map(([tags, searchTerm]: [Tag[], string]) =>
                 tags.filter(
-                    (tag) => tag.name.toUpperCase().indexOf(searchTerm) >= 0
+                    (tag) =>
+                        tag.name
+                            .toUpperCase()
+                            .indexOf(searchTerm.toUpperCase()) >= 0
                 )
             )
         );
@@ -85,7 +88,7 @@ export class TagsComponent implements AfterViewInit {
         const ESC = 27;
 
         if ($event.which === ENTER) {
-            this.searchTerm.next(this.term.toUpperCase());
+            this.searchTerm.next(this.term);
         }
 
         if ($event.which === ESC) {
