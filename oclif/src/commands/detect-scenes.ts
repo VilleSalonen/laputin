@@ -2,12 +2,9 @@ import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import * as fs from 'fs';
-import * as path from 'path';
-import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { SceneDetector } from '../laputin/scenedetector';
 
-export default class DetectScenes extends Command {
+export default class DetectScenesCommand extends Command {
     static description =
         'Detects individual scenes within video files using PySceneDetect';
 
@@ -26,19 +23,11 @@ export default class DetectScenes extends Command {
     static args = [{ name: 'file' }];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(DetectScenes);
+        const { args, flags } = await this.parse(DetectScenesCommand);
 
         initializeWinston(flags.verbose);
 
         const libraryPath = getLibraryPath(flags.library);
-
-        const configFilePath = path.join(flags.library, '.laputin.json');
-        const configuration: LaputinConfiguration = fs.existsSync(
-            configFilePath
-        )
-            ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-            : new LaputinConfiguration(3200, 'quick', undefined, []);
-
         const library = new Library(libraryPath);
         const sceneDetector = new SceneDetector(flags.library, library);
         await sceneDetector.detectMissingScenes(flags.file || '');
