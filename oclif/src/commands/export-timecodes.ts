@@ -1,54 +1,65 @@
+import { Command, Flags } from '@oclif/core';
+import { getLibraryPath } from '../laputin/helpers';
+import { Library } from '../laputin/library';
+import { initializeWinston } from '../laputin/winston';
 import fs = require('fs');
-import winston = require('winston');
-import commandLineArgs = require('command-line-args');
 import child_process = require('child_process');
+import { Tag, Timecode } from '../laputin/tag';
+import winston = require('winston');
+import { TagQuery } from '../laputin/tagquery.model';
+import { Query } from '../laputin/query.model';
 
-import { Command } from './command';
-import { getLibraryPath } from '..';
-import { Library } from '../library';
-import { Tag, Timecode } from '../tag';
-import { Query } from '../query.model';
+export default class ExportTimecodesCommand extends Command {
+    static description = 'Exports timecodes using ffmpeg';
 
-class ExportJob {
-    constructor(public timecode: Timecode, public exportCommand: string) {}
-}
+    static examples = ['<%= config.bin %> <%= command.id %>'];
 
-export class ExportTimecodesCommand implements Command {
-    public optionDefinitions: commandLineArgs.OptionDefinition[] = [
-        { name: 'libraryPath', type: String, defaultOption: true },
-        { name: 'targetDirectory', type: String },
-        { name: 'fileName', type: String },
-        { name: 'hash', type: String },
-        { name: 'tag', type: String, multiple: true },
-        { name: 'and', type: String, multiple: true },
-        { name: 'or', type: String, multiple: true },
-        { name: 'not', type: String, multiple: true }
-    ];
+    static flags = {
+        library: Flags.string({
+            char: 'l',
+            description: 'Laputin library path',
+            required: true,
+        }),
+        targetDirectory: Flags.string({ required: true }),
+        path: Flags.string({ char: 'p' }),
+        hash: Flags.string(),
+        tag: Flags.string({ multiple: true }),
+        and: Flags.string({ multiple: true }),
+        or: Flags.string({ multiple: true }),
+        not: Flags.string({ multiple: true }),
+        verbose: Flags.boolean({ char: 'v', default: false }),
+    };
 
-    public async execute(options: any): Promise<void> {
+    static args = [{ name: 'file' }];
+
+    public async run(): Promise<void> {
+        const { args, flags } = await this.parse(ExportTimecodesCommand);
+
+        initializeWinston(flags.verbose);
+
         if (
-            !fs.existsSync(options.targetDirectory) ||
-            !fs.statSync(options.targetDirectory).isDirectory()
+            !fs.existsSync(flags.targetDirectory) ||
+            !fs.statSync(flags.targetDirectory).isDirectory()
         ) {
             throw new Error(
-                `Directory ${options.targetDirectory} is not a valid directory.`
+                `Directory ${flags.targetDirectory} is not a valid directory.`
             );
         }
 
-        const libraryPath = getLibraryPath(options.libraryPath);
+        const libraryPath = getLibraryPath(flags.library);
 
         const library = new Library(libraryPath);
 
-        const allTags = await library.getTags(undefined);
+        const allTags = await library.getTags(new TagQuery([], true));
 
         const andTags: Tag[] = [];
         const andTagNames: string[] = [
-            ...(options.tag || []),
-            ...(options.and || [])
+            ...(flags.tag || []),
+            ...(flags.and || []),
         ];
         if (andTagNames) {
             andTagNames.forEach((tagName: string) => {
-                const foundTag = allTags.find(tag => tag.name === tagName);
+                const foundTag = allTags.find((tag) => tag.name === tagName);
                 if (!foundTag) {
                     winston.error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -58,9 +69,9 @@ export class ExportTimecodesCommand implements Command {
         }
 
         const orTags: Tag[] = [];
-        if (options.or) {
-            options.or.forEach((tagName: string) => {
-                const foundTag = allTags.find(tag => tag.name === tagName);
+        if (flags.or) {
+            flags.or.forEach((tagName: string) => {
+                const foundTag = allTags.find((tag) => tag.name === tagName);
                 if (!foundTag) {
                     winston.error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -70,9 +81,9 @@ export class ExportTimecodesCommand implements Command {
         }
 
         const notTags: Tag[] = [];
-        if (options.not) {
-            options.not.forEach((tagName: string) => {
-                const foundTag = allTags.find(tag => tag.name === tagName);
+        if (flags.not) {
+            flags.not.forEach((tagName: string) => {
+                const foundTag = allTags.find((tag) => tag.name === tagName);
                 if (!foundTag) {
                     winston.error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -81,27 +92,20 @@ export class ExportTimecodesCommand implements Command {
             });
         }
 
-        let status = '';
-        if (options.tagged) {
-            status = 'tagged';
-        } else if (options.untagged) {
-            status = 'untagged';
-        }
-
         const query = new Query(
-            options.fileName || '',
-            status,
-            options.hash || '',
-            andTags.map(tag => tag.id).join(','),
-            orTags.map(tag => tag.id).join(','),
-            notTags.map(tag => tag.id).join(','),
+            flags.path || '',
+            'tagged',
+            flags.hash || '',
+            andTags.map((tag) => tag.id).join(','),
+            orTags.map((tag) => tag.id).join(','),
+            notTags.map((tag) => tag.id).join(','),
             false
         );
 
         const timecodes = await library.getTimecodes(query);
-        const exportJobs: ExportJob[] = timecodes.map(t => {
+        const exportJobs: ExportJob[] = timecodes.map((t) => {
             const name = t.path.substring(t.path.lastIndexOf('/') + 1);
-            const tags = t.timecodeTags.map(ta => ta.tag.name).join(', ');
+            const tags = t.timecodeTags.map((ta) => ta.tag.name).join(', ');
 
             const exportCommand = `ffmpeg -ss ${this.formatPreciseDurationWithMs(
                 t.start
@@ -111,15 +115,15 @@ export class ExportTimecodesCommand implements Command {
             )}" -t ${this.formatPreciseDurationWithMs(
                 t.end - t.start
             )} -map v? -map a? -map s? -c:v hevc_nvenc -c:a copy -profile:v main -preset slow "${
-                options.targetDirectory
+                flags.targetDirectory
             }\\${name} [${tags}].mp4"`;
 
             return new ExportJob(t, exportCommand);
         });
 
-        exportJobs.forEach(exportJob => {
+        exportJobs.forEach((exportJob) => {
             const tags = exportJob.timecode.timecodeTags
-                .map(ta => ta.tag.name)
+                .map((ta) => ta.tag.name)
                 .join(', ');
             winston.info(
                 `Exporting ${
@@ -156,4 +160,8 @@ export class ExportTimecodesCommand implements Command {
         }
         return str;
     }
+}
+
+class ExportJob {
+    constructor(public timecode: Timecode, public exportCommand: string) {}
 }
