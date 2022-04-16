@@ -4,8 +4,8 @@ import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
 
-export default class Initialize extends Command {
-    static description = 'describe the command here';
+export default class InitializeCommand extends Command {
+    static description = 'Initializes new Laputin library';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
@@ -21,7 +21,7 @@ export default class Initialize extends Command {
     static args = [{ name: 'file' }];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(Initialize);
+        const { args, flags } = await this.parse(InitializeCommand);
 
         initializeWinston(flags.verbose);
 
