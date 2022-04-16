@@ -1,4 +1,5 @@
 import { Command, Flags } from '@oclif/core';
+import winston = require('winston');
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { TagQuery } from '../laputin/tagquery.model';
@@ -50,24 +51,28 @@ export default class MergeTags extends Command {
                 (t) => t.name.toLocaleUpperCase() === sourceTagNameUpperCase
             );
             if (!sourceTag) {
-                return Promise.reject<void>(
+                winston.warn(
                     `Could not find source tag with name ${flags.source}!`
                 );
+                continue;
             }
             const targetTagNameUpperCase = flags.target.toLocaleUpperCase();
             const targetTag = allTags.find(
                 (t) => t.name.toLocaleUpperCase() === targetTagNameUpperCase
             );
             if (!targetTag) {
-                return Promise.reject<void>(
+                winston.warn(
                     `Could not find target tag with name ${flags.target}!`
                 );
+                continue;
             }
             if (sourceTag.associationCount === 0) {
-                return Promise.reject<void>(
+                winston.warn(
                     `No files are associated with source tag ${sourceTag.name}!`
                 );
+                continue;
             }
+
             console.log(
                 `Merging tag ${sourceTag.name} to ${targetTag.name}...`
             );
