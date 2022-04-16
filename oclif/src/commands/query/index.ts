@@ -1,13 +1,13 @@
 import { Command, Flags } from '@oclif/core';
-import { getLibraryPath } from '../laputin/helpers';
-import { Library } from '../laputin/library';
-import { Tag } from '../laputin/tag';
-import { TagQuery } from '../laputin/tagquery.model';
-import { Query as QueryModel } from '../laputin/query.model';
-import { initializeWinston } from '../laputin/winston';
+import { getLibraryPath } from '../../laputin/helpers';
+import { Library } from '../../laputin/library';
+import { Tag } from '../../laputin/tag';
+import { TagQuery } from '../../laputin/tagquery.model';
+import { Query as QueryModel } from '../../laputin/query.model';
+import { initializeWinston } from '../../laputin/winston';
 
-export default class Query extends Command {
-    static description = 'describe the command here';
+export default class QueryCommand extends Command {
+    static description = 'Query files';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
@@ -33,7 +33,7 @@ export default class Query extends Command {
     static args = [];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(Query);
+        const { args, flags } = await this.parse(QueryCommand);
 
         initializeWinston(flags.verbose);
 
