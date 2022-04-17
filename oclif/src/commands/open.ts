@@ -1,13 +1,13 @@
 import { Command, Flags } from '@oclif/core';
-import { getLibraryPath } from '../../laputin/helpers';
-import { Library } from '../../laputin/library';
-import { Tag } from '../../laputin/tag';
-import { TagQuery } from '../../laputin/tagquery.model';
-import { Query } from '../../laputin/query.model';
-import { initializeWinston } from '../../laputin/winston';
+import { getLibraryPath } from '../laputin/helpers';
+import { Library } from '../laputin/library';
+import { Tag } from '../laputin/tag';
+import { TagQuery } from '../laputin/tagquery.model';
+import { Query } from '../laputin/query.model';
+import { VLCOpener } from '../laputin/vlcopener';
 
-export default class QueryFilesCommand extends Command {
-    static description = 'Query files';
+export default class OpenCommand extends Command {
+    static description = 'Opens files in VLC';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
@@ -25,17 +25,12 @@ export default class QueryFilesCommand extends Command {
         not: Flags.string({ multiple: true }),
         tagged: Flags.boolean({ exclusive: ['untagged'] }),
         untagged: Flags.boolean({ exclusive: ['tagged'] }),
-        json: Flags.boolean(),
-        pretty: Flags.boolean(),
-        verbose: Flags.boolean({ char: 'v', default: false }),
     };
 
-    static args = [];
+    static args = [{ name: 'file' }];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(QueryFilesCommand);
-
-        initializeWinston(flags.verbose);
+        const { args, flags } = await this.parse(OpenCommand);
 
         const libraryPath = getLibraryPath(flags.library);
         const library = new Library(libraryPath);
@@ -111,18 +106,7 @@ export default class QueryFilesCommand extends Command {
             false
         );
         const files = await library.getFiles(query);
-        if (flags.json) {
-            if (flags.pretty) {
-                files.forEach((file) => {
-                    console.log(file);
-                });
-            } else {
-                console.log(JSON.stringify(files));
-            }
-        } else {
-            files.forEach((file) => {
-                console.log(file.path);
-            });
-        }
+        const opener = new VLCOpener(flags.library);
+        opener.open(files);
     }
 }
