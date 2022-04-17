@@ -8,7 +8,9 @@ import { TagQuery } from '../../laputin/tagquery.model';
 export default class DeleteTagCommand extends Command {
     static description = 'Renames a tag';
 
-    static examples = ['<%= config.bin %> <%= command.id %>'];
+    static examples = [
+        '<%= config.bin %> <%= command.id %> "Old name" "New name"',
+    ];
 
     static flags = {
         library: Flags.string({
