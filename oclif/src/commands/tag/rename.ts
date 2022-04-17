@@ -5,7 +5,7 @@ import { initializeWinston } from '../../laputin/winston';
 import winston = require('winston');
 import { TagQuery } from '../../laputin/tagquery.model';
 
-export default class DeleteTagCommand extends Command {
+export default class RenameTagCommand extends Command {
     static description = 'Renames a tag';
 
     static examples = [
@@ -27,7 +27,7 @@ export default class DeleteTagCommand extends Command {
     ];
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(DeleteTagCommand);
+        const { args, flags } = await this.parse(RenameTagCommand);
 
         const oldTagName = <string>args.oldTagName;
         const newTagName = <string>args.newTagName;
