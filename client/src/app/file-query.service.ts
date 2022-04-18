@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { FileQuery } from './models';
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class FileQueryService {
     public query$: Observable<FileQuery>;
@@ -22,12 +22,12 @@ export class FileQueryService {
     }
 
     public emit(query: FileQuery): void {
-        localStorage.setItem('query', JSON.stringify(query));
+        localStorage.setItem('fileQuery', JSON.stringify(query));
         this.query.next(query);
     }
 
     private getPreviousQuery(): FileQuery {
-        const fromLocalStorage = localStorage.getItem('query');
+        const fromLocalStorage = localStorage.getItem('fileQuery');
         if (!fromLocalStorage || fromLocalStorage === 'undefined') {
             return undefined;
         }

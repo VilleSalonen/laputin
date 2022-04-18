@@ -67,10 +67,7 @@ export default class Tag extends Command {
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();
-        const allTags = await library.getTags({
-            selectedTags: [],
-            unassociated: true,
-        });
+        const allTags = await library.getAllTags();
 
         let tagNames: string[];
         if (flags.tagsFileName) {

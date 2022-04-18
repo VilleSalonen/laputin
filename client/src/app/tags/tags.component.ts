@@ -8,8 +8,9 @@ import {
 
 import { Tag } from './../models/tag';
 import { LaputinService } from './../laputin.service';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { shareReplay, map, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest, Subject } from 'rxjs';
+import { shareReplay, map, tap, switchMap } from 'rxjs/operators';
+import { TagQuery } from '../models/tagquery';
 
 @Component({
     styleUrls: ['./tags.component.scss'],
@@ -22,8 +23,6 @@ export class TagsComponent implements AfterViewInit {
     public filteredOrphanedTags: Tag[] = [];
     public loading: boolean;
 
-    public term = '';
-
     public tags$: Observable<Tag[]>;
     public filteredTags$: Observable<Tag[]>;
 
@@ -32,32 +31,17 @@ export class TagsComponent implements AfterViewInit {
 
     public tagStyle: any;
 
-    private searchTerm = new BehaviorSubject<string>('');
+    private tagQuery: Subject<TagQuery> = new BehaviorSubject<TagQuery>(
+        new TagQuery()
+    );
 
     constructor(private _service: LaputinService) {
+        const query = this.getPreviousOrDefaultQuery();
+        this.tagQuery.next(query);
+
         this.tags$ = this._service.getTags().pipe(shareReplay(1));
-
-        const fromLocalStorage = localStorage.getItem('tagsQuery');
-        if (fromLocalStorage) {
-            this.searchTerm.next(fromLocalStorage);
-            this.term = fromLocalStorage;
-        }
-
-        this.filteredTags$ = combineLatest(
-            this.tags$,
-            this.searchTerm.asObservable()
-        ).pipe(
-            tap(([_, searchTerm]: [Tag[], string]) =>
-                localStorage.setItem('tagsQuery', searchTerm)
-            ),
-            map(([tags, searchTerm]: [Tag[], string]) =>
-                tags.filter(
-                    (tag) =>
-                        tag.name
-                            .toUpperCase()
-                            .indexOf(searchTerm.toUpperCase()) >= 0
-                )
-            )
+        this.filteredTags$ = this.tagQuery.pipe(
+            switchMap((query) => this._service.getTags(query))
         );
     }
 
@@ -83,17 +67,16 @@ export class TagsComponent implements AfterViewInit {
         };
     }
 
-    public onKeyUp($event: KeyboardEvent): void {
-        const ENTER = 13;
-        const ESC = 27;
+    public tagQueryUpdated(tagQuery: TagQuery) {
+        this.tagQuery.next(tagQuery);
+    }
 
-        if ($event.which === ENTER) {
-            this.searchTerm.next(this.term);
+    private getPreviousOrDefaultQuery(): TagQuery {
+        const fromLocalStorage = localStorage.getItem('tagQuery');
+        if (!fromLocalStorage || fromLocalStorage === 'undefined') {
+            return new TagQuery();
         }
 
-        if ($event.which === ESC) {
-            this.term = '';
-            this.searchTerm.next(this.term);
-        }
+        return new TagQuery(JSON.parse(fromLocalStorage));
     }
 }

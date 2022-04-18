@@ -66,10 +66,7 @@ export default class Untag extends Command {
 
         const hasher: IHasher = new QuickMD5Hasher();
 
-        const allTags = await library.getTags({
-            selectedTags: [],
-            unassociated: true,
-        });
+        const allTags = await library.getAllTags();
 
         let tagNames: string[];
         if (flags.tagsFileName) {

@@ -36,9 +36,10 @@ export default class QueryTagsCommand extends Command {
         const libraryPath = getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
-        const allTags = await library.getTags(
-            new TagQuery([], !flags.associatedOnly)
-        );
+        const tagQuery = flags.associatedOnly
+            ? TagQuery.allAssociated()
+            : TagQuery.allUnassociated();
+        const allTags = await library.getTags(tagQuery);
 
         const tagName = <string>args.tag;
         const tagNameUpper = tagName.toLocaleUpperCase();

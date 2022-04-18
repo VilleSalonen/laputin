@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:G:/Culture/Videos/.laputin.db"
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model files {
+  hash     String? @unique(map: "sqlite_autoindex_files_1")
+  path     String? @unique(map: "sqlite_autoindex_files_2")
+  active   Int?
+  size     Int?
+  metadata Bytes?
+  type     String?
+
+  @@ignore
+}
+
+model files_timecodes {
+  id    Int     @id @default(autoincrement())
+  hash  String?
+  start Float?
+  end   Float?
+}
+
+model files_timecodes_tags {
+  id          Int  @id @default(autoincrement())
+  timecode_id Int?
+  tag_id      Int?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model screenshot_times_files {
+  hash String? @id
+  time Float?
+
+  @@ignore
+}
+
+model screenshot_times_tags {
+  id   Int     @id @default(autoincrement())
+  hash String?
+  time Float?
+}
+
+model screenshot_times_timecodes {
+  id   Int    @id @default(autoincrement())
+  time Float?
+}
+
+model tags {
+  id   Int     @id @default(autoincrement())
+  name String? @unique(map: "sqlite_autoindex_tags_1")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model tags_files {
+  id   Int?
+  hash String?
+
+  @@id([id, hash])
+  @@index([id], map: "tags_files_id")
+  @@index([hash], map: "tags_files_hash")
+  @@index([id], map: "tags_files_tagid")
+  @@ignore
+}

@@ -43,7 +43,7 @@ export default class MergeTagsCommand extends Command {
             );
         }
 
-        const allTags = await library.getTags(new TagQuery([], true));
+        const allTags = await library.getAllTags();
 
         for (const sourceTagName of sourceTagNames) {
             const sourceTagNameUpperCase = sourceTagName.toLocaleUpperCase();

@@ -14,6 +14,7 @@ import { Query } from './query.model';
 import { ExplorerOpener } from './exploreropener';
 import { FileDataMigrator } from './filedatamigrator';
 import { SceneDetector } from './scenedetector';
+import { TagQuery } from './tagquery.model';
 
 export class Laputin {
     constructor(
@@ -80,8 +81,27 @@ export class Laputin {
         });
 
         api.route('/tags').get(async (req, res) => {
-            const tags = await this.library.getTags(<any>req.query);
-            res.send(tags);
+            if (!req.query) {
+                const tags = await this.library.getAllTags();
+                res.send(tags);
+            } else {
+                var tagName = req.query.tagName || '';
+                var andTags = this.parseTags(<any>req.query.andTags);
+                var orTags = this.parseTags(<any>req.query.orTags);
+                var notTags = this.parseTags(<any>req.query.notTags);
+                var unassociated = req.query.unassociated === 'true';
+
+                var query = new TagQuery(
+                    <any>tagName,
+                    <any>andTags,
+                    <any>orTags,
+                    <any>notTags,
+                    <any>unassociated
+                );
+
+                const tags = await this.library.getTags(query);
+                res.send(tags);
+            }
         });
 
         api.route('/tags').post(async (req, res) => {
@@ -351,6 +371,18 @@ export class Laputin {
         });
 
         return api;
+    }
+
+    private parseTags(tagsString: string): string[] {
+        if (!tagsString) {
+            return [];
+        }
+
+        if (tagsString.indexOf(',') === -1) {
+            return [tagsString];
+        }
+
+        return tagsString.split(',');
     }
 
     private _createMediaRoutes(): express.Express {

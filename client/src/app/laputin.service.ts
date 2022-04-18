@@ -9,9 +9,11 @@ import {
     Timecode,
     Tag,
     TimecodeTag,
-    Duplicate
+    Duplicate,
 } from './models';
 import { FileQuerySort } from './models/filequerysort';
+import { TagQuery } from './models/tagquery';
+import { TagQuerySort } from './models/tagquerysort';
 
 @Injectable()
 export class LaputinService {
@@ -25,7 +27,7 @@ export class LaputinService {
     constructor(private _http: HttpClient) {}
 
     public queryFiles(query: FileQuery): Observable<File[]> {
-        const params = this.compileParams(query);
+        const params = this.compileFileQueryParams(query);
         return this._http.get(this._baseUrl + '/files' + params).pipe(
             map((files: any[]): File[] => {
                 const result: File[] = [];
@@ -37,7 +39,7 @@ export class LaputinService {
 
                 return result;
             }),
-            map(files => {
+            map((files) => {
                 if (query.sort === FileQuerySort.FileSize) {
                     files.sort((a: File, b: File) =>
                         a.size > b.size ? -1 : 1
@@ -97,20 +99,26 @@ export class LaputinService {
     }
 
     public queryTimecodes(query: FileQuery): Observable<Timecode[]> {
-        const params = this.compileParams(query);
+        const params = this.compileFileQueryParams(query);
         return this._http
             .get<any[]>(this._baseUrl + '/timecodes' + params)
-            .pipe(map(timecodes => this.mapTimecodes(timecodes)));
+            .pipe(map((timecodes) => this.mapTimecodes(timecodes)));
     }
 
-    public getTags(): Observable<Tag[]> {
-        return this._http
-            .get(this._baseUrl + '/tags')
-            .pipe(
-                map((tags: any[]): Tag[] =>
-                    tags.map((tag: any) => this._convertTag(tag))
-                )
-            );
+    public getTags(query?: TagQuery): Observable<Tag[]> {
+        const params = this.compileTagQueryParams(query);
+        return this._http.get(this._baseUrl + '/tags' + params).pipe(
+            map((tags: any[]): Tag[] =>
+                tags.map((tag: any) => this._convertTag(tag))
+            ),
+            map((tags: Tag[]): Tag[] =>
+                query && query.sort === TagQuerySort.AssociationCount
+                    ? tags.sort((a: Tag, b: Tag) =>
+                          a.associationCount > b.associationCount ? -1 : 1
+                      )
+                    : tags.sort((a: Tag, b: Tag) => (a.name > b.name ? 1 : -1))
+            )
+        );
     }
 
     public getAllTags(): Observable<Tag[]> {
@@ -128,7 +136,7 @@ export class LaputinService {
             .get<Timecode[]>(
                 this._baseUrl + '/files/' + file.hash + '/timecodes'
             )
-            .pipe(map(timecodes => this.mapTimecodes(timecodes)));
+            .pipe(map((timecodes) => this.mapTimecodes(timecodes)));
     }
 
     public createTagTimecode(
@@ -138,11 +146,11 @@ export class LaputinService {
     ): Observable<Timecode> {
         const body = JSON.stringify({
             timecode: timecode,
-            screenshotTime: screenshotTime
+            screenshotTime: screenshotTime,
         });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http
@@ -151,7 +159,7 @@ export class LaputinService {
                 body,
                 { headers: headers }
             )
-            .pipe(map(t => this.mapTimecode(t)));
+            .pipe(map((t) => this.mapTimecode(t)));
     }
 
     public deleteTimecodeTag(
@@ -175,11 +183,11 @@ export class LaputinService {
     ): Observable<void> {
         const body = JSON.stringify({
             sourceHash: sourceFile.hash,
-            targetFile: targetFile.hash
+            targetFile: targetFile.hash,
         });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http
@@ -244,7 +252,7 @@ export class LaputinService {
         const body = JSON.stringify({ hash: file.hash, time: timeInSeconds });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http
@@ -260,16 +268,16 @@ export class LaputinService {
         const body = JSON.stringify({
             hash: file.hash,
             timecode: timecode,
-            time: timeInSeconds
+            time: timeInSeconds,
         });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http
             .post(this._baseUrl + '/screenshotTimecode', body, {
-                headers: headers
+                headers: headers,
             })
             .pipe(tap(() => this.timecodeThumbnailChanged.next(timecode)));
     }
@@ -282,25 +290,25 @@ export class LaputinService {
         const body = JSON.stringify({
             tag: tag,
             hash: file.hash,
-            time: timeInSeconds
+            time: timeInSeconds,
         });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http.post(this._baseUrl + '/screenshotTag', body, {
-            headers: headers
+            headers: headers,
         });
     }
 
     public openFiles(query: FileQuery): Observable<any> {
-        const params = this.compileParams(query);
+        const params = this.compileFileQueryParams(query);
         return this._http.get(this._baseUrl + '/open/files' + params);
     }
 
     public showFileInExplorer(query: FileQuery): Observable<any> {
-        const params = this.compileParams(query);
+        const params = this.compileFileQueryParams(query);
         return this._http.get(this._baseUrl + '/showInExplorer' + params);
     }
 
@@ -308,33 +316,33 @@ export class LaputinService {
         const body = JSON.stringify({ tagName: newTagName });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http
             .post(this._baseUrl + '/tags', body, { headers: headers })
-            .pipe(map(tag => this._convertTag(tag)));
+            .pipe(map((tag) => this._convertTag(tag)));
     }
 
     public renameTag(tag: Tag, newTagName: string): Observable<Tag> {
         const body = JSON.stringify({ name: newTagName });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http
             .put(this._baseUrl + '/tags/' + tag.id, body, { headers: headers })
-            .pipe(map(jsonTag => this._convertTag(jsonTag)));
+            .pipe(map((jsonTag) => this._convertTag(jsonTag)));
     }
 
     public addTags(file: File, tags: Tag[]): Observable<any> {
         const body = JSON.stringify({
-            selectedTags: tags
+            selectedTags: tags,
         });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
 
         return this._http.post(
@@ -363,11 +371,11 @@ export class LaputinService {
         timecode: Timecode
     ): Observable<any> {
         const body = JSON.stringify({
-            timecode: timecode
+            timecode: timecode,
         });
         const headers = new HttpHeaders({
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         });
         return this._http.put(
             this._baseUrl +
@@ -380,7 +388,40 @@ export class LaputinService {
         );
     }
 
-    private compileParams(query: FileQuery): string {
+    private compileTagQueryParams(query: TagQuery): string {
+        const params: string[] = [];
+
+        if (query) {
+            if (query.andTags && query.andTags.length > 0) {
+                params.push(
+                    'andTags=' +
+                        query.andTags.map((tag: Tag) => tag.id).join(',')
+                );
+            }
+            if (query.orTags && query.orTags.length > 0) {
+                params.push(
+                    'orTags=' + query.orTags.map((tag: Tag) => tag.id).join(',')
+                );
+            }
+            if (query.notTags && query.notTags.length > 0) {
+                params.push(
+                    'notTags=' +
+                        query.notTags.map((tag: Tag) => tag.id).join(',')
+                );
+            }
+            params.push(`tagName=${query.tagName || ''}`);
+            params.push(`unassociated=${query.unassociated || false}`);
+        }
+
+        let paramsStr = '';
+        if (params.length > 0) {
+            paramsStr = '?' + params.join('&');
+        }
+
+        return paramsStr;
+    }
+
+    private compileFileQueryParams(query: FileQuery): string {
         const params: string[] = [];
 
         if (query) {
@@ -420,7 +461,7 @@ export class LaputinService {
     }
 
     private mapTimecodes(timecodes: any[]): Timecode[] {
-        return timecodes.map(t => this.mapTimecode(t));
+        return timecodes.map((t) => this.mapTimecode(t));
     }
 
     private mapTimecode(timecode: any): Timecode {
@@ -438,9 +479,9 @@ export class LaputinService {
         return this._http
             .get(`/laputin/scenes/${file.hash}/${file.hash}-Scenes.json`)
             .pipe(
-                map(scenesJson => {
+                map((scenesJson) => {
                     const scenes = <any[]>scenesJson;
-                    return scenes.map(s => ({
+                    return scenes.map((s) => ({
                         index: s['Scene Number'],
                         start: s['Start Timecode'],
                         end: s['End Timecode'],
@@ -448,7 +489,7 @@ export class LaputinService {
                         endFrame: parseInt(s['End Frame'], 10),
                         startSeconds: parseFloat(s['Start Time (seconds)']),
                         endSeconds: parseFloat(s['End Time (seconds)']),
-                        length: s['Length (seconds)']
+                        length: s['Length (seconds)'],
                     }));
                 })
             );

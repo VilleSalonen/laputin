@@ -364,6 +364,10 @@ export class Library {
         await deleteTagStmt.runAsync(tagId);
     }
 
+    public async getAllTags(): Promise<Tag[]> {
+        return this.getTags(TagQuery.allUnassociated());
+    }
+
     public async getTags(query: TagQuery): Promise<Tag[]> {
         const tags: Tag[] = [];
 
@@ -387,34 +391,36 @@ export class Library {
             sql += ' count > 0 ';
         }
 
-        if (query && query.selectedTags && query.selectedTags.length > 0) {
+        if (query && query.andTags && query.andTags.length > 0) {
             const wheres: string[] = [];
-            query.selectedTags.forEach((tag) => {
-                params.push(tag.id);
-                wheres.push(' id = ? ');
+            query.andTags.forEach((tagId) => {
+                params.push(tagId);
+                wheres.push(' SELECT hash FROM tags_files WHERE id = ? ');
             });
 
-            const wheresJoined = wheres.join(' OR ');
-            sql +=
-                ` AND id IN (
+            const wheresJoined = wheres.join(' INTERSECT ');
+            sql += ` AND id IN (
                 SELECT DISTINCT id
                 FROM tags_files
                 WHERE hash IN (
                     SELECT DISTINCT hash
                     FROM tags_files
-                    WHERE ` +
-                wheresJoined +
-                `
+                    WHERE hash IN (${wheresJoined})
                 )
             )`;
 
             const selectedIds: string[] = [];
-            query.selectedTags.forEach((tag) => {
-                params.push(tag.id);
+            query.andTags.forEach((tagId) => {
+                params.push(tagId);
                 selectedIds.push(' ? ');
             });
 
             sql += ' AND id NOT IN (' + selectedIds.join(',') + ')';
+        }
+
+        if (query && query.tagName) {
+            sql += ' AND name LIKE ?';
+            params.push('%' + query.tagName + '%');
         }
 
         sql += ' ORDER BY name ';

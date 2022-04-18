@@ -40,6 +40,7 @@ import { TagScreenshotDialogComponent } from './tag-screenshot-dialog/tag-screen
 import { TimecodeEditDialogComponent } from './timecode-edit-dialog/timecode-edit-dialog.component';
 import { TagAutocompleteModule } from './tag-autocomplete/tag-autocomplete.module';
 import { FileQueryModule } from './file-query-component/file-query.module';
+import { TagQueryModule } from './tag-query-component/tag-query.module';
 import { PipesModule } from './pipes/pipes.module';
 import { FileComponent } from './file/file.component';
 import { ImageFileComponent } from './image-file/image-file.component';
@@ -97,6 +98,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
         MatProgressSpinnerModule,
         TagAutocompleteModule,
         FileQueryModule,
+        TagQueryModule,
         TimecodeQueryModule,
         PipesModule,
         MatExpansionModule,

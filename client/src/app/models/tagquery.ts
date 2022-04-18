@@ -1,17 +1,17 @@
 import { Tag } from './tag';
 import { TagContainer } from './tagcontainer';
-import { FileQuerySort } from './filequerysort';
+import { TagQuerySort } from './tagquerysort';
 
-export class FileQuery implements TagContainer {
-    public filename: string;
-    public status: string;
-    public hash: string;
+export class TagQuery implements TagContainer {
+    public tagName: string;
 
     public andTags: Tag[] = [];
     public orTags: Tag[] = [];
     public notTags: Tag[] = [];
 
-    public sort = FileQuerySort.FilePath;
+    public sort = TagQuerySort.TagName;
+
+    public unassociated: boolean = false;
 
     public get tags(): Tag[] {
         return [...new Set([...this.andTags, ...this.orTags, ...this.notTags])];
@@ -21,13 +21,11 @@ export class FileQuery implements TagContainer {
         this.clear();
 
         if (values) {
-            this.filename = values.filename || '';
-            this.status = values.status;
-            this.hash = values.hash;
+            this.tagName = values.tagName;
             this.andTags = values.andTags;
             this.orTags = values.orTags;
             this.notTags = values.notTags;
-            this.sort = values.sort || FileQuerySort.FilePath;
+            this.sort = values.sort || TagQuerySort.TagName;
         }
     }
 
@@ -60,9 +58,7 @@ export class FileQuery implements TagContainer {
 
     public isEmpty(): boolean {
         return (
-            this.filename === '' &&
-            this.status === 'both' &&
-            this.hash === '' &&
+            this.tagName === '' &&
             this.andTags.length === 0 &&
             this.orTags.length === 0 &&
             this.notTags.length === 0
@@ -70,20 +66,16 @@ export class FileQuery implements TagContainer {
     }
 
     public clear(): void {
-        this.filename = '';
-        this.status = 'both';
-        this.hash = '';
+        this.tagName = '';
         this.andTags = [];
         this.orTags = [];
         this.notTags = [];
-        this.sort = FileQuerySort.FilePath;
+        this.sort = TagQuerySort.TagName;
     }
 
     public parametersSpecified(): boolean {
         return (
-            this.filename !== '' ||
-            this.status !== 'both' ||
-            this.hash !== '' ||
+            this.tagName !== '' ||
             this.andTags.length > 0 ||
             this.orTags.length > 0 ||
             this.notTags.length > 0

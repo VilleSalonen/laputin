@@ -1,14 +1,9 @@
 <div class="container">
     <div class="tags full-height" #tags>
+        <app-tag-query (queryUpdated)="tagQueryUpdated($event)"></app-tag-query>
+
         <ng-container *ngIf="filteredTags$ | async as tags; else loading">
             <div class="tags-search">
-                <form>
-                    <mat-form-field>
-                        <input matInput type="text" placeholder="Filter tags" name="filter" (keyup)="onKeyUp($event)"
-                            [(ngModel)]="term" />
-                    </mat-form-field>
-                </form>
-
                 <span>
                     {{tags.length}} tags
                 </span>

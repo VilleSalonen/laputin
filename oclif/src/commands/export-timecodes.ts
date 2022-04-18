@@ -50,7 +50,7 @@ export default class ExportTimecodesCommand extends Command {
 
         const library = new Library(libraryPath);
 
-        const allTags = await library.getTags(new TagQuery([], true));
+        const allTags = await library.getAllTags();
 
         const andTags: Tag[] = [];
         const andTagNames: string[] = [
