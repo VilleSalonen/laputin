@@ -54,6 +54,14 @@
     width: $height * calc(16 / 9);
 
     display: flex;
+
+    a {
+        display: flex;
+
+        flex: 1;
+
+        text-decoration: none;
+    }
 }
 
 .files-list {

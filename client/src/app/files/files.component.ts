@@ -184,9 +184,8 @@ export class FilesComponent implements AfterViewInit {
             .subscribe((query) => this._service.openFiles(query).toPromise());
     }
 
-    public openFile(file: File): void {
+    public rememberFile(file: File): void {
         sessionStorage.setItem('previousFileHash', file.hash);
-        this.router.navigate(['/files', file.hash]);
     }
 
     private humanDuration(seconds: number): string {
