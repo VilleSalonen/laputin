@@ -102,6 +102,9 @@
     <ng-container *ngIf="query.sort === FileQuerySort.FilePath">
         File path
     </ng-container>
+    <ng-container *ngIf="query.sort === FileQuerySort.FileName">
+        File name
+    </ng-container>
     <ng-container *ngIf="query.sort === FileQuerySort.Duration">
         Duration
     </ng-container>
