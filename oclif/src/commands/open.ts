@@ -97,9 +97,10 @@ export default class OpenCommand extends Command {
         }
 
         const query = new Query(
-            flags.path || '',
+            flags.path,
+            [],
             status,
-            flags.hash || '',
+            flags.hash ? [flags.hash] : [],
             andTags.map((tag) => tag.id).join(','),
             orTags.map((tag) => tag.id).join(','),
             notTags.map((tag) => tag.id).join(','),

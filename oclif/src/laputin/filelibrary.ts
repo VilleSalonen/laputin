@@ -49,6 +49,7 @@ export class FileLibrary extends events.EventEmitter {
                 undefined,
                 undefined,
                 undefined,
+                undefined,
                 undefined
             );
             this.library.getFiles(query).then((existingFiles: File[]) => {

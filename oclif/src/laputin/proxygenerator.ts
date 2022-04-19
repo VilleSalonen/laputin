@@ -19,7 +19,7 @@ export class ProxyGenerator {
         }
 
         const files = await this.library.getFiles(
-            new Query('', '', '', '', '', '', false)
+            new Query(undefined, undefined, '', undefined, '', '', '', false)
         );
 
         files.forEach((file) => {

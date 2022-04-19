@@ -93,9 +93,10 @@ export default class ExportTimecodesCommand extends Command {
         }
 
         const query = new Query(
-            flags.path || '',
+            flags.path,
+            [],
             'tagged',
-            flags.hash || '',
+            flags.hash ? [flags.hash] : [],
             andTags.map((tag) => tag.id).join(','),
             orTags.map((tag) => tag.id).join(','),
             notTags.map((tag) => tag.id).join(','),

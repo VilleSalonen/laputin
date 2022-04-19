@@ -33,7 +33,7 @@ export class SceneDetector {
         }
 
         const files = await this.library.getFiles(
-            new Query(filenameForQuery, '', '', '', '', '', false)
+            new Query(filenameForQuery, [], '', undefined, '', '', '', false)
         );
         if (files.length === 0) {
             winston.warn(

@@ -147,7 +147,8 @@ export class Laputin {
             const query = new Query(
                 undefined,
                 undefined,
-                req.params.hash,
+                undefined,
+                [req.params.hash],
                 undefined,
                 undefined,
                 undefined,
@@ -267,7 +268,8 @@ export class Laputin {
                 const query = new Query(
                     undefined,
                     undefined,
-                    req.body.hash,
+                    undefined,
+                    [req.body.hash],
                     undefined,
                     undefined,
                     undefined,
@@ -294,7 +296,8 @@ export class Laputin {
                 const query = new Query(
                     undefined,
                     undefined,
-                    req.body.hash,
+                    undefined,
+                    [req.body.hash],
                     undefined,
                     undefined,
                     undefined,
@@ -325,7 +328,8 @@ export class Laputin {
                 const query = new Query(
                     undefined,
                     undefined,
-                    req.body.hash,
+                    undefined,
+                    [req.body.hash],
                     undefined,
                     undefined,
                     undefined,

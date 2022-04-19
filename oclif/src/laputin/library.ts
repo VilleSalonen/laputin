@@ -105,7 +105,8 @@ export class Library {
                 new Query(
                     undefined,
                     undefined,
-                    file.hash,
+                    undefined,
+                    [file.hash],
                     undefined,
                     undefined,
                     undefined,
@@ -151,7 +152,8 @@ export class Library {
         const query = new Query(
             undefined,
             undefined,
-            hash,
+            undefined,
+            [hash],
             undefined,
             undefined,
             undefined,
@@ -188,6 +190,16 @@ export class Library {
                 params.push('%' + word + '%');
             }
         }
+        if (query.paths && query.paths.length) {
+            const pathWheres: string[] = [];
+
+            for (const path of query.paths) {
+                pathWheres.push(' path = ? COLLATE NOCASE ');
+                params.push(path);
+            }
+
+            sql1 += ` AND (${pathWheres.join(' OR ')})`;
+        }
         if (query.status) {
             if (query.status === 'tagged') {
                 sql1 +=
@@ -199,9 +211,13 @@ export class Library {
             }
         }
 
-        if (query.hash) {
-            sql1 += ' AND hash = ? ';
-            params.push(query.hash);
+        if (query.hash && query.hash.length) {
+            const hashWheres: string[] = [];
+            for (const hash of query.hash) {
+                hashWheres.push(' hash = ? ');
+                params.push(query.hash);
+            }
+            sql1 += ` AND (${hashWheres.join(' OR ')})`;
         }
 
         if (query.and || query.or || query.not) {
@@ -750,7 +766,8 @@ export class Library {
         if (query.filename) {
             timecodesWithTags = timecodesWithTags.filter((t) =>
                 query.filename
-                    ? t.path.toLocaleLowerCase().indexOf(query.filename) > -1
+                    ? // Currently timecode query only supports single filename.
+                      t.path.toLocaleLowerCase().indexOf(query.filename[0]) > -1
                     : -1
             );
         }
