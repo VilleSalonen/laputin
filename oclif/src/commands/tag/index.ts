@@ -10,8 +10,9 @@ import { Library } from '../../laputin/library';
 import { QuickMD5Hasher } from '../../laputin/quickmd5hasher';
 import { readPipe } from '../../laputin/read-pipe';
 import { initializeWinston } from '../../laputin/winston';
+import { File as LaputinFile } from '../../laputin/file';
 
-export default class Tag extends Command {
+export default class TagCommand extends Command {
     static description = 'describe the command here';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
@@ -37,7 +38,7 @@ export default class Tag extends Command {
     }
 
     public async run(): Promise<void> {
-        const { args, flags } = await this.parse(Tag);
+        const { args, flags } = await this.parse(TagCommand);
 
         initializeWinston(flags.verbose);
 
@@ -94,6 +95,7 @@ export default class Tag extends Command {
         }
 
         const tagsForAdding = [...newTags, ...existingTags];
+        const filesForAdding: LaputinFile[] = [];
         for (const file of files) {
             if (file && (!fs.existsSync(file) || !fs.statSync(file).isFile())) {
                 winston.warn(`File ${file} is not a valid file.`);
@@ -107,22 +109,15 @@ export default class Tag extends Command {
                 throw new Error(`Could not find file with hash ${hash}!`);
             }
 
-            const trulyAddedTags: string[] = [];
-            for (const tag of tagsForAdding) {
-                const added = await library.createNewLinkBetweenTagAndFile(
-                    tag,
-                    libraryFile.hash
-                );
-                if (added) {
-                    trulyAddedTags.push(tag.name);
-                }
-            }
+            filesForAdding.push(libraryFile);
+        }
 
-            if (trulyAddedTags.length) {
-                winston.info(
-                    `Added ${trulyAddedTags.join(',')} for: ${libraryFile.name}`
-                );
-            }
+        const results = await library.createNewLinksBetweenTagsAndFiles(
+            tagsForAdding,
+            filesForAdding
+        );
+        for (const result of results) {
+            winston.info(`Added ${result.tag.name} to ${result.file.path}`);
         }
     }
 }

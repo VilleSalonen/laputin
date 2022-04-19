@@ -17,6 +17,7 @@ import { Query } from './query.model';
 import { File } from './file';
 import { Tag, Timecode, TimecodeTag } from './tag';
 import { TagQuery } from './tagquery.model';
+import { FileTagLink } from './filetaglink';
 
 export class Library {
     private _db: any;
@@ -432,6 +433,85 @@ export class Library {
         const stmt = this._db.prepare(sql);
         await stmt.eachAsync(params, each);
         return tags;
+    }
+
+    public async createNewLinksBetweenTagsAndFiles(
+        inputTags: Tag[],
+        files: File[]
+    ): Promise<FileTagLink[]> {
+        const selectPrepares: string[] = [];
+        const selectParams: any[] = [];
+        for (const inputTag of inputTags) {
+            for (const file of files) {
+                selectPrepares.push('(id = ? AND hash = ?)');
+                selectParams.push(inputTag.id);
+                selectParams.push(file.hash);
+            }
+        }
+
+        const select = `SELECT * FROM tags_files WHERE ${selectPrepares.join(
+            ' OR '
+        )}`;
+        const selectStmt = this._db.prepare(select);
+
+        const selectResults: Map<string, Set<number>> = new Map<
+            string,
+            Set<number>
+        >();
+        const each = (err: Error, row: any) => {
+            if (!selectResults.has(row.hash)) {
+                selectResults.set(row.hash, new Set<number>());
+            }
+            // Map entry is guaranteed to exist as we just checked and/or created it.
+            (<Set<number>>selectResults.get(row.hash)).add(row.id);
+        };
+        await selectStmt.eachAsync(selectParams, each);
+
+        const insertPrepares: string[] = [];
+        const insertParams: any[] = [];
+        const results: FileTagLink[] = [];
+        for (const inputTag of inputTags) {
+            for (const file of files) {
+                if (
+                    !selectResults.has(file.hash) ||
+                    !(<Set<number>>selectResults.get(file.hash)).has(
+                        inputTag.id
+                    )
+                ) {
+                    winston.verbose(
+                        `${file.path} did not have ${inputTag.name}`
+                    );
+                    insertPrepares.push('(?, ?)');
+                    insertParams.push(inputTag.id);
+                    insertParams.push(file.hash);
+                    results.push(new FileTagLink(file, inputTag));
+                } else {
+                    winston.verbose(
+                        `${file.path} already HAD ${inputTag.name}`
+                    );
+                }
+            }
+        }
+
+        if (insertPrepares.length === 0) {
+            return [];
+        }
+
+        const insert = `INSERT INTO tags_files VALUES ${insertPrepares.join(
+            ','
+        )}`;
+        const insertStmt = this._db.prepare(insert);
+
+        try {
+            await insertStmt.runAsync(insertParams);
+            return results;
+        } catch (err) {
+            if ((<any>err).code !== 'SQLITE_CONSTRAINT') {
+                throw err;
+            }
+
+            return [];
+        }
     }
 
     public async createNewLinkBetweenTagAndFile(
