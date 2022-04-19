@@ -798,6 +798,83 @@ export class Library {
         return timecodesWithTags;
     }
 
+    public async deleteLinksBetweenTagsAndFiles(
+        inputTags: Tag[],
+        files: File[]
+    ): Promise<FileTagLink[]> {
+        const selectPrepares: string[] = [];
+        const selectParams: any[] = [];
+        for (const inputTag of inputTags) {
+            for (const file of files) {
+                selectPrepares.push('(id = ? AND hash = ?)');
+                selectParams.push(inputTag.id);
+                selectParams.push(file.hash);
+            }
+        }
+
+        const select = `SELECT * FROM tags_files WHERE ${selectPrepares.join(
+            ' OR '
+        )}`;
+        const selectStmt = this._db.prepare(select);
+
+        const selectResults: Map<string, Set<number>> = new Map<
+            string,
+            Set<number>
+        >();
+        const each = (err: Error, row: any) => {
+            if (!selectResults.has(row.hash)) {
+                selectResults.set(row.hash, new Set<number>());
+            }
+            // Map entry is guaranteed to exist as we just checked and/or created it.
+            (<Set<number>>selectResults.get(row.hash)).add(row.id);
+        };
+        await selectStmt.eachAsync(selectParams, each);
+
+        const deletePrepares: string[] = [];
+        const deleteParams: any[] = [];
+        const results: FileTagLink[] = [];
+        for (const inputTag of inputTags) {
+            for (const file of files) {
+                if (
+                    selectResults.has(file.hash) &&
+                    (<Set<number>>selectResults.get(file.hash)).has(inputTag.id)
+                ) {
+                    winston.verbose(
+                        `${file.path} already had ${inputTag.name}`
+                    );
+                    deletePrepares.push('(id = ? AND hash = ?)');
+                    deleteParams.push(inputTag.id);
+                    deleteParams.push(file.hash);
+                    results.push(new FileTagLink(file, inputTag));
+                } else {
+                    winston.verbose(
+                        `${file.path} did NOT HAVE ${inputTag.name}`
+                    );
+                }
+            }
+        }
+
+        if (deletePrepares.length === 0) {
+            return [];
+        }
+
+        const deleteSql = `DELETE FROM tags_files WHERE ${deletePrepares.join(
+            ' OR '
+        )}`;
+        const deleteStmt = this._db.prepare(deleteSql);
+
+        try {
+            await deleteStmt.runAsync(deleteParams);
+            return results;
+        } catch (err) {
+            if ((<any>err).code !== 'SQLITE_CONSTRAINT') {
+                throw err;
+            }
+
+            return [];
+        }
+    }
+
     public deleteLinkBetweenTagAndFile(
         inputTag: number,
         inputFile: string

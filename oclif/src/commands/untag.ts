@@ -8,6 +8,7 @@ import { Library } from '../laputin/library';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { IHasher } from '../laputin/ihasher';
 import winston = require('winston');
+import { File as LaputinFile } from '../laputin/file';
 
 export default class Untag extends Command {
     static description = 'describe the command here';
@@ -78,7 +79,7 @@ export default class Untag extends Command {
         const existingTags = allTags.filter((t) =>
             tagNamesLower.includes(t.name.toLocaleLowerCase())
         );
-
+        const filesForUntagging: LaputinFile[] = [];
         for (const file of files) {
             if (file && (!fs.existsSync(file) || !fs.statSync(file).isFile())) {
                 winston.warn(`File ${file} is not a valid file.`);
@@ -92,13 +93,15 @@ export default class Untag extends Command {
                 throw new Error(`Could not find file with hash ${hash}!`);
             }
 
-            for (const tag of existingTags) {
-                await library.deleteLinkBetweenTagAndFile(
-                    tag.id,
-                    libraryFile.hash
-                );
-                winston.info(`Removed ${tag.name} from ${libraryFile.name}`);
-            }
+            filesForUntagging.push(libraryFile);
+        }
+
+        const results = await library.deleteLinksBetweenTagsAndFiles(
+            existingTags,
+            filesForUntagging
+        );
+        for (const result of results) {
+            winston.info(`Removed ${result.tag.name} from ${result.file.path}`);
         }
     }
 }
