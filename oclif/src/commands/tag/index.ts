@@ -57,12 +57,6 @@ export default class Tag extends Command {
             files = flags.file;
         }
 
-        for (const file of files) {
-            if (file && (!fs.existsSync(file) || !fs.statSync(file).isFile())) {
-                throw new Error(`File ${file} is not a valid file.`);
-            }
-        }
-
         const libraryPath = getLibraryPathByFile(files[0]);
         const library = new Library(libraryPath);
 
@@ -101,6 +95,11 @@ export default class Tag extends Command {
 
         const tagsForAdding = [...newTags, ...existingTags];
         for (const file of files) {
+            if (file && (!fs.existsSync(file) || !fs.statSync(file).isFile())) {
+                winston.warn(`File ${file} is not a valid file.`);
+                continue;
+            }
+
             const fileStats = await stat(file);
             const hash = await hasher.hash(file, fileStats);
             const libraryFile = await library.getFile(hash);
