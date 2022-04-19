@@ -107,14 +107,21 @@ export default class Tag extends Command {
                 throw new Error(`Could not find file with hash ${hash}!`);
             }
 
+            const trulyAddedTags: string[] = [];
             for (const tag of tagsForAdding) {
                 const added = await library.createNewLinkBetweenTagAndFile(
                     tag,
                     libraryFile.hash
                 );
                 if (added) {
-                    winston.info(`Added: ${tag.name} to ${libraryFile.name}`);
+                    trulyAddedTags.push(tag.name);
                 }
+            }
+
+            if (trulyAddedTags.length) {
+                winston.info(
+                    `Added ${trulyAddedTags.join(',')} for: ${libraryFile.name}`
+                );
             }
         }
     }
