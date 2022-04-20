@@ -1,13 +1,13 @@
-import { Command, Flags } from '@oclif/core';
-import express = require('express');
 import * as fs from 'fs';
 import * as path from 'path';
-import { format } from 'winston';
-import winston = require('winston');
+import { Command, Flags } from '@oclif/core';
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
-import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { initializeWinston } from '../laputin/winston';
+import { LaputinConfiguration } from '../laputin/laputinconfiguration';
+import chalk = require('chalk');
+import express = require('express');
+import winston = require('winston');
 
 export default class Start extends Command {
     static description = 'describe the command here';
@@ -51,7 +51,9 @@ export default class Start extends Command {
         try {
             app.listen(configuration.port, () => {
                 winston.info(
-                    `Laputin in ${libraryPath} at http://localhost:${configuration.port}`
+                    `Laputin in ${chalk.green(libraryPath)} at ${chalk.green(
+                        'http://localhost:' + configuration.port
+                    )}`
                 );
             });
         } catch (error) {
