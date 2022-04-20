@@ -826,6 +826,13 @@ export class Library {
         inputTags: Tag[],
         files: File[]
     ): Promise<FileTagLink[]> {
+        if (inputTags && inputTags.length === 0) {
+            throw new Error('No tags provided for linking');
+        }
+        if (files && files.length === 0) {
+            throw new Error('No files provided for linking');
+        }
+
         const selectPrepares: string[] = [];
         const selectParams: any[] = [];
         for (const inputTag of inputTags) {
