@@ -80,8 +80,10 @@ export default class Untag extends Command {
         const existingTags = allTags.filter((t) =>
             tagNamesLower.includes(t.name.toLocaleLowerCase())
         );
+
+        const harmonizedFiles = files.map((file) => file.replace(/\\/g, '/'));
         const libraryFiles = await library.getFiles(
-            new Query(undefined, files)
+            new Query(undefined, harmonizedFiles)
         );
 
         const results = await library.deleteLinksBetweenTagsAndFiles(

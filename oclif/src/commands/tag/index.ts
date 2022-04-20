@@ -96,8 +96,10 @@ export default class TagCommand extends Command {
         }
 
         const tagsForAdding = [...newTags, ...existingTags];
+
+        const harmonizedFiles = files.map((file) => file.replace(/\\/g, '/'));
         const filesForAdding = await library.getFiles(
-            new Query(undefined, files)
+            new Query(undefined, harmonizedFiles)
         );
 
         const results = await library.createNewLinksBetweenTagsAndFiles(
