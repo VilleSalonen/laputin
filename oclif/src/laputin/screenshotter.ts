@@ -1,4 +1,5 @@
-import * as fs from 'fs';
+import * as fsLegacy from 'fs';
+import * as fs from 'fs/promises';
 import child_process = require('child_process');
 import * as path from 'path';
 import winston = require('winston');
@@ -46,15 +47,15 @@ export class Screenshotter {
         this.initialize();
 
         return (
-            fs.existsSync(this.getThumbPath(file)) &&
-            fs.existsSync(this.getThumbSmallPath(file))
+            fsLegacy.existsSync(this.getThumbPath(file)) &&
+            fsLegacy.existsSync(this.getThumbSmallPath(file))
         );
     }
 
     public async setScreenshot(file: File, path: string): Promise<void> {
         const thumbPath = this.getThumbPath(file);
 
-        fs.copyFileSync(path, thumbPath);
+        fsLegacy.copyFileSync(path, thumbPath);
         const command = `ffmpeg -y -i "${thumbPath}" -vf scale=800:-1 "${this.getThumbSmallPath(
             file
         )}"`;
@@ -188,6 +189,17 @@ export class Screenshotter {
         }
     }
 
+    public async copyScreenshot(sourceFile: File, targetFile: File) {
+        await fs.copyFile(
+            this.getThumbPath(sourceFile),
+            this.getThumbPath(targetFile)
+        );
+        await fs.copyFile(
+            this.getThumbSmallPath(sourceFile),
+            this.getThumbSmallPath(targetFile)
+        );
+    }
+
     private initialize(): void {
         if (this._initialized) {
             return;
@@ -195,44 +207,44 @@ export class Screenshotter {
 
         const laputinHiddenDir = path.join(this._libraryPath, '//.laputin//');
 
-        if (!fs.existsSync(laputinHiddenDir)) {
+        if (!fsLegacy.existsSync(laputinHiddenDir)) {
             winston.log(
                 'verbose',
                 'Created directory ' + laputinHiddenDir + '.'
             );
-            fs.mkdirSync(laputinHiddenDir);
+            fsLegacy.mkdirSync(laputinHiddenDir);
         }
 
-        if (!fs.existsSync(this._thumbsPath)) {
+        if (!fsLegacy.existsSync(this._thumbsPath)) {
             winston.log(
                 'verbose',
                 'Created directory ' + this._thumbsPath + '.'
             );
-            fs.mkdirSync(this._thumbsPath);
+            fsLegacy.mkdirSync(this._thumbsPath);
         }
 
-        if (!fs.existsSync(this._thumbsSmallPath)) {
+        if (!fsLegacy.existsSync(this._thumbsSmallPath)) {
             winston.log(
                 'verbose',
                 'Created directory ' + this._thumbsSmallPath + '.'
             );
-            fs.mkdirSync(this._thumbsSmallPath);
+            fsLegacy.mkdirSync(this._thumbsSmallPath);
         }
 
-        if (!fs.existsSync(this._tagTimecodeThumbsPath)) {
+        if (!fsLegacy.existsSync(this._tagTimecodeThumbsPath)) {
             winston.log(
                 'verbose',
                 'Created directory ' + this._tagTimecodeThumbsPath + '.'
             );
-            fs.mkdirSync(this._tagTimecodeThumbsPath);
+            fsLegacy.mkdirSync(this._tagTimecodeThumbsPath);
         }
 
-        if (!fs.existsSync(this._tagTimecodeThumbsSmallPath)) {
+        if (!fsLegacy.existsSync(this._tagTimecodeThumbsSmallPath)) {
             winston.log(
                 'verbose',
                 'Created directory ' + this._tagTimecodeThumbsSmallPath + '.'
             );
-            fs.mkdirSync(this._tagTimecodeThumbsSmallPath);
+            fsLegacy.mkdirSync(this._tagTimecodeThumbsSmallPath);
         }
 
         this._initialized = true;

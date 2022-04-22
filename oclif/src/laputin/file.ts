@@ -3,6 +3,7 @@ import * as path from 'path';
 import { Tag } from './tag';
 
 export class File {
+    public fileId: number;
     public hash: string;
     public path: string;
     public name: string;
@@ -12,6 +13,7 @@ export class File {
     public type: string;
 
     constructor(
+        fileId: number,
         hash: string,
         filePath: string,
         tags: Tag[],
@@ -19,6 +21,7 @@ export class File {
         type: string,
         metadata?: any
     ) {
+        this.fileId = fileId;
         this.hash = hash;
         this.path = filePath.replace(/\\/g, '/');
         this.name = this.cleanPath();

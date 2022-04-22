@@ -4,66 +4,73 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:G:/Culture/Videos/.laputin.db"
+  url      = env("DATABASE_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model files {
-  hash     String? @unique(map: "sqlite_autoindex_files_1")
-  path     String? @unique(map: "sqlite_autoindex_files_2")
-  active   Int?
-  size     Int?
-  metadata Bytes?
-  type     String?
-
-  @@ignore
+model File {
+  id               Int                @id @default(autoincrement())
+  hash             String             @unique(map: "sqlite_autoindex_File_1")
+  path             String             @unique(map: "sqlite_autoindex_File_2")
+  active           Int
+  size             BigInt
+  metadata         String
+  type             String
+  ScreenshotTag    ScreenshotTag[]
+  TagsOnFiles      TagsOnFiles[]
+  TimecodesOnFiles TimecodesOnFiles[]
 }
 
-model files_timecodes {
-  id    Int     @id @default(autoincrement())
-  hash  String?
-  start Float?
-  end   Float?
+model ScreenshotFile {
+  id   Int   @id @default(autoincrement())
+  time Float
 }
 
-model files_timecodes_tags {
-  id          Int  @id @default(autoincrement())
-  timecode_id Int?
-  tag_id      Int?
+model ScreenshotTag {
+  id     Int   @id @default(autoincrement())
+  fileId Int
+  time   Float
+  File   File  @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Tag    Tag   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model screenshot_times_files {
-  hash String? @id
-  time Float?
-
-  @@ignore
+model ScreenshotTimecode {
+  id   Int   @id @default(autoincrement())
+  Time Float
 }
 
-model screenshot_times_tags {
-  id   Int     @id @default(autoincrement())
-  hash String?
-  time Float?
+model Tag {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique(map: "sqlite_autoindex_Tag_1")
+  ScreenshotTag   ScreenshotTag?
+  TagsOnFiles     TagsOnFiles[]
+  TagsOnTimecodes TagsOnTimecodes[]
 }
 
-model screenshot_times_timecodes {
-  id   Int    @id @default(autoincrement())
-  time Float?
+model TagsOnFiles {
+  id     Int  @id @default(autoincrement())
+  fileId Int
+  tagId  Int
+  Tag    Tag  @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  File   File @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([fileId, tagId], map: "sqlite_autoindex_TagsOnFiles_1")
+  @@index([tagId], map: "TagsOnFiles_tagId")
+  @@index([fileId], map: "TagsOnFiles_fileId")
 }
 
-model tags {
-  id   Int     @id @default(autoincrement())
-  name String? @unique(map: "sqlite_autoindex_tags_1")
+model TagsOnTimecodes {
+  id               Int              @id @default(autoincrement())
+  timecodeId       Int
+  tagId            Int
+  Tag              Tag              @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  TimecodesOnFiles TimecodesOnFiles @relation(fields: [timecodeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model tags_files {
-  id   Int?
-  hash String?
-
-  @@id([id, hash])
-  @@index([id], map: "tags_files_id")
-  @@index([hash], map: "tags_files_hash")
-  @@index([id], map: "tags_files_tagid")
-  @@ignore
+model TimecodesOnFiles {
+  id              Int               @id @default(autoincrement())
+  fileId          Int
+  start           Float
+  end             Float
+  File            File              @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  TagsOnTimecodes TagsOnTimecodes[]
 }

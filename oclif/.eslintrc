@@ -1,6 +1,10 @@
 {
   "extends": [
     "oclif",
-    "oclif-typescript"
-  ]
+    "oclif-typescript",
+    "eslint:recommended"
+  ],
+  "rules": {
+    "object-curly-spacing": "off"
+  }
 }

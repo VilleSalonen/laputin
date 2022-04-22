@@ -147,97 +147,107 @@ export class FileLibrary extends events.EventEmitter {
         stats: fs.Stats,
         performFullCheck: boolean
     ): Promise<void> {
-        if (stats.isDirectory()) {
-            return;
-        }
-        if (this.fileShouldBeIgnored(filePath)) {
-            return;
-        }
-
-        const escapedFilePath = filePath.replace(/\\/g, '/');
-        if (
-            !performFullCheck &&
-            this._existingFiles[escapedFilePath] &&
-            this._existingFiles[escapedFilePath].size === stats.size
-        ) {
-            const file = this._existingFiles[escapedFilePath];
-            this.addFileToBookkeeping(file);
-
-            winston.log(
-                'verbose',
-                'File found in same path with same size: ' + filePath
-            );
-        } else {
-            const hash = await this._hasher.hash(filePath, stats);
-
-            const buffer = readChunk.sync(filePath, 0, fileType.minimumBytes);
-            const type = fileType(buffer);
-
-            if (!type) {
-                winston.log(
-                    'warn',
-                    `Could not read mime type from file ${filePath}. Skipping the file!`
-                );
+        try {
+            if (stats.isDirectory()) {
+                return;
+            }
+            if (this.fileShouldBeIgnored(filePath)) {
                 return;
             }
 
-            let metadata = {};
-            if (!this.skipMetadataExtraction) {
-                const ffprobeMetadata = await this.readFfprobeMetadata(
-                    filePath
-                );
-                metadata = { ...metadata, ...ffprobeMetadata };
+            const escapedFilePath = filePath.replace(/\\/g, '/');
+            if (
+                !performFullCheck &&
+                this._existingFiles[escapedFilePath] &&
+                BigInt(this._existingFiles[escapedFilePath].size) ===
+                    BigInt(stats.size)
+            ) {
+                const file = this._existingFiles[escapedFilePath];
+                this.addFileToBookkeeping(file);
 
-                const releaseDate = escapedFilePath.match(
-                    /.*(\d\d\d\d-\d\d-\d\d).*/
+                winston.log(
+                    'verbose',
+                    'File found in same path with same size: ' + filePath
                 );
-                if (releaseDate && releaseDate[1]) {
-                    metadata = {
-                        ...metadata,
-                        releaseDate: releaseDate[1],
-                    };
-                } else {
-                    const releaseYear = escapedFilePath.match(
-                        /.* - (\d\d\d\d) - .*/
+            } else {
+                const hash = await this._hasher.hash(filePath, stats);
+
+                const buffer = readChunk.sync(
+                    filePath,
+                    0,
+                    fileType.minimumBytes
+                );
+                const type = fileType(buffer);
+
+                if (!type) {
+                    winston.log(
+                        'warn',
+                        `Could not read mime type from file ${filePath}. Skipping the file!`
                     );
-                    if (releaseYear && releaseYear[1]) {
-                        metadata = {
-                            ...metadata,
-                            releaseDate: releaseYear[1],
-                        };
-                    }
+                    return;
                 }
 
-                metadata = {
-                    ...metadata,
-                    lastModified: stats.mtime,
-                };
+                let metadata = {};
+                if (!this.skipMetadataExtraction) {
+                    const ffprobeMetadata = await this.readFfprobeMetadata(
+                        filePath
+                    );
+                    metadata = { ...metadata, ...ffprobeMetadata };
+
+                    const releaseDate = escapedFilePath.match(
+                        /.*(\d\d\d\d-\d\d-\d\d).*/
+                    );
+                    if (releaseDate && releaseDate[1]) {
+                        metadata = {
+                            ...metadata,
+                            releaseDate: releaseDate[1],
+                        };
+                    } else {
+                        const releaseYear = escapedFilePath.match(
+                            /.* - (\d\d\d\d) - .*/
+                        );
+                        if (releaseYear && releaseYear[1]) {
+                            metadata = {
+                                ...metadata,
+                                releaseDate: releaseYear[1],
+                            };
+                        }
+                    }
+
+                    metadata = {
+                        ...metadata,
+                        lastModified: stats.mtime,
+                    };
+                }
+
+                const file = new File(
+                    NaN,
+                    hash,
+                    filePath,
+                    [],
+                    stats.size,
+                    type.mime,
+                    metadata
+                );
+                this.addFileToBookkeeping(file);
+
+                if (
+                    (type.mime.startsWith('video') ||
+                        type.mime.startsWith('image')) &&
+                    !this._screenshotter.exists(file)
+                ) {
+                    await this._screenshotter.screenshot(file, 180);
+                }
+
+                this.emit('found', file);
+
+                winston.log('verbose', 'Found file: ' + filePath);
             }
 
-            const file = new File(
-                hash,
-                filePath,
-                [],
-                stats.size,
-                type.mime,
-                metadata
-            );
-            this.addFileToBookkeeping(file);
-
-            if (
-                (type.mime.startsWith('video') ||
-                    type.mime.startsWith('image')) &&
-                !this._screenshotter.exists(file)
-            ) {
-                await this._screenshotter.screenshot(file, 180);
-            }
-
-            this.emit('found', file);
-
-            winston.log('verbose', 'Found file: ' + filePath);
+            delete this._existingFiles[escapedFilePath];
+        } catch (err) {
+            // console.log('err', err);
         }
-
-        delete this._existingFiles[escapedFilePath];
     }
 
     private async readFfprobeMetadata(filePath: string): Promise<any> {

@@ -18,7 +18,7 @@ export class FileDataMigrator {
         targetFile: File
     ): Promise<void> {
         await this.migrateTags(sourceFile, targetFile);
-        await this.migrateScreenshot(sourceFile, targetFile);
+        this.screenshotter.copyScreenshot(sourceFile, targetFile);
         await this.migrateTimecodes(sourceFile, targetFile);
         await this.migrateScenes(sourceFile, targetFile);
     }
@@ -27,7 +27,7 @@ export class FileDataMigrator {
         sourceFile: File,
         targetFile: File
     ): Promise<void> {
-        await this.library.clearAllTagsAndTimecodesFromFile(targetFile.hash);
+        await this.library.clearAllTagsAndTimecodesFromFile(targetFile.fileId);
 
         for (const tag of sourceFile.tags) {
             await this.library.createNewLinkBetweenTagAndFile(
@@ -35,16 +35,6 @@ export class FileDataMigrator {
                 targetFile.hash
             );
         }
-    }
-
-    private async migrateScreenshot(
-        sourceFile: File,
-        targetFile: File
-    ): Promise<void> {
-        const screenshotTime = await this.library.getScreenshotTime(
-            sourceFile.hash
-        );
-        await this.screenshotter.screenshot(targetFile, screenshotTime);
     }
 
     private async migrateTimecodes(
