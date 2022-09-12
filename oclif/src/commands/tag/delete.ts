@@ -3,13 +3,11 @@ import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { initializeWinston } from '../../laputin/winston';
 import winston = require('winston');
-import { TagQuery } from '../../laputin/tagquery.model';
 
 export default class DeleteTagCommand extends Command {
-    static description =
-        'Detects individual scenes within video files using PySceneDetect';
+    static description = 'Deletes a tag';
 
-    static examples = ['<%= config.bin %> <%= command.id %>'];
+    static examples = ['<%= config.bin %> <%= command.id %> "Some tag"'];
 
     static flags = {
         library: Flags.string({
