@@ -40,91 +40,104 @@ export class FileLibrary extends events.EventEmitter {
         super();
     }
 
-    public load(performFullCheck: boolean): Promise<void> {
+    public async load(performFullCheck: boolean): Promise<void> {
+        const query = new Query(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined
+        );
+        const existingFiles = await this.library.getFiles(query);
+        this._existingFiles = _.keyBy(existingFiles, (f) => f.path);
+
+        for (const mediaPath of this._configuration.mediaPaths) {
+            await this.scanFiles(mediaPath, performFullCheck);
+        }
+    }
+
+    private scanFiles(
+        mediaPath: string,
+        performFullCheck: boolean
+    ): Promise<void> {
+        const walkerOptions = {
+            followLinks: false,
+        };
+
         return new Promise<void>((resolve, reject) => {
-            const query = new Query(
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined
-            );
-            this.library.getFiles(query).then((existingFiles: File[]) => {
-                this._existingFiles = _.keyBy(existingFiles, (f) => f.path);
+            const walker = walk.walk(mediaPath, walkerOptions);
+            walker.on('file', (root, walkStat, callback) => {
+                this.processFile(root, walkStat, callback, performFullCheck);
+            });
+            walker.on('end', () => {
+                const escapedMediaPath = mediaPath.replace(/\\/g, '/');
+                const missingFiles = _.values(
+                    this._existingFiles
+                ).filter((file) => file.path.startsWith(escapedMediaPath));
 
-                const walkerOptions = {
-                    followLinks: false,
-                    filters: ['.laputin'],
-                };
-                const walker = walk.walk(this._libraryPath, walkerOptions);
-                walker.on('file', (root, walkStat, callback) => {
-                    this.processFile(
-                        root,
-                        walkStat,
-                        callback,
-                        performFullCheck
-                    );
+                missingFiles.forEach((file) => {
+                    this.emit('lost', file);
                 });
-                walker.on('end', () => {
-                    const missingFiles = _.values(this._existingFiles);
-                    missingFiles.forEach((file) => {
-                        this.emit('lost', file);
-                    });
 
-                    this.startMonitoring();
-                    resolve();
-                });
+                this.startMonitoring();
+                resolve();
             });
         });
     }
 
     public close(): void {
-        watch.unwatchTree(this._libraryPath);
+        for (const mediaPath of this._configuration.mediaPaths) {
+            watch.unwatchTree(mediaPath);
+        }
     }
 
     public startMonitoring(): void {
+        const monitorCallback = (monitor: watch.Monitor) => {
+            // If files are big or copying is otherwise slow, both created and
+            // changed events might be emitted for a new file. If this is the
+            // case, hashing is not possible during created event and must be
+            // done in changed event. However for small files or files that were
+            // otherwise copied fast, only created event is emitted.
+            //
+            // Because of this, hashing and emitting must be done on both
+            // events. Based on experiments, if both events are coming, hashing
+            // cannot be done on created events. Hasher will swallow the error.
+            // Thus each file is hashed and emitted just once even if both
+            // events will be emitted.
+            monitor.on('created', async (createdPath: string) => {
+                try {
+                    const stats = await stat(createdPath);
+                    this.addFileFromPath(createdPath, stats, false);
+                } catch (e) {
+                    winston.log('debug', 'Error with created file: ' + e);
+                }
+            });
+            monitor.on('changed', async (changedPath: string) => {
+                try {
+                    const stats = await stat(changedPath);
+                    this.addFileFromPath(changedPath, stats, false);
+                } catch (e) {
+                    winston.log('debug', 'Error with changed file: ' + e);
+                }
+            });
+            monitor.on('removed', (removedPath: string) =>
+                this.removeFileFromPath(removedPath)
+            );
+        };
+
         // Start monitoring after library has been hashed. Otherwise changes
         // done to database file cause changed events to be emitted and thus
         // slow down the initial processing.
-        watch.createMonitor(
-            this._libraryPath,
-            { ignoreDotFiles: true },
-            (monitor) => {
-                // If files are big or copying is otherwise slow, both created and
-                // changed events might be emitted for a new file. If this is the
-                // case, hashing is not possible during created event and must be
-                // done in changed event. However for small files or files that were
-                // otherwise copied fast, only created event is emitted.
-                //
-                // Because of this, hashing and emitting must be done on both
-                // events. Based on experiments, if both events are coming, hashing
-                // cannot be done on created events. Hasher will swallow the error.
-                // Thus each file is hashed and emitted just once even if both
-                // events will be emitted.
-                monitor.on('created', async (createdPath: string) => {
-                    try {
-                        const stats = await stat(createdPath);
-                        this.addFileFromPath(createdPath, stats, false);
-                    } catch (e) {
-                        winston.log('debug', 'Error with created file: ' + e);
-                    }
-                });
-                monitor.on('changed', async (changedPath: string) => {
-                    try {
-                        const stats = await stat(changedPath);
-                        this.addFileFromPath(changedPath, stats, false);
-                    } catch (e) {
-                        winston.log('debug', 'Error with changed file: ' + e);
-                    }
-                });
-                monitor.on('removed', (removedPath: string) =>
-                    this.removeFileFromPath(removedPath)
-                );
-            }
-        );
+        for (const mediaPath of this._configuration.mediaPaths) {
+            watch.createMonitor(
+                mediaPath,
+                { ignoreDotFiles: true },
+                monitorCallback
+            );
+        }
     }
 
     private async processFile(

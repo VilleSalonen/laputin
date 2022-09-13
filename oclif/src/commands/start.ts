@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Command, Flags } from '@oclif/core';
 import { compose } from '../laputin/compose';
@@ -34,11 +34,14 @@ export default class Start extends Command {
         const libraryPath = getLibraryPath(flags.library);
 
         const configFilePath = path.join(flags.library, '.laputin.json');
-        const configuration: LaputinConfiguration = fs.existsSync(
-            configFilePath
-        )
-            ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-            : new LaputinConfiguration(3200, 'quick', undefined, []);
+        const configurationExists = await fs.stat(configFilePath);
+        if (!configurationExists) {
+            throw new Error(
+                `Could not find configuration file at ${configFilePath}`
+            );
+        }
+        const configurationJson = await fs.readFile(configFilePath, 'utf8');
+        const configuration = JSON.parse(configurationJson);
 
         const laputin = compose(libraryPath, configuration);
 

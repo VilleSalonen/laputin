@@ -2,7 +2,8 @@ import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
+import * as fsLegacy from 'fs';
 import * as path from 'path';
 import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { ProxyGenerator } from '../laputin/proxygenerator';
@@ -32,11 +33,14 @@ export default class CreateProxiesCommand extends Command {
         const libraryPath = getLibraryPath(flags.library);
 
         const configFilePath = path.join(flags.library, '.laputin.json');
-        const configuration: LaputinConfiguration = fs.existsSync(
-            configFilePath
-        )
-            ? JSON.parse(fs.readFileSync(configFilePath, 'utf8'))
-            : new LaputinConfiguration(3200, 'quick', undefined, []);
+        const configurationExists = await fs.stat(configFilePath);
+        if (!configurationExists) {
+            throw new Error(
+                `Could not find configuration file at ${configFilePath}`
+            );
+        }
+        const configurationJson = await fs.readFile(configFilePath, 'utf8');
+        const configuration = JSON.parse(configurationJson);
 
         const library = new Library(libraryPath);
         const proxyGenerator = new ProxyGenerator(library, configuration);

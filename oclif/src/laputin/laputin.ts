@@ -15,6 +15,7 @@ import { ExplorerOpener } from './exploreropener';
 import { FileDataMigrator } from './filedatamigrator';
 import { SceneDetector } from './scenedetector';
 import { TagQuery } from './tagquery.model';
+import { LaputinConfiguration } from './laputinconfiguration';
 
 export class Laputin {
     constructor(
@@ -22,8 +23,7 @@ export class Laputin {
         public library: Library,
         public fileLibrary: FileLibrary,
         private _opener: VLCOpener,
-        private _port: number,
-        private _proxyDirectory?: string
+        private configuration: LaputinConfiguration
     ) {
         this.fileLibrary.on('found', (file: File) =>
             this.library.addFile(file)
@@ -44,7 +44,27 @@ export class Laputin {
         );
 
         app.use('/api', this._createApiRoutes());
-        app.use('/media', this._createMediaRoutes());
+
+        app.get('/media/:hash', async (req, res, next) => {
+            const file = await this.library.getFile(req.params.hash);
+
+            var options = {
+                root: path.parse(file.path).dir,
+                dotfiles: 'deny',
+                headers: {
+                    'x-timestamp': Date.now(),
+                    'x-sent': true,
+                },
+            };
+
+            res.sendFile(path.parse(file.path).base, options, function (err) {
+                if (err) {
+                    next(err);
+                } else {
+                    console.log('Sent:', file.path);
+                }
+            });
+        });
 
         app.use(
             '/laputin',
@@ -54,13 +74,16 @@ export class Laputin {
         const mediaCatchAll = express();
         app.use('/media/', mediaCatchAll);
 
-        if (this._proxyDirectory) {
-            app.use('/proxies', <any>express.static(this._proxyDirectory));
+        if (this.configuration.proxyDirectory) {
+            app.use(
+                '/proxies',
+                <any>express.static(this.configuration.proxyDirectory)
+            );
         }
     }
 
     public async loadFiles(performFullCheck: boolean): Promise<void> {
-        return this.fileLibrary.load(performFullCheck);
+        await this.fileLibrary.load(performFullCheck);
     }
 
     public startMonitoring(): void {
@@ -356,13 +379,13 @@ export class Laputin {
         });
 
         api.route('/proxyExists/:hash').get(async (req, res) => {
-            if (!this._proxyDirectory) {
+            if (!this.configuration.proxyDirectory) {
                 res.send(false);
             } else {
                 try {
                     fs.accessSync(
                         path.join(
-                            this._proxyDirectory,
+                            this.configuration.proxyDirectory,
                             req.params.hash + '.mp4'
                         ),
                         fs.constants.R_OK
@@ -387,36 +410,5 @@ export class Laputin {
         }
 
         return tagsString.split(',');
-    }
-
-    private _createMediaRoutes(): express.Express {
-        let previous: express.Express | undefined = undefined;
-        const components = this._libraryPath.split(path.sep);
-        for (let i = components.length; i > 0; i--) {
-            const currentPath = components[i - 1];
-            const current: express.Express = express();
-
-            if (i === components.length) {
-                current.use(
-                    '/' + currentPath,
-                    <any>express.static(this._libraryPath)
-                );
-            } else {
-                if (previous) {
-                    current.use(
-                        '/' + currentPath.replace(' ', '%20'),
-                        previous
-                    );
-                }
-            }
-
-            previous = current;
-        }
-
-        if (!previous) {
-            throw new Error('wtf creating media routes');
-        }
-
-        return previous;
     }
 }

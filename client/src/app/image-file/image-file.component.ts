@@ -6,7 +6,7 @@ import {
     EventEmitter,
     Output,
     ElementRef,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
 
 import { File, ChangeDirection, FileChange } from './../models';
@@ -16,7 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
     selector: 'app-image-file',
     templateUrl: './image-file.component.html',
-    styleUrls: ['./image-file.component.scss']
+    styleUrls: ['./image-file.component.scss'],
 })
 export class ImageFileComponent implements OnDestroy, AfterViewInit {
     private _file: File;
@@ -27,7 +27,7 @@ export class ImageFileComponent implements OnDestroy, AfterViewInit {
     }
     set file(value: File) {
         this._file = value;
-        this.imageSource = `/media/${this.file.escapedUrl}`;
+        this.imageSource = `/media/${this.file.hash}`;
     }
 
     public imageSource: string;

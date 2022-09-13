@@ -32,8 +32,7 @@ export function compose(
         library,
         fileLibrary,
         opener,
-        configuration.port,
-        configuration.proxyDirectory
+        configuration
     );
 }
 
@@ -61,8 +60,7 @@ export function composeForTests(
         library,
         fileLibrary,
         opener,
-        configuration.port,
-        configuration.proxyDirectory
+        configuration
     );
 }
 
