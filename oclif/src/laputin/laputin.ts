@@ -57,12 +57,8 @@ export class Laputin {
                 },
             };
 
-            res.sendFile(path.parse(file.path).base, options, function (err) {
-                if (err) {
-                    next(err);
-                } else {
-                    console.log('Sent:', file.path);
-                }
+            res.sendFile(path.parse(file.path).base, options, () => {
+                // Error logging suppressed intentionally. These are typically really verbose such as logging that request was aborted.
             });
         });
 
@@ -70,9 +66,6 @@ export class Laputin {
             '/laputin',
             <any>express.static(path.join(this._libraryPath, '/.laputin'))
         );
-
-        const mediaCatchAll = express();
-        app.use('/media/', mediaCatchAll);
 
         if (this.configuration.proxyDirectory) {
             app.use(
