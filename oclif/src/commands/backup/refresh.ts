@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 const { spawn } = require('child_process');
 import winston = require('winston');
+import { getLibraryPath } from '../../laputin/helpers';
 
 export default class RefreshBackupFilesCommand extends Command {
     static description = 'Refresh list of backed up files';
@@ -33,7 +34,8 @@ export default class RefreshBackupFilesCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const rcloneJsonPath = path.join(flags.library, 'rclone.json');
+        const libraryPath = getLibraryPath(flags.library);
+        const rcloneJsonPath = path.join(libraryPath, 'rclone.json');
 
         const rcloneJson = await fs.readFile(rcloneJsonPath, 'utf8');
         const rcloneList = JSON.parse(rcloneJson);

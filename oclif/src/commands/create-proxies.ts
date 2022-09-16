@@ -32,7 +32,7 @@ export default class CreateProxiesCommand extends Command {
 
         const libraryPath = getLibraryPath(flags.library);
 
-        const configFilePath = path.join(flags.library, '.laputin.json');
+        const configFilePath = path.join(libraryPath, '.laputin.json');
         const configurationExists = await fs.stat(configFilePath);
         if (!configurationExists) {
             throw new Error(

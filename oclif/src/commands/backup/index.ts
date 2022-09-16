@@ -120,7 +120,7 @@ export default class BackupFilesCommand extends Command {
             false
         );
 
-        const rcloneJsonPath = path.join(flags.library, 'rclone.json');
+        const rcloneJsonPath = path.join(libraryPath, 'rclone.json');
         const exists = await fs.stat(rcloneJsonPath);
 
         if (!exists) {

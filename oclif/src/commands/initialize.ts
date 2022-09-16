@@ -29,7 +29,7 @@ export default class InitializeCommand extends Command {
         await Library.initialize(libraryPath);
 
         winston.info(
-            `${flags.library} has been initialized as Laputin library. You can now start Laputin without --initialize.`
+            `${libraryPath} has been initialized as Laputin library. You can now start Laputin without --initialize.`
         );
     }
 }

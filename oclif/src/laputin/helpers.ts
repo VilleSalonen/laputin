@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 export function getLibraryPathByFile(givenFilePath: string): string {
     var libraryPath = '';
@@ -23,8 +24,26 @@ export function getLibraryPathByFile(givenFilePath: string): string {
 }
 
 export function getLibraryPath(givenLibraryPath?: string): string {
-    const libraryPath = givenLibraryPath || process.cwd();
+    if (!givenLibraryPath) {
+        throw new Error('Library path not provided!');
+    }
 
-    // For some reason " is added only to the end of the path if path contains spaces.
-    return libraryPath.replace(/\"/g, '');
+    const normalizedPath = path.normalize(givenLibraryPath);
+    if (normalizedPath.includes(path.sep)) {
+        return normalizedPath;
+    }
+
+    // Assume that user only passed library name under home directory .laputin directory.
+    const assumedLibraryPath = path.join(
+        os.homedir(),
+        '.laputin',
+        givenLibraryPath
+    );
+    if (fs.existsSync(assumedLibraryPath)) {
+        return assumedLibraryPath;
+    }
+
+    throw new Error(
+        `Could not determine library path from ${givenLibraryPath}`
+    );
 }

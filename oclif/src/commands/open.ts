@@ -107,7 +107,7 @@ export default class OpenCommand extends Command {
             false
         );
         const files = await library.getFiles(query);
-        const opener = new VLCOpener(flags.library);
+        const opener = new VLCOpener(libraryPath);
         opener.open(files);
     }
 }

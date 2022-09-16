@@ -337,7 +337,7 @@ export class Library {
                 id: file.fileId,
             },
             data: {
-                metadata: JSON.stringify(metadata),
+                metadata: metadata,
             },
         });
     }

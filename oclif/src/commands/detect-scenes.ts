@@ -29,7 +29,7 @@ export default class DetectScenesCommand extends Command {
 
         const libraryPath = getLibraryPath(flags.library);
         const library = new Library(libraryPath);
-        const sceneDetector = new SceneDetector(flags.library, library);
+        const sceneDetector = new SceneDetector(libraryPath, library);
         await sceneDetector.detectMissingScenes(flags.file || '');
     }
 }
