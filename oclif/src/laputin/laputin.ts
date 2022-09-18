@@ -16,6 +16,7 @@ import { FileDataMigrator } from './filedatamigrator';
 import { SceneDetector } from './scenedetector';
 import { TagQuery } from './tagquery.model';
 import { LaputinConfiguration } from './laputinconfiguration';
+import cors = require('cors');
 
 export class Laputin {
     constructor(
@@ -35,6 +36,8 @@ export class Laputin {
 
     public initializeRoutes(app: express.Express): void {
         app.use(bodyParser.json({}));
+
+        app.use(cors({ origin: 'http://localhost:3000' }));
 
         const clientPath = path.join(__dirname, '../../../client/dist');
         app.use(express.static(clientPath));

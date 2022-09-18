@@ -9,7 +9,7 @@ const Home: NextPage = () => {
         e.preventDefault();
 
         const results = await axios.get(
-            `http://fraktal.auvilankuja.fi:33333/api/files`,
+            `http://localhost:33333/api/files`,
             {
                 headers: {
                     Accept: "application/json",
