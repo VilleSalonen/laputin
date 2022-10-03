@@ -156,35 +156,26 @@ export class Library {
                 : file.metadata
         );
 
-        if (existingFile) {
-            try {
-                await this.prisma.file.update({
-                    where: {
-                        id: existingFile.fileId,
-                    },
-                    data: {
-                        path: file.path,
-                        active: 1,
-                        size: file.size,
-                        metadata: metadata,
-                        type: file.type,
-                    },
-                });
-            } catch (err) {
-                winston.error(err);
-            }
-        } else {
-            await this.prisma.file.create({
-                data: {
-                    hash: file.hash,
-                    path: file.path,
-                    active: 1,
-                    size: file.size,
-                    metadata: metadata,
-                    type: file.type,
-                },
-            });
-        }
+        await this.prisma.file.upsert({
+            where: {
+                hash: file.hash,
+            },
+            update: {
+                path: file.path,
+                active: 1,
+                size: file.size,
+                metadata: metadata,
+                type: file.type,
+            },
+            create: {
+                hash: file.hash,
+                path: file.path,
+                active: 1,
+                size: file.size,
+                metadata: metadata,
+                type: file.type,
+            },
+        });
     }
 
     public async deactivateFile(file: File): Promise<void> {
