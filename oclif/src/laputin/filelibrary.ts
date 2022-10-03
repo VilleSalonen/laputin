@@ -57,6 +57,8 @@ export class FileLibrary extends events.EventEmitter {
         for (const mediaPath of this._configuration.mediaPaths) {
             await this.scanFiles(mediaPath, performFullCheck);
         }
+
+        this.startMonitoring();
     }
 
     private scanFiles(
@@ -81,7 +83,6 @@ export class FileLibrary extends events.EventEmitter {
                     this.emit('lost', file);
                 });
 
-                this.startMonitoring();
                 resolve();
             });
         });
@@ -93,7 +94,7 @@ export class FileLibrary extends events.EventEmitter {
         }
     }
 
-    public startMonitoring(): void {
+    private startMonitoring(): void {
         const monitorCallback = (monitor: watch.Monitor) => {
             // If files are big or copying is otherwise slow, both created and
             // changed events might be emitted for a new file. If this is the

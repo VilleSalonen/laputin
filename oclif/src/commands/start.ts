@@ -49,8 +49,6 @@ export default class Start extends Command {
         laputin.initializeRoutes(app);
         await laputin.loadFiles(flags.performFullCheck);
 
-        laputin.startMonitoring();
-
         try {
             app.listen(configuration.port, () => {
                 winston.info(
