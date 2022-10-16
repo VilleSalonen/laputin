@@ -52,7 +52,7 @@ export class FileDataMigrator {
                 timecode
             );
             timecode.timecodeId = NaN;
-            timecode.hash = targetFile.hash;
+            timecode.fileId = targetFile.fileId;
             const newTimecode = await this.library.addTimecodeToFile(
                 timecode,
                 targetFile.hash

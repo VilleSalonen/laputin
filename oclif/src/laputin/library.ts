@@ -754,7 +754,7 @@ export class Library {
 
         return new Timecode(
             timecodeId,
-            file.hash,
+            file.fileId,
             timecode.path,
             timecodeTags,
             timecode.start,

@@ -469,7 +469,7 @@ export class LaputinService {
     private mapTimecode(timecode: any): Timecode {
         return new Timecode(
             timecode.timecodeId,
-            timecode.hash,
+            timecode.fileId,
             timecode.path,
             timecode.timecodeTags,
             timecode.start,
