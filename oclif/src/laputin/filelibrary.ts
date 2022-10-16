@@ -31,7 +31,6 @@ export class FileLibrary extends events.EventEmitter {
 
     constructor(
         private library: Library,
-        private _libraryPath: string,
         private _hasher: IHasher,
         private _screenshotter: Screenshotter,
         private skipMetadataExtraction: boolean,

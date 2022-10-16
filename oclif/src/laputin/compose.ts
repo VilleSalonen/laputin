@@ -18,7 +18,6 @@ export function compose(
     const hasher: IHasher = composeHasher(configuration);
     const fileLibrary = new FileLibrary(
         library,
-        libraryPath,
         hasher,
         screenshotter,
         false,
@@ -46,7 +45,6 @@ export function composeForTests(
     const hasher: IHasher = composeHasher(configuration);
     const fileLibrary = new FileLibrary(
         library,
-        libraryPath,
         hasher,
         screenshotter,
         true,
