@@ -251,11 +251,11 @@ export class Screenshotter {
     }
 
     private getThumbPath(file: File) {
-        return path.join(this._thumbsPath, file.hash + '.jpg');
+        return path.join(this._thumbsPath, file.fileId + '.jpg');
     }
 
     private getThumbSmallPath(file: File) {
-        return path.join(this._thumbsSmallPath, file.hash + '.jpg');
+        return path.join(this._thumbsSmallPath, file.fileId + '.jpg');
     }
 
     public getTagTimecodeThumbPath(timecode: Timecode) {
