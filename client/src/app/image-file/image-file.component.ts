@@ -27,7 +27,7 @@ export class ImageFileComponent implements OnDestroy, AfterViewInit {
     }
     set file(value: File) {
         this._file = value;
-        this.imageSource = `/media/${this.file.hash}`;
+        this.imageSource = `/media/${this.file.fileId}`;
     }
 
     public imageSource: string;

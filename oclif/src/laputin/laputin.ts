@@ -48,8 +48,20 @@ export class Laputin {
 
         app.use('/api', this._createApiRoutes());
 
-        app.get('/media/:hash', async (req, res, next) => {
-            const file = await this.library.getFile(req.params.hash);
+        app.get('/media/:fileId', async (req, res, next) => {
+            const isInteger = (candidate: string) =>
+                /^-?[0-9]+$/.test(candidate + '');
+            if (!isInteger(req.params.fileId)) {
+                res.status(400);
+                res.send(
+                    `Given fileId ${req.params.fileId} is not an integer!`
+                );
+                return;
+            }
+
+            const file = await this.library.getFileById(
+                parseInt(req.params.fileId)
+            );
 
             var options = {
                 root: path.parse(file.path).dir,

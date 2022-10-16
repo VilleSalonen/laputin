@@ -216,6 +216,19 @@ export class Library {
         return matchingFiles[0];
     }
 
+    public async getFileById(fileId: number): Promise<File> {
+        const filesSql = Prisma.sql`
+            SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
+            FROM File
+            WHERE id = ${fileId}`;
+        const matches = await this.getFilesViaSql(filesSql);
+        if (!matches || matches.length === 0) {
+            throw Error(`Could not find file with ID ${fileId}!`);
+        }
+
+        return matches[0];
+    }
+
     public async getFiles(query: Query): Promise<File[]> {
         let fileNameClause = Prisma.empty;
         if (query.filename) {
@@ -283,6 +296,10 @@ export class Library {
             ${this._generateTagFilterQueryNot(query.not)}
             ORDER BY File.path`;
 
+        return this.getFilesViaSql(filesSql);
+    }
+
+    private async getFilesViaSql(filesSql: Prisma.Sql): Promise<File[]> {
         const rawResults = await this.prisma.$queryRaw<any[]>(filesSql);
         const files: Map<number, File> = new Map<number, File>(
             rawResults.map((row) => [
