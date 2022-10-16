@@ -167,13 +167,7 @@ export class LaputinService {
         timecodeTag: TimecodeTag
     ): Observable<any> {
         return this._http.delete(
-            this._baseUrl +
-                '/files/' +
-                timecode.hash +
-                '/timecodes/' +
-                timecode.timecodeId +
-                '/tags/' +
-                timecodeTag.timecodeTagId
+            `${this._baseUrl}/files/${timecode.fileId}/timecodes/${timecode.timecodeId}/tags/${timecodeTag.timecodeTagId}`
         );
     }
 

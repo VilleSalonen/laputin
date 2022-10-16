@@ -3,7 +3,7 @@ import {
     Injectable,
     AfterViewInit,
     ElementRef,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
 
 import { Timecode } from './../models';
@@ -16,7 +16,7 @@ import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 
 @Component({
     styleUrls: ['./timecodes.component.scss'],
-    templateUrl: './timecodes.component.html'
+    templateUrl: './timecodes.component.html',
 })
 @Injectable()
 export class TimecodesComponent implements AfterViewInit {
@@ -37,24 +37,24 @@ export class TimecodesComponent implements AfterViewInit {
         private timecodeQueryService: TimecodeQueryService
     ) {
         this.timecodes$ = this.timecodeQueryService.query$.pipe(
-            switchMap(query => this._service.queryTimecodes(query)),
+            switchMap((query) => this._service.queryTimecodes(query)),
             shareReplay(1),
             tap(() => this.scrollToIndex(0))
         );
 
         this.timecodesSummary$ = this.timecodes$.pipe(
-            map(timecodes => {
+            map((timecodes) => {
                 const files = {};
                 let fileCount = 0;
-                timecodes.forEach(timecode => {
-                    if (!files[timecode.hash]) {
-                        files[timecode.hash] = true;
+                timecodes.forEach((timecode) => {
+                    if (!files[timecode.fileId]) {
+                        files[timecode.fileId] = true;
                         fileCount++;
                     }
                 });
 
                 let totalSeconds = 0.0;
-                timecodes.forEach(t => {
+                timecodes.forEach((t) => {
                     const duration = t.end - t.start;
                     if (!isNaN(duration)) {
                         totalSeconds += duration;
@@ -64,7 +64,7 @@ export class TimecodesComponent implements AfterViewInit {
                 return {
                     timecodeCount: timecodes.length,
                     fileCount: fileCount,
-                    duration: this.humanDuration(totalSeconds)
+                    duration: this.humanDuration(totalSeconds),
                 };
             })
         );
@@ -87,13 +87,13 @@ export class TimecodesComponent implements AfterViewInit {
 
         this.fileStyle = {
             width: Math.floor(totalWidth / columns) + 'px',
-            height: Math.floor(totalWidth / columns / aspectRatio) + 'px'
+            height: Math.floor(totalWidth / columns / aspectRatio) + 'px',
         };
 
         this.timecodes$
             .pipe(
                 take(1),
-                map(timecodes => {
+                map((timecodes) => {
                     let index = 0;
 
                     const previousTimecodeId = parseInt(
@@ -104,7 +104,7 @@ export class TimecodesComponent implements AfterViewInit {
 
                     if (previousTimecodeId) {
                         const foundIndex = timecodes.findIndex(
-                            t => t.timecodeId === previousTimecodeId
+                            (t) => t.timecodeId === previousTimecodeId
                         );
                         if (foundIndex > -1) {
                             index = foundIndex;
@@ -125,8 +125,8 @@ export class TimecodesComponent implements AfterViewInit {
         sessionStorage.setItem('previousTimecodeId', '' + timecode.timecodeId);
         this.router.navigate([
             '/files',
-            timecode.hash,
-            { start: timecode.start }
+            timecode.fileId,
+            { start: timecode.start },
         ]);
     }
 

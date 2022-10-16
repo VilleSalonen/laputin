@@ -320,7 +320,7 @@ export class FileComponent implements AfterViewInit {
 
         const tagTimecode = new Timecode(
             null,
-            this.file.hash,
+            this.file.fileId,
             this.file.path,
             selectedTimecodeTags,
             timecodeStartTime,
@@ -355,7 +355,7 @@ export class FileComponent implements AfterViewInit {
             if (this.timecodesScroller) {
                 const foundItem = this.timecodesScroller.items.find(
                     (i) =>
-                        i.hash === result.hash &&
+                        i.fileId === result.fileId &&
                         i.timecodeId === result.timecodeId
                 );
                 this.timecodesScroller.scrollInto(foundItem);
