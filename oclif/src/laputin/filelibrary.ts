@@ -267,17 +267,15 @@ export class FileLibrary extends events.EventEmitter {
     private async readFfprobeMetadata(filePath: string): Promise<any> {
         const data = await probe(filePath);
         if (data && data.streams) {
-            let isVideo = false;
-            let isAudio = false;
-
             let primaryVideoStream;
             for (const stream of data.streams) {
-                isVideo = isVideo || stream.codec_type === 'video';
-                primaryVideoStream = stream;
-                break;
+                if (stream.codec_type === 'video') {
+                    primaryVideoStream = stream;
+                    break;
+                }
             }
 
-            if (isVideo) {
+            if (primaryVideoStream) {
                 return {
                     type: 'video',
                     codec: primaryVideoStream.codec_name,
@@ -291,12 +289,13 @@ export class FileLibrary extends events.EventEmitter {
 
             let primaryAudioStream;
             for (const stream of data.streams) {
-                isAudio = isAudio || stream.codec_type === 'audio';
-                primaryAudioStream = stream;
-                break;
+                if (stream.codec_type === 'audio') {
+                    primaryAudioStream = stream;
+                    break;
+                }
             }
 
-            if (isAudio) {
+            if (primaryAudioStream) {
                 return {
                     type: 'audio',
                     codec: primaryAudioStream.codec_name,
