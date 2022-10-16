@@ -217,7 +217,7 @@ export class Laputin {
         api.route(
             '/files/:hash/timecodes/:timecodeId/tags/:timecodeTagId'
         ).delete(async (req, res) => {
-            const result = await this.library.removeTagFromTimecode(
+            await this.library.removeTagFromTimecode(
                 req.params.hash,
                 req.params.timecodeId,
                 req.params.timecodeTagId
