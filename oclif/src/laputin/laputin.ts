@@ -52,13 +52,13 @@ export class Laputin {
         app.get(
             '/media/:fileId',
             param('fileId').exists().toInt(),
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
             async (req, res) => {
-                const file = await this.library.getFileById(
-                    parseInt(req.params?.fileId)
-                );
-                if (!file) {
-                    return res.status(404);
-                }
+                const file: File = (<any>req).file;
 
                 var options = {
                     root: path.parse(file.path).dir,
@@ -90,6 +90,22 @@ export class Laputin {
 
     public async loadFiles(performFullCheck: boolean): Promise<void> {
         await this.fileLibrary.load(performFullCheck);
+    }
+
+    private async validateFileExists(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ): Promise<void> {
+        const fileId: number = (<any>req.params).fileId;
+
+        const file = await this.library.getFileById(fileId);
+        if (!file) {
+            res.status(404).send(`Could not find file with ${fileId}`);
+        } else {
+            (<any>req).file = file;
+            next();
+        }
     }
 
     private _createApiRoutes(): express.Express {
@@ -147,28 +163,22 @@ export class Laputin {
             res.send(tag);
         });
 
-        api.route('/files/:fileId/tags').post(async (req, res) => {
-            if (!this.isInteger(req.params.fileId)) {
-                return res
-                    .status(400)
-                    .send(
-                        `Given fileId ${req.params.fileId} is not an integer!`
-                    );
-            }
+        api.route('/files/:fileId/tags').post(
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file: File = (<any>req).file;
 
-            const file = await this.library.getFileById(
-                parseInt(req.params.fileId)
-            );
-            if (!file) {
-                return res.status(404);
+                const selectedTags = req.body.selectedTags;
+                selectedTags.forEach((tag: Tag) => {
+                    this.library.createNewLinkBetweenTagAndFile(tag, file.hash);
+                });
+                res.status(200).end();
             }
-
-            const selectedTags = req.body.selectedTags;
-            selectedTags.forEach((tag: Tag) => {
-                this.library.createNewLinkBetweenTagAndFile(tag, file.hash);
-            });
-            res.status(200).end();
-        });
+        );
 
         api.route('/files/:fileId/timecodes').get(async (req, res) => {
             if (!this.isInteger(req.params.fileId)) {
