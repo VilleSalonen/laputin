@@ -479,7 +479,7 @@ export class LaputinService {
 
     public getDetectedScenes(file: File): any {
         return this._http
-            .get(`/laputin/scenes/${file.hash}/${file.hash}-Scenes.json`)
+            .get(`/laputin/scenes/${file.fileId}/${file.fileId}-Scenes.json`)
             .pipe(
                 map((scenesJson) => {
                     const scenes = <any[]>scenesJson;

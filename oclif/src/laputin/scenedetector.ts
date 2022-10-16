@@ -19,7 +19,7 @@ export class SceneDetector {
     }
 
     public getSceneDirectory(file: File): string {
-        return path.join(this.getScenesDirectory(), file.hash + '/');
+        return path.join(this.getScenesDirectory(), file.fileId + '/');
     }
 
     public async detectMissingScenes(filenameForQuery: string) {
@@ -48,7 +48,7 @@ export class SceneDetector {
 
         for (const file of files) {
             try {
-                winston.verbose(`${file.hash} = ${file.path}`);
+                winston.verbose(`${file.fileId} = ${file.path}`);
 
                 const sceneDirectory = this.getSceneDirectory(file);
                 if (!fs.existsSync(sceneDirectory)) {
@@ -60,17 +60,17 @@ export class SceneDetector {
 
                 const analysisCsvPath = path.join(
                     sceneDirectory,
-                    `${file.hash}-Scenes.csv`
+                    `${file.fileId}-Scenes.csv`
                 );
                 const analysisJsonPath = path.join(
                     sceneDirectory,
-                    `${file.hash}-Scenes.json`
+                    `${file.fileId}-Scenes.json`
                 );
 
                 if (!fs.existsSync(analysisCsvPath)) {
                     const targetPath = path.join(
                         sceneDirectory,
-                        `${file.hash}.mp4`
+                        `${file.fileId}.mp4`
                     );
                     const createdDownscaledVersion = this.createDownscaledVideoIfDoesNotExist(
                         file,
@@ -120,7 +120,7 @@ export class SceneDetector {
 
         const incompleteTargetPath = path.join(
             sceneDirectory,
-            `${file.hash}_INCOMPLETE.mp4`
+            `${file.fileId}_INCOMPLETE.mp4`
         );
         const command = `ffmpeg -y -i "${file.path}" -vcodec h264_nvenc -preset fast -vf "scale=w=320:h=180" -an "${incompleteTargetPath}"`;
 
@@ -191,15 +191,15 @@ export class SceneDetector {
 
             const path1 = path.join(
                 sceneDirectory,
-                file.hash + '_' + sceneNumber + '_1.jpg'
+                file.fileId + '_' + sceneNumber + '_1.jpg'
             );
             const path2 = path.join(
                 sceneDirectory,
-                file.hash + '_' + sceneNumber + '_2.jpg'
+                file.fileId + '_' + sceneNumber + '_2.jpg'
             );
             const path3 = path.join(
                 sceneDirectory,
-                file.hash + '_' + sceneNumber + '_3.jpg'
+                file.fileId + '_' + sceneNumber + '_3.jpg'
             );
 
             if (!fs.existsSync(path1)) {

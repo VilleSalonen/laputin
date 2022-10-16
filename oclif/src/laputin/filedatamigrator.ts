@@ -90,8 +90,8 @@ export class FileDataMigrator {
             const sourceSceneFiles = fs.readdirSync(sourceSceneDirectory);
             for (const sourceSceneFile of sourceSceneFiles) {
                 const targetSceneFile = sourceSceneFile.replace(
-                    sourceFile.hash,
-                    targetFile.hash
+                    '' + sourceFile.fileId,
+                    '' + targetFile.fileId
                 );
 
                 const sourceFileFullPath = path.join(
