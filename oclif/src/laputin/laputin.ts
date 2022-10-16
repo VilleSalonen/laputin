@@ -3,6 +3,8 @@ import bodyParser = require('body-parser');
 import * as path from 'path';
 import http = require('http');
 import * as fs from 'fs';
+import { param, validationResult } from 'express-validator';
+import cors = require('cors');
 
 import { Library } from './library';
 import { FileLibrary } from './filelibrary';
@@ -16,7 +18,6 @@ import { FileDataMigrator } from './filedatamigrator';
 import { SceneDetector } from './scenedetector';
 import { TagQuery } from './tagquery.model';
 import { LaputinConfiguration } from './laputinconfiguration';
-import cors = require('cors');
 
 export class Laputin {
     constructor(
@@ -48,35 +49,31 @@ export class Laputin {
 
         app.use('/api', this._createApiRoutes());
 
-        app.get('/media/:fileId', async (req, res, next) => {
-            if (!this.isInteger(req.params.fileId)) {
-                return res
-                    .status(400)
-                    .send(
-                        `Given fileId ${req.params.fileId} is not an integer!`
-                    );
+        app.get(
+            '/media/:fileId',
+            param('fileId').exists().toInt(),
+            async (req, res) => {
+                const file = await this.library.getFileById(
+                    parseInt(req.params?.fileId)
+                );
+                if (!file) {
+                    return res.status(404);
+                }
+
+                var options = {
+                    root: path.parse(file.path).dir,
+                    dotfiles: 'deny',
+                    headers: {
+                        'x-timestamp': Date.now(),
+                        'x-sent': true,
+                    },
+                };
+
+                res.sendFile(path.parse(file.path).base, options, () => {
+                    // Error logging suppressed intentionally. These are typically really verbose such as logging that request was aborted.
+                });
             }
-
-            const file = await this.library.getFileById(
-                parseInt(req.params.fileId)
-            );
-            if (!file) {
-                return res.status(404);
-            }
-
-            var options = {
-                root: path.parse(file.path).dir,
-                dotfiles: 'deny',
-                headers: {
-                    'x-timestamp': Date.now(),
-                    'x-sent': true,
-                },
-            };
-
-            res.sendFile(path.parse(file.path).base, options, () => {
-                // Error logging suppressed intentionally. These are typically really verbose such as logging that request was aborted.
-            });
-        });
+        );
 
         app.use(
             '/laputin',
