@@ -49,9 +49,7 @@ export class Laputin {
         app.use('/api', this._createApiRoutes());
 
         app.get('/media/:fileId', async (req, res, next) => {
-            const isInteger = (candidate: string) =>
-                /^-?[0-9]+$/.test(candidate + '');
-            if (!isInteger(req.params.fileId)) {
+            if (!this.isInteger(req.params.fileId)) {
                 return res
                     .status(400)
                     .send(
@@ -400,6 +398,10 @@ export class Laputin {
         });
 
         return api;
+    }
+
+    private isInteger(candidate: string): boolean {
+        return /^-?[0-9]+$/.test(candidate + '');
     }
 
     private parseTags(tagsString: string): string[] {
