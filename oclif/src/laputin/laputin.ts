@@ -58,7 +58,7 @@ export class Laputin {
                 next: express.NextFunction
             ) => this.validateFileExists(req, res, next),
             async (req, res) => {
-                const file: File = (<any>req).file;
+                const file = this.getFileFromReq(req);
 
                 var options = {
                     root: path.parse(file.path).dir,
@@ -106,6 +106,17 @@ export class Laputin {
             (<any>req).file = file;
             next();
         }
+    }
+
+    private getFileFromReq(req: express.Request): File {
+        const file: File = (<any>req).file;
+        if (!file) {
+            throw new Error(
+                'Could not read file from req! Did you run middleware validateFileExists?'
+            );
+        }
+
+        return file;
     }
 
     private _createApiRoutes(): express.Express {
@@ -170,7 +181,7 @@ export class Laputin {
                 next: express.NextFunction
             ) => this.validateFileExists(req, res, next),
             async (req, res) => {
-                const file: File = (<any>req).file;
+                const file = this.getFileFromReq(req);
 
                 const selectedTags = req.body.selectedTags;
                 selectedTags.forEach((tag: Tag) => {
@@ -180,83 +191,71 @@ export class Laputin {
             }
         );
 
-        api.route('/files/:fileId/timecodes').get(async (req, res) => {
-            if (!this.isInteger(req.params.fileId)) {
-                return res
-                    .status(400)
-                    .send(
-                        `Given fileId ${req.params.fileId} is not an integer!`
+        api.route('/files/:fileId/timecodes').get(
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = this.getFileFromReq(req);
+
+                const tags = await this.library.getTimecodesForFile(file.hash);
+                res.send(tags);
+            }
+        );
+
+        api.route('/files/:fileId/timecodes').post(
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = this.getFileFromReq(req);
+
+                const timecode: Timecode = req.body.timecode;
+                const screenshotTime: number = req.body.screenshotTime;
+
+                timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
+                    this.library.createNewLinkBetweenTagAndFile(
+                        timecodeTag.tag,
+                        file.hash
                     );
-            }
+                });
 
-            const file = await this.library.getFileById(
-                parseInt(req.params.fileId)
-            );
-            if (!file) {
-                return res.status(404);
-            }
-
-            const tags = await this.library.getTimecodesForFile(file.hash);
-            res.send(tags);
-        });
-
-        api.route('/files/:fileId/timecodes').post(async (req, res) => {
-            if (!this.isInteger(req.params.fileId)) {
-                return res
-                    .status(400)
-                    .send(
-                        `Given fileId ${req.params.fileId} is not an integer!`
-                    );
-            }
-
-            const file = await this.library.getFileById(
-                parseInt(req.params.fileId)
-            );
-            if (!file) {
-                return res.status(404);
-            }
-
-            const timecode: Timecode = req.body.timecode;
-            const screenshotTime: number = req.body.screenshotTime;
-
-            timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
-                this.library.createNewLinkBetweenTagAndFile(
-                    timecodeTag.tag,
+                const result = await this.library.addTimecodeToFile(
+                    timecode,
                     file.hash
                 );
-            });
 
-            const result = await this.library.addTimecodeToFile(
-                timecode,
-                file.hash
-            );
+                if (!timecode.timecodeId) {
+                    const screenshotter = new Screenshotter(
+                        this._libraryPath,
+                        this.library
+                    );
+                    await screenshotter.screenshotTimecode(
+                        file,
+                        result,
+                        screenshotTime
+                    );
+                }
 
-            if (!timecode.timecodeId) {
-                const screenshotter = new Screenshotter(
-                    this._libraryPath,
-                    this.library
-                );
-                await screenshotter.screenshotTimecode(
-                    file,
-                    result,
-                    screenshotTime
-                );
+                res.send(result);
             }
-
-            res.send(result);
-        });
+        );
 
         api.put(
             '/files/:fileId/timecodes/:timecodeId',
             param('fileId').exists().toInt(),
             param('timecodeId').exists().toInt(),
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
             async (req, res) => {
-                const file = await this.library.getFileById(
-                    parseInt(req.params?.fileId)
-                );
-                if (!file) {
-                    return res.status(404);
-                }
+                const file = this.getFileFromReq(req);
 
                 await this.library.updateTimecodeStartAndEnd(
                     file.hash,
