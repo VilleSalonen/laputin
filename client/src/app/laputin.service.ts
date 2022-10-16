@@ -155,7 +155,7 @@ export class LaputinService {
 
         return this._http
             .post<Timecode>(
-                this._baseUrl + '/files/' + file.hash + '/timecodes',
+                this._baseUrl + '/files/' + file.fileId + '/timecodes',
                 body,
                 { headers: headers }
             )

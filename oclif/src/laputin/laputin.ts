@@ -193,52 +193,50 @@ export class Laputin {
             res.send(tags);
         });
 
-        api.route('/files/:hash/timecodes').post(async (req, res) => {
+        api.route('/files/:fileId/timecodes').post(async (req, res) => {
+            if (!this.isInteger(req.params.fileId)) {
+                return res
+                    .status(400)
+                    .send(
+                        `Given fileId ${req.params.fileId} is not an integer!`
+                    );
+            }
+
+            const file = await this.library.getFileById(
+                parseInt(req.params.fileId)
+            );
+            if (!file) {
+                return res.status(404);
+            }
+
             const timecode: Timecode = req.body.timecode;
             const screenshotTime: number = req.body.screenshotTime;
 
-            const query = new Query(
-                undefined,
-                undefined,
-                undefined,
-                [req.params.hash],
-                undefined,
-                undefined,
-                undefined,
-                undefined
-            );
-            const files = await this.library.getFiles(query);
-
-            if (files.length > 0) {
-                timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
-                    this.library.createNewLinkBetweenTagAndFile(
-                        timecodeTag.tag,
-                        req.params.hash
-                    );
-                });
-
-                const result = await this.library.addTimecodeToFile(
-                    timecode,
-                    req.params.hash
+            timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
+                this.library.createNewLinkBetweenTagAndFile(
+                    timecodeTag.tag,
+                    file.hash
                 );
+            });
 
-                if (!timecode.timecodeId) {
-                    const screenshotter = new Screenshotter(
-                        this._libraryPath,
-                        this.library
-                    );
-                    await screenshotter.screenshotTimecode(
-                        files[0],
-                        result,
-                        screenshotTime
-                    );
-                }
+            const result = await this.library.addTimecodeToFile(
+                timecode,
+                file.hash
+            );
 
-                res.send(result);
-            } else {
-                console.log('no files found');
-                res.send(500);
+            if (!timecode.timecodeId) {
+                const screenshotter = new Screenshotter(
+                    this._libraryPath,
+                    this.library
+                );
+                await screenshotter.screenshotTimecode(
+                    file,
+                    result,
+                    screenshotTime
+                );
             }
+
+            res.send(result);
         });
 
         api.route('/files/:hash/timecodes/:timecodeId').put(
