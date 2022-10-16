@@ -266,16 +266,26 @@ export class Laputin {
             }
         );
 
-        api.route(
-            '/files/:hash/timecodes/:timecodeId/tags/:timecodeTagId'
-        ).delete(async (req, res) => {
-            await this.library.removeTagFromTimecode(
-                req.params.hash,
-                req.params.timecodeId,
-                req.params.timecodeTagId
-            );
-            res.status(200).end();
-        });
+        api.delete(
+            '/files/:fileId/timecodes/:timecodeId/tags/:timecodeTagId',
+            param('fileId').exists().toInt(),
+            param('timecodeId').exists().toInt(),
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = this.getFileFromReq(req);
+
+                await this.library.removeTagFromTimecode(
+                    file.hash,
+                    req.params.timecodeId,
+                    req.params.timecodeTagId
+                );
+                res.status(200).end();
+            }
+        );
 
         api.route('/files/:hash/tags/:tagId').delete(async (req, res) => {
             await this.library.deleteLinkBetweenTagAndFile(
