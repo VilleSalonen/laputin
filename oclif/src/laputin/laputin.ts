@@ -236,11 +236,21 @@ export class Laputin {
             res.send(result);
         });
 
-        api.route('/files/:hash/timecodes/:timecodeId').put(
+        api.put(
+            '/files/:fileId/timecodes/:timecodeId',
+            param('fileId').exists().toInt(),
+            param('timecodeId').exists().toInt(),
             async (req, res) => {
+                const file = await this.library.getFileById(
+                    parseInt(req.params?.fileId)
+                );
+                if (!file) {
+                    return res.status(404);
+                }
+
                 await this.library.updateTimecodeStartAndEnd(
-                    req.params.hash,
-                    Number(req.params.timecodeId),
+                    file.hash,
+                    Number(req.params?.timecodeId),
                     req.body.timecode
                 );
                 res.status(200).end();
