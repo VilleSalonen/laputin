@@ -23,9 +23,10 @@ export class ProxyGenerator {
         );
 
         files.forEach((file) => {
-            const proxyPath = path.join(proxyDirectory, file.hash) + '.mp4';
+            const proxyPath =
+                path.join(proxyDirectory, '' + file.fileId) + '.mp4';
             const incompleProxyPath =
-                path.join(proxyDirectory, 'incomplete_' + file.hash) + '.mp4';
+                path.join(proxyDirectory, 'incomplete_' + file.fileId) + '.mp4';
 
             const proxyExists = fs.existsSync(proxyPath);
 
