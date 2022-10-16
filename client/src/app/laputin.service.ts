@@ -348,7 +348,7 @@ export class LaputinService {
         });
 
         return this._http.post(
-            this._baseUrl + '/files/' + file.hash + '/tags',
+            this._baseUrl + '/files/' + file.fileId + '/tags',
             body,
             { headers: headers }
         );

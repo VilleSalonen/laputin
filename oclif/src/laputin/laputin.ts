@@ -150,13 +150,25 @@ export class Laputin {
             res.send(tag);
         });
 
-        api.route('/files/:hash/tags').post((req, res) => {
+        api.route('/files/:fileId/tags').post(async (req, res) => {
+            if (!this.isInteger(req.params.fileId)) {
+                return res
+                    .status(400)
+                    .send(
+                        `Given fileId ${req.params.fileId} is not an integer!`
+                    );
+            }
+
+            const file = await this.library.getFileById(
+                parseInt(req.params.fileId)
+            );
+            if (!file) {
+                return res.status(404);
+            }
+
             const selectedTags = req.body.selectedTags;
             selectedTags.forEach((tag: Tag) => {
-                this.library.createNewLinkBetweenTagAndFile(
-                    tag,
-                    req.params.hash
-                );
+                this.library.createNewLinkBetweenTagAndFile(tag, file.hash);
             });
             res.status(200).end();
         });
