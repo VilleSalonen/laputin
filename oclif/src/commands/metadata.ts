@@ -46,7 +46,7 @@ export default class MetadataCommand extends Command {
 
         const fileStats = fs.statSync(flags.file);
         const hash = await hasher.hash(flags.file, fileStats);
-        const file = await library.getFile(hash);
+        const file = await library.getFileByHash(hash);
         if (!file) {
             throw new Error(`Could not find file with hash ${hash}!`);
         }

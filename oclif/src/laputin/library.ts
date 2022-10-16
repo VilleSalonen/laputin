@@ -229,6 +229,19 @@ export class Library {
         return matches[0];
     }
 
+    public async getFileByHash(hash: string): Promise<File> {
+        const filesSql = Prisma.sql`
+            SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
+            FROM File
+            WHERE hash = ${hash}`;
+        const matches = await this.getFilesViaSql(filesSql);
+        if (!matches || matches.length === 0) {
+            throw Error(`Could not find file with hash ${hash}!`);
+        }
+
+        return matches[0];
+    }
+
     public async getFiles(query: Query): Promise<File[]> {
         let fileNameClause = Prisma.empty;
         if (query.filename) {
