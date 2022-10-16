@@ -359,7 +359,7 @@ export class LaputinService {
     }
 
     public proxyExists(file: File): Observable<any> {
-        return this._http.get(this._baseUrl + '/proxyExists/' + file.hash);
+        return this._http.get(`${this._baseUrl}/proxyExists/${file.fileId}`);
     }
 
     public deleteTagFileAssoc(file: File, tag: Tag): Observable<any> {

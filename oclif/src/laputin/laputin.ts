@@ -438,24 +438,35 @@ export class Laputin {
             }
         });
 
-        api.route('/proxyExists/:hash').get(async (req, res) => {
-            if (!this.configuration.proxyDirectory) {
-                res.send(false);
-            } else {
-                try {
-                    fs.accessSync(
-                        path.join(
-                            this.configuration.proxyDirectory,
-                            req.params.hash + '.mp4'
-                        ),
-                        fs.constants.R_OK
-                    );
-                    res.send(true);
-                } catch (error) {
+        api.get(
+            '/proxyExists/:fileId',
+            param('fileId').exists().toInt(),
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = this.getFileFromReq(req);
+
+                if (!this.configuration.proxyDirectory) {
                     res.send(false);
+                } else {
+                    try {
+                        fs.accessSync(
+                            path.join(
+                                this.configuration.proxyDirectory,
+                                file.fileId + '.mp4'
+                            ),
+                            fs.constants.R_OK
+                        );
+                        res.send(true);
+                    } catch (error) {
+                        res.send(false);
+                    }
                 }
             }
-        });
+        );
 
         return api;
     }
