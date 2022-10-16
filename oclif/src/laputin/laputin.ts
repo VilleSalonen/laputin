@@ -26,14 +26,7 @@ export class Laputin {
         public fileLibrary: FileLibrary,
         private _opener: VLCOpener,
         private configuration: LaputinConfiguration
-    ) {
-        this.fileLibrary.on('found', (file: File) =>
-            this.library.addFile(file)
-        );
-        this.fileLibrary.on('lost', (file: File) =>
-            this.library.deactivateFile(file)
-        );
-    }
+    ) {}
 
     public initializeRoutes(app: express.Express): void {
         app.use(bodyParser.json({}));

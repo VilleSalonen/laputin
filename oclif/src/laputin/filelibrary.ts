@@ -80,7 +80,7 @@ export class FileLibrary extends events.EventEmitter {
                 ).filter((file) => file.path.startsWith(mediaPath));
 
                 missingFiles.forEach((file) => {
-                    this.emit('lost', file);
+                    this.library.deactivateFile(file);
                 });
 
                 resolve();
@@ -244,15 +244,16 @@ export class FileLibrary extends events.EventEmitter {
                 );
                 this.addFileToBookkeeping(file);
 
+                const fileFromDb = await this.library.addFile(file);
+
                 if (
+                    fileFromDb &&
                     (type.mime.startsWith('video') ||
                         type.mime.startsWith('image')) &&
-                    !this._screenshotter.exists(file)
+                    !this._screenshotter.exists(fileFromDb)
                 ) {
-                    await this._screenshotter.screenshot(file, 180);
+                    await this._screenshotter.screenshot(fileFromDb, 180);
                 }
-
-                this.emit('found', file);
 
                 winston.log('verbose', 'Found file: ' + filePath);
             }
@@ -369,7 +370,7 @@ export class FileLibrary extends events.EventEmitter {
                 return f.path !== filePath;
             });
 
-            this.emit('lost', file);
+            this.library.deactivateFile(file);
 
             winston.log('verbose', 'Lost file:  ' + filePath);
         } else {

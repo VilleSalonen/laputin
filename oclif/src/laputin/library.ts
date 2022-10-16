@@ -128,27 +128,8 @@ export class Library {
         this._db = new sqlite3.Database(dbPath);
     }
 
-    public async addFile(file: File): Promise<void> {
-        let existingFile;
-        try {
-            const files = await this.getFiles(
-                new Query(
-                    undefined,
-                    undefined,
-                    undefined,
-                    [file.hash],
-                    undefined,
-                    undefined,
-                    undefined,
-                    true
-                )
-            );
-            if (files.length > 0) {
-                existingFile = files[0];
-            }
-        } catch (e) {
-            // OK
-        }
+    public async addFile(file: File): Promise<File | null> {
+        const existingFile = await this.getFileByHash(file.hash);
 
         const metadata = JSON.stringify(
             existingFile
@@ -177,9 +158,13 @@ export class Library {
                     type: file.type,
                 },
             });
+
+            return await this.getFileByHash(file.hash);
         } catch (err) {
             winston.error(`Upserting ${file.hash} ${file.path}`, err);
         }
+
+        return null;
     }
 
     public async deactivateFile(file: File): Promise<void> {
