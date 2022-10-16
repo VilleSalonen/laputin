@@ -11,7 +11,7 @@ export function getLibraryPathByFile(givenFilePath: string): string {
             throw new Error('Could not find library path based on file path.');
         }
 
-        const foo = path.join(parentDirectory, '.laputin.db');
+        const foo = path.join(parentDirectory, 'laputin.db');
         if (fs.existsSync(foo)) {
             libraryPath = parentDirectory;
             break;

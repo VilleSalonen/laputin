@@ -15,7 +15,7 @@ export class SceneDetector {
     constructor(private libraryPath: string, private library: Library) {}
 
     public getScenesDirectory(): string {
-        return path.join(this.libraryPath, '//.laputin//scenes//');
+        return path.join(this.libraryPath, '//public//scenes//');
     }
 
     public getSceneDirectory(file: File): string {

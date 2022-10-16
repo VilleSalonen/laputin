@@ -59,7 +59,7 @@ export class Library {
             );
         }
 
-        const dbPath = path.join(libraryPath, '.laputin.db');
+        const dbPath = path.join(libraryPath, 'laputin.db');
         if (fs.existsSync(dbPath)) {
             throw new Error(
                 `${libraryPath} has already been initialized as Laputin library. Refusing to re-initialize.`
@@ -110,7 +110,7 @@ export class Library {
             );
         }
 
-        const dbPath = path.join(this._libraryPath, '.laputin.db');
+        const dbPath = path.join(this._libraryPath, 'laputin.db');
         if (!fs.existsSync(dbPath)) {
             winston.error(
                 `${this._libraryPath} has not been initialized as Laputin library.`

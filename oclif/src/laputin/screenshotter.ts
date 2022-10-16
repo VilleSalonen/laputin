@@ -20,26 +20,26 @@ export class Screenshotter {
     private _initialized: boolean = false;
 
     constructor(private _libraryPath: string, private _library: Library) {
-        this._thumbsPath = path.join(this._libraryPath, '//.laputin//thumbs//');
+        this._thumbsPath = path.join(this._libraryPath, '//public//thumbs//');
         this._thumbsSmallPath = path.join(
             this._libraryPath,
-            '//.laputin//thumbs-small//'
+            '//public//thumbs-small//'
         );
         this._tagTimecodeThumbsPath = path.join(
             this._libraryPath,
-            '//.laputin//tag-timecode-thumbs//'
+            '//public//tag-timecode-thumbs//'
         );
         this._tagTimecodeThumbsSmallPath = path.join(
             this._libraryPath,
-            '//.laputin//tag-timecode-thumbs-small//'
+            '//public//tag-timecode-thumbs-small//'
         );
         this._tagThumbsPath = path.join(
             this._libraryPath,
-            '//.laputin//tag-thumbs//'
+            '//public//tag-thumbs//'
         );
         this._tagThumbsSmallPath = path.join(
             this._libraryPath,
-            '//.laputin//tag-thumbs-small//'
+            '//public//tag-thumbs-small//'
         );
     }
 
@@ -205,7 +205,7 @@ export class Screenshotter {
             return;
         }
 
-        const laputinHiddenDir = path.join(this._libraryPath, '//.laputin//');
+        const laputinHiddenDir = path.join(this._libraryPath, '//public//');
 
         if (!fsLegacy.existsSync(laputinHiddenDir)) {
             winston.log(

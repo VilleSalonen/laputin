@@ -20,8 +20,8 @@ export class VLCOpener {
             this._binaryPath = '/Applications/VLC.app/Contents/MacOS/VLC';
         }
 
-        const laputinDirectory = path.join(libraryPath, '.laputin/');
-        this._playlistPath = path.join(laputinDirectory, '.playlist.m3u');
+        const laputinDirectory = path.join(libraryPath, 'public/');
+        this._playlistPath = path.join(laputinDirectory, 'playlist.m3u');
     }
 
     public open(files: File[]): void {

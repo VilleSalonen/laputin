@@ -67,7 +67,7 @@ export class Laputin {
 
         app.use(
             '/laputin',
-            <any>express.static(path.join(this._libraryPath, '/.laputin'))
+            <any>express.static(path.join(this._libraryPath, '/public'))
         );
 
         if (this.configuration.proxyDirectory) {
