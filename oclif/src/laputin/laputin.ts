@@ -235,11 +235,6 @@ export class Laputin {
 
         api.route('/files/:sourceHash/migrate/:targetHash').post(
             async (req, res) => {
-                // await this.library.migrateAllData(
-                //     req.params.sourceHash,
-                //     req.params.targetHash
-                // );
-
                 const sourceFile: File = await this.library.getFile(
                     req.params.sourceHash
                 );
