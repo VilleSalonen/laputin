@@ -186,11 +186,7 @@ export class LaputinService {
 
         return this._http
             .post<void>(
-                this._baseUrl +
-                    '/files/' +
-                    sourceFile.hash +
-                    '/migrate/' +
-                    targetFile.hash,
+                `${this._baseUrl}/files/${sourceFile.fileId}/migrate/${targetFile.fileId}`,
                 body,
                 { headers: headers }
             )

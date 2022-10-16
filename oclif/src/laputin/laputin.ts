@@ -299,14 +299,30 @@ export class Laputin {
             }
         );
 
-        api.route('/files/:sourceHash/migrate/:targetHash').post(
+        api.post(
+            '/files/:sourceFileId/migrate/:targetFileId',
+            param('sourceFileId').exists().toInt(),
+            param('targetFileId').exists().toInt(),
             async (req, res) => {
-                const sourceFile: File = await this.library.getFile(
-                    req.params.sourceHash
+                const sourceFile = await this.library.getFileById(
+                    req.params?.sourceFileId
                 );
-                const targetFile: File = await this.library.getFile(
-                    req.params.targetHash
+                if (!sourceFile) {
+                    res.status(404).send(
+                        `Could not find source file with ID ${req.params?.sourceFileId}`
+                    );
+                    return;
+                }
+
+                const targetFile = await this.library.getFileById(
+                    req.params?.targetFileId
                 );
+                if (!targetFile) {
+                    res.status(404).send(
+                        `Could not find target file with ID ${req.params?.sourceFileId}`
+                    );
+                    return;
+                }
 
                 const fileDataMigrator = new FileDataMigrator(
                     this.library,
