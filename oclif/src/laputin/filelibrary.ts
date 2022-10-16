@@ -352,8 +352,7 @@ export class FileLibrary extends events.EventEmitter {
 
     private removeFileFromPath(filePath: string): void {
         // Ugly fix for different path separators
-        const fixedPath = filePath.replace(/\\/g, '/');
-        const hash = this._hashesByPaths[fixedPath];
+        const hash = this._hashesByPaths[filePath];
         const files = this._files[hash];
 
         if (!files) {
@@ -361,12 +360,12 @@ export class FileLibrary extends events.EventEmitter {
         }
 
         const file = files.find((f: File) => {
-            return f.path === fixedPath;
+            return f.path === filePath;
         });
 
         if (file) {
             this._files[hash] = files.filter((f: File) => {
-                return f.path !== fixedPath;
+                return f.path !== filePath;
             });
 
             this.emit('lost', file);

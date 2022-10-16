@@ -10,6 +10,7 @@ import { IHasher } from '../laputin/ihasher';
 import winston = require('winston');
 import { File as LaputinFile } from '../laputin/file';
 import { Query } from '../laputin/query.model';
+import path = require('path');
 
 export default class Untag extends Command {
     static description = 'describe the command here';
@@ -81,7 +82,7 @@ export default class Untag extends Command {
             tagNamesLower.includes(t.name.toLocaleLowerCase())
         );
 
-        const harmonizedFiles = files.map((file) => file.replace(/\\/g, '/'));
+        const harmonizedFiles = files.map((file) => path.normalize(file));
         const libraryFiles = await library.getFiles(
             new Query(undefined, harmonizedFiles)
         );

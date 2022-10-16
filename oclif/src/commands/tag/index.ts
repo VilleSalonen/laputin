@@ -12,6 +12,7 @@ import { readPipe } from '../../laputin/read-pipe';
 import { initializeWinston } from '../../laputin/winston';
 import { File as LaputinFile } from '../../laputin/file';
 import { Query } from '../../laputin/query.model';
+import path = require('path');
 
 export default class TagCommand extends Command {
     static description = 'describe the command here';
@@ -97,7 +98,7 @@ export default class TagCommand extends Command {
 
         const tagsForAdding = [...newTags, ...existingTags];
 
-        const harmonizedFiles = files.map((file) => file.replace(/\\/g, '/'));
+        const harmonizedFiles = files.map((file) => path.normalize(file));
         const filesForAdding = await library.getFiles(
             new Query(undefined, harmonizedFiles)
         );
