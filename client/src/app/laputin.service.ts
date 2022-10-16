@@ -134,7 +134,7 @@ export class LaputinService {
     public getTimecodes(file: File): Observable<Timecode[]> {
         return this._http
             .get<Timecode[]>(
-                this._baseUrl + '/files/' + file.hash + '/timecodes'
+                this._baseUrl + '/files/' + file.fileId + '/timecodes'
             )
             .pipe(map((timecodes) => this.mapTimecodes(timecodes)));
     }

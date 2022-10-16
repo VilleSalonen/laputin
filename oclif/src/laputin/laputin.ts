@@ -173,10 +173,23 @@ export class Laputin {
             res.status(200).end();
         });
 
-        api.route('/files/:hash/timecodes').get(async (req, res) => {
-            const tags = await this.library.getTimecodesForFile(
-                req.params.hash
+        api.route('/files/:fileId/timecodes').get(async (req, res) => {
+            if (!this.isInteger(req.params.fileId)) {
+                return res
+                    .status(400)
+                    .send(
+                        `Given fileId ${req.params.fileId} is not an integer!`
+                    );
+            }
+
+            const file = await this.library.getFileById(
+                parseInt(req.params.fileId)
             );
+            if (!file) {
+                return res.status(404);
+            }
+
+            const tags = await this.library.getTimecodesForFile(file.hash);
             res.send(tags);
         });
 
