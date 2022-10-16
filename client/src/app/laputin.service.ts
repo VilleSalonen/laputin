@@ -215,6 +215,7 @@ export class LaputinService {
                     const files = current.map(
                         (file: any) =>
                             new File(
+                                file.fileId,
                                 file.hash,
                                 file.path,
                                 [],
@@ -239,6 +240,7 @@ export class LaputinService {
 
     private _convertFile(file: any): File {
         return new File(
+            file.fileId,
             file.hash,
             file.path,
             this._convertTags(file.tags),

@@ -11,6 +11,7 @@ export class File implements TagContainer {
     public metadata: any;
 
     constructor(
+        public fileId: number,
         public hash: string,
         public path: string,
         public tags: Tag[],

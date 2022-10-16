@@ -38,7 +38,7 @@ export class FileItemComponent implements OnInit {
         }
 
         this.service.thumbnailChanged.subscribe((changed: File) => {
-            if (changed.hash === this.file.hash) {
+            if (changed.fileId === this.file.fileId) {
                 this.cacheBuster = '?cachebuster=' + new Date().toISOString();
                 this.setImageUrl();
             }
@@ -46,6 +46,6 @@ export class FileItemComponent implements OnInit {
     }
 
     private setImageUrl(): void {
-        this.image = `/laputin/thumbs-small/${this.file.hash}.jpg${this.cacheBuster}`;
+        this.image = `/laputin/thumbs-small/${this.file.fileId}.jpg${this.cacheBuster}`;
     }
 }

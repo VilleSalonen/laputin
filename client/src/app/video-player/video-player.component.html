@@ -1,5 +1,5 @@
 <div class="container" #playerView>
-    <div class="video-area" #videoArea [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
+    <div class="video-area" #videoArea [ngStyle]="!playbackHasBeenStarted && {'background-image': 'url(/laputin/thumbs/' + file.fileId + '.jpg)'}" [ngClass]="{ 'show': this.mouseOverVideo || !this.playing}">
         <div class="video-overlay-controls">
             <div (click)="goToPrevious()" title="Go to previous" class="small-icon">
                 <i class="material-icons">
@@ -33,7 +33,7 @@
         </div>
 
         <div [ngClass]="{ 'hidden': !playbackHasBeenStarted }" class="video-container">
-            <div class="screenshot-preview" [ngClass]="{ 'hidden': !showScreenshotPreview }" [ngStyle]="showScreenshotPreview && {'background-image': 'url(/laputin/thumbs/' + file.hash + '.jpg?' + cacheBuster + ')'}">
+            <div class="screenshot-preview" [ngClass]="{ 'hidden': !showScreenshotPreview }" [ngStyle]="showScreenshotPreview && {'background-image': 'url(/laputin/thumbs/' + file.fileId + '.jpg?' + cacheBuster + ')'}">
                 &nbsp;
             </div>
 
