@@ -156,20 +156,17 @@ export class Library {
                 : file.metadata
         );
 
-        const fileFromDb = await this.prisma.file.findFirst({
-            where: { hash: file.hash },
-        });
-        if (fileFromDb) {
+        if (existingFile) {
             try {
                 await this.prisma.file.update({
                     where: {
-                        id: fileFromDb.id,
+                        id: existingFile.fileId,
                     },
                     data: {
                         path: file.path,
                         active: 1,
                         size: file.size,
-                        metadata: JSON.stringify(metadata),
+                        metadata: metadata,
                         type: file.type,
                     },
                 });
@@ -183,7 +180,7 @@ export class Library {
                     path: file.path,
                     active: 1,
                     size: file.size,
-                    metadata: JSON.stringify(metadata),
+                    metadata: metadata,
                     type: file.type,
                 },
             });

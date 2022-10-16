@@ -24,7 +24,7 @@ const fileType = require('file-type');
 const probe = require('node-ffprobe');
 
 export class FileLibrary extends events.EventEmitter {
-    private _existingFiles: { [path: string]: File } = {};
+    private _existingFilesByPath: { [path: string]: File } = {};
 
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
@@ -52,7 +52,7 @@ export class FileLibrary extends events.EventEmitter {
             undefined
         );
         const existingFiles = await this.library.getFiles(query);
-        this._existingFiles = _.keyBy(existingFiles, (f) => f.path);
+        this._existingFilesByPath = _.keyBy(existingFiles, (f) => f.path);
 
         for (const mediaPath of this._configuration.mediaPaths) {
             await this.scanFiles(mediaPath, performFullCheck);
@@ -73,10 +73,9 @@ export class FileLibrary extends events.EventEmitter {
                 this.processFile(root, walkStat, callback, performFullCheck);
             });
             walker.on('end', () => {
-                const escapedMediaPath = mediaPath.replace(/\\/g, '/');
                 const missingFiles = _.values(
-                    this._existingFiles
-                ).filter((file) => file.path.startsWith(escapedMediaPath));
+                    this._existingFilesByPath
+                ).filter((file) => file.path.startsWith(mediaPath));
 
                 missingFiles.forEach((file) => {
                     this.emit('lost', file);
@@ -168,14 +167,14 @@ export class FileLibrary extends events.EventEmitter {
                 return;
             }
 
-            const escapedFilePath = filePath.replace(/\\/g, '/');
+            const normalizedFilePath = path.normalize(filePath);
             if (
                 !performFullCheck &&
-                this._existingFiles[escapedFilePath] &&
-                BigInt(this._existingFiles[escapedFilePath].size) ===
+                this._existingFilesByPath[normalizedFilePath] &&
+                BigInt(this._existingFilesByPath[normalizedFilePath].size) ===
                     BigInt(stats.size)
             ) {
-                const file = this._existingFiles[escapedFilePath];
+                const file = this._existingFilesByPath[normalizedFilePath];
                 this.addFileToBookkeeping(file);
 
                 winston.log(
@@ -207,7 +206,7 @@ export class FileLibrary extends events.EventEmitter {
                     );
                     metadata = { ...metadata, ...ffprobeMetadata };
 
-                    const releaseDate = escapedFilePath.match(
+                    const releaseDate = normalizedFilePath.match(
                         /.*(\d\d\d\d-\d\d-\d\d).*/
                     );
                     if (releaseDate && releaseDate[1]) {
@@ -216,7 +215,7 @@ export class FileLibrary extends events.EventEmitter {
                             releaseDate: releaseDate[1],
                         };
                     } else {
-                        const releaseYear = escapedFilePath.match(
+                        const releaseYear = normalizedFilePath.match(
                             /.* - (\d\d\d\d) - .*/
                         );
                         if (releaseYear && releaseYear[1]) {
@@ -257,7 +256,7 @@ export class FileLibrary extends events.EventEmitter {
                 winston.log('verbose', 'Found file: ' + filePath);
             }
 
-            delete this._existingFiles[escapedFilePath];
+            delete this._existingFilesByPath[normalizedFilePath];
         } catch (err) {
             // console.log('err', err);
         }

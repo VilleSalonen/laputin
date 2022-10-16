@@ -23,7 +23,7 @@ export class File {
     ) {
         this.fileId = fileId;
         this.hash = hash;
-        this.path = filePath.replace(/\\/g, '/');
+        this.path = path.normalize(filePath);
         this.name = this.cleanPath();
         this.tags = tags;
         this.size = size;
