@@ -269,7 +269,7 @@ export class Library {
             }
         }
 
-        let sql1_ = Prisma.sql`
+        let filesSql = Prisma.sql`
             SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
             FROM File
             WHERE 1 = 1
@@ -283,7 +283,7 @@ export class Library {
             ${this._generateTagFilterQueryNot(query.not)}
             ORDER BY File.path`;
 
-        const rawResults = await this.prisma.$queryRaw<any[]>(sql1_);
+        const rawResults = await this.prisma.$queryRaw<any[]>(filesSql);
         const files: Map<number, File> = new Map<number, File>(
             rawResults.map((row) => [
                 row.id,
