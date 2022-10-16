@@ -287,13 +287,24 @@ export class Laputin {
             }
         );
 
-        api.route('/files/:hash/tags/:tagId').delete(async (req, res) => {
-            await this.library.deleteLinkBetweenTagAndFile(
-                Number(req.params.tagId),
-                req.params.hash
-            );
-            res.status(200).end();
-        });
+        api.delete(
+            '/files/:fileId/tags/:tagId',
+            param('fileId').exists().toInt(),
+            (
+                req: express.Request,
+                res: express.Response,
+                next: express.NextFunction
+            ) => this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = this.getFileFromReq(req);
+
+                await this.library.deleteLinkBetweenTagAndFile(
+                    Number(req.params.tagId),
+                    file.hash
+                );
+                res.status(200).end();
+            }
+        );
 
         api.route('/files/:sourceHash/migrate/:targetHash').post(
             async (req, res) => {

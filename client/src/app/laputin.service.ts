@@ -363,9 +363,9 @@ export class LaputinService {
     }
 
     public deleteTagFileAssoc(file: File, tag: Tag): Observable<any> {
-        return this._http.delete(
-            this._baseUrl + '/files/' + file.hash + '/tags/' + tag.id
-        );
+        return this._http.delete(`
+            ${this._baseUrl}/files/${file.fileId}/tags/${tag.id}
+        `);
     }
 
     public updateTimecodeStartAndEnd(
