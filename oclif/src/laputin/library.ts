@@ -649,17 +649,10 @@ export class Library {
                         inputTag.id
                     )
                 ) {
-                    winston.verbose(
-                        `${file.path} did not have ${inputTag.name}`
-                    );
                     insertPrepares.push('(NULL, ?, ?)');
                     insertParams.push(file.fileId);
                     insertParams.push(inputTag.id);
                     returnResults.push(new FileTagLink(file, inputTag));
-                } else {
-                    winston.verbose(
-                        `${file.path} already HAD ${inputTag.name}`
-                    );
                 }
             }
         }
