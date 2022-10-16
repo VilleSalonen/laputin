@@ -52,16 +52,19 @@ export class Laputin {
             const isInteger = (candidate: string) =>
                 /^-?[0-9]+$/.test(candidate + '');
             if (!isInteger(req.params.fileId)) {
-                res.status(400);
-                res.send(
-                    `Given fileId ${req.params.fileId} is not an integer!`
-                );
-                return;
+                return res
+                    .status(400)
+                    .send(
+                        `Given fileId ${req.params.fileId} is not an integer!`
+                    );
             }
 
             const file = await this.library.getFileById(
                 parseInt(req.params.fileId)
             );
+            if (!file) {
+                return res.status(404);
+            }
 
             var options = {
                 root: path.parse(file.path).dir,

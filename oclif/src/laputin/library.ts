@@ -216,30 +216,22 @@ export class Library {
         return matchingFiles[0];
     }
 
-    public async getFileById(fileId: number): Promise<File> {
-        const filesSql = Prisma.sql`
-            SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
-            FROM File
-            WHERE id = ${fileId}`;
-        const matches = await this.getFilesViaSql(filesSql);
-        if (!matches || matches.length === 0) {
-            throw Error(`Could not find file with ID ${fileId}!`);
-        }
-
-        return matches[0];
+    public getFileById(fileId: number): Promise<File | null> {
+        return this.getFileViaSql(
+            Prisma.sql`
+                SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
+                FROM File
+                WHERE id = ${fileId}`
+        );
     }
 
-    public async getFileByHash(hash: string): Promise<File> {
-        const filesSql = Prisma.sql`
-            SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
-            FROM File
-            WHERE hash = ${hash}`;
-        const matches = await this.getFilesViaSql(filesSql);
-        if (!matches || matches.length === 0) {
-            throw Error(`Could not find file with hash ${hash}!`);
-        }
-
-        return matches[0];
+    public getFileByHash(hash: string): Promise<File | null> {
+        return this.getFileViaSql(
+            Prisma.sql`
+                SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
+                FROM File
+                WHERE hash = ${hash}`
+        );
     }
 
     public async getFiles(query: Query): Promise<File[]> {
@@ -345,6 +337,11 @@ export class Library {
         });
 
         return Array.from(files.values());
+    }
+
+    private async getFileViaSql(fileSql: Prisma.Sql): Promise<File | null> {
+        const matches = await this.getFilesViaSql(fileSql);
+        return matches && matches.length > 0 ? matches[0] : null;
     }
 
     private formatActiveClause(query: Query): Prisma.Sql {
