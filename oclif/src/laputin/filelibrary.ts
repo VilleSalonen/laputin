@@ -20,7 +20,7 @@ const fileType = require('file-type');
 const probe = require('node-ffprobe');
 
 export class FileLibrary extends events.EventEmitter {
-    private _existingFilesByPath: { [path: string]: File } = {};
+    private _existingFilesByPath: Map<string, File> = new Map<string, File>();
 
     private _files: { [hash: string]: File[] } = {};
     private _hashesByPaths: { [filePath: string]: string } = {};
@@ -51,7 +51,9 @@ export class FileLibrary extends events.EventEmitter {
             performFullCheck
         );
         const existingFiles = await this.library.getFiles(query);
-        this._existingFilesByPath = _.keyBy(existingFiles, (f) => f.path);
+        for (const existingFile of existingFiles) {
+            this._existingFilesByPath.set(existingFile.path, existingFile);
+        }
 
         for (const mediaPath of this._configuration.mediaPaths) {
             const filePaths = await this.readdirRecursive(mediaPath);
@@ -156,14 +158,15 @@ export class FileLibrary extends events.EventEmitter {
             }
 
             const normalizedFilePath = path.normalize(filePath);
+            const existingFile = this._existingFilesByPath.get(
+                normalizedFilePath
+            );
             if (
                 !performFullCheck &&
-                this._existingFilesByPath[normalizedFilePath] &&
-                BigInt(this._existingFilesByPath[normalizedFilePath].size) ===
-                    BigInt(stats.size)
+                existingFile &&
+                BigInt(existingFile.size) === BigInt(stats.size)
             ) {
-                const file = this._existingFilesByPath[normalizedFilePath];
-                this.addFileToBookkeeping(file);
+                this.addFileToBookkeeping(existingFile);
 
                 winston.log(
                     'verbose',
@@ -244,8 +247,6 @@ export class FileLibrary extends events.EventEmitter {
 
                 winston.log('verbose', 'Found file: ' + filePath);
             }
-
-            delete this._existingFilesByPath[normalizedFilePath];
         } catch (err) {
             // console.log('err', err);
         }
