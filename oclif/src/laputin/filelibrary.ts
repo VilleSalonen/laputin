@@ -1,15 +1,11 @@
-/// <reference path="walk.d.ts" />
-
 import _ = require('lodash');
-import walk = require('walk');
 import * as path from 'path';
 import watch = require('watch');
 import events = require('events');
 import winston = require('winston');
 
-import * as fs from 'fs';
-import { promisify } from 'util';
-const stat = promisify(fs.stat);
+import { Stats } from 'node:fs';
+import { readdir, stat } from 'node:fs/promises';
 
 import { IHasher } from './ihasher';
 import { File } from './file';
@@ -58,37 +54,40 @@ export class FileLibrary extends events.EventEmitter {
         this._existingFilesByPath = _.keyBy(existingFiles, (f) => f.path);
 
         for (const mediaPath of this._configuration.mediaPaths) {
-            await this.scanFiles(mediaPath, performFullCheck);
+            const filePaths = await this.readdirRecursive(mediaPath);
+
+            for (const filePath of filePaths) {
+                const fileStats = await stat(filePath);
+                await this.addFileFromPath(
+                    filePath,
+                    fileStats,
+                    performFullCheck
+                );
+            }
         }
 
         this.startMonitoring();
     }
 
-    private scanFiles(
-        mediaPath: string,
-        performFullCheck: boolean
-    ): Promise<void> {
-        const walkerOptions = {
-            followLinks: false,
-        };
+    private async readdirRecursive(directory: string): Promise<string[]> {
+        let files: string[] = [];
+        const items = await readdir(directory, { withFileTypes: true });
 
-        return new Promise<void>((resolve, reject) => {
-            const walker = walk.walk(mediaPath, walkerOptions);
-            walker.on('file', (root, walkStat, callback) => {
-                this.processFile(root, walkStat, callback, performFullCheck);
-            });
-            walker.on('end', () => {
-                const missingFiles = _.values(
-                    this._existingFilesByPath
-                ).filter((file) => file.path.startsWith(mediaPath));
+        for (const item of items) {
+            if (item.isDirectory()) {
+                const directoryPath = path.join(directory, item.name);
+                const directoryFiles = await this.readdirRecursive(
+                    directoryPath
+                );
+                files = [...files, ...directoryFiles];
+            } else {
+                const filePath = path.join(directory, item.name);
+                const normalizedFilePath = path.normalize(filePath);
+                files.push(normalizedFilePath);
+            }
+        }
 
-                missingFiles.forEach((file) => {
-                    this.library.deactivateFile(file);
-                });
-
-                resolve();
-            });
-        });
+        return files.sort();
     }
 
     public close(): void {
@@ -143,24 +142,9 @@ export class FileLibrary extends events.EventEmitter {
         }
     }
 
-    private async processFile(
-        root: string,
-        walkStat: walk.WalkStat,
-        next: () => void,
-        performFullCheck: boolean
-    ): Promise<void> {
-        const filePath = path.normalize(path.join(root, walkStat.name));
-        try {
-            await this.addFileFromPath(filePath, walkStat, performFullCheck);
-        } catch (e) {
-            winston.log('debug', 'Error while process file: ' + e);
-        }
-        next();
-    }
-
     private async addFileFromPath(
         filePath: string,
-        stats: fs.Stats,
+        stats: Stats,
         performFullCheck: boolean
     ): Promise<void> {
         try {
