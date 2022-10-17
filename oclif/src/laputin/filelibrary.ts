@@ -40,6 +40,10 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     public async load(performFullCheck: boolean): Promise<void> {
+        if (performFullCheck) {
+            await this.library.deactivateAll();
+        }
+
         const query = new Query(
             undefined,
             undefined,
@@ -48,7 +52,7 @@ export class FileLibrary extends events.EventEmitter {
             undefined,
             undefined,
             undefined,
-            undefined
+            performFullCheck
         );
         const existingFiles = await this.library.getFiles(query);
         this._existingFilesByPath = _.keyBy(existingFiles, (f) => f.path);
