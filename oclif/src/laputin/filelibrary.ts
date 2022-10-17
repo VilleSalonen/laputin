@@ -370,12 +370,14 @@ export class FileLibrary extends events.EventEmitter {
 
     public getDuplicates(): any {
         const duplicates: any = {};
+        const hashes = Object.keys(this._files);
 
-        _.forOwn(this._files, function (files: File[], hash: string) {
+        for (const hash of hashes) {
+            const files = this._files[hash];
             if (files.length > 1) {
                 duplicates[hash] = files;
             }
-        });
+        }
 
         return duplicates;
     }
