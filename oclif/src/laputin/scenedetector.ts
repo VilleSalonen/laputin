@@ -1,6 +1,7 @@
 import child_process = require('child_process');
 import * as fs from 'fs';
 import * as path from 'path';
+import { readdir, unlink } from 'node:fs/promises';
 
 import { Library } from './library';
 import { Query } from './query.model';
@@ -22,7 +23,7 @@ export class SceneDetector {
         return path.join(this.getScenesDirectory(), file.fileId + '/');
     }
 
-    public async detectMissingScenes(filenameForQuery: string) {
+    public async detectMissingScenes(query: Query, performFullCheck: boolean) {
         const scenesDirectory = this.getScenesDirectory();
 
         if (!fs.existsSync(scenesDirectory)) {
@@ -32,18 +33,20 @@ export class SceneDetector {
             );
         }
 
-        const files = await this.library.getFiles(
-            new Query(filenameForQuery, [], '', undefined, '', '', '', false)
-        );
+        const files = await this.library.getFiles(query);
         if (files.length === 0) {
             winston.warn(
-                `Could not find any files with filename query ${filenameForQuery}`
+                `Could not find any files with filename query ${JSON.stringify(
+                    query
+                )}`
             );
             return;
         }
 
         winston.verbose(
-            `Found ${files.length} files with filename query ${filenameForQuery}`
+            `Found ${files.length} files with filename query ${JSON.stringify(
+                query
+            )}`
         );
 
         for (const file of files) {
@@ -51,6 +54,17 @@ export class SceneDetector {
                 winston.verbose(`${file.fileId} = ${file.path}`);
 
                 const sceneDirectory = this.getSceneDirectory(file);
+                const sceneDirectoryExists = fs.existsSync(sceneDirectory);
+
+                // If scene directory exists and user did not request full check we need to skip checking the every
+                // individual screenshot as that takes a looong time.
+                //
+                // Note: some scenes may be incomplete or are missing screenshots. User can fix these by running
+                // full check for specific files.
+                if (sceneDirectoryExists && !performFullCheck) {
+                    continue;
+                }
+
                 if (!fs.existsSync(sceneDirectory)) {
                     fs.mkdirSync(sceneDirectory);
                     winston.verbose(
@@ -72,7 +86,7 @@ export class SceneDetector {
                         sceneDirectory,
                         `${file.fileId}.mp4`
                     );
-                    const createdDownscaledVersion = this.createDownscaledVideoIfDoesNotExist(
+                    const createdDownscaledVersion = await this.createDownscaledVideo(
                         file,
                         sceneDirectory,
                         targetPath
@@ -95,7 +109,7 @@ export class SceneDetector {
                     fs.writeFileSync(analysisJsonPath, JSON.stringify(scenes));
                 }
 
-                this.generateMissingSceneScreenshots(
+                await this.generateMissingSceneScreenshots(
                     file,
                     sceneDirectory,
                     scenes
@@ -109,19 +123,23 @@ export class SceneDetector {
         }
     }
 
-    private createDownscaledVideoIfDoesNotExist(
+    private async createDownscaledVideo(
         file: File,
         sceneDirectory: string,
         targetPath: string
-    ): boolean {
-        if (fs.existsSync(targetPath)) {
-            return false;
-        }
-
+    ): Promise<boolean> {
         const incompleteTargetPath = path.join(
             sceneDirectory,
             `${file.fileId}_INCOMPLETE.mp4`
         );
+
+        if (fs.existsSync(incompleteTargetPath)) {
+            await unlink(incompleteTargetPath);
+        }
+        if (fs.existsSync(targetPath)) {
+            await unlink(targetPath);
+        }
+
         const command = `ffmpeg -y -i "${file.path}" -vcodec h264_nvenc -preset fast -vf "scale=w=320:h=180" -an "${incompleteTargetPath}"`;
 
         winston.verbose(
@@ -174,11 +192,23 @@ export class SceneDetector {
         return await csv().fromString(csvContent);
     }
 
-    private generateMissingSceneScreenshots(
+    private async generateMissingSceneScreenshots(
         file: File,
         sceneDirectory: string,
         scenes: any[]
-    ): void {
+    ): Promise<void> {
+        const existingFiles = await readdir(sceneDirectory);
+        const existingThumbnails = existingFiles.filter((fileName) =>
+            fileName.endsWith('.jpg')
+        );
+
+        if (scenes.length * 3 === existingThumbnails.length) {
+            winston.verbose(
+                `Scene directory contains expected ${existingThumbnails.length} thumbnails for ${scenes.length} scenes, skipping.`
+            );
+            return;
+        }
+
         winston.verbose(`Generating thumbnails for ${scenes.length} scenes...`);
         for (const scene of scenes) {
             const sceneNumber = parseInt(scene['Scene Number'], 10);
