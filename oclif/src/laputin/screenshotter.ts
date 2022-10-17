@@ -66,6 +66,15 @@ export class Screenshotter {
         this.initialize();
 
         if (file.type.startsWith('video')) {
+            const duration = Math.floor(parseFloat(file.metadata.duration));
+            if (timeInSeconds > duration) {
+                const newTimeInSeconds = duration / 2;
+                winston.verbose(
+                    `Screenshot was requested at ${timeInSeconds} seconds but duration is only ${duration} seconds. Screenshot will be taken at ${newTimeInSeconds} seconds.`
+                );
+                timeInSeconds = newTimeInSeconds;
+            }
+
             const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
                 file.path
             }" -vframes 1 "${this.getThumbPath(file)}"`;
