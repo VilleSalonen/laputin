@@ -8,7 +8,7 @@
 /lib
 /lib
 /package-lock.json
-/tmp
+/test/test-runs
 /tmp
 /yarn.lock
 node_modules

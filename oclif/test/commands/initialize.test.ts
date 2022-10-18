@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 
 describe('initialize', () => {
     describe('empty directory', () => {
-        const directoryPath = `C:\\Github\\laputin\\oclif\\test\\${randomUUID()}`;
+        const directoryPath = `C:\\Github\\laputin\\oclif\\test\\test-runs\\${randomUUID()}`;
 
         beforeEach(async () => {
             await fs.mkdir(directoryPath, { recursive: true });
@@ -20,7 +20,7 @@ describe('initialize', () => {
     });
 
     describe('existing Laputin directory', () => {
-        const directoryPath = `C:\\Github\\laputin\\oclif\\test\\${randomUUID()}`;
+        const directoryPath = `C:\\Github\\laputin\\oclif\\test\\test-runs\\${randomUUID()}`;
 
         beforeEach(async () => {
             await fs.mkdir(directoryPath, { recursive: true });
