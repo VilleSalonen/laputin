@@ -35,7 +35,6 @@ import sqlite3 = require('sqlite3');
 bluebird.promisifyAll(sqlite3);
 
 import * as path from 'path';
-import _ = require('lodash');
 import * as fs from 'fs';
 import winston = require('winston');
 

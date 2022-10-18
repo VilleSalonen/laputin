@@ -1,4 +1,3 @@
-import _ = require('lodash');
 import * as path from 'path';
 import watch = require('watch');
 import events = require('events');

@@ -47,7 +47,6 @@
     "@types/command-line-usage": "^5.0.1",
     "@types/cors": "^2.8.6",
     "@types/express": "~4.11.1",
-    "@types/lodash": "4.14.106",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.9.4",
     "@types/rimraf": "^2.0.3",
