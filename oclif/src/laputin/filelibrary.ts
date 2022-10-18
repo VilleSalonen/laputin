@@ -36,10 +36,6 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     public async load(performFullCheck: boolean): Promise<void> {
-        if (performFullCheck) {
-            await this.library.deactivateAll();
-        }
-
         const query = new Query(
             undefined,
             undefined,
@@ -50,21 +46,42 @@ export class FileLibrary extends events.EventEmitter {
             undefined,
             performFullCheck
         );
+
         const existingFiles = await this.library.getFiles(query);
+        const existingFilesByHash = new Map<string, File>();
         for (const existingFile of existingFiles) {
             this._existingFilesByPath.set(existingFile.path, existingFile);
+            existingFilesByHash.set(existingFile.hash, existingFile);
         }
 
+        const actualFilesByHash = new Map<string, File>();
         for (const mediaPath of this._configuration.mediaPaths) {
             const filePaths = await this.readdirRecursive(mediaPath);
 
             for (const filePath of filePaths) {
                 const fileStats = await stat(filePath);
-                await this.addFileFromPath(
+                const file = await this.addFileFromPath(
                     filePath,
                     fileStats,
                     performFullCheck
                 );
+                if (file) {
+                    actualFilesByHash.set(file.hash, file);
+                }
+            }
+        }
+
+        const existingHashSet = new Set(existingFilesByHash.keys());
+        const actualHashSet = new Set(actualFilesByHash.keys());
+        const missingHashSet = new Set(
+            [...existingHashSet].filter(
+                (element) => !actualHashSet.has(element)
+            )
+        );
+        for (const missingHash of missingHashSet) {
+            const missingFile = existingFilesByHash.get(missingHash);
+            if (missingFile) {
+                this.library.deactivateFile(missingFile);
             }
         }
 
@@ -148,13 +165,13 @@ export class FileLibrary extends events.EventEmitter {
         filePath: string,
         stats: Stats,
         performFullCheck: boolean
-    ): Promise<void> {
+    ): Promise<File | null> {
         try {
             if (stats.isDirectory()) {
-                return;
+                return null;
             }
             if (this.fileShouldBeIgnored(filePath)) {
-                return;
+                return null;
             }
 
             const normalizedFilePath = path.normalize(filePath);
@@ -172,6 +189,8 @@ export class FileLibrary extends events.EventEmitter {
                     'verbose',
                     'File found in same path with same size: ' + filePath
                 );
+
+                return existingFile;
             } else {
                 const hash = await this._hasher.hash(filePath, stats);
 
@@ -187,7 +206,7 @@ export class FileLibrary extends events.EventEmitter {
                         'warn',
                         `Could not read mime type from file ${filePath}. Skipping the file!`
                     );
-                    return;
+                    return null;
                 }
 
                 let metadata = {};
@@ -246,10 +265,14 @@ export class FileLibrary extends events.EventEmitter {
                 }
 
                 winston.log('verbose', 'Found file: ' + filePath);
+
+                return fileFromDb;
             }
         } catch (err) {
             // console.log('err', err);
         }
+
+        return null;
     }
 
     private async readFfprobeMetadata(filePath: string): Promise<any> {

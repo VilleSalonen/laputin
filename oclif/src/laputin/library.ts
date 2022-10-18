@@ -172,10 +172,6 @@ export class Library {
             .$queryRaw`UPDATE File SET active = 0 WHERE path = ${file.path}`;
     }
 
-    public async deactivateAll(): Promise<void> {
-        await this.prisma.$queryRaw`UPDATE File SET active = 0`;
-    }
-
     public async getFile(hash: string): Promise<File> {
         const query = new Query(
             undefined,
