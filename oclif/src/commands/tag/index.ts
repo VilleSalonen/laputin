@@ -10,7 +10,6 @@ import { Library } from '../../laputin/library';
 import { QuickMD5Hasher } from '../../laputin/quickmd5hasher';
 import { readPipe } from '../../laputin/read-pipe';
 import { initializeWinston } from '../../laputin/winston';
-import { File as LaputinFile } from '../../laputin/file';
 import { Query } from '../../laputin/query.model';
 import path = require('path');
 

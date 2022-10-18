@@ -5,10 +5,7 @@ import { readPipe } from '../laputin/read-pipe';
 import { initializeWinston } from '../laputin/winston';
 import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
-import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
-import { IHasher } from '../laputin/ihasher';
 import winston = require('winston');
-import { File as LaputinFile } from '../laputin/file';
 import { Query } from '../laputin/query.model';
 import path = require('path');
 
@@ -60,8 +57,6 @@ export default class Untag extends Command {
 
         const libraryPath = getLibraryPathByFile(files[0]);
         const library = new Library(libraryPath);
-
-        const hasher: IHasher = new QuickMD5Hasher();
 
         const allTags = await library.getAllTags();
 

@@ -4,7 +4,6 @@ import { Command, Flags } from '@oclif/core';
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
 import { initializeWinston } from '../laputin/winston';
-import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import chalk = require('chalk');
 import express = require('express');
 import winston = require('winston');

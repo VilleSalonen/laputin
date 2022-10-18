@@ -1,9 +1,7 @@
 import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
-import { Tag } from '../../laputin/tag';
 import { TagQuery } from '../../laputin/tagquery.model';
-import { Query as QueryModel } from '../../laputin/query.model';
 import { initializeWinston } from '../../laputin/winston';
 
 export default class QueryTagsCommand extends Command {

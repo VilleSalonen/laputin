@@ -3,9 +3,7 @@ import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
 import * as fs from 'fs/promises';
-import * as fsLegacy from 'fs';
 import * as path from 'path';
-import { LaputinConfiguration } from '../laputin/laputinconfiguration';
 import { ProxyGenerator } from '../laputin/proxygenerator';
 
 export default class CreateProxiesCommand extends Command {

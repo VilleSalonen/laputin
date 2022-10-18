@@ -2,7 +2,6 @@ import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { Tag } from '../laputin/tag';
-import { TagQuery } from '../laputin/tagquery.model';
 import { Query } from '../laputin/query.model';
 import { VLCOpener } from '../laputin/vlcopener';
 

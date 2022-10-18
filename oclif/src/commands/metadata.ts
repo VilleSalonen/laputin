@@ -1,6 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import winston = require('winston');
-import { getLibraryPath, getLibraryPathByFile } from '../laputin/helpers';
+import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
 import * as fs from 'fs';

@@ -3,7 +3,6 @@ import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { initializeWinston } from '../../laputin/winston';
 import winston = require('winston');
-import { TagQuery } from '../../laputin/tagquery.model';
 
 export default class RenameTagCommand extends Command {
     static description = 'Renames a tag';

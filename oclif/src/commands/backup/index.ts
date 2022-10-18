@@ -1,4 +1,4 @@
-import { Command, Flags, CliUx } from '@oclif/core';
+import { Command, Flags } from '@oclif/core';
 import { File as LaputinFile } from '../../laputin/file';
 import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';

@@ -3,7 +3,7 @@ import bodyParser = require('body-parser');
 import * as path from 'path';
 import http = require('http');
 import * as fs from 'fs';
-import { param, validationResult } from 'express-validator';
+import { param } from 'express-validator';
 import cors = require('cors');
 
 import { Library } from './library';
