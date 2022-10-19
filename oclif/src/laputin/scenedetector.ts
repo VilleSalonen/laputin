@@ -1,6 +1,6 @@
 import child_process = require('child_process');
-import * as fs from 'fs';
-import * as path from 'path';
+import fs = require('fs');
+import path = require('path');
 import { readdir, unlink } from 'node:fs/promises';
 
 import { Library } from './library';

@@ -1,8 +1,9 @@
+import winston = require('winston');
+
 import { Command, Flags } from '@oclif/core';
 import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { initializeWinston } from '../../laputin/winston';
-import winston = require('winston');
 
 export default class DeleteTagCommand extends Command {
     static description = 'Deletes a tag';
@@ -27,7 +28,7 @@ export default class DeleteTagCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const allTags = await library.getAllTags();

@@ -34,8 +34,8 @@ import bluebird = require('bluebird');
 import sqlite3 = require('sqlite3');
 bluebird.promisifyAll(sqlite3);
 
-import * as path from 'path';
-import * as fs from 'fs';
+import path = require('path');
+import fs = require('fs');
 import winston = require('winston');
 
 import { Query } from './query.model';

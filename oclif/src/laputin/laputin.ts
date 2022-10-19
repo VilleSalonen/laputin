@@ -1,8 +1,8 @@
 import express = require('express');
 import bodyParser = require('body-parser');
-import * as path from 'path';
+import path = require('path');
 import http = require('http');
-import * as fs from 'fs';
+import fs = require('fs');
 import { param } from 'express-validator';
 import cors = require('cors');
 

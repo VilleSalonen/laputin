@@ -1,10 +1,9 @@
-import * as path from 'path';
+import fs = require('node:fs/promises');
+import { Stats } from 'node:fs';
+import path = require('path');
 import watch = require('watch');
 import events = require('events');
 import winston = require('winston');
-
-import { Stats } from 'node:fs';
-import { readdir, stat } from 'node:fs/promises';
 
 import { IHasher } from './ihasher';
 import { File } from './file';
@@ -13,10 +12,10 @@ import { Library } from './library';
 import { Query } from './query.model';
 import { LaputinConfiguration } from './laputinconfiguration';
 
-const readChunk = require('read-chunk');
-const fileType = require('file-type');
+import readChunk = require('read-chunk');
+import fileType = require('file-type');
 
-const probe = require('node-ffprobe');
+const probe: any = require('node-ffprobe');
 
 export class FileLibrary extends events.EventEmitter {
     private _existingFilesByPath: Map<string, File> = new Map<string, File>();
@@ -58,7 +57,7 @@ export class FileLibrary extends events.EventEmitter {
             const filePaths = await this.readdirRecursive(mediaPath);
 
             for (const filePath of filePaths) {
-                const fileStats = await stat(filePath);
+                const fileStats = await fs.stat(filePath);
                 const file = await this.addFileFromPath(
                     filePath,
                     fileStats,
@@ -89,7 +88,7 @@ export class FileLibrary extends events.EventEmitter {
 
     private async readdirRecursive(directory: string): Promise<string[]> {
         let files: string[] = [];
-        const items = await readdir(directory, { withFileTypes: true });
+        const items = await fs.readdir(directory, { withFileTypes: true });
 
         for (const item of items) {
             if (item.isDirectory()) {
@@ -129,7 +128,7 @@ export class FileLibrary extends events.EventEmitter {
             // events will be emitted.
             monitor.on('created', async (createdPath: string) => {
                 try {
-                    const stats = await stat(createdPath);
+                    const stats = await fs.stat(createdPath);
                     this.addFileFromPath(createdPath, stats, false);
                 } catch (e) {
                     winston.log('debug', 'Error with created file: ' + e);
@@ -137,7 +136,7 @@ export class FileLibrary extends events.EventEmitter {
             });
             monitor.on('changed', async (changedPath: string) => {
                 try {
-                    const stats = await stat(changedPath);
+                    const stats = await fs.stat(changedPath);
                     this.addFileFromPath(changedPath, stats, false);
                 } catch (e) {
                     winston.log('debug', 'Error with changed file: ' + e);
@@ -174,9 +173,8 @@ export class FileLibrary extends events.EventEmitter {
             }
 
             const normalizedFilePath = path.normalize(filePath);
-            const existingFile = this._existingFilesByPath.get(
-                normalizedFilePath
-            );
+            const existingFile =
+                this._existingFilesByPath.get(normalizedFilePath);
             if (
                 !performFullCheck &&
                 existingFile &&
@@ -224,9 +222,8 @@ export class FileLibrary extends events.EventEmitter {
                             releaseDate: releaseDate[1],
                         };
                     } else {
-                        const releaseYear = normalizedFilePath.match(
-                            /.* - (\d\d\d\d) - .*/
-                        );
+                        const releaseYear =
+                            normalizedFilePath.match(/.* - (\d\d\d\d) - .*/);
                         if (releaseYear && releaseYear[1]) {
                             metadata = {
                                 ...metadata,

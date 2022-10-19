@@ -1,9 +1,10 @@
 import { Command, Flags } from '@oclif/core';
-import { initializeWinston } from '../../laputin/winston';
-import * as path from 'path';
-import * as fs from 'fs/promises';
-const { spawn } = require('child_process');
+import child_process = require('child_process');
+import fs = require('fs/promises');
+import path = require('path');
 import winston = require('winston');
+
+import { initializeWinston } from '../../laputin/winston';
 import { getLibraryPath } from '../../laputin/helpers';
 
 export default class RefreshBackupFilesCommand extends Command {
@@ -34,13 +35,13 @@ export default class RefreshBackupFilesCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
         const rcloneJsonPath = path.join(libraryPath, 'rclone.json');
 
         const rcloneJson = await fs.readFile(rcloneJsonPath, 'utf8');
         const rcloneList = JSON.parse(rcloneJson);
 
-        const child = spawn('rclone', [
+        const child = child_process.spawn('rclone', [
             'lsjson',
             `${flags.remote}:`,
             '--fast-list',

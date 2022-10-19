@@ -1,8 +1,8 @@
 import child_process = require('child_process');
+import path = require('path');
+import winston = require('winston');
 
 import { File } from './file';
-import winston = require('winston');
-import * as path from 'path';
 
 export class ExplorerOpener {
     private _binaryPath = 'C:\\WINDOWS\\explorer.exe';

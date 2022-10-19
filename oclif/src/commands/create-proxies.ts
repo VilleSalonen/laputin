@@ -1,9 +1,10 @@
 import { Command, Flags } from '@oclif/core';
+import fs = require('fs/promises');
+import path = require('path');
+
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { ProxyGenerator } from '../laputin/proxygenerator';
 
 export default class CreateProxiesCommand extends Command {
@@ -28,7 +29,7 @@ export default class CreateProxiesCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
 
         const configFilePath = path.join(libraryPath, 'laputin.json');
         const configurationExists = await fs.stat(configFilePath);

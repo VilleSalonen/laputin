@@ -1,13 +1,14 @@
 import { Command, Flags } from '@oclif/core';
+import child_process = require('node:child_process');
+import fs = require('fs/promises');
+import path = require('path');
+
 import { File as LaputinFile } from '../../laputin/file';
 import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { Query } from '../../laputin/query.model';
 import { initializeWinston } from '../../laputin/winston';
-import * as path from 'path';
-import * as fs from 'fs/promises';
 import { Tag } from '../../laputin/tag';
-const { spawn } = require('child_process');
 
 export default class BackupFilesCommand extends Command {
     static description = 'Back up files';
@@ -45,7 +46,7 @@ export default class BackupFilesCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const allTags = await library.getAllTags();
@@ -163,7 +164,7 @@ export default class BackupFilesCommand extends Command {
         for (const file of filesToCopy) {
             console.log(`${file.path} ${file.hash}`);
 
-            const child = spawn('rclone.exe', [
+            const child = child_process.spawn('rclone.exe', [
                 'copyto',
                 '--progress',
                 file.path,
@@ -171,7 +172,8 @@ export default class BackupFilesCommand extends Command {
             ]);
 
             for await (const chunk of child.stdout) {
-                const regex = /(\d+\.\d+) (kiB|MiB|GiB|TiB) \/ (\d+\.\d+) (kiB|MiB|GiB|TiB), (\d+%), (\d+\.\d+) (KiB|MiB|GiB|TiB)\/s, ETA (.*)/gm;
+                const regex =
+                    /(\d+\.\d+) (kiB|MiB|GiB|TiB) \/ (\d+\.\d+) (kiB|MiB|GiB|TiB), (\d+%), (\d+\.\d+) (KiB|MiB|GiB|TiB)\/s, ETA (.*)/gm;
                 const array = [...chunk.toString().matchAll(regex)];
                 if (array.length !== 0) {
                     process.stdout.write(`${array[array.length - 1][0]}\r`);

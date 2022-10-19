@@ -1,8 +1,10 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as os from 'os';
+import fs = require('fs/promises');
+import os = require('os');
+import path = require('path');
 
-export function getLibraryPathByFile(givenFilePath: string): string {
+export async function getLibraryPathByFile(
+    givenFilePath: string
+): Promise<string> {
     var libraryPath = '';
     var libraryPathCandidate = givenFilePath;
     do {
@@ -11,8 +13,9 @@ export function getLibraryPathByFile(givenFilePath: string): string {
             throw new Error('Could not find library path based on file path.');
         }
 
-        const foo = path.join(parentDirectory, 'laputin.db');
-        if (fs.existsSync(foo)) {
+        const databasePath = path.join(parentDirectory, 'laputin.db');
+        const databaseStat = await fs.stat(databasePath);
+        if (databaseStat) {
             libraryPath = parentDirectory;
             break;
         }
@@ -23,7 +26,9 @@ export function getLibraryPathByFile(givenFilePath: string): string {
     return getLibraryPath(libraryPath);
 }
 
-export function getLibraryPath(givenLibraryPath?: string): string {
+export async function getLibraryPath(
+    givenLibraryPath?: string
+): Promise<string> {
     if (!givenLibraryPath) {
         throw new Error('Library path not provided!');
     }
@@ -39,7 +44,8 @@ export function getLibraryPath(givenLibraryPath?: string): string {
         '.laputin',
         givenLibraryPath
     );
-    if (fs.existsSync(assumedLibraryPath)) {
+    const assumedLibraryStat = await fs.stat(assumedLibraryPath);
+    if (assumedLibraryStat) {
         return assumedLibraryPath;
     }
 

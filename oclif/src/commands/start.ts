@@ -1,6 +1,7 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { Command, Flags } from '@oclif/core';
+import fs = require('fs/promises');
+import path = require('path');
+
 import { compose } from '../laputin/compose';
 import { getLibraryPath } from '../laputin/helpers';
 import { initializeWinston } from '../laputin/winston';
@@ -30,7 +31,7 @@ export default class Start extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
 
         const configFilePath = path.join(libraryPath, 'laputin.json');
         const configurationExists = await fs.stat(configFilePath);

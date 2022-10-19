@@ -1,5 +1,5 @@
 import crypto = require('crypto');
-import * as fs from 'fs';
+import fs = require('fs');
 
 import { IHasher } from './ihasher';
 

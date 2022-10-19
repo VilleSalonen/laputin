@@ -1,7 +1,7 @@
 import chai = require('chai');
 const expect = chai.expect;
 
-import * as fs from 'fs';
+import fs = require('fs');
 import request = require('supertest');
 import events = require('events');
 

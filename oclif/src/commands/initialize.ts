@@ -1,5 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import winston = require('winston');
+
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
@@ -25,7 +26,7 @@ export default class InitializeCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
         await Library.initialize(libraryPath);
 
         winston.info(

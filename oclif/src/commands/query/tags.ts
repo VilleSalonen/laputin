@@ -1,4 +1,5 @@
 import { Command, Flags } from '@oclif/core';
+
 import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { TagQuery } from '../../laputin/tagquery.model';
@@ -31,7 +32,7 @@ export default class QueryTagsCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const tagQuery = flags.associatedOnly

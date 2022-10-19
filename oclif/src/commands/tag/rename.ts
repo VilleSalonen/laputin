@@ -1,8 +1,9 @@
 import { Command, Flags } from '@oclif/core';
+import winston = require('winston');
+
 import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { initializeWinston } from '../../laputin/winston';
-import winston = require('winston');
 
 export default class RenameTagCommand extends Command {
     static description = 'Renames a tag';
@@ -33,7 +34,7 @@ export default class RenameTagCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const allTags = await library.getAllTags();

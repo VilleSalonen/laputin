@@ -1,6 +1,6 @@
-import * as fs from 'fs';
+import fs = require('fs');
 import child_process = require('child_process');
-import * as path from 'path';
+import path = require('path');
 import os = require('os');
 
 import { File } from './file';

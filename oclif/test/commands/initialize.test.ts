@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises';
+import fs = require('fs/promises');
 import { expect, test } from '@oclif/test';
 import { randomUUID } from 'crypto';
 

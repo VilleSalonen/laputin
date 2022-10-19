@@ -1,7 +1,7 @@
 import * as fsLegacy from 'fs';
-import * as fs from 'fs/promises';
+import fs = require('fs/promises');
 import child_process = require('child_process');
-import * as path from 'path';
+import path = require('path');
 import winston = require('winston');
 
 import { File } from './file';

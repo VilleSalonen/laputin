@@ -1,9 +1,10 @@
 import { Command, Flags } from '@oclif/core';
+import fs = require('fs/promises');
 import winston = require('winston');
+
 import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import * as fs from 'fs';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { IHasher } from '../laputin/ihasher';
 
@@ -25,27 +26,27 @@ export default class MetadataCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        if (!fs.existsSync(flags.file) || !fs.statSync(flags.file).isFile()) {
+        const fileStat = await fs.stat(flags.file);
+        if (!fileStat?.isFile()) {
             throw new Error(`${flags.file} is not a valid file.`);
         }
 
-        if (
-            !fs.existsSync(flags.metadataFileName) ||
-            !fs.statSync(flags.metadataFileName).isFile()
-        ) {
+        const metadataFileStat = await fs.stat(flags.metadataFileName);
+        if (!metadataFileStat?.isFile) {
             throw new Error(`${flags.metadataFileName} is not a valid file.`);
         }
 
-        const metadata = fs.readFileSync(flags.metadataFileName, 'utf8').trim();
+        const metadata = (
+            await fs.readFile(flags.metadataFileName, 'utf8')
+        ).trim();
         const metadataObject = JSON.parse(metadata);
 
-        const libraryPath = getLibraryPathByFile(flags.file);
+        const libraryPath = await getLibraryPathByFile(flags.file);
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();
 
-        const fileStats = fs.statSync(flags.file);
-        const hash = await hasher.hash(flags.file, fileStats);
+        const hash = await hasher.hash(flags.file, fileStat);
         const file = await library.getFileByHash(hash);
         if (!file) {
             throw new Error(`Could not find file with hash ${hash}!`);

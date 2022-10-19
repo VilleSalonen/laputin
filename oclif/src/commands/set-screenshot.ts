@@ -1,12 +1,13 @@
 import { Command, Flags } from '@oclif/core';
+import fs = require('fs');
+import winston = require('winston');
+
 import { getLibraryPathByFile } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
 import { IHasher } from '../laputin/ihasher';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { Screenshotter } from '../laputin/screenshotter';
-import winston = require('winston');
-import * as fs from 'fs';
 
 export default class SetScreenshot extends Command {
     static description = 'describe the command here';
@@ -37,7 +38,7 @@ export default class SetScreenshot extends Command {
             throw new Error(`File ${flags.screenshot} is not a valid file.`);
         }
 
-        const libraryPath = getLibraryPathByFile(flags.file);
+        const libraryPath = await getLibraryPathByFile(flags.file);
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();

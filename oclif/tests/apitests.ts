@@ -1,6 +1,6 @@
 import chai = require('chai');
 const expect = chai.expect;
-import * as fs from 'fs';
+import fs = require('fs');
 import rimraf = require('rimraf');
 import request = require('supertest');
 

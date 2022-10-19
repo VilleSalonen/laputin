@@ -1,12 +1,12 @@
 import { Command, Flags } from '@oclif/core';
+import child_process = require('child_process');
+import fs = require('fs/promises');
+import winston = require('winston');
+
 import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
-import * as fs from 'fs';
-import child_process = require('child_process');
 import { Tag, Timecode } from '../laputin/tag';
-import winston = require('winston');
-import { TagQuery } from '../laputin/tagquery.model';
 import { Query } from '../laputin/query.model';
 
 export default class ExportTimecodesCommand extends Command {
@@ -37,16 +37,14 @@ export default class ExportTimecodesCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        if (
-            !fs.existsSync(flags.targetDirectory) ||
-            !fs.statSync(flags.targetDirectory).isDirectory()
-        ) {
+        const directoryStat = await fs.stat(flags.targetDirectory);
+        if (!directoryStat || !directoryStat.isDirectory()) {
             throw new Error(
                 `Directory ${flags.targetDirectory} is not a valid directory.`
             );
         }
 
-        const libraryPath = getLibraryPath(flags.library);
+        const libraryPath = await getLibraryPath(flags.library);
 
         const library = new Library(libraryPath);
 

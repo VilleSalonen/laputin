@@ -1,9 +1,9 @@
 import { Command, Flags } from '@oclif/core';
-import * as fs from 'fs';
-import { promisify } from 'util';
+import fs = require('fs');
+import os = require('os');
+import path = require('path');
 import winston = require('winston');
-const stat = promisify(fs.stat);
-const { EOL } = require('os');
+
 import { getLibraryPathByFile } from '../../laputin/helpers';
 import { IHasher } from '../../laputin/ihasher';
 import { Library } from '../../laputin/library';
@@ -11,7 +11,6 @@ import { QuickMD5Hasher } from '../../laputin/quickmd5hasher';
 import { readPipe } from '../../laputin/read-pipe';
 import { initializeWinston } from '../../laputin/winston';
 import { Query } from '../../laputin/query.model';
-import path = require('path');
 
 export default class TagCommand extends Command {
     static description = 'describe the command here';
@@ -50,7 +49,7 @@ export default class TagCommand extends Command {
                 throw new Error('No files provided via stdin');
             }
 
-            files = stdin.split(EOL).filter((file) => file);
+            files = stdin.split(os.EOL).filter((file) => file);
         } else {
             if (!flags.file) {
                 throw new Error('No files provided');
@@ -59,7 +58,7 @@ export default class TagCommand extends Command {
             files = flags.file;
         }
 
-        const libraryPath = getLibraryPathByFile(files[0]);
+        const libraryPath = await getLibraryPathByFile(files[0]);
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();
