@@ -5,6 +5,11 @@
     "eslint:recommended"
   ],
   "rules": {
-    "object-curly-spacing": "off"
+    "indent": [
+      "error",
+      4
+    ],
+    "object-curly-spacing": "off",
+    "semi": "off"
   }
 }
