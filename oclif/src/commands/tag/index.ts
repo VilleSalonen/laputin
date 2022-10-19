@@ -5,9 +5,7 @@ import path = require('path');
 import winston = require('winston');
 
 import { getLibraryPathByFile } from '../../laputin/helpers';
-import { IHasher } from '../../laputin/ihasher';
 import { Library } from '../../laputin/library';
-import { QuickMD5Hasher } from '../../laputin/quickmd5hasher';
 import { readPipe } from '../../laputin/read-pipe';
 import { initializeWinston } from '../../laputin/winston';
 import { Query } from '../../laputin/query.model';
@@ -61,7 +59,6 @@ export default class TagCommand extends Command {
         const libraryPath = await getLibraryPathByFile(files[0]);
         const library = new Library(libraryPath);
 
-        const hasher: IHasher = new QuickMD5Hasher();
         const allTags = await library.getAllTags();
 
         let tagNames: string[];
