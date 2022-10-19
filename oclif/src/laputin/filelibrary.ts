@@ -15,6 +15,7 @@ import { LaputinConfiguration } from './laputinconfiguration';
 import readChunk = require('read-chunk');
 import fileType = require('file-type');
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const probe: any = require('node-ffprobe');
 
 export class FileLibrary extends events.EventEmitter {
