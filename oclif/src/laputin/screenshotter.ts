@@ -17,7 +17,7 @@ export class Screenshotter {
     private _tagTimecodeThumbsSmallPath: string;
     private _tagThumbsPath: string;
     private _tagThumbsSmallPath: string;
-    private _initialized: boolean = false;
+    private _initialized = false;
 
     constructor(private _libraryPath: string, private _library: Library) {
         this._thumbsPath = path.join(this._libraryPath, '//public//thumbs//');
