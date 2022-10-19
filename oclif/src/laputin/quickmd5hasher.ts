@@ -61,7 +61,7 @@ export class QuickMD5Hasher implements IHasher {
             await fileHandle.read(buffer, 0, buffer.length, offset);
 
             const firstByte = buffer[0];
-            for (var i = 1; i < buffer.length; i++) {
+            for (let i = 1; i < buffer.length; i++) {
                 const currentByte = buffer[i];
                 if (currentByte !== firstByte) {
                     allIdenticalBytes = false;

@@ -154,7 +154,7 @@ export default class BackupFilesCommand extends Command {
             }
         }
 
-        let totalSize = filesToCopy.reduce((sum, file) => sum + file.size, 0);
+        const totalSize = filesToCopy.reduce((sum, file) => sum + file.size, 0);
         console.log(
             `Backing up ${
                 filesToCopy.length

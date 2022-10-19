@@ -40,7 +40,7 @@ export default class Untag extends Command {
 
         initializeWinston(flags.verbose);
 
-        var files = [];
+        let files = [];
         if (flags.stdinFile) {
             const stdin = this.stdin;
             if (!stdin) {

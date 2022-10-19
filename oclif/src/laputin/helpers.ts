@@ -5,10 +5,10 @@ import path = require('path');
 export async function getLibraryPathByFile(
     givenFilePath: string
 ): Promise<string> {
-    var libraryPath = '';
-    var libraryPathCandidate = givenFilePath;
+    let libraryPath = '';
+    let libraryPathCandidate = givenFilePath;
     do {
-        var parentDirectory = path.dirname(libraryPathCandidate);
+        const parentDirectory = path.dirname(libraryPathCandidate);
         if (parentDirectory === libraryPathCandidate) {
             throw new Error('Could not find library path based on file path.');
         }

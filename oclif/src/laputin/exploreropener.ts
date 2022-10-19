@@ -8,7 +8,7 @@ export class ExplorerOpener {
     private _binaryPath = 'C:\\WINDOWS\\explorer.exe';
 
     public open(files: File[]): void {
-        var command = '';
+        let command = '';
         if (process.platform === 'win32') {
             const filePath = files[0].path.replace(/\//g, '\\');
             command = `"${this._binaryPath}" /select,"${filePath}"`;

@@ -70,7 +70,7 @@ export default class RefreshBackupFilesCommand extends Command {
 
         await fs.writeFile(rcloneJsonPath, data);
 
-        var currentList = JSON.parse(data);
+        const currentList = JSON.parse(data);
 
         const previousSize = rcloneList.reduce(
             (sum: number, f: any) => sum + f.Size,

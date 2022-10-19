@@ -267,7 +267,7 @@ export class Library {
             }
         }
 
-        let filesSql = Prisma.sql`
+        const filesSql = Prisma.sql`
             SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
             FROM File
             WHERE 1 = 1

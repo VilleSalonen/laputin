@@ -45,7 +45,7 @@ export default class Start extends Command {
 
         const laputin = compose(libraryPath, configuration);
 
-        var app = express();
+        const app = express();
         laputin.initializeRoutes(app);
         await laputin.loadFiles(flags.performFullCheck);
 

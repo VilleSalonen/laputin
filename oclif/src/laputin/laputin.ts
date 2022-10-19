@@ -52,7 +52,7 @@ export class Laputin {
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
-                var options = {
+                const options = {
                     root: path.parse(file.path).dir,
                     dotfiles: 'deny',
                     headers: {
@@ -129,13 +129,13 @@ export class Laputin {
                 const tags = await this.library.getAllTags();
                 res.send(tags);
             } else {
-                var tagName = req.query.tagName || '';
-                var andTags = this.parseTags(<any>req.query.andTags);
-                var orTags = this.parseTags(<any>req.query.orTags);
-                var notTags = this.parseTags(<any>req.query.notTags);
-                var unassociated = req.query.unassociated === 'true';
+                const tagName = req.query.tagName || '';
+                const andTags = this.parseTags(<any>req.query.andTags);
+                const orTags = this.parseTags(<any>req.query.orTags);
+                const notTags = this.parseTags(<any>req.query.notTags);
+                const unassociated = req.query.unassociated === 'true';
 
-                var query = new TagQuery(
+                const query = new TagQuery(
                     <any>tagName,
                     <any>andTags,
                     <any>orTags,
