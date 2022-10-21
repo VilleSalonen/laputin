@@ -184,7 +184,7 @@ export default class BackupFilesCommand extends Command {
                 console.error('stderr chunk: ' + chunk);
                 error += chunk;
             }
-            const exitCode = await new Promise((resolve, reject) => {
+            const exitCode = await new Promise((resolve) => {
                 child.on('close', resolve);
             });
 
