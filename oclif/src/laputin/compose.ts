@@ -15,7 +15,7 @@ export function compose(
 
     const screenshotter = new Screenshotter(libraryPath, library);
 
-    const hasher: IHasher = composeHasher(configuration);
+    const hasher: IHasher = composeHasher();
     const fileLibrary = new FileLibrary(
         library,
         hasher,
@@ -42,7 +42,7 @@ export function composeForTests(
 ): Laputin {
     const library = new Library(libraryPath);
 
-    const hasher: IHasher = composeHasher(configuration);
+    const hasher: IHasher = composeHasher();
     const fileLibrary = new FileLibrary(
         library,
         hasher,
@@ -62,6 +62,6 @@ export function composeForTests(
     );
 }
 
-function composeHasher(configuration: LaputinConfiguration): IHasher {
+function composeHasher(): IHasher {
     return new QuickMD5Hasher();
 }
