@@ -42,6 +42,7 @@ export default class BackupFilesCommand extends Command {
     static args = [];
 
     public async run(): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { args, flags } = await this.parse(BackupFilesCommand);
 
         initializeWinston(flags.verbose);
@@ -172,8 +173,7 @@ export default class BackupFilesCommand extends Command {
             ]);
 
             for await (const chunk of child.stdout) {
-                const regex =
-                    /(\d+\.\d+) (kiB|MiB|GiB|TiB) \/ (\d+\.\d+) (kiB|MiB|GiB|TiB), (\d+%), (\d+\.\d+) (KiB|MiB|GiB|TiB)\/s, ETA (.*)/gm;
+                const regex = /(\d+\.\d+) (kiB|MiB|GiB|TiB) \/ (\d+\.\d+) (kiB|MiB|GiB|TiB), (\d+%), (\d+\.\d+) (KiB|MiB|GiB|TiB)\/s, ETA (.*)/gm;
                 const array = [...chunk.toString().matchAll(regex)];
                 if (array.length !== 0) {
                     process.stdout.write(`${array[array.length - 1][0]}\r`);

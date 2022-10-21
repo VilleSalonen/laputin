@@ -36,6 +36,7 @@ export default class Untag extends Command {
     }
 
     public async run(): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { args, flags } = await this.parse(Untag);
 
         initializeWinston(flags.verbose);

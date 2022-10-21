@@ -1,6 +1,7 @@
 import express = require('express');
 import bodyParser = require('body-parser');
 import path = require('path');
+import { constants } from 'node:fs';
 import fs = require('fs/promises');
 import { param } from 'express-validator';
 import cors = require('cors');
@@ -466,7 +467,7 @@ export class Laputin {
                                 this.configuration.proxyDirectory,
                                 file.fileId + '.mp4'
                             ),
-                            fs.constants.R_OK
+                            constants.R_OK
                         );
                         res.send(true);
                     } catch (error) {

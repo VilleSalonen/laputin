@@ -33,6 +33,7 @@ export default class QueryFilesCommand extends Command {
     static args = [];
 
     public async run(): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { args, flags } = await this.parse(QueryFilesCommand);
 
         initializeWinston(flags.verbose);

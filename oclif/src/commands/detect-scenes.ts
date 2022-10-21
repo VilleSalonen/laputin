@@ -34,6 +34,7 @@ export default class DetectScenesCommand extends Command {
     static args = [{ name: 'file' }];
 
     public async run(): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { args, flags } = await this.parse(DetectScenesCommand);
 
         initializeWinston(flags.verbose);
