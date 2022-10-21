@@ -7,7 +7,6 @@
 /dist
 /lib
 /lib
-/package-lock.json
 /test/test-runs
 /tmp
 /yarn.lock
