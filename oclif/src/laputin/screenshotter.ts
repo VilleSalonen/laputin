@@ -1,4 +1,3 @@
-import * as fsLegacy from 'fs';
 import fs = require('fs/promises');
 import child_process = require('child_process');
 import path = require('path');
@@ -43,19 +42,19 @@ export class Screenshotter {
         );
     }
 
-    public exists(file: File): boolean {
-        this.initialize();
+    public async exists(file: File): Promise<boolean> {
+        await this.initialize();
 
         return (
-            fsLegacy.existsSync(this.getThumbPath(file)) &&
-            fsLegacy.existsSync(this.getThumbSmallPath(file))
+            !!(await fs.stat(this.getThumbPath(file))) &&
+            !!(await fs.stat(this.getThumbSmallPath(file)))
         );
     }
 
     public async setScreenshot(file: File, path: string): Promise<void> {
         const thumbPath = this.getThumbPath(file);
 
-        fsLegacy.copyFileSync(path, thumbPath);
+        await fs.copyFile(path, thumbPath);
         const command = `ffmpeg -y -i "${thumbPath}" -vf scale=800:-1 "${this.getThumbSmallPath(
             file
         )}"`;
@@ -63,7 +62,7 @@ export class Screenshotter {
     }
 
     public async screenshot(file: File, timeInSeconds: number): Promise<void> {
-        this.initialize();
+        await this.initialize();
 
         if (file.type.startsWith('video')) {
             const duration = Math.floor(parseFloat(file.metadata.duration));
@@ -123,7 +122,7 @@ export class Screenshotter {
         timecode: Timecode,
         timeInSeconds?: number
     ): Promise<void> {
-        this.initialize();
+        await this.initialize();
 
         if (!timeInSeconds) {
             timeInSeconds =
@@ -168,7 +167,7 @@ export class Screenshotter {
         file: File,
         timeInSeconds: number
     ): Promise<void> {
-        this.initialize();
+        await this.initialize();
 
         const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
             file.path
@@ -209,54 +208,35 @@ export class Screenshotter {
         );
     }
 
-    private initialize(): void {
+    private async initialize(): Promise<void> {
         if (this._initialized) {
             return;
         }
 
         const laputinHiddenDir = path.join(this._libraryPath, '//public//');
+        await this.createThumbnailDirectory(laputinHiddenDir);
 
-        if (!fsLegacy.existsSync(laputinHiddenDir)) {
-            winston.log(
-                'verbose',
-                'Created directory ' + laputinHiddenDir + '.'
-            );
-            fsLegacy.mkdirSync(laputinHiddenDir);
-        }
-
-        if (!fsLegacy.existsSync(this._thumbsPath)) {
-            winston.log(
-                'verbose',
-                'Created directory ' + this._thumbsPath + '.'
-            );
-            fsLegacy.mkdirSync(this._thumbsPath);
-        }
-
-        if (!fsLegacy.existsSync(this._thumbsSmallPath)) {
-            winston.log(
-                'verbose',
-                'Created directory ' + this._thumbsSmallPath + '.'
-            );
-            fsLegacy.mkdirSync(this._thumbsSmallPath);
-        }
-
-        if (!fsLegacy.existsSync(this._tagTimecodeThumbsPath)) {
-            winston.log(
-                'verbose',
-                'Created directory ' + this._tagTimecodeThumbsPath + '.'
-            );
-            fsLegacy.mkdirSync(this._tagTimecodeThumbsPath);
-        }
-
-        if (!fsLegacy.existsSync(this._tagTimecodeThumbsSmallPath)) {
-            winston.log(
-                'verbose',
-                'Created directory ' + this._tagTimecodeThumbsSmallPath + '.'
-            );
-            fsLegacy.mkdirSync(this._tagTimecodeThumbsSmallPath);
-        }
+        await this.createThumbnailDirectory(this._thumbsPath);
+        await this.createThumbnailDirectory(this._thumbsSmallPath);
+        await this.createThumbnailDirectory(this._tagTimecodeThumbsPath);
+        await this.createThumbnailDirectory(this._tagTimecodeThumbsSmallPath);
 
         this._initialized = true;
+    }
+
+    private async createThumbnailDirectory(directory: string): Promise<void> {
+        const directoryStat = await fs.stat(directory);
+
+        if (directoryStat && directoryStat.isFile()) {
+            throw new Error(
+                `A file exists at ${directory} where a thumbnail directory should be!`
+            );
+        }
+
+        if (!directoryStat) {
+            winston.log('verbose', `Created directory ${directory}.`);
+            await fs.mkdir(directory);
+        }
     }
 
     private getThumbPath(file: File) {

@@ -256,7 +256,7 @@ export class FileLibrary extends events.EventEmitter {
                     fileFromDb &&
                     (type.mime.startsWith('video') ||
                         type.mime.startsWith('image')) &&
-                    !this._screenshotter.exists(fileFromDb)
+                    !(await this._screenshotter.exists(fileFromDb))
                 ) {
                     await this._screenshotter.screenshot(fileFromDb, 180);
                 }
