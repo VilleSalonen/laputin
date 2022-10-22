@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import fs = require('fs');
+import fs = require('fs/promises');
 import winston = require('winston');
 
 import { getLibraryPathByFile } from '../laputin/helpers';
@@ -28,14 +28,13 @@ export default class SetScreenshot extends Command {
 
         initializeWinston(flags.verbose);
 
-        if (!fs.existsSync(flags.file) || !fs.statSync(flags.file).isFile()) {
+        const fileStat = await fs.stat(flags.file);
+        if (!fileStat || !fileStat.isFile()) {
             throw new Error(`File ${flags.file} is not a valid file.`);
         }
 
-        if (
-            !fs.existsSync(flags.screenshot) ||
-            !fs.statSync(flags.screenshot).isFile()
-        ) {
+        const screenshotStat = await fs.stat(flags.screenshot);
+        if (!screenshotStat || !screenshotStat.isFile()) {
             throw new Error(`File ${flags.screenshot} is not a valid file.`);
         }
 
@@ -44,8 +43,7 @@ export default class SetScreenshot extends Command {
 
         const hasher: IHasher = new QuickMD5Hasher();
 
-        const fileStats = fs.statSync(flags.file);
-        const hash = await hasher.hash(flags.file, <any>fileStats);
+        const hash = await hasher.hash(flags.file, fileStat);
         const file = await library.getFile(hash);
         if (!file) {
             throw new Error(`Could not find file with hash ${hash}!`);
