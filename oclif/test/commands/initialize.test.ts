@@ -1,10 +1,11 @@
-import fs = require('fs/promises');
 import { expect, test } from '@oclif/test';
 import { randomUUID } from 'crypto';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 describe('initialize', () => {
     describe('empty directory', () => {
-        const directoryPath = `C:\\Github\\laputin\\oclif\\test\\test-runs\\${randomUUID()}`;
+        const directoryPath = path.join(__dirname, 'test-runs', randomUUID());
 
         beforeEach(async () => {
             await fs.mkdir(directoryPath, { recursive: true });
@@ -20,7 +21,7 @@ describe('initialize', () => {
     });
 
     describe('existing Laputin directory', () => {
-        const directoryPath = `C:\\Github\\laputin\\oclif\\test\\test-runs\\${randomUUID()}`;
+        const directoryPath = path.join(__dirname, 'test-runs', randomUUID());
 
         beforeEach(async () => {
             await fs.mkdir(directoryPath, { recursive: true });
