@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import fs = require('fs');
+import fs = require('fs/promises');
 import os = require('os');
 import path = require('path');
 import winston = require('winston');
@@ -64,7 +64,7 @@ export default class Untag extends Command {
 
         let tagNames: string[];
         if (flags.tagsFileName) {
-            const metadata = fs.readFileSync(flags.tagsFileName, 'utf8').trim();
+            const metadata = (await fs.readFile(flags.tagsFileName, 'utf8')).trim();
             const metadataObject = JSON.parse(metadata);
             tagNames = metadataObject.tags;
         } else if (flags.tags) {
@@ -75,19 +75,12 @@ export default class Untag extends Command {
 
         const tagNamesLower = tagNames.map((n) => n.toLocaleLowerCase());
 
-        const existingTags = allTags.filter((t) =>
-            tagNamesLower.includes(t.name.toLocaleLowerCase())
-        );
+        const existingTags = allTags.filter((t) => tagNamesLower.includes(t.name.toLocaleLowerCase()));
 
         const harmonizedFiles = files.map((file) => path.normalize(file));
-        const libraryFiles = await library.getFiles(
-            new Query(undefined, harmonizedFiles)
-        );
+        const libraryFiles = await library.getFiles(new Query(undefined, harmonizedFiles));
 
-        const results = await library.deleteLinksBetweenTagsAndFiles(
-            existingTags,
-            libraryFiles
-        );
+        const results = await library.deleteLinksBetweenTagsAndFiles(existingTags, libraryFiles);
         for (const result of results) {
             winston.info(`Removed ${result.tag.name} from ${result.file.path}`);
         }
