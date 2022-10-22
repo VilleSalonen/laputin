@@ -1,7 +1,6 @@
 import child_process = require('child_process');
-import fs = require('fs');
+import fs = require('fs/promises');
 import path = require('path');
-import { readdir, unlink } from 'node:fs/promises';
 
 import { Library } from './library';
 import { Query } from './query.model';
@@ -26,147 +25,105 @@ export class SceneDetector {
     public async detectMissingScenes(query: Query, performFullCheck: boolean) {
         const scenesDirectory = this.getScenesDirectory();
 
-        if (!fs.existsSync(scenesDirectory)) {
-            fs.mkdirSync(scenesDirectory);
-            winston.verbose(
-                `Created Laputin scenes directory: ${scenesDirectory}`
-            );
+        const scenesDirectoryStat = await fs.stat(scenesDirectory);
+        if (!scenesDirectoryStat) {
+            await fs.mkdir(scenesDirectory);
+            winston.verbose(`Created Laputin scenes directory: ${scenesDirectory}`);
         }
 
         const files = await this.library.getFiles(query);
         if (files.length === 0) {
-            winston.warn(
-                `Could not find any files with filename query ${JSON.stringify(
-                    query
-                )}`
-            );
+            winston.warn(`Could not find any files with filename query ${JSON.stringify(query)}`);
             return;
         }
 
-        winston.verbose(
-            `Found ${files.length} files with filename query ${JSON.stringify(
-                query
-            )}`
-        );
+        winston.verbose(`Found ${files.length} files with filename query ${JSON.stringify(query)}`);
 
         for (const file of files) {
             try {
                 winston.verbose(`${file.fileId} = ${file.path}`);
 
                 const sceneDirectory = this.getSceneDirectory(file);
-                const sceneDirectoryExists = fs.existsSync(sceneDirectory);
+                const sceneDirectoryStat = await fs.stat(sceneDirectory);
 
                 // If scene directory exists and user did not request full check we need to skip checking the every
                 // individual screenshot as that takes a looong time.
                 //
                 // Note: some scenes may be incomplete or are missing screenshots. User can fix these by running
                 // full check for specific files.
-                if (sceneDirectoryExists && !performFullCheck) {
+                if (sceneDirectoryStat && !performFullCheck) {
                     continue;
                 }
 
-                if (!fs.existsSync(sceneDirectory)) {
-                    fs.mkdirSync(sceneDirectory);
-                    winston.verbose(
-                        `Created scene directory: ${sceneDirectory}`
-                    );
+                if (!sceneDirectoryStat) {
+                    await fs.mkdir(sceneDirectory);
+                    winston.verbose(`Created scene directory: ${sceneDirectory}`);
                 }
 
-                const analysisCsvPath = path.join(
-                    sceneDirectory,
-                    `${file.fileId}-Scenes.csv`
-                );
-                const analysisJsonPath = path.join(
-                    sceneDirectory,
-                    `${file.fileId}-Scenes.json`
-                );
+                const analysisCsvPath = path.join(sceneDirectory, `${file.fileId}-Scenes.csv`);
+                const analysisCsvStat = await fs.stat(analysisCsvPath);
 
-                if (!fs.existsSync(analysisCsvPath)) {
-                    const targetPath = path.join(
-                        sceneDirectory,
-                        `${file.fileId}.mp4`
-                    );
-                    const createdDownscaledVersion = await this.createDownscaledVideo(
-                        file,
-                        sceneDirectory,
-                        targetPath
-                    );
+                if (!analysisCsvStat) {
+                    const targetPath = path.join(sceneDirectory, `${file.fileId}.mp4`);
+                    const createdDownscaledVersion = await this.createDownscaledVideo(file, sceneDirectory, targetPath);
 
-                    this.detectScenes(
-                        analysisCsvPath,
-                        targetPath,
-                        sceneDirectory
-                    );
+                    await this.detectScenes(analysisCsvPath, targetPath, sceneDirectory);
 
                     if (createdDownscaledVersion) {
-                        fs.unlinkSync(targetPath);
+                        await fs.unlink(targetPath);
                     }
                 }
 
                 const scenes = await this.parseScenes(analysisCsvPath);
+                const analysisJsonPath = path.join(sceneDirectory, `${file.fileId}-Scenes.json`);
+                const analysisJsonStat = await fs.stat(analysisJsonPath);
 
-                if (!fs.existsSync(analysisJsonPath)) {
-                    fs.writeFileSync(analysisJsonPath, JSON.stringify(scenes));
+                if (!analysisJsonStat) {
+                    await fs.writeFile(analysisJsonPath, JSON.stringify(scenes));
                 }
 
-                await this.generateMissingSceneScreenshots(
-                    file,
-                    sceneDirectory,
-                    scenes
-                );
+                await this.generateMissingSceneScreenshots(file, sceneDirectory, scenes);
             } catch (err) {
-                winston.error(
-                    `Could not detect scenes for ${file.path}! Error: `,
-                    err
-                );
+                winston.error(`Could not detect scenes for ${file.path}! Error: `, err);
             }
         }
     }
 
-    private async createDownscaledVideo(
-        file: File,
-        sceneDirectory: string,
-        targetPath: string
-    ): Promise<boolean> {
-        const incompleteTargetPath = path.join(
-            sceneDirectory,
-            `${file.fileId}_INCOMPLETE.mp4`
-        );
+    private async createDownscaledVideo(file: File, sceneDirectory: string, targetPath: string): Promise<boolean> {
+        const incompleteTargetPath = path.join(sceneDirectory, `${file.fileId}_INCOMPLETE.mp4`);
 
-        if (fs.existsSync(incompleteTargetPath)) {
-            await unlink(incompleteTargetPath);
+        const incompleteTargetStat1 = await fs.stat(incompleteTargetPath);
+        if (incompleteTargetStat1) {
+            await fs.unlink(incompleteTargetPath);
         }
-        if (fs.existsSync(targetPath)) {
-            await unlink(targetPath);
+
+        const targetStat = await fs.stat(targetPath);
+        if (targetStat) {
+            await fs.unlink(targetPath);
         }
 
         const command = `ffmpeg -y -i "${file.path}" -vcodec h264_nvenc -preset fast -vf "scale=w=320:h=180" -an "${incompleteTargetPath}"`;
 
-        winston.verbose(
-            `Generating downscaled version for faster scene detection: ${targetPath}`
-        );
+        winston.verbose(`Generating downscaled version for faster scene detection: ${targetPath}`);
         try {
             child_process.execSync(command, options);
         } catch (err) {
             // OK
         }
 
-        if (!fs.existsSync(incompleteTargetPath)) {
+        const incompleteTargetStat2 = await fs.stat(incompleteTargetPath);
+        if (!incompleteTargetStat2) {
             throw new Error(
                 `Attempt to move ${incompleteTargetPath} to ${targetPath} but downscaled version could not be found!`
             );
         }
 
-        fs.renameSync(incompleteTargetPath, targetPath);
+        await fs.rename(incompleteTargetPath, targetPath);
 
         return true;
     }
 
-    private detectScenes(
-        analysisCsvPath: string,
-        targetPath: string,
-        sceneDirectory: string
-    ): void {
+    private async detectScenes(analysisCsvPath: string, targetPath: string, sceneDirectory: string): Promise<void> {
         // There's some problem with passing paths with spaces to scenedetect. To work around this we change working
         // directory to target scene directory before running scenedetect.
         process.chdir(sceneDirectory);
@@ -174,33 +131,20 @@ export class SceneDetector {
         winston.verbose(`Detecting scenes to: ${analysisCsvPath}`);
         child_process.execSync(command2, options);
 
-        if (!fs.existsSync(analysisCsvPath)) {
-            throw new Error(
-                `Could not find scene analysis CSV file at ${analysisCsvPath}!`
-            );
+        const analysisCsvStat = await fs.stat(analysisCsvPath);
+        if (!analysisCsvStat) {
+            throw new Error(`Could not find scene analysis CSV file at ${analysisCsvPath}!`);
         }
     }
 
     private async parseScenes(analysisCsvPath: string): Promise<any[]> {
-        const csvContent = fs
-            .readFileSync(analysisCsvPath)
-            .toString()
-            .split('\n')
-            .slice(1)
-            .join('\n');
-
+        const csvContent = (await fs.readFile(analysisCsvPath)).toString().split('\n').slice(1).join('\n');
         return await csv().fromString(csvContent);
     }
 
-    private async generateMissingSceneScreenshots(
-        file: File,
-        sceneDirectory: string,
-        scenes: any[]
-    ): Promise<void> {
-        const existingFiles = await readdir(sceneDirectory);
-        const existingThumbnails = existingFiles.filter((fileName) =>
-            fileName.endsWith('.jpg')
-        );
+    private async generateMissingSceneScreenshots(file: File, sceneDirectory: string, scenes: any[]): Promise<void> {
+        const existingFiles = await fs.readdir(sceneDirectory);
+        const existingThumbnails = existingFiles.filter((fileName) => fileName.endsWith('.jpg'));
 
         if (scenes.length * 3 === existingThumbnails.length) {
             winston.verbose(
@@ -219,49 +163,29 @@ export class SceneDetector {
             const time2 = sceneStart + ((sceneEnd - sceneStart) / 10) * 5;
             const time3 = sceneStart + ((sceneEnd - sceneStart) / 10) * 8;
 
-            const path1 = path.join(
-                sceneDirectory,
-                file.fileId + '_' + sceneNumber + '_1.jpg'
-            );
-            const path2 = path.join(
-                sceneDirectory,
-                file.fileId + '_' + sceneNumber + '_2.jpg'
-            );
-            const path3 = path.join(
-                sceneDirectory,
-                file.fileId + '_' + sceneNumber + '_3.jpg'
-            );
+            const path1 = path.join(sceneDirectory, `${file.fileId}_${sceneNumber}_1.jpg`);
+            const path2 = path.join(sceneDirectory, `${file.fileId}_${sceneNumber}_2.jpg`);
+            const path3 = path.join(sceneDirectory, `${file.fileId}_${sceneNumber}_3.jpg`);
 
-            if (!fs.existsSync(path1)) {
-                try {
-                    child_process.execSync(
-                        `ffmpeg -y -ss ${time1} -i "${file.path}" -vf scale=150:-1 -vframes 1 "${path1}"`,
-                        options
-                    );
-                } catch (err) {
-                    // OK
-                }
-            }
-            if (!fs.existsSync(path2)) {
-                try {
-                    child_process.execSync(
-                        `ffmpeg -y -ss ${time2} -i "${file.path}" -vf scale=150:-1 -vframes 1 "${path2}"`,
-                        options
-                    );
-                } catch (err) {
-                    // OK
-                }
-            }
-            if (!fs.existsSync(path3)) {
-                try {
-                    child_process.execSync(
-                        `ffmpeg -y -ss ${time3} -i "${file.path}" -vf scale=150:-1 -vframes 1 "${path3}"`,
-                        options
-                    );
-                } catch (err) {
-                    // OK
-                }
-            }
+            await this.createSceneThumb(file, time1, path1);
+            await this.createSceneThumb(file, time2, path2);
+            await this.createSceneThumb(file, time3, path3);
+        }
+    }
+
+    private async createSceneThumb(file: File, time: number, path: string): Promise<void> {
+        const sceneThumbStat = await fs.stat(path);
+        if (sceneThumbStat && sceneThumbStat.isFile()) {
+            return;
+        }
+
+        try {
+            child_process.execSync(
+                `ffmpeg -y -ss ${time} -i "${file.path}" -vf scale=150:-1 -vframes 1 "${path}"`,
+                options
+            );
+        } catch (err) {
+            // OK
         }
     }
 }
