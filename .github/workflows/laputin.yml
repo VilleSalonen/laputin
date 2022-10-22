@@ -1,11 +1,11 @@
 name: laputin
 on: [push]
 jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - run: cd src && npm ci && npm run test-server && cd client && npm ci && npm run lint
+    ci:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: "16"
+            - run: cd oclif && npm ci && npm run test
