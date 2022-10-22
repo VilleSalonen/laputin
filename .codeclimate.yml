@@ -1,6 +1,0 @@
-languages:
-  JavaScript: true
-  TypeScript: true
-exclude_paths:
-- "src/tests/*.ts"
-- "src/**/*.spec.ts"
