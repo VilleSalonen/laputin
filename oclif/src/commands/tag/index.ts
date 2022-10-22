@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import fs = require('fs');
+import fs = require('fs/promises');
 import os = require('os');
 import path = require('path');
 import winston = require('winston');
@@ -64,7 +64,7 @@ export default class TagCommand extends Command {
 
         let tagNames: string[];
         if (flags.tagsFileName) {
-            const metadata = fs.readFileSync(flags.tagsFileName, 'utf8').trim();
+            const metadata = (await fs.readFile(flags.tagsFileName, 'utf8')).trim();
             const metadataObject = JSON.parse(metadata);
             tagNames = metadataObject.tags;
         } else if (flags.tags) {
@@ -75,15 +75,9 @@ export default class TagCommand extends Command {
 
         const tagNamesLower = tagNames.map((n) => n.toLocaleLowerCase());
 
-        const existingTags = allTags.filter((t) =>
-            tagNamesLower.includes(t.name.toLocaleLowerCase())
-        );
-        const existingTagNames = existingTags.map((t) =>
-            t.name.toLocaleLowerCase()
-        );
-        const newTagNames = tagNames.filter(
-            (n) => !existingTagNames.includes(n.toLocaleLowerCase())
-        );
+        const existingTags = allTags.filter((t) => tagNamesLower.includes(t.name.toLocaleLowerCase()));
+        const existingTagNames = existingTags.map((t) => t.name.toLocaleLowerCase());
+        const newTagNames = tagNames.filter((n) => !existingTagNames.includes(n.toLocaleLowerCase()));
         const newTags = [];
         for (const newTagName of newTagNames) {
             winston.info(`Creating new tag "${newTagName}"...`);
@@ -95,14 +89,9 @@ export default class TagCommand extends Command {
         const tagsForAdding = [...newTags, ...existingTags];
 
         const harmonizedFiles = files.map((file) => path.normalize(file));
-        const filesForAdding = await library.getFiles(
-            new Query(undefined, harmonizedFiles)
-        );
+        const filesForAdding = await library.getFiles(new Query(undefined, harmonizedFiles));
 
-        const results = await library.createNewLinksBetweenTagsAndFiles(
-            tagsForAdding,
-            filesForAdding
-        );
+        const results = await library.createNewLinksBetweenTagsAndFiles(tagsForAdding, filesForAdding);
         for (const result of results) {
             winston.info(`Added ${result.tag.name} to ${result.file.path}`);
         }
