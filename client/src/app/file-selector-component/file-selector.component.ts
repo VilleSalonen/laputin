@@ -8,7 +8,7 @@ import {
     OnInit,
     Injectable
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import {
     MatAutocompleteSelectedEvent,
     MatAutocomplete,
@@ -33,7 +33,7 @@ export class FileSelectorComponent implements OnInit {
     public selectable = false;
     public removable = true;
     public addOnBlur = false;
-    public termCtrl = new FormControl();
+    public termCtrl = new UntypedFormControl();
 
     public searchTerm: string;
 

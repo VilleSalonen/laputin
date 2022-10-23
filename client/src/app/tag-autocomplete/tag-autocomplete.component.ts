@@ -8,7 +8,7 @@ import {
     OnInit,
     Injectable
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import {
     MatAutocompleteSelectedEvent,
     MatAutocomplete
@@ -35,7 +35,7 @@ export class TagAutocompleteComponent implements OnInit {
     public selectable = false;
     public removable = true;
     public addOnBlur = false;
-    public termCtrl = new FormControl();
+    public termCtrl = new UntypedFormControl();
 
     @ViewChild('termInput') termInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;

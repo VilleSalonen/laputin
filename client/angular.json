@@ -97,7 +97,6 @@
       }
     }
   },
-  "defaultProject": "laputin",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

@@ -9,7 +9,7 @@ import {
     Injectable,
     HostListener
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import {
     MatAutocompleteSelectedEvent,
     MatAutocomplete,
@@ -74,7 +74,7 @@ export class FileQueryComponent implements OnInit {
     public selectable = false;
     public removable = true;
     public addOnBlur = false;
-    public termCtrl = new FormControl();
+    public termCtrl = new UntypedFormControl();
 
     public searchTerm: string;
 
