@@ -31,7 +31,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { PlayerService, Progress } from '../player.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DomSanitizer } from '@angular/platform-browser';
-import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
+import { VirtualScrollerComponent } from '@iharbeck/ngx-virtual-scroller';
 import { MatDialog } from '@angular/material/dialog';
 import { MigrateFileDataDialogComponent } from '../migrate-file-data-dialog/migrate-file-data-dialog.component';
 

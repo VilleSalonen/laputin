@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { TimecodeQueryService } from '../timecode-query.service';
 import { switchMap, shareReplay, take, map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
+import { VirtualScrollerComponent } from '@iharbeck/ngx-virtual-scroller';
 
 @Component({
     styleUrls: ['./timecodes.component.scss'],

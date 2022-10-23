@@ -12,7 +12,7 @@ import { LaputinService } from './../laputin.service';
 import { Subject, Observable } from 'rxjs';
 import { FileQueryService } from '../file-query.service';
 import { switchMap, take, map, shareReplay, tap } from 'rxjs/operators';
-import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
+import { VirtualScrollerComponent } from '@iharbeck/ngx-virtual-scroller';
 import { Router } from '@angular/router';
 
 enum ViewMode {
