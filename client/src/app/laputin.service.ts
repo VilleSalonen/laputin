@@ -175,10 +175,7 @@ export class LaputinService {
         sourceFile: File,
         targetFile: File
     ): Observable<void> {
-        const body = JSON.stringify({
-            sourceHash: sourceFile.hash,
-            targetFile: targetFile.hash,
-        });
+        const body = JSON.stringify({});
         const headers = new HttpHeaders({
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -372,7 +369,7 @@ export class LaputinService {
         return this._http.put(
             this._baseUrl +
                 '/files/' +
-                file.hash +
+                file.fileId +
                 '/timecodes/' +
                 timecode.timecodeId,
             body,
