@@ -64,39 +64,6 @@ export class Library {
                 `${libraryPath} has already been initialized as Laputin library. Refusing to re-initialize.`
             );
         }
-
-        const db = new sqlite3.Database(dbPath);
-
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "File" (id INTEGER PRIMARY KEY AUTOINCREMENT, hash TEXT UNIQUE NOT NULL, path TEXT UNIQUE NOT NULL, active INTEGER NOT NULL, size INTEGER NOT NULL, metadata TEXT NOT NULL, type TEXT NOT NULL);'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "Tag" (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE NOT NULL);'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "TagsOnFiles" (id INTEGER PRIMARY KEY AUTOINCREMENT, fileId INTEGER NOT NULL, tagId INTEGER NOT NULL, UNIQUE (fileId, tagId), FOREIGN KEY (fileId) REFERENCES File(id), FOREIGN KEY (tagId) REFERENCES Tag(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE INDEX TagsOnFiles_fileId ON TagsOnFiles(fileId);'
-        );
-        await (<any>db).runAsync(
-            'CREATE INDEX TagsOnFiles_tagId ON TagsOnFiles(tagId);'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "TimecodesOnFiles" (id INTEGER PRIMARY KEY AUTOINCREMENT, fileId INTEGER NOT NULL, start REAL NOT NULL, end REAL NOT NULL, FOREIGN KEY (fileId) REFERENCES File(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "TagsOnTimecodes" (id INTEGER PRIMARY KEY AUTOINCREMENT, timecodeId INTEGER NOT NULL, tagId INTEGER NOT NULL, FOREIGN KEY (timecodeId) REFERENCES TimecodesOnFiles(id), FOREIGN KEY (tagId) REFERENCES Tag(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "ScreenshotFile" (id INTEGER PRIMARY KEY, time REAL NOT NULL, FOREIGN KEY (id) REFERENCES Files(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "ScreenshotTag" (id INTEGER PRIMARY KEY, fileId INTEGER NOT NULL, time REAL NOT NULL, FOREIGN KEY (id) REFERENCES Tag(id), FOREIGN KEY (fileId) REFERENCES File(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "ScreenshotTimecode" (id INTEGER PRIMARY KEY, Time REAL NOT NULL);'
-        );
     }
 
     constructor(private _libraryPath: string) {

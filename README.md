@@ -19,8 +19,8 @@ _(Laputin as a name comes from a Finnish word lappu which means tag in English. 
 
 Technically Laputin is implemented in two parts:
 
-- Backend implemented in Node. This handles interaction with file system and opening of the file opener associated with the collection.
-- Frontend implemented in HTML5 using Angular 2. Because desktop and command line UIs are so 90s, with Laputin you can organize your file collection from the browser!
+-   Backend implemented in Node. This handles interaction with file system and opening of the file opener associated with the collection.
+-   Frontend implemented in HTML5 using Angular 2. Because desktop and command line UIs are so 90s, with Laputin you can organize your file collection from the browser!
 
 Each file in collection is identified by its content. This means that you can
 move and rename your files within the collection and Laputin still associates
@@ -32,14 +32,6 @@ version runs the whole file through SHA512.
 
 ## Installation
 
-Firstly: Laputin is pre-alpha software so whatever you organize, please have
-backups! Laputin doesn't delete any of your files but I'd hate to be part of
-destroying your files. So please, be safe!
+TODO: Creating database:
 
-When you're creating a new Laputin collection, just start laputin and give it a
-path to your library:
-
-    npm install
-    npm run build
-    node deploy\index.js --initialize C:\Users\coolbro\Documents\Videos\
-    node deploy\index.js C:\Users\coolbro\Documents\Videos\ --verbose
+    DATABASE_URL=file:~/.laputin/youtube/laputin.db npx prisma migrate dev --name init
