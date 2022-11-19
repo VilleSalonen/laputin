@@ -193,7 +193,7 @@ export class Laputin {
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
-                const tags = await this.library.getTimecodesForFile(file.hash);
+                const tags = await this.library.getTimecodesForFile(file);
                 res.send(tags);
             }
         );
@@ -248,13 +248,7 @@ export class Laputin {
                 next: express.NextFunction
             ) => this.validateFileExists(req, res, next),
             async (req, res) => {
-                const file = this.getFileFromReq(req);
-
-                await this.library.updateTimecodeStartAndEnd(
-                    file.hash,
-                    Number(req.params?.timecodeId),
-                    req.body.timecode
-                );
+                await this.library.updateTimecodeStartAndEnd(Number(req.params?.timecodeId), req.body.timecode);
                 res.status(200).end();
             }
         );

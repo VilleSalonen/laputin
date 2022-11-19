@@ -9,68 +9,83 @@ datasource db {
 
 model File {
   id               Int                @id @default(autoincrement())
-  hash             String             @unique(map: "sqlite_autoindex_File_1")
-  path             String             @unique(map: "sqlite_autoindex_File_2")
+  hash             String             @unique()
+  path             String             @unique()
   active           Int
   size             BigInt
-  metadata         String
+  metadata         Json
   type             String
   ScreenshotTag    ScreenshotTag[]
   TagsOnFiles      TagsOnFiles[]
   TimecodesOnFiles TimecodesOnFiles[]
+
+  @@map("file")
 }
 
 model ScreenshotFile {
   id   Int   @id @default(autoincrement())
   time Float
+
+  @@map("screenshot_file")
 }
 
 model ScreenshotTag {
   id     Int   @id @default(autoincrement())
-  fileId Int
+  fileId Int   @map("file_id")
   time   Float
   File   File  @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Tag    Tag   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("screenshot_tag")
 }
 
 model ScreenshotTimecode {
   id   Int   @id @default(autoincrement())
-  Time Float
+  time Float
+
+  @@map("screenshot_timecode")
 }
 
 model Tag {
   id              Int               @id @default(autoincrement())
-  name            String            @unique(map: "sqlite_autoindex_Tag_1")
+  name            String            @unique()
   ScreenshotTag   ScreenshotTag?
   TagsOnFiles     TagsOnFiles[]
   TagsOnTimecodes TagsOnTimecodes[]
+
+  @@map("tag")
 }
 
 model TagsOnFiles {
   id     Int  @id @default(autoincrement())
-  fileId Int
-  tagId  Int
+  fileId Int  @map("file_id")
+  tagId  Int  @map("tag_id")
   Tag    Tag  @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   File   File @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([fileId, tagId], map: "sqlite_autoindex_TagsOnFiles_1")
-  @@index([tagId], map: "TagsOnFiles_tagId")
-  @@index([fileId], map: "TagsOnFiles_fileId")
+  @@unique([fileId, tagId])
+  @@index([tagId])
+  @@index([fileId])
+  @@map("tags_on_files")
 }
 
 model TagsOnTimecodes {
   id               Int              @id @default(autoincrement())
-  timecodeId       Int
-  tagId            Int
+  timecodeId       Int              @map("timecode_id")
+  tagId            Int              @map("tag_id")
   Tag              Tag              @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   TimecodesOnFiles TimecodesOnFiles @relation(fields: [timecodeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("tags_on_timecodes")
 }
 
 model TimecodesOnFiles {
   id              Int               @id @default(autoincrement())
-  fileId          Int
+  fileId          Int               @map("file_id")
   start           Float
   end             Float
   File            File              @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   TagsOnTimecodes TagsOnTimecodes[]
+
+  @@map("timecodes_on_files")
 }

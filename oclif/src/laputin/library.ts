@@ -1,40 +1,4 @@
-// DELETE FROM files_timecodes_tags WHERE tag_id IS NULL;
-// DELETE FROM screenshot_times_timecodes WHERE time IS NULL;
-// CREATE TABLE IF NOT EXISTS "File" (id INTEGER PRIMARY KEY AUTOINCREMENT, hash TEXT UNIQUE NOT NULL, path TEXT UNIQUE NOT NULL, active INTEGER NOT NULL, size INTEGER NOT NULL, metadata TEXT NOT NULL, type TEXT NOT NULL);
-// CREATE TABLE IF NOT EXISTS "Tag" (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE NOT NULL);
-// CREATE TABLE IF NOT EXISTS "TagsOnFiles" (id INTEGER PRIMARY KEY AUTOINCREMENT, fileId INTEGER NOT NULL, tagId INTEGER NOT NULL, UNIQUE (fileId, tagId), FOREIGN KEY (fileId) REFERENCES File(id), FOREIGN KEY (tagId) REFERENCES Tag(id));
-// CREATE INDEX TagsOnFiles_fileId ON TagsOnFiles(fileId);
-// CREATE INDEX TagsOnFiles_tagId ON TagsOnFiles(tagId);
-// CREATE TABLE IF NOT EXISTS "TimecodesOnFiles" (id INTEGER PRIMARY KEY AUTOINCREMENT, fileId INTEGER NOT NULL, start REAL NOT NULL, end REAL NOT NULL, FOREIGN KEY (fileId) REFERENCES File(id));
-// CREATE TABLE IF NOT EXISTS "TagsOnTimecodes" (id INTEGER PRIMARY KEY AUTOINCREMENT, timecodeId INTEGER NOT NULL, tagId INTEGER NOT NULL, FOREIGN KEY (timecodeId) REFERENCES TimecodesOnFiles(id), FOREIGN KEY (tagId) REFERENCES Tag(id));
-// CREATE TABLE IF NOT EXISTS "ScreenshotFile" (id INTEGER PRIMARY KEY, time REAL NOT NULL, FOREIGN KEY (id) REFERENCES Files(id));
-// CREATE TABLE IF NOT EXISTS "ScreenshotTag" (id INTEGER PRIMARY KEY, fileId INTEGER NOT NULL, time REAL NOT NULL, FOREIGN KEY (id) REFERENCES Tag(id), FOREIGN KEY (fileId) REFERENCES File(id));
-// CREATE TABLE IF NOT EXISTS "ScreenshotTimecode" (id INTEGER PRIMARY KEY, Time REAL NOT NULL);
-// INSERT INTO File SELECT null, hash, path, active, size, metadata, type FROM files;
-// DROP TABLE files;
-// INSERT INTO Tag SELECT * FROM tags;
-// DROP TABLE tags;
-// INSERT INTO TagsOnFiles SELECT NULL, File.id, tags_files.id FROM tags_files JOIN File ON tags_files.hash = File.hash;
-// DROP TABLE tags_files;
-// INSERT INTO TimecodesOnFiles SELECT files_timecodes.id, File.id, files_timecodes.start, files_timecodes.end FROM files_timecodes JOIN File ON files_timecodes.hash = File.hash;
-// DROP TABLE files_timecodes;
-// INSERT INTO TagsOnTimecodes SELECT * FROM files_timecodes_tags;
-// DROP TABLE files_timecodes_tags;
-// INSERT INTO ScreenshotFile SELECT File.id, screenshot_times_files.time FROM screenshot_times_files JOIN File ON File.hash = screenshot_times_files.hash;
-// DROP TABLE screenshot_times_files;
-// INSERT INTO ScreenshotTag SELECT screenshot_times_tags.id, File.id, screenshot_times_tags.time FROM screenshot_times_tags JOIN File ON File.hash = screenshot_times_tags.hash;
-// DROP TABLE screenshot_times_tags;
-// INSERT INTO ScreenshotTimecode SELECT * FROM screenshot_times_timecodes;
-// DROP TABLE screenshot_times_timecodes;
-// VACUUM;
-
 import { Prisma, PrismaClient } from '@prisma/client';
-import bluebird = require('bluebird');
-
-import sqlite3 = require('sqlite3');
-bluebird.promisifyAll(sqlite3);
-
-import path = require('path');
 import fs = require('fs');
 import winston = require('winston');
 
@@ -45,49 +9,12 @@ import { TagQuery } from './tagquery.model';
 import { FileTagLink } from './filetaglink';
 
 export class Library {
-    private _db: any;
     private prisma: PrismaClient;
 
     static async initialize(libraryPath: string): Promise<void> {
         if (!fs.existsSync(libraryPath) || !fs.statSync(libraryPath).isDirectory()) {
             throw new Error(`Directory ${libraryPath} is not a valid directory.`);
         }
-
-        const dbPath = path.join(libraryPath, 'laputin.db');
-        if (fs.existsSync(dbPath)) {
-            throw new Error(
-                `${libraryPath} has already been initialized as Laputin library. Refusing to re-initialize.`
-            );
-        }
-
-        const db = new sqlite3.Database(dbPath);
-
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "File" (id INTEGER PRIMARY KEY AUTOINCREMENT, hash TEXT UNIQUE NOT NULL, path TEXT UNIQUE NOT NULL, active INTEGER NOT NULL, size INTEGER NOT NULL, metadata TEXT NOT NULL, type TEXT NOT NULL);'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "Tag" (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE NOT NULL);'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "TagsOnFiles" (id INTEGER PRIMARY KEY AUTOINCREMENT, fileId INTEGER NOT NULL, tagId INTEGER NOT NULL, UNIQUE (fileId, tagId), FOREIGN KEY (fileId) REFERENCES File(id), FOREIGN KEY (tagId) REFERENCES Tag(id));'
-        );
-        await (<any>db).runAsync('CREATE INDEX TagsOnFiles_fileId ON TagsOnFiles(fileId);');
-        await (<any>db).runAsync('CREATE INDEX TagsOnFiles_tagId ON TagsOnFiles(tagId);');
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "TimecodesOnFiles" (id INTEGER PRIMARY KEY AUTOINCREMENT, fileId INTEGER NOT NULL, start REAL NOT NULL, end REAL NOT NULL, FOREIGN KEY (fileId) REFERENCES File(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "TagsOnTimecodes" (id INTEGER PRIMARY KEY AUTOINCREMENT, timecodeId INTEGER NOT NULL, tagId INTEGER NOT NULL, FOREIGN KEY (timecodeId) REFERENCES TimecodesOnFiles(id), FOREIGN KEY (tagId) REFERENCES Tag(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "ScreenshotFile" (id INTEGER PRIMARY KEY, time REAL NOT NULL, FOREIGN KEY (id) REFERENCES Files(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "ScreenshotTag" (id INTEGER PRIMARY KEY, fileId INTEGER NOT NULL, time REAL NOT NULL, FOREIGN KEY (id) REFERENCES Tag(id), FOREIGN KEY (fileId) REFERENCES File(id));'
-        );
-        await (<any>db).runAsync(
-            'CREATE TABLE IF NOT EXISTS "ScreenshotTimecode" (id INTEGER PRIMARY KEY, Time REAL NOT NULL);'
-        );
     }
 
     constructor(private _libraryPath: string) {
@@ -95,66 +22,52 @@ export class Library {
             throw new Error(`Directory ${this._libraryPath} is not a valid directory.`);
         }
 
-        const dbPath = path.join(this._libraryPath, 'laputin.db');
-        if (!fs.existsSync(dbPath)) {
-            winston.error(`${this._libraryPath} has not been initialized as Laputin library.`);
-            process.exit(-1);
-        }
-
-        this.prisma = new PrismaClient({
-            datasources: {
-                db: {
-                    url: `file:${dbPath}`,
-                },
-            },
-            log: [
-                {
-                    emit: 'event',
-                    level: 'query',
-                },
-            ],
-        });
-
-        this._db = new sqlite3.Database(dbPath);
+        this.prisma = new PrismaClient();
     }
 
-    public async addFile(file: File): Promise<File | null> {
+    public async addFile(file: File): Promise<File> {
         const existingFile = await this.getFileByHash(file.hash);
 
-        const metadata = JSON.stringify(existingFile ? { ...existingFile.metadata, ...file.metadata } : file.metadata);
+        const metadata = existingFile ? { ...existingFile.metadata, ...file.metadata } : file.metadata;
 
-        try {
-            await this.prisma.file.upsert({
-                where: {
-                    hash: file.hash,
-                },
-                update: {
-                    path: file.path,
-                    active: 1,
-                    size: file.size,
-                    metadata: metadata,
-                    type: file.type,
-                },
-                create: {
-                    hash: file.hash,
-                    path: file.path,
-                    active: 1,
-                    size: file.size,
-                    metadata: metadata,
-                    type: file.type,
-                },
-            });
+        const createdFile = await this.prisma.file.upsert({
+            where: {
+                hash: file.hash,
+            },
+            update: {
+                path: file.path,
+                active: 1,
+                size: file.size,
+                metadata: metadata,
+                type: file.type,
+            },
+            create: {
+                hash: file.hash,
+                path: file.path,
+                active: 1,
+                size: file.size,
+                metadata: metadata,
+                type: file.type,
+            },
+        });
 
-            return await this.getFileByHash(file.hash);
-        } catch (err) {
-            winston.error(`Upserting ${file.hash} ${file.path}`, err);
+        const createdFileWithTags = await this.getFileById(createdFile.id);
+        if (!createdFileWithTags) {
+            throw new Error('File was not created WTF');
         }
 
-        return null;
+        return createdFileWithTags;
     }
 
     public async deactivateFile(file: File): Promise<void> {
-        await this.prisma.$queryRaw`UPDATE File SET active = 0 WHERE path = ${file.path}`;
+        await this.prisma.file.update({
+            where: {
+                id: file.fileId,
+            },
+            data: {
+                active: 0,
+            },
+        });
     }
 
     public async getFile(hash: string): Promise<File> {
@@ -174,8 +87,8 @@ export class Library {
     public getFileById(fileId: number): Promise<File | null> {
         return this.getFileViaSql(
             Prisma.sql`
-                SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
-                FROM File
+                SELECT file.id, file.hash, file.path, file.size, file.metadata, file.type
+                FROM file
                 WHERE id = ${fileId}`
         );
     }
@@ -183,8 +96,8 @@ export class Library {
     public getFileByHash(hash: string): Promise<File | null> {
         return this.getFileViaSql(
             Prisma.sql`
-                SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
-                FROM File
+                SELECT file.id, file.hash, file.path, file.size, file.metadata, file.type
+                FROM file
                 WHERE hash = ${hash}`
         );
     }
@@ -195,7 +108,7 @@ export class Library {
             fileNameClause = query.filename
                 .split(' ')
                 .map((word) => `%${word}%`)
-                .reduce((query, word) => Prisma.sql` ${query} AND path LIKE ${word} COLLATE NOCASE `, Prisma.empty);
+                .reduce((query, word) => Prisma.sql` ${query} AND path ILIKE ${word} `, Prisma.empty);
         }
 
         let pathsClause = Prisma.empty;
@@ -203,8 +116,8 @@ export class Library {
             const paths = query.paths.reduce(
                 (query, path, currentIndex) =>
                     currentIndex === 0
-                        ? Prisma.sql` ${query} path = ${path} COLLATE NOCASE `
-                        : Prisma.sql` ${query} OR path = ${path} COLLATE NOCASE `,
+                        ? Prisma.sql` ${query} path = ${path} `
+                        : Prisma.sql` ${query} OR path = ${path} `,
                 Prisma.empty
             );
 
@@ -214,10 +127,10 @@ export class Library {
         let statusClause = Prisma.empty;
         if (query.status) {
             if (query.status === 'tagged') {
-                statusClause = Prisma.sql` AND EXISTS (SELECT 1 FROM TagsOnFiles WHERE TagsOnFiles.fileId = File.id) `;
+                statusClause = Prisma.sql` AND EXISTS (SELECT 1 FROM tags_on_files WHERE tags_on_files.file_id = file.id) `;
             }
             if (query.status === 'untagged') {
-                statusClause = Prisma.sql` AND NOT EXISTS (SELECT 1 FROM TagsOnFiles WHERE TagsOnFiles.fileId = File.id) `;
+                statusClause = Prisma.sql` AND NOT EXISTS (SELECT 1 FROM tags_on_files WHERE tags_on_files.file_id = file.id) `;
             }
         }
 
@@ -239,8 +152,8 @@ export class Library {
         }
 
         const filesSql = Prisma.sql`
-            SELECT File.id, File.hash, File.path, File.size, File.metadata, File.type
-            FROM File
+            SELECT file.id, file.hash, file.path, file.size, file.metadata, file.type
+            FROM file
             WHERE 1 = 1
             ${this.formatActiveClause(query)}
             ${fileNameClause}
@@ -250,7 +163,7 @@ export class Library {
             ${this._generateTagFilterQueryAnd(query.and)}
             ${this._generateTagFilterQueryOr(query.or)}
             ${this._generateTagFilterQueryNot(query.not)}
-            ORDER BY File.path`;
+            ORDER BY file.path`;
 
         return this.getFilesViaSql(filesSql);
     }
@@ -260,52 +173,32 @@ export class Library {
         const files: Map<number, File> = new Map<number, File>(
             rawResults.map((row) => [
                 row.id,
-                new File(
-                    row.id,
-                    row.hash,
-                    row.path,
-                    [],
-                    Number(row.size),
-                    row.type,
-                    row.metadata ? JSON.parse(row.metadata) : {}
-                ),
+                new File(row.id, row.hash, row.path, [], Number(row.size), row.type, row.metadata ?? {}),
             ])
         );
         const fileIds = rawResults.map((r) => r.id);
 
-        // For still unknown reason sorting by tag name breaks if there are more than 999 TagOnFile relations
-        // per query.
-        const perChunk = 999;
-        // Source: https://stackoverflow.com/a/37826698/27736
-        const fileIdsInChunks: any[][] = fileIds.reduce((all, one, i) => {
-            const ch = Math.floor(i / perChunk);
-            all[ch] = [].concat(all[ch] || [], one);
-            return all;
-        }, []);
-
-        for (const chunk of fileIdsInChunks) {
-            const tagsOnFiles = await this.prisma.tagsOnFiles.findMany({
-                where: {
-                    fileId: { in: chunk },
-                },
-                include: {
-                    Tag: true,
-                },
-                orderBy: [
-                    {
-                        Tag: {
-                            name: 'asc',
-                        },
+        const tagsOnFiles = await this.prisma.tagsOnFiles.findMany({
+            where: {
+                fileId: { in: fileIds },
+            },
+            include: {
+                Tag: true,
+            },
+            orderBy: [
+                {
+                    Tag: {
+                        name: 'asc',
                     },
-                ],
-            });
+                },
+            ],
+        });
 
-            tagsOnFiles.forEach((tagOnFile) => {
-                if (files.has(tagOnFile.fileId)) {
-                    (<File>files.get(tagOnFile.fileId)).tags.push(new Tag(tagOnFile.Tag.id, tagOnFile.Tag.name, 0));
-                }
-            });
-        }
+        tagsOnFiles.forEach((tagOnFile) => {
+            if (files.has(tagOnFile.fileId)) {
+                (<File>files.get(tagOnFile.fileId)).tags.push(new Tag(tagOnFile.Tag.id, tagOnFile.Tag.name, 0));
+            }
+        });
 
         return Array.from(files.values());
     }
@@ -325,7 +218,7 @@ export class Library {
                 id: file.fileId,
             },
             data: {
-                metadata: JSON.stringify(metadata),
+                metadata: metadata,
             },
         });
     }
@@ -358,11 +251,12 @@ export class Library {
         }
         const wheres = ids
             .split(',')
+            .map((idStr) => parseInt(idStr))
             .reduce(
                 (query, id, currentIndex) =>
                     currentIndex === 0
-                        ? Prisma.sql` ${query} File.id IN (SELECT fileId FROM TagsOnFiles WHERE tagId = ${id}) `
-                        : Prisma.sql` ${query} AND File.id IN (SELECT fileId FROM TagsOnFiles WHERE tagId = ${id}) `,
+                        ? Prisma.sql` ${query} file.id IN (SELECT tags_on_files.file_id FROM tags_on_files WHERE tags_on_files.tag_id = ${id}) `
+                        : Prisma.sql` ${query} AND file.id IN (SELECT tags_on_files.file_id FROM tags_on_files WHERE tags_on_files.tag_id = ${id}) `,
                 Prisma.empty
             );
 
@@ -375,11 +269,12 @@ export class Library {
         }
         const wheres = ids
             .split(',')
+            .map((idStr) => parseInt(idStr))
             .reduce(
                 (query, id, currentIndex) =>
                     currentIndex === 0
-                        ? Prisma.sql` ${query} File.id IN (SELECT fileId FROM TagsOnFiles WHERE tagId = ${id}) `
-                        : Prisma.sql` ${query} OR File.id IN (SELECT fileId FROM TagsOnFiles WHERE tagId = ${id}) `,
+                        ? Prisma.sql` ${query} file.id IN (SELECT tags_on_files.file_id FROM tags_on_files WHERE tags_on_files.tag_id = ${id}) `
+                        : Prisma.sql` ${query} OR file.id IN (SELECT tags_on_files.file_id FROM tags_on_files WHERE tags_on_files.tag_id = ${id}) `,
                 Prisma.empty
             );
 
@@ -392,11 +287,12 @@ export class Library {
         }
         const wheres = ids
             .split(',')
+            .map((idStr) => parseInt(idStr))
             .reduce(
                 (query, id, currentIndex) =>
                     currentIndex === 0
-                        ? Prisma.sql` ${query} File.id NOT IN (SELECT fileId FROM TagsOnFiles WHERE tagId = ${id}) `
-                        : Prisma.sql` ${query} AND File.id NOT IN (SELECT fileId FROM TagsOnFiles WHERE tagId = ${id}) `,
+                        ? Prisma.sql` ${query} file.id NOT IN (SELECT tags_on_files.file_id FROM tags_on_files WHERE tags_on_files.tag_id = ${id}) `
+                        : Prisma.sql` ${query} AND file.id NOT IN (SELECT tags_on_files.file_id FROM tags_on_files WHERE tags_on_files.tag_id = ${id}) `,
                 Prisma.empty
             );
 
@@ -489,44 +385,12 @@ export class Library {
     }
 
     public async getTags(query: TagQuery): Promise<Tag[]> {
-        /*const results = await this.prisma.tag.findMany({
-            include: {
-                _count: {
-                    select: { TagsOnFiles: true },
-                },
-            },
-            where: {
-                name: { contains: query.tagName },
-                TagsOnFiles: { some: {} },
-            },
-        });
+        const unassociatedClause =
+            query && query.unassociated
+                ? Prisma.sql``
+                : Prisma.sql` AND EXISTS(SELECT id FROM tags_on_files WHERE tags_on_files.tag_id = tag."id") `;
 
-        return results.map(
-            (result) =>
-                new Tag(result.id, result.name, result._count.TagsOnFiles)
-        );*/
-
-        const params: any[] = [];
-        let sql = `
-            SELECT id, name, (
-                SELECT COUNT(*)
-                FROM TagsOnFiles
-                JOIN File ON TagsOnFiles.fileId = File.id
-                WHERE
-                    TagsOnFiles.tagId = Tag.id AND
-                    File.active = 1
-            ) AS Count
-            FROM Tag
-            WHERE
-        `;
-
-        if (query && query.unassociated) {
-            sql += ' count >= 0 ';
-        } else {
-            sql += ' count > 0 ';
-        }
-
-        if (query && query.andTags && query.andTags.length > 0) {
+        /*if (query && query.andTags && query.andTags.length > 0) {
             const wheres: string[] = [];
             query.andTags.forEach((tagId) => {
                 params.push(tagId);
@@ -557,16 +421,27 @@ export class Library {
             sql += ' AND name LIKE ?';
             params.push('%' + query.tagName + '%');
         }
+        */
 
-        sql += ' ORDER BY name ';
+        const tagsSql = Prisma.sql`
+            SELECT tag.id, tag.name, CAST((
+                SELECT COUNT(*)
+                FROM tags_on_files
+                JOIN file ON tags_on_files.file_id = file.id
+                WHERE
+                    tags_on_files.tag_id = tag.id AND
+                    file.active = 1
+            ) AS int) AS count
+            FROM tag
+            WHERE
+                1 = 1
+                ${unassociatedClause}
+            ORDER BY tag.name
+        `;
 
-        const tags: Tag[] = [];
-        const each = (err: Error, row: any) => {
-            tags.push(new Tag(row.id, row.name, row.count));
-        };
+        const rawResults = await this.prisma.$queryRaw<any[]>(tagsSql);
+        const tags: Tag[] = rawResults.map((row) => new Tag(row.id, row.name, row.count));
 
-        const stmt = this._db.prepare(sql);
-        await stmt.eachAsync(params, each);
         return tags;
     }
 
@@ -614,7 +489,6 @@ export class Library {
         files: File[],
         existingLinks: Map<number, Set<number>>
     ) {
-        const insertPrepares: string[] = [];
         const insertParams: any[] = [];
         const returnResults: FileTagLink[] = [];
         for (const inputTag of inputTags) {
@@ -623,37 +497,44 @@ export class Library {
                     !existingLinks.has(file.fileId) ||
                     !(<Set<number>>existingLinks.get(file.fileId)).has(inputTag.id)
                 ) {
-                    insertPrepares.push('(NULL, ?, ?)');
-                    insertParams.push(file.fileId);
-                    insertParams.push(inputTag.id);
+                    insertParams.push({ fileId: file.fileId, tagId: inputTag.id });
                     returnResults.push(new FileTagLink(file, inputTag));
                 }
             }
         }
 
-        if (insertPrepares.length === 0) {
+        if (returnResults.length === 0) {
             return [];
         }
 
-        const insert = `INSERT INTO TagsOnFiles VALUES ${insertPrepares.join(',')}`;
-        await this.prisma.$queryRawUnsafe(insert, ...insertParams);
+        await this.prisma.tagsOnFiles.createMany({
+            data: insertParams,
+        });
         return returnResults;
     }
 
-    public async createNewLinkBetweenTagAndFile(inputTag: Tag, hash: string): Promise<boolean> {
+    public async createNewLinkBetweenTagAndFile(inputTag: Tag, hash: string): Promise<void> {
         const file = await this.getFile(hash);
 
-        const stmt = this._db.prepare('INSERT INTO TagsOnFiles VALUES (NULL, ?, ?)');
-
         try {
-            await stmt.runAsync(file.fileId, inputTag.id);
-            return true;
-        } catch (err) {
-            if ((<any>err).code !== 'SQLITE_CONSTRAINT') {
-                throw err;
+            await this.prisma.tagsOnFiles.upsert({
+                where: {
+                    fileId_tagId: {
+                        tagId: inputTag.id,
+                        fileId: file.fileId,
+                    },
+                },
+                update: {},
+                create: {
+                    tagId: inputTag.id,
+                    fileId: file.fileId,
+                },
+            });
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+                return;
             }
-
-            return false;
+            throw e;
         }
     }
 
@@ -662,173 +543,133 @@ export class Library {
 
         let timecodeId: number;
         if (!timecode.timecodeId) {
-            const stmt1 = this._db.prepare(`INSERT INTO TimecodesOnFiles
-            VALUES (
-                null,
-                ?,
-                ?,
-                ?
-            )`);
-            await stmt1.runAsync(file.fileId, timecode.start, timecode.end);
-            timecodeId = stmt1.lastID;
+            const createdTimecode = await this.prisma.timecodesOnFiles.create({
+                data: {
+                    fileId: file.fileId,
+                    start: timecode.start,
+                    end: timecode.end,
+                },
+            });
+            timecodeId = createdTimecode.id;
         } else {
             timecodeId = timecode.timecodeId;
         }
 
         const timecodeTags: TimecodeTag[] = [];
         for (const timecodeTag of timecode.timecodeTags) {
-            const stmt2 = this._db.prepare(`INSERT INTO TagsOnTimecodes
-            VALUES (
-                null,
-                ?,
-                ?
-            )`);
-            await stmt2.runAsync(timecodeId, timecodeTag.tag.id);
-            timecodeTags.push(new TimecodeTag(timecodeId, stmt2.lastID, timecodeTag.tag));
+            const createdTagOnTimecode = await this.prisma.tagsOnTimecodes.create({
+                data: {
+                    timecodeId: timecodeId,
+                    tagId: timecodeTag.tag.id,
+                },
+            });
+            timecodeTags.push(new TimecodeTag(timecodeId, createdTagOnTimecode.id, timecodeTag.tag));
         }
 
-        return new Timecode(timecodeId, file.fileId, timecode.path, timecodeTags, timecode.start, timecode.end);
+        return new Timecode(timecodeId, file.fileId, timecode.path, [], timecode.start, timecode.end);
     }
 
     public async removeTagFromTimecode(hash: string, timecodeId: string, timecodeTagId: string) {
-        const stmt1 = this._db.prepare(`DELETE FROM TagsOnTimecodes
+        await this.prisma.tagsOnTimecodes.delete({ where: { id: parseInt(timecodeTagId) } });
+        await this.prisma.$executeRaw(Prisma.sql`
+            DELETE FROM timecodes_on_files
             WHERE
-                id = ?
-        `);
-        await stmt1.runAsync(timecodeTagId);
-
-        const stmt2 = this._db.prepare(`DELETE FROM TimecodesOnFiles
-            WHERE
-                id = ? AND
+                id = ${timecodeId} AND
                 (
                     SELECT COUNT(*)
-                    FROM TagsOnTimecodes
-                    WHERE timecodeId = ?
+                    FROM tags_on_timecodes
+                    WHERE timecode_id = ${timecodeId}
                 )
-                = 0
-        `);
-        await stmt2.runAsync(timecodeId, timecodeId);
+                = 0`);
     }
 
-    public async updateTimecodeStartAndEnd(hash: string, timecode_id: number, timecode: Timecode): Promise<void> {
-        const stmt = this._db.prepare(`
-            UPDATE TimecodesOnFiles
-            SET start = ?, end = ?
-            WHERE id = ?
-        `);
-        await stmt.runAsync(timecode.start, timecode.end, timecode_id);
+    public async updateTimecodeStartAndEnd(timecode_id: number, timecode: Timecode): Promise<void> {
+        await this.prisma.timecodesOnFiles.update({
+            where: {
+                id: timecode_id,
+            },
+            data: {
+                start: timecode.start,
+                end: timecode.end,
+            },
+        });
     }
 
-    public async getTimecodesForFile(hash: string): Promise<Timecode[]> {
-        const file = await this.getFile(hash);
+    public async getTimecodesForFile(file: File): Promise<Timecode[]> {
+        const rawResults = await this.prisma.timecodesOnFiles.findMany({
+            where: {
+                fileId: file.fileId,
+            },
+            include: {
+                File: true,
+            },
+            orderBy: [
+                {
+                    start: 'asc',
+                },
+                { end: 'asc' },
+            ],
+        });
+        const timecodes: Timecode[] = rawResults.map(
+            (row) => new Timecode(row.id, row.fileId, row.File.path, [], row.start, row.end)
+        );
+        const timecodeIds = timecodes.map((t) => t.timecodeId);
 
-        const timecodes: Timecode[] = [];
-
-        const params1: any[] = [];
-        params1.push(file.fileId);
-
-        const sql1 = `
-            SELECT
-                TimecodesOnFiles.id,
-                TimecodesOnFiles.fileId AS fileId,
-                File.path,
-                TimecodesOnFiles.start,
-                TimecodesOnFiles.end
-            FROM TimecodesOnFiles
-            JOIN File
-            ON File.id = TimecodesOnFiles.fileId
-            WHERE TimecodesOnFiles.fileId = ?
-            ORDER BY start
-        `;
-
-        const each1 = (err: Error, row: any) => {
-            timecodes.push(new Timecode(row.id, row.fileId, row.path, [], row.start, row.end));
-        };
-
-        const stmt1 = this._db.prepare(sql1);
-        await stmt1.eachAsync(params1, each1);
-
-        const params2: any[] = [];
-        params2.push(file.fileId);
-
-        const sql2 = `
-            SELECT
-                TagsOnTimecodes.id AS id,
-                TagsOnTimecodes.timecodeId AS timecodeId,
-                TagsOnTimecodes.tagId AS tagId,
-                Tag.name AS tagName
-            FROM TagsOnTimecodes
-            JOIN TimecodesOnFiles
-            ON TimecodesOnFiles.id = TagsOnTimecodes.timecodeId
-            JOIN Tag
-            ON Tag.id = TagsOnTimecodes.tagId
-            WHERE TimecodesOnFiles.fileId = ?
-            ORDER BY TimecodesOnFiles.start, Tag.name
-        `;
-
-        const each2 = (err: Error, row: any) => {
+        const rawResults2 = await this.prisma.tagsOnTimecodes.findMany({
+            where: {
+                timecodeId: { in: timecodeIds },
+            },
+            include: {
+                Tag: true,
+            },
+        });
+        rawResults2.forEach((row) => {
             const timecode = timecodes.find((t) => t.timecodeId === row.timecodeId);
 
             if (timecode) {
-                timecode.timecodeTags.push(new TimecodeTag(row.timecodeId, row.id, new Tag(row.tagId, row.tagName, 0)));
+                timecode.timecodeTags.push(
+                    new TimecodeTag(row.timecodeId, row.id, new Tag(row.tagId, row.Tag.name, 0))
+                );
             }
-        };
-
-        const stmt2 = this._db.prepare(sql2);
-        await stmt2.eachAsync(params1, each2);
+        });
 
         const timecodesWithTags = timecodes.filter((t) => t.timecodeTags.length > 0);
         return timecodesWithTags;
     }
 
     public async getTimecodes(query: Query): Promise<Timecode[]> {
-        const timecodes: Timecode[] = [];
+        const rawResults = await this.prisma.timecodesOnFiles.findMany({
+            include: {
+                File: true,
+            },
+            orderBy: {
+                File: {
+                    path: 'asc',
+                },
+            },
+        });
+        const timecodes: Timecode[] = rawResults.map(
+            (row) => new Timecode(row.id, row.fileId, row.File.path, [], row.start, row.end)
+        );
+        const timecodeIds = timecodes.map((t) => t.timecodeId);
 
-        const sql1 = `
-            SELECT
-                TimecodesOnFiles.id,
-                File.hash AS hash,
-                File.path,
-                File.active,
-                TimecodesOnFiles.Start,
-                TimecodesOnFiles.End
-            FROM TimecodesOnFiles
-            JOIN File
-            ON File.id = TimecodesOnFiles.fileId
-            WHERE File.active = 1
-            ORDER BY File.path, start
-        `;
-
-        const each1 = (err: Error, row: any) => {
-            timecodes.push(new Timecode(row.id, row.hash, row.path, [], row.start, row.end));
-        };
-
-        const stmt1 = this._db.prepare(sql1);
-        await stmt1.eachAsync([], each1);
-
-        const sql2 = `
-            SELECT
-                TagsOnTimecodes.id AS id,
-                TagsOnTimecodes.timecodeId AS timecodeId,
-                TagsOnTimecodes.tagId AS tagId,
-                Tag.name AS tagName
-            FROM TagsOnTimecodes
-            JOIN TimecodesOnFiles
-            ON TimecodesOnFiles.id = tagsOnTimecodes.timecodeId
-            JOIN Tag
-            ON Tag.id = TagsOnTimecodes.tagId
-            ORDER BY TimecodesOnFiles.start, Tag.name
-        `;
-
-        const each2 = (err: Error, row: any) => {
+        const rawResults2 = await this.prisma.tagsOnTimecodes.findMany({
+            where: {
+                timecodeId: { in: timecodeIds },
+            },
+            include: {
+                Tag: true,
+            },
+        });
+        rawResults2.forEach((row) => {
             const timecode = timecodes.find((t) => t.timecodeId === row.timecodeId);
-            if (timecode) {
-                timecode.timecodeTags.push(new TimecodeTag(row.timecodeId, row.id, new Tag(row.tagId, row.tagName, 0)));
-            }
-        };
 
-        const stmt2 = this._db.prepare(sql2);
-        await stmt2.eachAsync([], each2);
+            if (timecode) {
+                timecode.timecodeTags.push(
+                    new TimecodeTag(row.timecodeId, row.id, new Tag(row.tagId, row.Tag.name, 0))
+                );
+            }
+        });
 
         let timecodesWithTags = timecodes.filter((t) => t.timecodeTags.length > 0);
 
@@ -871,39 +712,33 @@ export class Library {
             throw new Error('No files provided for linking');
         }
 
-        const selectPrepares: string[] = [];
-        const selectParams: any[] = [];
-        for (const inputTag of inputTags) {
-            for (const file of files) {
-                selectPrepares.push('(fileId = ? AND TagId = ?)');
-                selectParams.push(file.fileId);
-                selectParams.push(inputTag.id);
-            }
-        }
+        const tagIds = inputTags.map((tag) => tag.id);
+        const fileIds = files.map((file) => file.fileId);
 
-        const select = `SELECT * FROM TagsOnFiles WHERE ${selectPrepares.join(' OR ')}`;
-        const selectStmt = this._db.prepare(select);
+        const rawResults = await this.prisma.tagsOnFiles.findMany({
+            where: {
+                tagId: { in: tagIds },
+                fileId: { in: fileIds },
+            },
+        });
 
-        const selectResults: Map<string, Set<number>> = new Map<string, Set<number>>();
-        const each = (err: Error, row: any) => {
+        const selectResults: Map<number, Set<number>> = new Map<number, Set<number>>();
+        rawResults.forEach((row) => {
             if (!selectResults.has(row.fileId)) {
                 selectResults.set(row.fileId, new Set<number>());
             }
             // Map entry is guaranteed to exist as we just checked and/or created it.
-            (<Set<number>>selectResults.get(row.fileId)).add(row.TagId);
-        };
-        await selectStmt.eachAsync(selectParams, each);
+            (<Set<number>>selectResults.get(row.fileId)).add(row.tagId);
+        });
 
-        const deletePrepares: string[] = [];
-        const deleteParams: any[] = [];
+        const deletes: Prisma.Sql[] = [];
         const results: FileTagLink[] = [];
+
         for (const inputTag of inputTags) {
             for (const file of files) {
-                if (selectResults.has(file.hash) && (<Set<number>>selectResults.get(file.hash)).has(inputTag.id)) {
+                if (selectResults.has(file.fileId) && (<Set<number>>selectResults.get(file.fileId)).has(inputTag.id)) {
                     winston.verbose(`${file.path} already had ${inputTag.name}`);
-                    deletePrepares.push('(fileId = ? AND tagId = ?)');
-                    deleteParams.push(file.fileId);
-                    deleteParams.push(inputTag.id);
+                    deletes.push(Prisma.sql`(file_id = ${file.fileId} AND tag_id = ${inputTag.id})`);
                     results.push(new FileTagLink(file, inputTag));
                 } else {
                     winston.verbose(`${file.path} did NOT HAVE ${inputTag.name}`);
@@ -911,44 +746,75 @@ export class Library {
             }
         }
 
-        if (deletePrepares.length === 0) {
+        if (deletes.length === 0) {
             return [];
         }
 
-        const deleteSql = `DELETE FROM TagsOnFiles WHERE ${deletePrepares.join(' OR ')}`;
-        const deleteStmt = this._db.prepare(deleteSql);
-
-        try {
-            await deleteStmt.runAsync(deleteParams);
-            return results;
-        } catch (err) {
-            if ((<any>err).code !== 'SQLITE_CONSTRAINT') {
-                throw err;
-            }
-
-            return [];
-        }
+        const combinedDeletes = deletes.reduce(
+            (query, deletion, currentIndex) =>
+                currentIndex === 0 ? Prisma.sql` ${query} ${deletion} ` : Prisma.sql` ${query} OR ${deletion} `,
+            Prisma.empty
+        );
+        const deleteSql = Prisma.sql`DELETE FROM tags_on_files WHERE ${combinedDeletes}`;
+        await this.prisma.$executeRaw(deleteSql);
+        return results;
     }
 
     public async deleteLinkBetweenTagAndFile(inputTag: number, inputFile: string): Promise<void> {
         const file = await this.getFile(inputFile);
 
-        const stmt = this._db.prepare('DELETE FROM TagsOnFiles WHERE fileId = ? AND tagId = ?');
-        return stmt.runAsync(file.fileId, inputTag);
+        await this.prisma.tagsOnFiles.delete({
+            where: {
+                fileId_tagId: {
+                    tagId: inputTag,
+                    fileId: file.fileId,
+                },
+            },
+        });
     }
 
-    public storeTimeForFileScreenshot(file: File, time: number) {
-        const stmt = this._db.prepare('INSERT OR REPLACE INTO ScreenshotFile (id, time) VALUES (?, ?)');
-        return stmt.runAsync(file.fileId, time);
+    public async storeTimeForFileScreenshot(file: File, time: number): Promise<void> {
+        await this.prisma.screenshotFile.upsert({
+            where: {
+                id: file.fileId,
+            },
+            update: {
+                time: time,
+            },
+            create: {
+                id: file.fileId,
+                time: time,
+            },
+        });
     }
 
-    public storeTimeForTimecodeScreenshot(timecode: Timecode, time: number) {
-        const stmt = this._db.prepare('INSERT OR REPLACE INTO ScreenshotTimecode (Id, Time) VALUES (?, ?)');
-        return stmt.runAsync(timecode.timecodeId, time);
+    public async storeTimeForTimecodeScreenshot(timecode: Timecode, time: number): Promise<void> {
+        await this.prisma.screenshotTimecode.upsert({
+            where: {
+                id: timecode.timecodeId,
+            },
+            update: {
+                time: time,
+            },
+            create: {
+                id: timecode.timecodeId,
+                time: time,
+            },
+        });
     }
 
-    public storeTimeForTagScreenshot(tag: Tag, file: File, time: number) {
-        const stmt = this._db.prepare('INSERT OR REPLACE INTO ScreenshotTag (Id, fileId, Time) VALUES (?, ?, ?)');
-        return stmt.runAsync(tag.id, file.fileId, time);
+    public async storeTimeForTagScreenshot(tag: Tag, file: File, time: number): Promise<void> {
+        await this.prisma.screenshotTag.upsert({
+            where: { id: tag.id },
+            update: {
+                fileId: file.fileId,
+                time: time,
+            },
+            create: {
+                id: tag.id,
+                fileId: file.fileId,
+                time: time,
+            },
+        });
     }
 }

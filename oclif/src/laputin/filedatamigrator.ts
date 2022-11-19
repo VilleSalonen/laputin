@@ -25,7 +25,7 @@ export class FileDataMigrator {
     }
 
     private async migrateTimecodes(sourceFile: File, targetFile: File): Promise<void> {
-        const timecodes = await this.library.getTimecodesForFile(sourceFile.hash);
+        const timecodes = await this.library.getTimecodesForFile(sourceFile);
         for (const timecode of timecodes) {
             const sourcePath = this.screenshotter.getTagTimecodeThumbPath(timecode);
             const sourceSmallPath = this.screenshotter.getTagTimecodeThumbSmallPath(timecode);
