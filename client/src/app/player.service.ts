@@ -27,7 +27,6 @@ export class PlayerService {
     public progress$ = new BehaviorSubject<Progress>(new Progress(0, 0, 0));
     public initialized = new Subject<void>();
 
-    private timeDrift: number = null;
     private fps: number;
     private frameInSeconds: number;
     private frameWindowLower: number;
@@ -40,7 +39,6 @@ export class PlayerService {
 
     private playerClosed = new EventEmitter<any>();
 
-    private driftSubscription: Subscription;
     private durationSubscription: Subscription;
     private frameSubscription: Subscription;
 
@@ -60,18 +58,16 @@ export class PlayerService {
             this.paintCount = 'webkitDecodedFrameCount';
         }
 
-        this.driftSubscription = zip(
-            fromEvent(this.player, 'durationchange'),
-            fromEvent(this.player, 'canplay')
-        ).subscribe(([_durationChange, canPlay]: [any, any]) => {
-            this.timeDrift = (<any>canPlay.target).currentTime;
-            this.initialized.next();
-        });
-
         this.durationSubscription = fromEvent(
             this.player,
             'durationchange'
-        ).subscribe(() => {
+        ).subscribe((event: any) => {
+            // This event is also triggered when the end of the video is reached. We only want to initialize when a
+            // video is started.
+            if (event.target.currentTime !== 0) {
+                return;
+            }
+
             const components = this.file.metadata.framerate.split('/');
             this.fps =
                 parseInt(components[0], 10) / parseInt(components[1], 10);
@@ -84,24 +80,16 @@ export class PlayerService {
             this.nextFrame = 1;
             this.nextFrameTime = this.nextFrame * this.frameInSeconds;
 
+            this.initialized.next();
             this.emit();
         });
 
         const seekedFrameUpdates = fromEvent(this.player, 'seeked').pipe(
-            map(() => {
-                const time = this.player.currentTime - this.timeDrift;
-                const frame = Math.floor(time / this.frameInSeconds);
-                return frame;
-            })
+            map(() => Math.floor(this.player.currentTime / this.frameInSeconds))
         );
 
         const pauseFrameUpdates = fromEvent(this.player, 'pause').pipe(
-            map(() => {
-                const time = this.player.currentTime - this.timeDrift;
-                // For some reason rounding works better than flooring for pause.
-                const frame = Math.round(time / this.frameInSeconds);
-                return frame;
-            })
+            map(() => Math.round(this.player.currentTime / this.frameInSeconds))
         );
 
         this.frameSubscription = merge(
@@ -127,7 +115,7 @@ export class PlayerService {
             return;
         }
 
-        const time = this.player.currentTime - this.timeDrift;
+        const time = this.player.currentTime;
         const frame = Math.round(time / this.frameInSeconds);
         if (this.paintCount) {
             const currentPaintCount = this.player[this.paintCount];
@@ -160,9 +148,9 @@ export class PlayerService {
 
     private emit(): void {
         const timecode = this.currentFrame * this.frameInSeconds;
-        const time = this.player.currentTime - this.timeDrift;
-
-        this.progress$.next(new Progress(this.currentFrame, timecode, time));
+        this.progress$.next(
+            new Progress(this.currentFrame, timecode, this.player.currentTime)
+        );
     }
 
     public getCurrentTime(): number {
@@ -207,11 +195,6 @@ export class PlayerService {
 
         this.playerClosed.emit();
         this.player = null;
-
-        if (this.driftSubscription) {
-            this.driftSubscription.unsubscribe();
-            this.driftSubscription = null;
-        }
 
         if (this.durationSubscription) {
             this.durationSubscription.unsubscribe();
