@@ -251,6 +251,7 @@ export class FileLibrary extends events.EventEmitter {
                 this.addFileToBookkeeping(file);
 
                 const fileFromDb = await this.library.addFile(file);
+                this.addFileToBookkeeping(fileFromDb);
 
                 if (
                     fileFromDb &&
