@@ -7,9 +7,13 @@
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
-    "target": "es2019"
+    "target": "es2019",
+    "types": [
+      "mocha"
+    ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "tests/*"
   ]
 }

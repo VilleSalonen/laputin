@@ -37,9 +37,7 @@ export default class Start extends Command {
         const configFilePath = path.join(libraryPath, 'laputin.json');
         const configurationExists = await fs.stat(configFilePath);
         if (!configurationExists) {
-            throw new Error(
-                `Could not find configuration file at ${configFilePath}`
-            );
+            throw new Error(`Could not find configuration file at ${configFilePath}`);
         }
         const configurationJson = await fs.readFile(configFilePath, 'utf8');
         const configuration = JSON.parse(configurationJson);
@@ -51,11 +49,9 @@ export default class Start extends Command {
         await laputin.loadFiles(flags.performFullCheck);
 
         try {
-            app.listen(configuration.port, () => {
+            laputin.startListening(configuration.port, () => {
                 winston.info(
-                    `Laputin in ${chalk.green(libraryPath)} at ${chalk.green(
-                        'http://localhost:' + configuration.port
-                    )}`
+                    `Laputin in ${chalk.green(libraryPath)} at ${chalk.green('http://localhost:' + configuration.port)}`
                 );
             });
         } catch (error) {

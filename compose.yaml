@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15.0-bullseye
+    image: postgres:13.8-bullseye
     restart: always
     ports:
       - 5432:5432

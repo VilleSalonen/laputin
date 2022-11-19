@@ -5,6 +5,7 @@ import { constants } from 'node:fs';
 import fs = require('fs/promises');
 import { param } from 'express-validator';
 import cors = require('cors');
+import http = require('http');
 
 import { Library } from './library';
 import { FileLibrary } from './filelibrary';
@@ -20,6 +21,9 @@ import { TagQuery } from './tagquery.model';
 import { LaputinConfiguration } from './laputinconfiguration';
 
 export class Laputin {
+    public app: express.Express | undefined = undefined;
+    private server: http.Server | undefined = undefined;
+
     constructor(
         private _libraryPath: string,
         public library: Library,
@@ -29,27 +33,23 @@ export class Laputin {
     ) {}
 
     public initializeRoutes(app: express.Express): void {
-        app.use(bodyParser.json({}));
+        this.app = app;
 
-        app.use(cors({ origin: 'http://localhost:3000' }));
+        this.app.use(bodyParser.json({}));
+
+        this.app.use(cors({ origin: 'http://localhost:3000' }));
 
         const clientPath = path.join(__dirname, '../../../client/dist');
-        app.use(express.static(clientPath));
-        app.use(
-            '/node_modules',
-            <any>express.static(path.join(__dirname, '../node_modules'))
-        );
+        this.app.use(express.static(clientPath));
+        this.app.use('/node_modules', <any>express.static(path.join(__dirname, '../node_modules')));
 
-        app.use('/api', this._createApiRoutes());
+        this.app.use('/api', this._createApiRoutes());
 
-        app.get(
+        this.app.get(
             '/media/:fileId',
             param('fileId').exists().toInt(),
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
@@ -68,21 +68,28 @@ export class Laputin {
             }
         );
 
-        app.use(
-            '/laputin',
-            <any>express.static(path.join(this._libraryPath, '/public'))
-        );
+        this.app.use('/laputin', <any>express.static(path.join(this._libraryPath, '/public')));
 
         if (this.configuration.proxyDirectory) {
-            app.use(
-                '/proxies',
-                <any>express.static(this.configuration.proxyDirectory)
-            );
+            this.app.use('/proxies', <any>express.static(this.configuration.proxyDirectory));
         }
     }
 
     public async loadFiles(performFullCheck: boolean): Promise<void> {
         await this.fileLibrary.load(performFullCheck);
+    }
+
+    public startListening(port: number, callback?: () => void): http.Server {
+        if (!this.app) {
+            throw new Error('Express is not initialized!');
+        }
+
+        this.server = this.app.listen(port, callback);
+        return this.server;
+    }
+
+    public stopListening() {
+        this.server?.close();
     }
 
     private async validateFileExists(
@@ -104,9 +111,7 @@ export class Laputin {
     private getFileFromReq(req: express.Request): File {
         const file: File = (<any>req).file;
         if (!file) {
-            throw new Error(
-                'Could not read file from req! Did you run middleware validateFileExists?'
-            );
+            throw new Error('Could not read file from req! Did you run middleware validateFileExists?');
         }
 
         return file;
@@ -136,13 +141,7 @@ export class Laputin {
                 const notTags = this.parseTags(<any>req.query.notTags);
                 const unassociated = req.query.unassociated === 'true';
 
-                const query = new TagQuery(
-                    <any>tagName,
-                    <any>andTags,
-                    <any>orTags,
-                    <any>notTags,
-                    <any>unassociated
-                );
+                const query = new TagQuery(<any>tagName, <any>andTags, <any>orTags, <any>notTags, <any>unassociated);
 
                 const tags = await this.library.getTags(query);
                 res.send(tags);
@@ -160,19 +159,13 @@ export class Laputin {
         });
 
         api.route('/tags/:tagId').put(async (req, res) => {
-            const tag = await this.library.renameTag(
-                Number(req.params.tagId),
-                req.body.name
-            );
+            const tag = await this.library.renameTag(Number(req.params.tagId), req.body.name);
             res.send(tag);
         });
 
         api.route('/files/:fileId/tags').post(
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
@@ -185,11 +178,8 @@ export class Laputin {
         );
 
         api.route('/files/:fileId/timecodes').get(
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
@@ -199,11 +189,8 @@ export class Laputin {
         );
 
         api.route('/files/:fileId/timecodes').post(
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
@@ -211,27 +198,14 @@ export class Laputin {
                 const screenshotTime: number = req.body.screenshotTime;
 
                 timecode.timecodeTags.forEach((timecodeTag: TimecodeTag) => {
-                    this.library.createNewLinkBetweenTagAndFile(
-                        timecodeTag.tag,
-                        file.hash
-                    );
+                    this.library.createNewLinkBetweenTagAndFile(timecodeTag.tag, file.hash);
                 });
 
-                const result = await this.library.addTimecodeToFile(
-                    timecode,
-                    file.hash
-                );
+                const result = await this.library.addTimecodeToFile(timecode, file.hash);
 
                 if (!timecode.timecodeId) {
-                    const screenshotter = new Screenshotter(
-                        this._libraryPath,
-                        this.library
-                    );
-                    await screenshotter.screenshotTimecode(
-                        file,
-                        result,
-                        screenshotTime
-                    );
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
+                    await screenshotter.screenshotTimecode(file, result, screenshotTime);
                 }
 
                 res.send(result);
@@ -242,11 +216,8 @@ export class Laputin {
             '/files/:fileId/timecodes/:timecodeId',
             param('fileId').exists().toInt(),
             param('timecodeId').exists().toInt(),
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 await this.library.updateTimecodeStartAndEnd(Number(req.params?.timecodeId), req.body.timecode);
                 res.status(200).end();
@@ -257,19 +228,12 @@ export class Laputin {
             '/files/:fileId/timecodes/:timecodeId/tags/:timecodeTagId',
             param('fileId').exists().toInt(),
             param('timecodeId').exists().toInt(),
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
-                await this.library.removeTagFromTimecode(
-                    file.hash,
-                    req.params.timecodeId,
-                    req.params.timecodeTagId
-                );
+                await this.library.removeTagFromTimecode(file.hash, req.params.timecodeId, req.params.timecodeTagId);
                 res.status(200).end();
             }
         );
@@ -277,18 +241,12 @@ export class Laputin {
         api.delete(
             '/files/:fileId/tags/:tagId',
             param('fileId').exists().toInt(),
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
-                await this.library.deleteLinkBetweenTagAndFile(
-                    Number(req.params.tagId),
-                    file.hash
-                );
+                await this.library.deleteLinkBetweenTagAndFile(Number(req.params.tagId), file.hash);
                 res.status(200).end();
             }
         );
@@ -298,23 +256,15 @@ export class Laputin {
             param('sourceFileId').exists().toInt(),
             param('targetFileId').exists().toInt(),
             async (req, res) => {
-                const sourceFile = await this.library.getFileById(
-                    req.params?.sourceFileId
-                );
+                const sourceFile = await this.library.getFileById(req.params?.sourceFileId);
                 if (!sourceFile) {
-                    res.status(404).send(
-                        `Could not find source file with ID ${req.params?.sourceFileId}`
-                    );
+                    res.status(404).send(`Could not find source file with ID ${req.params?.sourceFileId}`);
                     return;
                 }
 
-                const targetFile = await this.library.getFileById(
-                    req.params?.targetFileId
-                );
+                const targetFile = await this.library.getFileById(req.params?.targetFileId);
                 if (!targetFile) {
-                    res.status(404).send(
-                        `Could not find target file with ID ${req.params?.sourceFileId}`
-                    );
+                    res.status(404).send(`Could not find target file with ID ${req.params?.sourceFileId}`);
                     return;
                 }
 
@@ -364,10 +314,7 @@ export class Laputin {
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(
-                        this._libraryPath,
-                        this.library
-                    );
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
                     await screenshotter.screenshot(files[0], req.body.time);
                 }
 
@@ -392,15 +339,8 @@ export class Laputin {
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(
-                        this._libraryPath,
-                        this.library
-                    );
-                    await screenshotter.screenshotTimecode(
-                        files[0],
-                        req.body.timecode,
-                        req.body.time
-                    );
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
+                    await screenshotter.screenshotTimecode(files[0], req.body.timecode, req.body.time);
                 }
 
                 res.status(200).end();
@@ -424,15 +364,8 @@ export class Laputin {
                 const files = await this.library.getFiles(query);
 
                 if (files.length > 0) {
-                    const screenshotter = new Screenshotter(
-                        this._libraryPath,
-                        this.library
-                    );
-                    await screenshotter.screenshotTag(
-                        req.body.tag,
-                        files[0],
-                        req.body.time
-                    );
+                    const screenshotter = new Screenshotter(this._libraryPath, this.library);
+                    await screenshotter.screenshotTag(req.body.tag, files[0], req.body.time);
                 }
 
                 res.status(200).end();
@@ -444,11 +377,8 @@ export class Laputin {
         api.get(
             '/proxyExists/:fileId',
             param('fileId').exists().toInt(),
-            (
-                req: express.Request,
-                res: express.Response,
-                next: express.NextFunction
-            ) => this.validateFileExists(req, res, next),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
             async (req, res) => {
                 const file = this.getFileFromReq(req);
 
@@ -457,10 +387,7 @@ export class Laputin {
                 } else {
                     try {
                         await fs.access(
-                            path.join(
-                                this.configuration.proxyDirectory,
-                                file.fileId + '.mp4'
-                            ),
+                            path.join(this.configuration.proxyDirectory, file.fileId + '.mp4'),
                             constants.R_OK
                         );
                         res.send(true);
@@ -472,10 +399,6 @@ export class Laputin {
         );
 
         return api;
-    }
-
-    private isInteger(candidate: string): boolean {
-        return /^-?[0-9]+$/.test(candidate + '');
     }
 
     private parseTags(tagsString: string): string[] {
