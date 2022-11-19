@@ -12,7 +12,7 @@
                         <i class="fa fa-folder" aria-hidden="true"></i>
                     </a>
     
-                    <a [href]="sanitize('intent://' + baseMediaPath + file.hash + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
+                    <a [href]="sanitize('intent://' + baseMediaPath + file.fileId + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
                         <i class="fa fa-film" aria-hidden="true"></i>
                     </a>
                 </span>
@@ -52,7 +52,7 @@
                         <i class="fa fa-film" aria-hidden="true"></i>
                     </a>
     
-                    <a [href]="sanitize('intent://' + baseMediaPath + file.hash + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
+                    <a [href]="sanitize('intent://' + baseMediaPath + file.fileId + '#Intent;scheme=http;package=org.videolan.vlc;end')" *ngIf="isMobile">
                         <i class="fa fa-film" aria-hidden="true"></i>
                     </a>
                 </span>
