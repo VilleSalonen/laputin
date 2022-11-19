@@ -1,2 +1,4 @@
 .DS_Store
 oclif/test/commands/test-runs/
+servers.json
+pgpass
