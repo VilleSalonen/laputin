@@ -385,9 +385,7 @@ export class FileComponent implements AfterViewInit {
     }
 
     public showFileInExplorer(): void {
-        this.laputinService
-            .showFileInExplorer(new FileQuery({ hash: this.file.hash }))
-            .toPromise();
+        this.laputinService.showFileInExplorer(this.file).toPromise();
     }
 
     private addTagTimecode(timecode: Timecode): void {

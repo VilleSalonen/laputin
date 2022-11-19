@@ -17,6 +17,13 @@ import { TagQuerySort } from './models/tagquerysort';
 
 @Injectable()
 export class LaputinService {
+    private defaultOptions = {
+        headers: new HttpHeaders({
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        }),
+    };
+
     private _baseUrl = '/api';
 
     public thumbnailChanged: ReplaySubject<File> = new ReplaySubject<File>(5);
@@ -300,9 +307,16 @@ export class LaputinService {
         return this._http.get(this._baseUrl + '/open/files' + params);
     }
 
-    public showFileInExplorer(query: FileQuery): Observable<any> {
-        const params = this.compileFileQueryParams(query);
-        return this._http.get(this._baseUrl + '/showInExplorer' + params);
+    public showFileInExplorer(file: File): Observable<any> {
+        const headers = new HttpHeaders({
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        });
+        return this._http.post(
+            `${this._baseUrl}/showInExplorer/${file.fileId}`,
+            {},
+            this.defaultOptions
+        );
     }
 
     public createTag(newTagName: string): Observable<Tag> {

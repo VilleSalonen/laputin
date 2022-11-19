@@ -310,15 +310,23 @@ export class Laputin {
             res.status(200).end();
         });
 
-        api.route('/showInExplorer').get(async (req, res) => {
-            const explorerOpener = new ExplorerOpener();
+        api.post(
+            '/showInExplorer/:fileId',
+            param('fileId').exists().toInt(),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const explorerOpener = new ExplorerOpener();
 
-            const files = await this.library.getFiles(<any>req.query);
-            if (files && files.length > 0) {
-                explorerOpener.open(files);
+                const file = await this.library.getFileById(parseInt(req.params.fileId));
+                if (!file) {
+                    res.status(404).end();
+                } else {
+                    explorerOpener.open(file);
+                    res.status(200).end();
+                }
             }
-            res.status(200).end();
-        });
+        );
 
         api.route('/screenshot').post(async (req, res) => {
             try {

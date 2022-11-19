@@ -7,13 +7,13 @@ import { File } from './file';
 export class ExplorerOpener {
     private _binaryPath = 'C:\\WINDOWS\\explorer.exe';
 
-    public open(files: File[]): void {
+    public open(file: File): void {
         let command = '';
         if (process.platform === 'win32') {
-            const filePath = files[0].path.replace(/\//g, '\\');
+            const filePath = file.path.replace(/\//g, '\\');
             command = `"${this._binaryPath}" /select,"${filePath}"`;
         } else {
-            const filePath = path.dirname(files[0].path);
+            const filePath = path.dirname(file.path);
             command = `open "${filePath}"`;
         }
 
