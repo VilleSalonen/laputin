@@ -7,13 +7,13 @@ import {
     EventEmitter,
     OnInit,
     Injectable,
-    HostListener
+    HostListener,
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import {
     MatAutocompleteSelectedEvent,
     MatAutocomplete,
-    MatAutocompleteTrigger
+    MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -31,7 +31,7 @@ enum OptionType {
     Tag,
     Status,
     File,
-    SearchOption
+    SearchOption,
 }
 
 class Option {
@@ -46,7 +46,7 @@ class Option {
     selector: 'app-file-query',
     styleUrls: ['./file-query.component.scss'],
     templateUrl: './file-query.component.html',
-    providers: [LaputinService]
+    providers: [LaputinService],
 })
 @Injectable()
 export class FileQueryComponent implements OnInit {
@@ -55,13 +55,13 @@ export class FileQueryComponent implements OnInit {
     public allSearchOptions: Option[] = [
         new Option(OptionType.SearchOption, 'tag', 'tag:'),
         new Option(OptionType.SearchOption, 'tagged, untagged, all', 'status:'),
-        new Option(OptionType.SearchOption, 'file', 'file:')
+        new Option(OptionType.SearchOption, 'file', 'file:'),
     ];
 
     public allStatuses: Option[] = [
         new Option(OptionType.Status, 'Both', 'both'),
         new Option(OptionType.Status, 'Tagged', 'tagged'),
-        new Option(OptionType.Status, 'Untagged', 'untagged')
+        new Option(OptionType.Status, 'Untagged', 'untagged'),
     ];
     public matchingStatuses: Option[] = [];
 
@@ -102,7 +102,7 @@ export class FileQueryComponent implements OnInit {
         private router: Router,
         private fileQueryService: FileQueryService
     ) {
-        this.fileQueryService.query$.subscribe(query => (this.query = query));
+        this.fileQueryService.query$.subscribe((query) => (this.query = query));
 
         this.queryUpdatedSubject
             .pipe(
@@ -110,7 +110,7 @@ export class FileQueryComponent implements OnInit {
                     (a, b) => JSON.stringify(a) === JSON.stringify(b)
                 )
             )
-            .subscribe(query => {
+            .subscribe((query) => {
                 this.query = new FileQuery(query);
                 this.queryUpdated.emit(query);
                 this.fileQueryService.emit(query);
@@ -124,7 +124,7 @@ export class FileQueryComponent implements OnInit {
             .then(
                 (tags: Tag[]) =>
                     (this.allTags = tags.map(
-                        t => new Option(OptionType.Tag, t.name, t)
+                        (t) => new Option(OptionType.Tag, t.name, t)
                     ))
             );
 
@@ -134,7 +134,7 @@ export class FileQueryComponent implements OnInit {
             .then(
                 (files: File[]) =>
                     (this.allFiles = files.map(
-                        f => new Option(OptionType.File, f.name, f)
+                        (f) => new Option(OptionType.File, f.name, f)
                     ))
             );
 
@@ -186,7 +186,10 @@ export class FileQueryComponent implements OnInit {
                 this.emitUpdate(query);
                 this.clearInput();
             } else if (event.option.value.type === OptionType.File) {
-                this.router.navigate(['/files', event.option.value.value.hash]);
+                this.router.navigate([
+                    '/files',
+                    event.option.value.value.fileId,
+                ]);
             }
         }
     }
@@ -200,7 +203,7 @@ export class FileQueryComponent implements OnInit {
             return;
         }
 
-        this.matchingStatuses = this.allStatuses.filter(s =>
+        this.matchingStatuses = this.allStatuses.filter((s) =>
             s.text.toLowerCase().startsWith(this.searchTerm)
         );
 
@@ -208,7 +211,7 @@ export class FileQueryComponent implements OnInit {
             .filter((option: Option) =>
                 this.searchTerm
                     .split(' ')
-                    .every(word =>
+                    .every((word) =>
                         option.value.name.toLowerCase().includes(word)
                     )
             )
