@@ -108,7 +108,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
             [
                 { path: '', redirectTo: 'files', pathMatch: 'full' },
                 { path: 'files', component: FilesComponent },
-                { path: 'files/:hash', component: FileComponent },
+                { path: 'files/:fileId', component: FileComponent },
                 { path: 'timecodes', component: TimecodesComponent },
                 { path: 'tags', component: TagsComponent },
                 { path: 'duplicates', component: DuplicatesComponent },

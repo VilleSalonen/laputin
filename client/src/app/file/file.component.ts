@@ -98,10 +98,8 @@ export class FileComponent implements AfterViewInit {
         breakpointObserver: BreakpointObserver
     ) {
         this.activeFile$ = this.activatedRoute.params.pipe(
-            map((params) => params['hash']),
-            map((hash) => new FileQuery({ hash: hash })),
-            switchMap((query) => this.laputinService.queryFiles(query)),
-            map((files) => files[0]),
+            map((params) => parseInt(params['fileId'])),
+            switchMap((fileId) => this.laputinService.getFile(fileId)),
             shareReplay(1),
             tap((file) => {
                 this.file = file;
@@ -382,7 +380,7 @@ export class FileComponent implements AfterViewInit {
 
     public openFile(): void {
         this.laputinService
-            .openFiles(new FileQuery({ hash: this.file.hash }))
+            .openFiles(new FileQuery({ fileIds: [this.file.fileId] }))
             .toPromise();
     }
 

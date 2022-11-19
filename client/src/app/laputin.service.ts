@@ -26,6 +26,10 @@ export class LaputinService {
 
     constructor(private _http: HttpClient) {}
 
+    public getFile(fileId: number): Observable<File> {
+        return this._http.get<File>(`${this._baseUrl}/files/${fileId}`);
+    }
+
     public queryFiles(query: FileQuery): Observable<File[]> {
         const params = this.compileFileQueryParams(query);
         return this._http.get(this._baseUrl + '/files' + params).pipe(

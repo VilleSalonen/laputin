@@ -125,6 +125,21 @@ export class Laputin {
             res.send(files);
         });
 
+        api.get(
+            '/files/:fileId',
+            param('fileId').exists().toInt(),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = await this.library.getFileById(parseInt(req.params.fileId));
+                if (file) {
+                    res.send(file);
+                } else {
+                    res.status(404);
+                }
+            }
+        );
+
         api.route('/timecodes').get(async (req, res) => {
             const timecodes = await this.library.getTimecodes(<any>req.query);
             res.send(timecodes);

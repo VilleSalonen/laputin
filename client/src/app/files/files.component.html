@@ -44,7 +44,7 @@
                 <virtual-scroller #scroll [items]="files">
                     <div class="files-grid" #container>
                         <div class="grid-item" *ngFor="let file of scroll.viewPortItems" [ngStyle]="fileStyle" role="button">
-                            <a href="/#/files/{{ file.hash }}" (click)="rememberFile(file)">
+                            <a href="/#/files/{{ file.fileId }}" (click)="rememberFile(file)">
                                 <ng-container *ngIf="activeViewMode === ViewMode.Thumbnails || activeViewMode === ViewMode.SmallThumbnails">
                                     <app-file-item [file]="file"></app-file-item>
                                 </ng-container>
