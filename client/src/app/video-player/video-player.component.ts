@@ -467,13 +467,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.tagCreationOpen = !this.tagCreationOpen;
     }
 
-    public openFile(): void {
-        const query = new FileQuery();
-        query.hash = this.file.hash;
-
-        this._service.openFiles(query);
-    }
-
     public screenshot(): void {
         this._service
             .screenshotFile(this.file, this._playerService.getCurrentTime())
