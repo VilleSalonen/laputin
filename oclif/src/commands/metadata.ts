@@ -7,6 +7,7 @@ import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
 import { IHasher } from '../laputin/ihasher';
+import { File } from '../laputin/file';
 
 export default class MetadataCommand extends Command {
     static description = 'Set file metadata';
@@ -19,8 +20,10 @@ export default class MetadataCommand extends Command {
             description: 'Laputin library path',
             required: true,
         }),
-        file: Flags.string({ required: true }),
-        metadataFileName: Flags.string({ required: true }),
+        path: Flags.string(),
+        hash: Flags.string(),
+        metadata: Flags.string(),
+        metadataFileName: Flags.string(),
         verbose: Flags.boolean(),
     };
 
@@ -32,28 +35,42 @@ export default class MetadataCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const fileStat = await fs.stat(flags.file);
-        if (!fileStat?.isFile()) {
-            throw new Error(`${flags.file} is not a valid file.`);
+        let metadataObject: any;
+        if (flags.metadataFileName) {
+            const metadata = (await fs.readFile(flags.metadataFileName, 'utf8')).trim();
+            metadataObject = JSON.parse(metadata);
+        } else if (flags.metadata) {
+            metadataObject = JSON.parse(flags.metadata);
         }
-
-        const metadataFileStat = await fs.stat(flags.metadataFileName);
-        if (!metadataFileStat?.isFile) {
-            throw new Error(`${flags.metadataFileName} is not a valid file.`);
-        }
-
-        const metadata = (await fs.readFile(flags.metadataFileName, 'utf8')).trim();
-        const metadataObject = JSON.parse(metadata);
 
         const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();
 
-        const hash = await hasher.hash(flags.file, fileStat);
-        const file = await library.getFileByHash(hash);
-        if (!file) {
-            throw new Error(`Could not find file with hash ${hash}!`);
+        let file: File;
+        if (flags.path) {
+            const fileStat = await fs.stat(flags.path);
+            if (!fileStat?.isFile()) {
+                throw new Error(`${flags.file} is not a valid file.`);
+            }
+
+            const hash = await hasher.hash(flags.path, fileStat);
+            const fileCandidate = await library.getFileByHash(hash);
+            if (!fileCandidate) {
+                throw new Error(`Could not find file with hash ${hash}!`);
+            }
+
+            file = fileCandidate;
+        } else if (flags.hash) {
+            const fileCandidate = await library.getFileByHash(flags.hash);
+            if (!fileCandidate) {
+                throw new Error(`Could not find file with hash ${flags.hash}!`);
+            }
+
+            file = fileCandidate;
+        } else {
+            throw new Error('You must pass either --path or --hash!');
         }
 
         await library.updateMetadata(file, {
@@ -61,7 +78,7 @@ export default class MetadataCommand extends Command {
             ...metadataObject,
         });
 
-        winston.log('info', `Target file: ${flags.file}`);
-        winston.log('info', `Metadata: ${metadata}`);
+        winston.log('info', `Target file: ${file.path}`);
+        winston.log('info', `Metadata: ${JSON.stringify(metadataObject)}`);
     }
 }
