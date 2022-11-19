@@ -20,7 +20,7 @@
 
         <ng-container *ngIf="searchTerm && matchingFiles.length > 0">
             <mat-option *ngFor="let file of matchingFiles" [value]="file">
-                <img *ngIf="file" class="tag-preview" aria-hidden src="/laputin/thumbs-small/{{file.hash}}.jpg" onerror="this.style.display = 'none'" />
+                <img *ngIf="file" class="tag-preview" aria-hidden src="/laputin/thumbs-small/{{file.fileId}}.jpg" onerror="this.style.display = 'none'" />
                 {{file.name}}
             </mat-option>
         </ng-container>
