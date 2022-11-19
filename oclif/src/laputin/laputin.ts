@@ -163,7 +163,9 @@ export class Laputin {
             res.send(tag);
         });
 
-        api.route('/files/:fileId/tags').post(
+        api.post(
+            '/files/:fileId/tags',
+            param('fileId').exists().toInt(),
             (req: express.Request, res: express.Response, next: express.NextFunction) =>
                 this.validateFileExists(req, res, next),
             async (req, res) => {
@@ -177,7 +179,9 @@ export class Laputin {
             }
         );
 
-        api.route('/files/:fileId/timecodes').get(
+        api.get(
+            '/files/:fileId/timecodes',
+            param('fileId').exists().toInt(),
             (req: express.Request, res: express.Response, next: express.NextFunction) =>
                 this.validateFileExists(req, res, next),
             async (req, res) => {
@@ -188,7 +192,9 @@ export class Laputin {
             }
         );
 
-        api.route('/files/:fileId/timecodes').post(
+        api.post(
+            '/files/:fileId/timecodes',
+            param('fileId').exists().toInt(),
             (req: express.Request, res: express.Response, next: express.NextFunction) =>
                 this.validateFileExists(req, res, next),
             async (req, res) => {
