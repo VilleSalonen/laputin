@@ -2,3 +2,4 @@
 oclif/test/commands/test-runs/
 servers.json
 pgpass
+oclif/deploy-tests/
