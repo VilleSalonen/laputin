@@ -209,7 +209,7 @@ export class FileComponent implements AfterViewInit {
                 switchMap((query) => this.laputinService.queryFiles(query)),
                 map((files) => {
                     const activeIndex = files.findIndex(
-                        (f) => f.hash === fileChange.currentFile.hash
+                        (f) => f.fileId === fileChange.currentFile.fileId
                     );
 
                     let newIndex: number;
@@ -233,7 +233,7 @@ export class FileComponent implements AfterViewInit {
                 }),
                 take(1)
             )
-            .subscribe((file) => this.router.navigate(['/files', file.hash]));
+            .subscribe((file) => this.router.navigate(['/files', file.fileId]));
     }
 
     public removeTimecode(timecode: Timecode): void {
