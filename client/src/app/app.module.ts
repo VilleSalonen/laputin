@@ -29,6 +29,7 @@ import { FileItemComponent } from './file-item/file-item.component';
 import { FilesComponent } from './files/files.component';
 import { TagsComponent } from './tags/tags.component';
 import { TagFilterPipe } from './tag-filter.pipe';
+import { FileSizePipe } from './file-size.pipe';
 import { TagRowComponent } from './tag-row/tag-row.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { LaputinService } from './laputin.service';
@@ -62,6 +63,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
         TimecodeItemComponent,
         FilesComponent,
         TagFilterPipe,
+        FileSizePipe,
         TagRowComponent,
         TagsComponent,
         TagScreenshotDialogComponent,

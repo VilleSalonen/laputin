@@ -24,19 +24,6 @@ export class File implements TagContainer {
         this.directory = this.path.replace(this.name, '');
         this.nameSansSuffix = this.name.substr(0, this.name.lastIndexOf('.'));
         this.suffix = this.name.substr(this.name.lastIndexOf('.'));
-        this.humanSize = this.formatHumanSize();
         this.metadata = metadata || {};
-    }
-
-    private formatHumanSize(): string {
-        if (this.size < 1000) {
-            return this.size + ' B';
-        } else if (this.size < 1000000) {
-            return (this.size / 1000.0).toFixed(1) + ' kB';
-        } else if (this.size < 1000000000) {
-            return (this.size / 1000000.0).toFixed(1) + ' MB';
-        } else {
-            return (this.size / 1000000000.0).toFixed(1) + ' GB';
-        }
     }
 }

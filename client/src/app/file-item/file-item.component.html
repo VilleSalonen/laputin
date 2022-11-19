@@ -2,7 +2,7 @@
     <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <div
             class="filename"
-            matTooltip="{{ file.path }}&#13;{{ file.metadata.duration | duration }} - {{file.humanSize}}&#13;{{ file.metadata.width }}x{{ file.metadata.height }}&#13;{{ file.metadata.codec }}"
+            matTooltip="{{ file.path }}&#13;{{ file.metadata.duration | duration }} - {{ file | fileSize }}&#13;{{ file.metadata.width }}x{{ file.metadata.height }}&#13;{{ file.metadata.codec }}"
             matTooltipClass="metadata-tooltip">
             <span class="filename-small">{{file.directory}}</span>
             <br />
