@@ -97,14 +97,14 @@ export class FilesComponent implements AfterViewInit {
                 map((files) => {
                     let index = 0;
 
-                    const previousFileHash = sessionStorage.getItem(
-                        'previousFileHash'
+                    const previousFileId = sessionStorage.getItem(
+                        'previousFileId'
                     );
-                    sessionStorage.removeItem('previousFileHash');
+                    sessionStorage.removeItem('previousFileId');
 
-                    if (previousFileHash) {
+                    if (previousFileId) {
                         const foundIndex = files.findIndex(
-                            (f) => f.hash === previousFileHash
+                            (f) => '' + f.fileId === previousFileId
                         );
                         if (foundIndex > -1) {
                             index = foundIndex;
@@ -185,7 +185,7 @@ export class FilesComponent implements AfterViewInit {
     }
 
     public rememberFile(file: File): void {
-        sessionStorage.setItem('previousFileHash', file.hash);
+        sessionStorage.setItem('previousFileId', '' + file.fileId);
     }
 
     private humanDuration(seconds: number): string {
