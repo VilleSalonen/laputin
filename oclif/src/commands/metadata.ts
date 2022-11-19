@@ -2,7 +2,7 @@ import { Command, Flags } from '@oclif/core';
 import fs = require('fs/promises');
 import winston = require('winston');
 
-import { getLibraryPathByFile } from '../laputin/helpers';
+import { getLibraryPath } from '../laputin/helpers';
 import { Library } from '../laputin/library';
 import { initializeWinston } from '../laputin/winston';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
@@ -14,6 +14,11 @@ export default class MetadataCommand extends Command {
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
     static flags = {
+        library: Flags.string({
+            char: 'l',
+            description: 'Laputin library path',
+            required: true,
+        }),
         file: Flags.string({ required: true }),
         metadataFileName: Flags.string({ required: true }),
         verbose: Flags.boolean(),
@@ -37,12 +42,10 @@ export default class MetadataCommand extends Command {
             throw new Error(`${flags.metadataFileName} is not a valid file.`);
         }
 
-        const metadata = (
-            await fs.readFile(flags.metadataFileName, 'utf8')
-        ).trim();
+        const metadata = (await fs.readFile(flags.metadataFileName, 'utf8')).trim();
         const metadataObject = JSON.parse(metadata);
 
-        const libraryPath = await getLibraryPathByFile(flags.file);
+        const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const hasher: IHasher = new QuickMD5Hasher();

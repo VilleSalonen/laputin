@@ -4,7 +4,7 @@ import os = require('os');
 import path = require('path');
 import winston = require('winston');
 
-import { getLibraryPathByFile } from '../../laputin/helpers';
+import { getLibraryPath } from '../../laputin/helpers';
 import { Library } from '../../laputin/library';
 import { readPipe } from '../../laputin/read-pipe';
 import { initializeWinston } from '../../laputin/winston';
@@ -16,6 +16,11 @@ export default class TagCommand extends Command {
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
     static flags = {
+        library: Flags.string({
+            char: 'l',
+            description: 'Laputin library path',
+            required: true,
+        }),
         file: Flags.string({ multiple: true, exclusive: ['stdinFile'] }),
         stdinFile: Flags.boolean({ exclusive: ['file'] }),
         tag: Flags.string({ multiple: true, exclusive: ['tags'] }),
@@ -57,7 +62,7 @@ export default class TagCommand extends Command {
             files = flags.file;
         }
 
-        const libraryPath = await getLibraryPathByFile(files[0]);
+        const libraryPath = await getLibraryPath(flags.library);
         const library = new Library(libraryPath);
 
         const allTags = await library.getAllTags();
