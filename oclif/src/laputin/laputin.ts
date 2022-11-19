@@ -304,6 +304,22 @@ export class Laputin {
             res.send(this.fileLibrary.getDuplicates());
         });
 
+        api.post(
+            '/open/files/:fileId',
+            param('fileId').exists().toInt(),
+            (req: express.Request, res: express.Response, next: express.NextFunction) =>
+                this.validateFileExists(req, res, next),
+            async (req, res) => {
+                const file = await this.library.getFileById(parseInt(req.params.fileId));
+                if (!file) {
+                    res.status(404).end();
+                } else {
+                    this._opener.open([file]);
+                    res.status(200).end();
+                }
+            }
+        );
+
         api.route('/open/files').get(async (req, res) => {
             const files = await this.library.getFiles(<any>req.query);
             this._opener.open(files);

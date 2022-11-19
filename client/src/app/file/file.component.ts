@@ -379,9 +379,7 @@ export class FileComponent implements AfterViewInit {
     }
 
     public openFile(): void {
-        this.laputinService
-            .openFiles(new FileQuery({ fileIds: [this.file.fileId] }))
-            .toPromise();
+        this.laputinService.openFile(this.file).toPromise();
     }
 
     public showFileInExplorer(): void {

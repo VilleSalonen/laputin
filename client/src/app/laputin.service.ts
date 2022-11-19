@@ -302,16 +302,20 @@ export class LaputinService {
         });
     }
 
+    public openFile(file: File): Observable<any> {
+        return this._http.post(
+            `${this._baseUrl}/open/files/${file.fileId}`,
+            {},
+            this.defaultOptions
+        );
+    }
+
     public openFiles(query: FileQuery): Observable<any> {
         const params = this.compileFileQueryParams(query);
         return this._http.get(this._baseUrl + '/open/files' + params);
     }
 
     public showFileInExplorer(file: File): Observable<any> {
-        const headers = new HttpHeaders({
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        });
         return this._http.post(
             `${this._baseUrl}/showInExplorer/${file.fileId}`,
             {},
