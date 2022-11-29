@@ -36,10 +36,10 @@ public class VideoController : ControllerBase
     }
 
     [HttpGet(Name = "GetVideo")]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(int id)
     {
         var context = new LaputinContext();
-        var file = await context.LaputinFiles.FirstAsync();
+        var file = await context.LaputinFiles.FindAsync(id);
 
         var filestream = System.IO.File.OpenRead(file.Path);
         return File(filestream, "video/mp4", enableRangeProcessing: true);
