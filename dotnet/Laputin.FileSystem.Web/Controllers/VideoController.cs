@@ -19,7 +19,7 @@ public class LaputinFile {
     public int Active { get; private set; }
 
     [Column("size")]
-    public int Size { get; private set; }
+    public long Size { get; private set; }
 
     [Column("metadata")]
     public string Metadata { get; private set; }
@@ -27,7 +27,7 @@ public class LaputinFile {
     [Column("type")]
     public string Type { get; private set; }
 
-    public LaputinFile(int id, string hash, string path, int active, int size, string metadata, string type) {
+    public LaputinFile(int id, string hash, string path, int active, long size, string metadata, string type) {
         Id = id;
         Hash = hash;
         Path = path;
