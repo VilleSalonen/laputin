@@ -21,12 +21,8 @@ public class VideoController : ControllerBase
     public async Task<IActionResult> Get(int? id)
     {
         var file = await _context.LaputinFiles.FindAsync(id);
-
-        if (file == null) {
-            return NotFound();
-        }
-
-        var filestream = System.IO.File.OpenRead(file.Path);
-        return File(filestream, file.Type, enableRangeProcessing: true);
+        return file != null
+            ? File(System.IO.File.OpenRead(file.Path), file.Type, enableRangeProcessing: true)
+            : NotFound();
     }
 }
