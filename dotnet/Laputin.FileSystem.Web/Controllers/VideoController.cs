@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Laputin.FileSystem.Web.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("/media")]
 public class VideoController : ControllerBase
 {
     private readonly ILogger<VideoController> _logger;
