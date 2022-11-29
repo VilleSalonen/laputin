@@ -15,6 +15,7 @@ public class VideoController : ControllerBase
         _context = context;
     }
 
+    [HttpGet(Name = "Video_Get")]
     [ProducesResponseType(typeof(File), StatusCodes.Status206PartialContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(int? id)
