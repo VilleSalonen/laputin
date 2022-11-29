@@ -15,7 +15,8 @@ public class VideoController : ControllerBase
         _context = context;
     }
 
-    [HttpGet(Name = "GetVideo")]
+    [ProducesResponseType(typeof(File), StatusCodes.Status206PartialContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(int? id)
     {
         var file = await _context.LaputinFiles.FindAsync(id);
