@@ -40,10 +40,16 @@ public class LaputinFile {
 
 public class LaputinContext : DbContext
 {
+    private readonly IConfiguration _configuration;
+
     public DbSet<LaputinFile> LaputinFiles => Set<LaputinFile>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("TODO");
+        => optionsBuilder.UseNpgsql(_configuration["Laputin:ConnectionString"]);
+
+    public LaputinContext(IConfiguration configuration) {
+        _configuration = configuration;
+    }
 }
 
 [ApiController]
@@ -51,16 +57,18 @@ public class LaputinContext : DbContext
 public class VideoController : ControllerBase
 {
     private readonly ILogger<VideoController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public VideoController(ILogger<VideoController> logger)
+    public VideoController(ILogger<VideoController> logger, IConfiguration configuration)
     {
         _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpGet(Name = "GetVideo")]
     public async Task<IActionResult> Get(int? id)
     {
-        var context = new LaputinContext();
+        var context = new LaputinContext(_configuration);
         var file = await context.LaputinFiles.FindAsync(id);
 
         if (file == null) {
