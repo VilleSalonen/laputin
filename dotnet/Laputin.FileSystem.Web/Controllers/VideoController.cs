@@ -68,6 +68,6 @@ public class VideoController : ControllerBase
         }
 
         var filestream = System.IO.File.OpenRead(file.Path);
-        return File(filestream, "video/mp4", enableRangeProcessing: true);
+        return File(filestream, file.Type, enableRangeProcessing: true);
     }
 }
