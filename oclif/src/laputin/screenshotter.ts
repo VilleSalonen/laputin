@@ -63,7 +63,7 @@ export class Screenshotter {
             try {
                 child_process.execSync(command, options);
                 child_process.execSync(commandSmall, options);
-                this._library.storeTimeForFileScreenshot(file, timeInSeconds);
+                await this._library.storeTimeForFileScreenshot(file, timeInSeconds);
                 winston.log('verbose', 'Created screenshot for ' + file.path + '.');
             } catch (err) {
                 winston.log('error', 'Could not create screenshot for ' + file.path + '!');
@@ -73,7 +73,7 @@ export class Screenshotter {
 
             try {
                 child_process.execSync(commandSmall);
-                this._library.storeTimeForFileScreenshot(file, timeInSeconds);
+                await this._library.storeTimeForFileScreenshot(file, timeInSeconds);
                 winston.log('verbose', 'Created screenshot for ' + file.path + '.');
             } catch (err) {
                 winston.log('error', 'Could not create screenshot for ' + file.path + '!');
