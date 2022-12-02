@@ -1,4 +1,5 @@
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import path = require('path');
 
 import { Library } from './library';
@@ -44,11 +45,8 @@ export class FileDataMigrator {
         const sourceSceneDirectory = this.sceneDetector.getSceneDirectory(sourceFile);
         const targetSceneDirectory = this.sceneDetector.getSceneDirectory(targetFile);
 
-        const sourceSceneStat = await fs.stat(sourceSceneDirectory);
-        const targetSceneStat = await fs.stat(targetSceneDirectory);
-
-        if (sourceSceneStat) {
-            if (targetSceneStat) {
+        if (fsLegacy.existsSync(sourceSceneDirectory)) {
+            if (fsLegacy.existsSync(targetSceneDirectory)) {
                 await fs.rmdir(targetSceneDirectory, { recursive: true });
             }
 

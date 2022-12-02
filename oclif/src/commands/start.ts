@@ -1,5 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import path = require('path');
 
 import { compose } from '../laputin/compose';
@@ -35,7 +36,7 @@ export default class Start extends Command {
         const libraryPath = await getLibraryPath(flags.library);
 
         const configFilePath = path.join(libraryPath, 'laputin.json');
-        const configurationExists = await fs.stat(configFilePath);
+        const configurationExists = fsLegacy.existsSync(configFilePath);
         if (!configurationExists) {
             throw new Error(`Could not find configuration file at ${configFilePath}`);
         }

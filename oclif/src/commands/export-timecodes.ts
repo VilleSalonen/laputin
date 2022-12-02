@@ -1,6 +1,7 @@
 import { Command, Flags } from '@oclif/core';
 import child_process = require('child_process');
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import winston = require('winston');
 
 import { getLibraryPath } from '../laputin/helpers';
@@ -38,8 +39,7 @@ export default class ExportTimecodesCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const directoryStat = await fs.stat(flags.targetDirectory);
-        if (!directoryStat || !directoryStat.isDirectory()) {
+        if (!fsLegacy.existsSync(flags.targetDirectory) || !(await fs.stat(flags.targetDirectory)).isDirectory()) {
             throw new Error(`Directory ${flags.targetDirectory} is not a valid directory.`);
         }
 

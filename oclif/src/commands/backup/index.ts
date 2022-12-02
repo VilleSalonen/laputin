@@ -1,6 +1,7 @@
 import { Command, Flags } from '@oclif/core';
 import child_process = require('node:child_process');
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import path = require('path');
 
 import { File as LaputinFile } from '../../laputin/file';
@@ -123,12 +124,8 @@ export default class BackupFilesCommand extends Command {
         );
 
         const rcloneJsonPath = path.join(libraryPath, 'rclone.json');
-        const exists = await fs.stat(rcloneJsonPath);
-
-        if (!exists) {
-            throw new Error(
-                `Could not find rclone backup file with name ${rcloneJsonPath}.`
-            );
+        if (!fsLegacy.existsSync(rcloneJsonPath)) {
+            throw new Error(`Could not find rclone backup file with name ${rcloneJsonPath}.`);
         }
 
         const rcloneJson = await fs.readFile(rcloneJsonPath, 'utf8');

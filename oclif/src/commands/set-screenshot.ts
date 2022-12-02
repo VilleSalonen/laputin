@@ -1,5 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import winston = require('winston');
 
 import { getLibraryPath } from '../laputin/helpers';
@@ -38,8 +39,7 @@ export default class SetScreenshot extends Command {
             throw new Error(`File ${flags.file} is not a valid file.`);
         }
 
-        const screenshotStat = await fs.stat(flags.screenshot);
-        if (!screenshotStat || !screenshotStat.isFile()) {
+        if (!fsLegacy.existsSync(flags.screenshot) || !(await fs.stat(flags.screenshot)).isFile()) {
             throw new Error(`File ${flags.screenshot} is not a valid file.`);
         }
 

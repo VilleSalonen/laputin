@@ -1,5 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import winston = require('winston');
 
 import { initializeWinston } from '../laputin/winston';
@@ -26,12 +27,12 @@ export default class HashCommand extends Command {
 
         const hasher: IHasher = new QuickMD5Hasher();
 
-        const fileStat = await fs.stat(flags.file);
-        if (!fileStat) {
+        if (!fsLegacy.existsSync(flags.file)) {
             winston.error('File not found.');
             process.exit(-1);
         }
 
+        const fileStat = await fs.stat(flags.file);
         const hash = await hasher.hash(flags.file, fileStat);
         console.log(hash);
     }

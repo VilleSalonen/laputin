@@ -1,4 +1,4 @@
-import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import os = require('os');
 import path = require('path');
 
@@ -14,8 +14,7 @@ export async function getLibraryPath(givenLibraryPath?: string): Promise<string>
 
     // Assume that user only passed library name under home directory .laputin directory.
     const assumedLibraryPath = path.join(os.homedir(), '.laputin', givenLibraryPath);
-    const assumedLibraryStat = await fs.stat(assumedLibraryPath);
-    if (assumedLibraryStat) {
+    if (fsLegacy.existsSync(assumedLibraryPath)) {
         return assumedLibraryPath;
     }
 

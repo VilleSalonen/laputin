@@ -1,5 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import winston = require('winston');
 
 import { getLibraryPath } from '../laputin/helpers';
@@ -50,8 +51,12 @@ export default class MetadataCommand extends Command {
 
         let file: File;
         if (flags.path) {
+            if (!fsLegacy.existsSync(flags.path)) {
+                throw new Error(`${flags.file} does not exist.`);
+            }
+
             const fileStat = await fs.stat(flags.path);
-            if (!fileStat?.isFile()) {
+            if (!fileStat.isFile()) {
                 throw new Error(`${flags.file} is not a valid file.`);
             }
 

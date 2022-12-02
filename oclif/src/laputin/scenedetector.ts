@@ -26,8 +26,7 @@ export class SceneDetector {
     public async detectMissingScenes(query: Query, performFullCheck: boolean) {
         const scenesDirectory = this.getScenesDirectory();
 
-        const scenesDirectoryStat = await fs.stat(scenesDirectory);
-        if (!scenesDirectoryStat) {
+        if (!fsLegacy.existsSync(scenesDirectory)) {
             await fs.mkdir(scenesDirectory);
             winston.verbose(`Created Laputin scenes directory: ${scenesDirectory}`);
         }
@@ -137,8 +136,7 @@ export class SceneDetector {
         winston.verbose(`Detecting scenes to: ${analysisCsvPath}`);
         child_process.execSync(command2, options);
 
-        const analysisCsvStat = await fs.stat(analysisCsvPath);
-        if (!analysisCsvStat) {
+        if (!fsLegacy.existsSync(analysisCsvPath)) {
             throw new Error(`Could not find scene analysis CSV file at ${analysisCsvPath}!`);
         }
     }

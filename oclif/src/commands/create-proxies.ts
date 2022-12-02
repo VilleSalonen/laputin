@@ -1,5 +1,6 @@
 import { Command, Flags } from '@oclif/core';
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import path = require('path');
 
 import { getLibraryPath } from '../laputin/helpers';
@@ -8,8 +9,7 @@ import { initializeWinston } from '../laputin/winston';
 import { ProxyGenerator } from '../laputin/proxygenerator';
 
 export default class CreateProxiesCommand extends Command {
-    static description =
-        'Creates lower quality H.264 proxy files for videos using incompatible codecs such as H.265.';
+    static description = 'Creates lower quality H.264 proxy files for videos using incompatible codecs such as H.265.';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
@@ -33,11 +33,9 @@ export default class CreateProxiesCommand extends Command {
         const libraryPath = await getLibraryPath(flags.library);
 
         const configFilePath = path.join(libraryPath, 'laputin.json');
-        const configurationExists = await fs.stat(configFilePath);
+        const configurationExists = fsLegacy.existsSync(configFilePath);
         if (!configurationExists) {
-            throw new Error(
-                `Could not find configuration file at ${configFilePath}`
-            );
+            throw new Error(`Could not find configuration file at ${configFilePath}`);
         }
         const configurationJson = await fs.readFile(configFilePath, 'utf8');
         const configuration = JSON.parse(configurationJson);
