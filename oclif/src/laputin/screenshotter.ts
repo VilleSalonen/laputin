@@ -20,44 +20,24 @@ export class Screenshotter {
 
     constructor(private _libraryPath: string, private _library: Library) {
         this._thumbsPath = path.join(this._libraryPath, '//public//thumbs//');
-        this._thumbsSmallPath = path.join(
-            this._libraryPath,
-            '//public//thumbs-small//'
-        );
-        this._tagTimecodeThumbsPath = path.join(
-            this._libraryPath,
-            '//public//tag-timecode-thumbs//'
-        );
-        this._tagTimecodeThumbsSmallPath = path.join(
-            this._libraryPath,
-            '//public//tag-timecode-thumbs-small//'
-        );
-        this._tagThumbsPath = path.join(
-            this._libraryPath,
-            '//public//tag-thumbs//'
-        );
-        this._tagThumbsSmallPath = path.join(
-            this._libraryPath,
-            '//public//tag-thumbs-small//'
-        );
+        this._thumbsSmallPath = path.join(this._libraryPath, '//public//thumbs-small//');
+        this._tagTimecodeThumbsPath = path.join(this._libraryPath, '//public//tag-timecode-thumbs//');
+        this._tagTimecodeThumbsSmallPath = path.join(this._libraryPath, '//public//tag-timecode-thumbs-small//');
+        this._tagThumbsPath = path.join(this._libraryPath, '//public//tag-thumbs//');
+        this._tagThumbsSmallPath = path.join(this._libraryPath, '//public//tag-thumbs-small//');
     }
 
     public async exists(file: File): Promise<boolean> {
         await this.initialize();
 
-        return (
-            !!(await fs.stat(this.getThumbPath(file))) &&
-            !!(await fs.stat(this.getThumbSmallPath(file)))
-        );
+        return !!(await fs.stat(this.getThumbPath(file))) && !!(await fs.stat(this.getThumbSmallPath(file)));
     }
 
     public async setScreenshot(file: File, path: string): Promise<void> {
         const thumbPath = this.getThumbPath(file);
 
         await fs.copyFile(path, thumbPath);
-        const command = `ffmpeg -y -i "${thumbPath}" -vf scale=800:-1 "${this.getThumbSmallPath(
-            file
-        )}"`;
+        const command = `ffmpeg -y -i "${thumbPath}" -vf scale=800:-1 "${this.getThumbSmallPath(file)}"`;
         child_process.execSync(command, options);
     }
 
@@ -74,9 +54,7 @@ export class Screenshotter {
                 timeInSeconds = newTimeInSeconds;
             }
 
-            const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
-                file.path
-            }" -vframes 1 "${this.getThumbPath(file)}"`;
+            const command = `ffmpeg -y -ss ${timeInSeconds} -i "${file.path}" -vframes 1 "${this.getThumbPath(file)}"`;
 
             const commandSmall = `ffmpeg -y -ss ${timeInSeconds}  -i "${
                 file.path
@@ -86,92 +64,55 @@ export class Screenshotter {
                 child_process.execSync(command, options);
                 child_process.execSync(commandSmall, options);
                 this._library.storeTimeForFileScreenshot(file, timeInSeconds);
-                winston.log(
-                    'verbose',
-                    'Created screenshot for ' + file.path + '.'
-                );
+                winston.log('verbose', 'Created screenshot for ' + file.path + '.');
             } catch (err) {
-                winston.log(
-                    'error',
-                    'Could not create screenshot for ' + file.path + '!'
-                );
+                winston.log('error', 'Could not create screenshot for ' + file.path + '!');
             }
         } else if (file.type.startsWith('image')) {
-            const commandSmall = `ffmpeg -y  -i "${
-                file.path
-            }" -vf scale=800:-1 "${this.getThumbSmallPath(file)}"`;
+            const commandSmall = `ffmpeg -y  -i "${file.path}" -vf scale=800:-1 "${this.getThumbSmallPath(file)}"`;
 
             try {
                 child_process.execSync(commandSmall);
                 this._library.storeTimeForFileScreenshot(file, timeInSeconds);
-                winston.log(
-                    'verbose',
-                    'Created screenshot for ' + file.path + '.'
-                );
+                winston.log('verbose', 'Created screenshot for ' + file.path + '.');
             } catch (err) {
-                winston.log(
-                    'error',
-                    'Could not create screenshot for ' + file.path + '!'
-                );
+                winston.log('error', 'Could not create screenshot for ' + file.path + '!');
             }
         }
     }
 
-    public async screenshotTimecode(
-        file: File,
-        timecode: Timecode,
-        timeInSeconds?: number
-    ): Promise<void> {
+    public async screenshotTimecode(file: File, timecode: Timecode, timeInSeconds?: number): Promise<void> {
         await this.initialize();
 
         if (!timeInSeconds) {
-            timeInSeconds =
-                timecode.start + (timecode.end - timecode.start) * 0.66;
+            timeInSeconds = timecode.start + (timecode.end - timecode.start) * 0.66;
         }
 
-        const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
-            file.path
-        }" -vframes 1 "${this.getTagTimecodeThumbPath(timecode)}"`;
+        const command = `ffmpeg -y -ss ${timeInSeconds} -i "${file.path}" -vframes 1 "${this.getTagTimecodeThumbPath(
+            timecode
+        )}"`;
 
         const commandSmall = `ffmpeg -y -ss ${timeInSeconds} -i "${
             file.path
-        }" -vframes 1 -vf scale=800:-1 "${this.getTagTimecodeThumbSmallPath(
-            timecode
-        )}"`;
+        }" -vframes 1 -vf scale=800:-1 "${this.getTagTimecodeThumbSmallPath(timecode)}"`;
 
         try {
             child_process.execSync(command, options);
             child_process.execSync(commandSmall, options);
-            this._library.storeTimeForTimecodeScreenshot(
-                timecode,
-                timeInSeconds
-            );
+            this._library.storeTimeForTimecodeScreenshot(timecode, timeInSeconds);
             winston.log(
                 'verbose',
-                'Created screenshot for ' +
-                    file.path +
-                    ' and timecode ID ' +
-                    timecode.timecodeId +
-                    '.'
+                'Created screenshot for ' + file.path + ' and timecode ID ' + timecode.timecodeId + '.'
             );
         } catch (err) {
-            winston.log(
-                'error',
-                'Could not create screenshot for ' + file.path + '!'
-            );
+            winston.log('error', 'Could not create screenshot for ' + file.path + '!');
         }
     }
 
-    public async screenshotTag(
-        tag: Tag,
-        file: File,
-        timeInSeconds: number
-    ): Promise<void> {
+    public async screenshotTag(tag: Tag, file: File, timeInSeconds: number): Promise<void> {
         await this.initialize();
 
-        const command = `ffmpeg -y -ss ${timeInSeconds} -i "${
-            file.path
-        }" -vframes 1 "${this.getTagThumbPath(tag)}"`;
+        const command = `ffmpeg -y -ss ${timeInSeconds} -i "${file.path}" -vframes 1 "${this.getTagThumbPath(tag)}"`;
 
         const commandSmall = `ffmpeg -y -ss ${timeInSeconds} -i "${
             file.path
@@ -181,31 +122,15 @@ export class Screenshotter {
             child_process.execSync(command, options);
             child_process.execSync(commandSmall, options);
             this._library.storeTimeForTagScreenshot(tag, file, timeInSeconds);
-            winston.log(
-                'verbose',
-                'Created screenshot for tag ' +
-                    tag.name +
-                    ' from file ' +
-                    file.path +
-                    '.'
-            );
+            winston.log('verbose', 'Created screenshot for tag ' + tag.name + ' from file ' + file.path + '.');
         } catch (err) {
-            winston.log(
-                'error',
-                'Could not create screenshot for tag ' + tag.name + '!'
-            );
+            winston.log('error', 'Could not create screenshot for tag ' + tag.name + '!');
         }
     }
 
     public async copyScreenshot(sourceFile: File, targetFile: File) {
-        await fs.copyFile(
-            this.getThumbPath(sourceFile),
-            this.getThumbPath(targetFile)
-        );
-        await fs.copyFile(
-            this.getThumbSmallPath(sourceFile),
-            this.getThumbSmallPath(targetFile)
-        );
+        await fs.copyFile(this.getThumbPath(sourceFile), this.getThumbPath(targetFile));
+        await fs.copyFile(this.getThumbSmallPath(sourceFile), this.getThumbSmallPath(targetFile));
     }
 
     private async initialize(): Promise<void> {
@@ -228,9 +153,7 @@ export class Screenshotter {
         const directoryStat = await fs.stat(directory);
 
         if (directoryStat && directoryStat.isFile()) {
-            throw new Error(
-                `A file exists at ${directory} where a thumbnail directory should be!`
-            );
+            throw new Error(`A file exists at ${directory} where a thumbnail directory should be!`);
         }
 
         if (!directoryStat) {
@@ -248,17 +171,11 @@ export class Screenshotter {
     }
 
     public getTagTimecodeThumbPath(timecode: Timecode) {
-        return path.join(
-            this._tagTimecodeThumbsPath,
-            timecode.timecodeId + '.jpg'
-        );
+        return path.join(this._tagTimecodeThumbsPath, timecode.timecodeId + '.jpg');
     }
 
     public getTagTimecodeThumbSmallPath(timecode: Timecode) {
-        return path.join(
-            this._tagTimecodeThumbsSmallPath,
-            timecode.timecodeId + '.jpg'
-        );
+        return path.join(this._tagTimecodeThumbsSmallPath, timecode.timecodeId + '.jpg');
     }
 
     private getTagThumbPath(tag: Tag) {
