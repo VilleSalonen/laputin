@@ -239,17 +239,7 @@ export class FileLibrary extends events.EventEmitter {
                     };
                 }
 
-                const file = new File(
-                    NaN,
-                    hash,
-                    filePath,
-                    [],
-                    stats.size,
-                    type.mime,
-                    metadata
-                );
-                this.addFileToBookkeeping(file);
-
+                const file = new File(NaN, hash, filePath, [], stats.size, type.mime, metadata);
                 const fileFromDb = await this.library.addFile(file);
                 this.addFileToBookkeeping(fileFromDb);
 
