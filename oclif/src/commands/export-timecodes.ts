@@ -40,9 +40,7 @@ export default class ExportTimecodesCommand extends Command {
 
         const directoryStat = await fs.stat(flags.targetDirectory);
         if (!directoryStat || !directoryStat.isDirectory()) {
-            throw new Error(
-                `Directory ${flags.targetDirectory} is not a valid directory.`
-            );
+            throw new Error(`Directory ${flags.targetDirectory} is not a valid directory.`);
         }
 
         const libraryPath = await getLibraryPath(flags.library);
@@ -52,10 +50,7 @@ export default class ExportTimecodesCommand extends Command {
         const allTags = await library.getAllTags();
 
         const andTags: Tag[] = [];
-        const andTagNames: string[] = [
-            ...(flags.tag || []),
-            ...(flags.and || []),
-        ];
+        const andTagNames: string[] = [...(flags.tag || []), ...(flags.and || [])];
         if (andTagNames) {
             andTagNames.forEach((tagName: string) => {
                 const foundTag = allTags.find((tag) => tag.name === tagName);
@@ -107,9 +102,7 @@ export default class ExportTimecodesCommand extends Command {
             const name = t.path.substring(t.path.lastIndexOf('/') + 1);
             const tags = t.timecodeTags.map((ta) => ta.tag.name).join(', ');
 
-            const exportCommand = `ffmpeg -ss ${this.formatPreciseDurationWithMs(
-                t.start
-            )} -i "${t.path.replace(
+            const exportCommand = `ffmpeg -ss ${this.formatPreciseDurationWithMs(t.start)} -i "${t.path.replace(
                 /\//g,
                 '\\'
             )}" -t ${this.formatPreciseDurationWithMs(
@@ -122,17 +115,11 @@ export default class ExportTimecodesCommand extends Command {
         });
 
         exportJobs.forEach((exportJob) => {
-            const tags = exportJob.timecode.timecodeTags
-                .map((ta) => ta.tag.name)
-                .join(', ');
+            const tags = exportJob.timecode.timecodeTags.map((ta) => ta.tag.name).join(', ');
             winston.info(
-                `Exporting ${
-                    exportJob.timecode.path
-                } timecode ${this.formatPreciseDurationWithMs(
+                `Exporting ${exportJob.timecode.path} timecode ${this.formatPreciseDurationWithMs(
                     exportJob.timecode.start
-                )}-${this.formatPreciseDurationWithMs(
-                    exportJob.timecode.end
-                )} with tags ${tags}...`
+                )}-${this.formatPreciseDurationWithMs(exportJob.timecode.end)} with tags ${tags}...`
             );
             child_process.execSync(exportJob.exportCommand);
         });
@@ -147,10 +134,7 @@ export default class ExportTimecodesCommand extends Command {
         const mm = ~~((secondsWithDecimals % HOUR) / MINUTE);
         const hh = ~~(secondsWithDecimals / HOUR);
 
-        return `${this.zpad(hh)}:${this.zpad(mm)}:${this.zpad(ss)}.${this.zpad(
-            ms,
-            3
-        )}`;
+        return `${this.zpad(hh)}:${this.zpad(mm)}:${this.zpad(ss)}.${this.zpad(ms, 3)}`;
     }
 
     private zpad(initial: number, num = 2, pad = '0'): string {
