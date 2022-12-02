@@ -1,5 +1,6 @@
 import child_process = require('child_process');
 import fs = require('fs/promises');
+import fsLegacy = require('fs');
 import path = require('path');
 
 import { Library } from './library';
@@ -43,27 +44,32 @@ export class SceneDetector {
             try {
                 winston.verbose(`${file.fileId} = ${file.path}`);
 
+                if (file.metadata?.scenes?.ignore) {
+                    winston.verbose(`File ${file.path} has scenes ignore set, skipping...`);
+                    continue;
+                }
+
                 const sceneDirectory = this.getSceneDirectory(file);
-                const sceneDirectoryStat = await fs.stat(sceneDirectory);
+                const sceneDirectoryExists = fsLegacy.existsSync(sceneDirectory);
 
                 // If scene directory exists and user did not request full check we need to skip checking the every
                 // individual screenshot as that takes a looong time.
                 //
                 // Note: some scenes may be incomplete or are missing screenshots. User can fix these by running
                 // full check for specific files.
-                if (sceneDirectoryStat && !performFullCheck) {
+                if (sceneDirectoryExists && !performFullCheck) {
                     continue;
                 }
 
-                if (!sceneDirectoryStat) {
+                if (!sceneDirectoryExists) {
                     await fs.mkdir(sceneDirectory);
                     winston.verbose(`Created scene directory: ${sceneDirectory}`);
                 }
 
                 const analysisCsvPath = path.join(sceneDirectory, `${file.fileId}-Scenes.csv`);
-                const analysisCsvStat = await fs.stat(analysisCsvPath);
+                const analysisCsvExists = fsLegacy.existsSync(analysisCsvPath);
 
-                if (!analysisCsvStat) {
+                if (!analysisCsvExists) {
                     const targetPath = path.join(sceneDirectory, `${file.fileId}.mp4`);
                     const createdDownscaledVersion = await this.createDownscaledVideo(file, sceneDirectory, targetPath);
 
@@ -76,9 +82,9 @@ export class SceneDetector {
 
                 const scenes = await this.parseScenes(analysisCsvPath);
                 const analysisJsonPath = path.join(sceneDirectory, `${file.fileId}-Scenes.json`);
-                const analysisJsonStat = await fs.stat(analysisJsonPath);
+                const analysisJsonExists = fsLegacy.existsSync(analysisJsonPath);
 
-                if (!analysisJsonStat) {
+                if (!analysisJsonExists) {
                     await fs.writeFile(analysisJsonPath, JSON.stringify(scenes));
                 }
 
@@ -92,13 +98,13 @@ export class SceneDetector {
     private async createDownscaledVideo(file: File, sceneDirectory: string, targetPath: string): Promise<boolean> {
         const incompleteTargetPath = path.join(sceneDirectory, `${file.fileId}_INCOMPLETE.mp4`);
 
-        const incompleteTargetStat1 = await fs.stat(incompleteTargetPath);
-        if (incompleteTargetStat1) {
+        const incompleteTargetExists1 = fsLegacy.existsSync(incompleteTargetPath);
+        if (incompleteTargetExists1) {
             await fs.unlink(incompleteTargetPath);
         }
 
-        const targetStat = await fs.stat(targetPath);
-        if (targetStat) {
+        const targetExists = fsLegacy.existsSync(targetPath);
+        if (targetExists) {
             await fs.unlink(targetPath);
         }
 
@@ -111,8 +117,8 @@ export class SceneDetector {
             // OK
         }
 
-        const incompleteTargetStat2 = await fs.stat(incompleteTargetPath);
-        if (!incompleteTargetStat2) {
+        const incompleteTargetExists2 = fsLegacy.existsSync(incompleteTargetPath);
+        if (!incompleteTargetExists2) {
             throw new Error(
                 `Attempt to move ${incompleteTargetPath} to ${targetPath} but downscaled version could not be found!`
             );
@@ -174,8 +180,7 @@ export class SceneDetector {
     }
 
     private async createSceneThumb(file: File, time: number, path: string): Promise<void> {
-        const sceneThumbStat = await fs.stat(path);
-        if (sceneThumbStat && sceneThumbStat.isFile()) {
+        if (fsLegacy.existsSync(path)) {
             return;
         }
 
