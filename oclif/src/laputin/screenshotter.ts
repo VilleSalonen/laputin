@@ -1,4 +1,5 @@
 import fs = require('fs/promises');
+import * as fsLegacy from 'fs';
 import child_process = require('child_process');
 import path = require('path');
 import winston = require('winston');
@@ -27,10 +28,10 @@ export class Screenshotter {
         this._tagThumbsSmallPath = path.join(this._libraryPath, '//public//tag-thumbs-small//');
     }
 
-    public async exists(file: File): Promise<boolean> {
-        await this.initialize();
+    public exists(file: File): boolean {
+        this.initialize();
 
-        return !!(await fs.stat(this.getThumbPath(file))) && !!(await fs.stat(this.getThumbSmallPath(file)));
+        return fsLegacy.existsSync(this.getThumbPath(file)) && fsLegacy.existsSync(this.getThumbSmallPath(file));
     }
 
     public async setScreenshot(file: File, path: string): Promise<void> {
@@ -150,13 +151,7 @@ export class Screenshotter {
     }
 
     private async createThumbnailDirectory(directory: string): Promise<void> {
-        const directoryStat = await fs.stat(directory);
-
-        if (directoryStat && directoryStat.isFile()) {
-            throw new Error(`A file exists at ${directory} where a thumbnail directory should be!`);
-        }
-
-        if (!directoryStat) {
+        if (!fsLegacy.existsSync(directory)) {
             winston.log('verbose', `Created directory ${directory}.`);
             await fs.mkdir(directory);
         }
