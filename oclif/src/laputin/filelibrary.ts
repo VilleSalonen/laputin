@@ -59,11 +59,7 @@ export class FileLibrary extends events.EventEmitter {
 
             for (const filePath of filePaths) {
                 const fileStats = await fs.stat(filePath);
-                const file = await this.addFileFromPath(
-                    filePath,
-                    fileStats,
-                    performFullCheck
-                );
+                const file = await this.addFileFromPath(filePath, fileStats, performFullCheck);
                 if (file) {
                     actualFilesByHash.set(file.hash, file);
                 }
@@ -72,11 +68,7 @@ export class FileLibrary extends events.EventEmitter {
 
         const existingHashSet = new Set(existingFilesByHash.keys());
         const actualHashSet = new Set(actualFilesByHash.keys());
-        const missingHashSet = new Set(
-            [...existingHashSet].filter(
-                (element) => !actualHashSet.has(element)
-            )
-        );
+        const missingHashSet = new Set([...existingHashSet].filter((element) => !actualHashSet.has(element)));
         for (const missingHash of missingHashSet) {
             const missingFile = existingFilesByHash.get(missingHash);
             if (missingFile) {
@@ -94,9 +86,7 @@ export class FileLibrary extends events.EventEmitter {
         for (const item of items) {
             if (item.isDirectory()) {
                 const directoryPath = path.join(directory, item.name);
-                const directoryFiles = await this.readdirRecursive(
-                    directoryPath
-                );
+                const directoryFiles = await this.readdirRecursive(directoryPath);
                 files = [...files, ...directoryFiles];
             } else {
                 const filePath = path.join(directory, item.name);
@@ -143,28 +133,18 @@ export class FileLibrary extends events.EventEmitter {
                     winston.log('debug', 'Error with changed file: ' + e);
                 }
             });
-            monitor.on('removed', (removedPath: string) =>
-                this.removeFileFromPath(removedPath)
-            );
+            monitor.on('removed', (removedPath: string) => this.removeFileFromPath(removedPath));
         };
 
         // Start monitoring after library has been hashed. Otherwise changes
         // done to database file cause changed events to be emitted and thus
         // slow down the initial processing.
         for (const mediaPath of this._configuration.mediaPaths) {
-            watch.createMonitor(
-                mediaPath,
-                { ignoreDotFiles: true },
-                monitorCallback
-            );
+            watch.createMonitor(mediaPath, { ignoreDotFiles: true }, monitorCallback);
         }
     }
 
-    private async addFileFromPath(
-        filePath: string,
-        stats: Stats,
-        performFullCheck: boolean
-    ): Promise<File | null> {
+    private async addFileFromPath(filePath: string, stats: Stats, performFullCheck: boolean): Promise<File | null> {
         try {
             if (stats.isDirectory()) {
                 return null;
@@ -174,57 +154,37 @@ export class FileLibrary extends events.EventEmitter {
             }
 
             const normalizedFilePath = path.normalize(filePath);
-            const existingFile =
-                this._existingFilesByPath.get(normalizedFilePath);
-            if (
-                !performFullCheck &&
-                existingFile &&
-                BigInt(existingFile.size) === BigInt(stats.size)
-            ) {
+            const existingFile = this._existingFilesByPath.get(normalizedFilePath);
+            if (!performFullCheck && existingFile && BigInt(existingFile.size) === BigInt(stats.size)) {
                 this.addFileToBookkeeping(existingFile);
 
-                winston.log(
-                    'verbose',
-                    'File found in same path with same size: ' + filePath
-                );
+                winston.log('verbose', 'File found in same path with same size: ' + filePath);
 
                 return existingFile;
             } else {
                 const hash = await this._hasher.hash(filePath, stats);
 
-                const buffer = readChunk.sync(
-                    filePath,
-                    0,
-                    fileType.minimumBytes
-                );
+                const buffer = readChunk.sync(filePath, 0, fileType.minimumBytes);
                 const type = fileType(buffer);
 
                 if (!type) {
-                    winston.log(
-                        'warn',
-                        `Could not read mime type from file ${filePath}. Skipping the file!`
-                    );
+                    winston.log('warn', `Could not read mime type from file ${filePath}. Skipping the file!`);
                     return null;
                 }
 
                 let metadata = {};
                 if (!this.skipMetadataExtraction) {
-                    const ffprobeMetadata = await this.readFfprobeMetadata(
-                        filePath
-                    );
+                    const ffprobeMetadata = await this.readFfprobeMetadata(filePath);
                     metadata = { ...metadata, ...ffprobeMetadata };
 
-                    const releaseDate = normalizedFilePath.match(
-                        /.*(\d\d\d\d-\d\d-\d\d).*/
-                    );
+                    const releaseDate = normalizedFilePath.match(/.*(\d\d\d\d-\d\d-\d\d).*/);
                     if (releaseDate && releaseDate[1]) {
                         metadata = {
                             ...metadata,
                             releaseDate: releaseDate[1],
                         };
                     } else {
-                        const releaseYear =
-                            normalizedFilePath.match(/.* - (\d\d\d\d) - .*/);
+                        const releaseYear = normalizedFilePath.match(/.* - (\d\d\d\d) - .*/);
                         if (releaseYear && releaseYear[1]) {
                             metadata = {
                                 ...metadata,
@@ -245,8 +205,7 @@ export class FileLibrary extends events.EventEmitter {
 
                 if (
                     fileFromDb &&
-                    (type.mime.startsWith('video') ||
-                        type.mime.startsWith('image')) &&
+                    (type.mime.startsWith('video') || type.mime.startsWith('image')) &&
                     !(await this._screenshotter.exists(fileFromDb))
                 ) {
                     await this._screenshotter.screenshot(fileFromDb, 180);
@@ -317,23 +276,14 @@ export class FileLibrary extends events.EventEmitter {
     }
 
     private fileShouldBeIgnored(filePath: string) {
-        if (
-            path.basename(filePath).startsWith('.') ||
-            filePath.indexOf('Thumbs.db') !== -1
-        ) {
+        if (path.basename(filePath).startsWith('.') || filePath.indexOf('Thumbs.db') !== -1) {
             return true;
         }
 
         // This always returns extensions in a format such as ".txt"
-        const extension = path
-            .extname(filePath)
-            .toLocaleLowerCase()
-            .substring(1);
+        const extension = path.extname(filePath).toLocaleLowerCase().substring(1);
 
-        return (
-            this._configuration.ignoredExtensions &&
-            this._configuration.ignoredExtensions.indexOf(extension) > -1
-        );
+        return this._configuration.ignoredExtensions && this._configuration.ignoredExtensions.indexOf(extension) > -1;
     }
 
     private initializeListForHash(file: File): void {
@@ -344,10 +294,7 @@ export class FileLibrary extends events.EventEmitter {
 
     private identicalFileAlreadyExistsInIdenticalPath(file: File): boolean {
         const files = this._files[file.hash];
-        return files.some(
-            (fileForChecking: File): boolean =>
-                file.path === fileForChecking.path
-        );
+        return files.some((fileForChecking: File): boolean => file.path === fileForChecking.path);
     }
 
     private removeFileFromPath(filePath: string): void {
