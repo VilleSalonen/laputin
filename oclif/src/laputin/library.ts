@@ -566,7 +566,7 @@ export class Library {
             timecodeTags.push(new TimecodeTag(timecodeId, createdTagOnTimecode.id, timecodeTag.tag));
         }
 
-        return new Timecode(timecodeId, file.fileId, timecode.path, [], timecode.start, timecode.end);
+        return new Timecode(timecodeId, file.fileId, timecode.path, timecodeTags, timecode.start, timecode.end);
     }
 
     public async removeTagFromTimecode(hash: string, timecodeId: string, timecodeTagId: string) {
