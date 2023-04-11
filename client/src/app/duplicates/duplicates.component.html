@@ -1,13 +1,28 @@
 <div class="container">
-    <h1 [hidden]="duplicates.length == 0">Showing {{filteredDuplicates.length}} matching duplicates</h1>
+    <h1 [hidden]="duplicates.length == 0">
+        Showing {{filteredDuplicates.length}} matching duplicates
+    </h1>
     <h1 [hidden]="duplicates.length > 0">No duplicates found</h1>
 
-    <div *ngFor="let duplicate of filteredDuplicates">
-        {{duplicate.hash}}
-        <ul>
-            <li *ngFor="let file of duplicate.files">
-                {{file.path}}
-            </li>
-        </ul>
+    <div *ngFor="let duplicate of filteredDuplicates" class="duplicate-group">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>File Path</th>
+                    <th *ngFor="let hashKey of duplicate.files[0].metadata.hashes | keyvalue">
+                        {{hashKey.key}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let file of duplicate.files">
+                    <td>{{file.path}}</td>
+                    <td *ngFor="let hashKey of file.metadata.hashes | keyvalue"
+                        [ngClass]="{'exact-match': isExactMatch(duplicate.files, hashKey.key, hashKey.value)}">
+                        {{hashKey.value}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
