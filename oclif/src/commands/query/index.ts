@@ -44,17 +44,10 @@ export default class QueryFilesCommand extends Command {
         const allTags = await library.getAllTags();
 
         const andTags: Tag[] = [];
-        const andTagNames: string[] = [
-            ...(flags.tag || []),
-            ...(flags.and || []),
-        ];
+        const andTagNames: string[] = [...(flags.tag || []), ...(flags.and || [])];
         if (andTagNames) {
             andTagNames.forEach((tagName: string) => {
-                const foundTag = allTags.find(
-                    (tag) =>
-                        tag.name.toLocaleUpperCase() ===
-                        tagName.toLocaleUpperCase()
-                );
+                const foundTag = allTags.find((tag) => tag.name.toLocaleUpperCase() === tagName.toLocaleUpperCase());
                 if (!foundTag) {
                     throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -66,11 +59,7 @@ export default class QueryFilesCommand extends Command {
         const orTags: Tag[] = [];
         if (flags.or) {
             flags.or.forEach((tagName: string) => {
-                const foundTag = allTags.find(
-                    (tag) =>
-                        tag.name.toLocaleUpperCase() ===
-                        tagName.toLocaleUpperCase()
-                );
+                const foundTag = allTags.find((tag) => tag.name.toLocaleUpperCase() === tagName.toLocaleUpperCase());
                 if (!foundTag) {
                     throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
@@ -82,11 +71,7 @@ export default class QueryFilesCommand extends Command {
         const notTags: Tag[] = [];
         if (flags.not) {
             flags.not.forEach((tagName: string) => {
-                const foundTag = allTags.find(
-                    (tag) =>
-                        tag.name.toLocaleUpperCase() ===
-                        tagName.toLocaleUpperCase()
-                );
+                const foundTag = allTags.find((tag) => tag.name.toLocaleUpperCase() === tagName.toLocaleUpperCase());
                 if (!foundTag) {
                     throw new Error(`Could not find tag with name ${tagName}.`);
                 } else {
