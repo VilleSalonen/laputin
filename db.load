@@ -1,0 +1,9 @@
+load database
+     from sqlite:///home/thardas/laputin.db
+     into pgsql://laputin_admin@localhost:5432/laputin_db
+
+ with include drop, create tables, create no indexes
+
+ excluding table names like '_prisma_migrations'
+
+  set work_mem to '16MB', maintenance_work_mem to '512 MB';
