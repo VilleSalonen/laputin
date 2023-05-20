@@ -139,14 +139,14 @@ export default class BackupFilesCommand extends Command {
 
         const activeFilesMap = new Map<string, LaputinFile>();
         allFiles.forEach((file) =>
-            activeFilesMap.set(file.hash, <LaputinFile>file)
+            activeFilesMap.set(file.metadata.hashes.xxhash, <LaputinFile>file)
         );
 
         const filesToCopy = [];
         for (const file of allFiles) {
             if (
-                !rcloneMap.has(file.hash) ||
-                rcloneMap.get(file.hash).Size !== file.size
+                !rcloneMap.has(file.metadata.hashes.xxhash) ||
+                rcloneMap.get(file.metadata.hashes.xxhash).Size !== file.size
             ) {
                 filesToCopy.push(file);
             }
@@ -160,13 +160,13 @@ export default class BackupFilesCommand extends Command {
         );
 
         for (const file of filesToCopy) {
-            console.log(`${file.path} ${file.hash}`);
+            console.log(`${file.path} ${file.metadata.hashes.xxhash}`);
 
             const child = child_process.spawn('rclone.exe', [
                 'copyto',
                 '--progress',
                 file.path,
-                `${flags.remote}:${file.hash}`,
+                `${flags.remote}:${file.metadata.hashes.xxhash}`,
             ]);
 
             for await (const chunk of child.stdout) {
