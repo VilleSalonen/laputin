@@ -19,17 +19,6 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-  # node:
-  #   build: ./oclif/
-  #   environment:
-  #     DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
-  #   # For debugging, uncomment:
-  #   # stdin_open: true
-  #   # tty: true
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #
   pgadmin4:
     image: dpage/pgadmin4:6.15
     restart: always
@@ -44,6 +33,17 @@ services:
       - "db"
     profiles:
       - debug
+  # node:
+  #   build: ./oclif/
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+  #   # For debugging, uncomment:
+  #   # stdin_open: true
+  #   # tty: true
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #
 
 volumes:
   db_volume:
