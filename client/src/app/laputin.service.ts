@@ -218,7 +218,8 @@ export class LaputinService {
                                 file.path,
                                 [],
                                 file.size,
-                                file.type
+                                file.type,
+                                file.metadata
                             )
                     );
                     result.push(new Duplicate(hash, files));
