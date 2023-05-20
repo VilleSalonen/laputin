@@ -342,12 +342,12 @@ export class Library {
         }
 
         await this.prisma.$executeRaw`
-            UPDATE TagsOnFiles
-            SET tagId = ${targetTagId}
+            UPDATE tags_on_files
+            SET tag_id = ${targetTagId}
             WHERE
-                tagId = ${sourceTagId} AND
-                fileId NOT IN (
-                    SELECT fileId FROM TagsOnFiles WHERE tagId = ${targetTagId}
+                tag_id = ${sourceTagId} AND
+                file_id NOT IN (
+                    SELECT file_id FROM tags_on_files WHERE tag_id = ${targetTagId}
                 )
         `;
 
