@@ -1,3 +1,18 @@
+SET default_transaction_read_only = off;
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
+--
+-- Roles
+--
+
+CREATE ROLE laputin_admin;
+ALTER ROLE laputin_admin WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS PASSWORD 'md5eb1ed92a5393fa40cd1ccee69036d4b8';
+
+--
+-- Tables
+--
 create table file
 (
     id       serial
