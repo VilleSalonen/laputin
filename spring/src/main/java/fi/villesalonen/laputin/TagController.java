@@ -9,8 +9,12 @@ import java.util.List;
 
 @RestController
 public class TagController {
+    private final TagRepository tagRepo;
+
     @Autowired
-    private TagRepository tagRepo;
+    public TagController(TagRepository tagRepo) {
+        this.tagRepo = tagRepo;
+    }
 
     @GetMapping("/tags")
     public List<TagEntity> listAll() {
