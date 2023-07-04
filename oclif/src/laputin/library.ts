@@ -642,11 +642,16 @@ export class Library {
             include: {
                 File: true,
             },
-            orderBy: {
-                File: {
-                    path: 'asc',
+            orderBy: [
+                {
+                    File: {
+                        path: 'asc',
+                    }
                 },
-            },
+                {
+                    start: 'asc'
+                }
+            ],
         });
 
         const timecodes: Timecode[] = rawResults.filter((row) => row.File.active === 1).map(
