@@ -13,7 +13,7 @@ export class QuickMD5Hasher implements IHasher {
                 return '';
             }
 
-            return await this.readHash(fileHandle, stats);
+            return await this.readHash(path, fileHandle, stats);
         } catch (e) {
             console.log(e);
             if ((<any>e).name === 'TypeError') {
@@ -27,6 +27,7 @@ export class QuickMD5Hasher implements IHasher {
     }
 
     private async readHash(
+        path: string,
         fileHandle: fs.promises.FileHandle,
         stats: fs.Stats
     ): Promise<string> {
@@ -48,7 +49,7 @@ export class QuickMD5Hasher implements IHasher {
             if (offset + CHUNK_SIZE > inputSize) {
                 // Very rare case but let's at least throw an error instead of silently failing.
                 throw Error(
-                    'Could not find a chunk of non-identical bytes between the middle of the file and the end of the file!'
+                    `Could not find a chunk of non-identical bytes between the middle of the file and the end of the file: ${path}`
                 );
             }
 
