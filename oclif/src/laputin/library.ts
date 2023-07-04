@@ -648,7 +648,8 @@ export class Library {
                 },
             },
         });
-        const timecodes: Timecode[] = rawResults.map(
+
+        const timecodes: Timecode[] = rawResults.filter((row) => row.File.active === 1).map(
             (row) => new Timecode(row.id, row.fileId, row.File.path, [], row.start, row.end)
         );
         const timecodeIds = timecodes.map((t) => t.timecodeId);
