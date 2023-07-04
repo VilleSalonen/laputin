@@ -1,17 +1,16 @@
 import { Command, Flags } from '@oclif/core';
-import child_process = require('child_process');
 import fs = require('fs/promises');
 import * as fsLegacy from 'fs';
 import winston = require('winston');
 
-import { getLibraryPath } from '../laputin/helpers';
-import { Library } from '../laputin/library';
-import { initializeWinston } from '../laputin/winston';
-import { Tag, Timecode } from '../laputin/tag';
-import { Query } from '../laputin/query.model';
+import { getLibraryPath } from '../../laputin/helpers';
+import { Library } from '../../laputin/library';
+import { initializeWinston } from '../../laputin/winston';
+import { Tag, Timecode } from '../../laputin/tag';
+import { Query } from '../../laputin/query.model';
 
-export default class ExportTimecodesCommand extends Command {
-    static description = 'Exports timecodes using ffmpeg';
+export default class TimecodesCommand extends Command {
+    static description = 'Lists timecodes';
 
     static examples = ['<%= config.bin %> <%= command.id %>'];
 
@@ -21,7 +20,6 @@ export default class ExportTimecodesCommand extends Command {
             description: 'Laputin library path',
             required: true,
         }),
-        targetDirectory: Flags.string({ required: true }),
         path: Flags.string({ char: 'p' }),
         hash: Flags.string(),
         tag: Flags.string({ multiple: true }),
@@ -35,13 +33,9 @@ export default class ExportTimecodesCommand extends Command {
 
     public async run(): Promise<void> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { args, flags } = await this.parse(ExportTimecodesCommand);
+        const { args, flags } = await this.parse(TimecodesCommand);
 
         initializeWinston(flags.verbose);
-
-        if (!fsLegacy.existsSync(flags.targetDirectory) || !(await fs.stat(flags.targetDirectory)).isDirectory()) {
-            throw new Error(`Directory ${flags.targetDirectory} is not a valid directory.`);
-        }
 
         const libraryPath = await getLibraryPath(flags.library);
 
@@ -98,31 +92,20 @@ export default class ExportTimecodesCommand extends Command {
         );
 
         const timecodes = await library.getTimecodes(query);
-        const exportJobs: ExportJob[] = timecodes.map((t) => {
-            const name = t.path.substring(t.path.lastIndexOf('/') + 1);
-            const tags = t.timecodeTags.map((ta) => ta.tag.name).join(', ');
+        const timecodesGroupedByFile = timecodes.reduce((acc, timecode) => {
+            if (!acc[timecode.path]) {
+                acc[timecode.path] = [];
+            }
+            acc[timecode.path].push(timecode);
+            return acc;
+        }, {} as { [key: string]: Timecode[] });
 
-            const exportCommand = `ffmpeg -ss ${this.formatPreciseDurationWithMs(t.start)} -i "${t.path.replace(
-                /\//g,
-                '\\'
-            )}" -t ${this.formatPreciseDurationWithMs(
-                t.end - t.start
-            )} -map v? -map a? -map s? -c:v hevc_nvenc -c:a copy -profile:v main -preset slow "${
-                flags.targetDirectory
-            }\\${name} [${tags}].mp4"`;
-
-            return new ExportJob(t, exportCommand);
-        });
-
-        exportJobs.forEach((exportJob) => {
-            const tags = exportJob.timecode.timecodeTags.map((ta) => ta.tag.name).join(', ');
-            winston.info(
-                `Exporting ${exportJob.timecode.path} timecode ${this.formatPreciseDurationWithMs(
-                    exportJob.timecode.start
-                )}-${this.formatPreciseDurationWithMs(exportJob.timecode.end)} with tags ${tags}...`
-            );
-            child_process.execSync(exportJob.exportCommand);
-        });
+        for (const path in timecodesGroupedByFile) {
+            winston.info(path);
+            for (const timecode of timecodesGroupedByFile[path]) {
+                winston.info(`  ${this.formatPreciseDurationWithMs(timecode.start)}-${this.formatPreciseDurationWithMs(timecode.end)}: ${timecode.timecodeTags.map(t => t.tag.name).join(', ')}`);
+            }
+        }
     }
 
     private formatPreciseDurationWithMs(secondsWithDecimals: number): string {
@@ -144,8 +127,4 @@ export default class ExportTimecodesCommand extends Command {
         }
         return str;
     }
-}
-
-class ExportJob {
-    constructor(public timecode: Timecode, public exportCommand: string) {}
 }
