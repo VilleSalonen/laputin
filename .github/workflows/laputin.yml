@@ -11,7 +11,7 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: "16"
-            - run: cd oclif && npm ci && npm run test
+            - run: cd oclif && npm ci && npm run build
         env:
             POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
             POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -23,4 +23,4 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: "16"
-            - run: cd client && npm ci && npm run test
+            - run: cd client && npm ci && npm run build && npm run test
