@@ -1,7 +1,16 @@
 package fi.villesalonen.laputin.entities;
 
-import jakarta.persistence.*;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.Type;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Entity
@@ -23,9 +32,9 @@ public class FileEntity {
     @Basic
     @Column(name = "size")
     private long size;
-    @Basic
-    @Column(name = "metadata")
-    private Object metadata;
+    @Type(JsonType.class)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private Map<String, String> metadata;
     @Basic
     @Column(name = "type")
     private String type;
@@ -70,11 +79,11 @@ public class FileEntity {
         this.size = size;
     }
 
-    public Object getMetadata() {
+    public Map<String, String> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Object metadata) {
+    public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
 
