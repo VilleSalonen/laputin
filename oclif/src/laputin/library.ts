@@ -710,6 +710,28 @@ export class Library {
         return timecodesWithTags;
     }
 
+    public async deleteTimecodes(timecodes: Timecode[]): Promise<void> {
+        const timecodeIds = timecodes.map((t) => t.timecodeId);
+
+        await this.prisma.tagsOnTimecodes.deleteMany({
+            where: {
+                timecodeId: { in: timecodeIds },
+            },
+        });
+
+        await this.prisma.screenshotTimecode.deleteMany({
+            where: {
+                id: { in: timecodeIds },
+            },
+        });
+
+        await this.prisma.timecodesOnFiles.deleteMany({
+            where: {
+                id: { in: timecodeIds },
+            },
+        });
+    }
+
     public async deleteLinksBetweenTagsAndFiles(inputTags: Tag[], files: File[]): Promise<FileTagLink[]> {
         if (inputTags && inputTags.length === 0) {
             throw new Error('No tags provided for linking');
