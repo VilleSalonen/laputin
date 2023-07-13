@@ -6,6 +6,7 @@ import winston = require('winston');
 import { initializeWinston } from '../laputin/winston';
 import { IHasher } from '../laputin/ihasher';
 import { QuickMD5Hasher } from '../laputin/quickmd5hasher';
+import { OsHashHasher } from '../laputin/oshashhasher';
 
 export default class HashCommand extends Command {
     static description = 'Hashes given file';
@@ -25,7 +26,8 @@ export default class HashCommand extends Command {
 
         initializeWinston(flags.verbose);
 
-        const hasher: IHasher = new QuickMD5Hasher();
+        const quickMd5Hasher: IHasher = new QuickMD5Hasher();
+        const osHashHasher: IHasher = new OsHashHasher();
 
         if (!fsLegacy.existsSync(flags.file)) {
             winston.error('File not found.');
@@ -33,7 +35,9 @@ export default class HashCommand extends Command {
         }
 
         const fileStat = await fs.stat(flags.file);
-        const hash = await hasher.hash(flags.file, fileStat);
-        console.log(hash);
+        const quickMd5Hash = await quickMd5Hasher.hash(flags.file, fileStat);
+        const osHashHash = await osHashHasher.hash(flags.file, fileStat);
+        winston.info(`Laputin Hash: ${quickMd5Hash}`);
+        winston.info(`OSHash Hash: ${osHashHash}`);
     }
 }
