@@ -11,6 +11,7 @@ export class File {
     public size: number;
     public metadata: any;
     public type: string;
+    public active: boolean;
 
     constructor(
         fileId: number,
@@ -19,6 +20,7 @@ export class File {
         tags: Tag[],
         size: number,
         type: string,
+        active: boolean,
         metadata?: any
     ) {
         this.fileId = fileId;
@@ -28,6 +30,7 @@ export class File {
         this.tags = tags;
         this.size = size;
         this.type = type;
+        this.active = active;
         this.metadata = metadata || {};
     }
 

@@ -152,7 +152,7 @@ export class Library {
         }
 
         const filesSql = Prisma.sql`
-            SELECT file.id, file.hash, file.path, file.size, file.metadata, file.type
+            SELECT file.id, file.hash, file.path, file.size, file.metadata, file.type, file.active
             FROM file
             WHERE 1 = 1
             ${this.formatActiveClause(query)}
@@ -173,7 +173,7 @@ export class Library {
         const files: Map<number, File> = new Map<number, File>(
             rawResults.map((row) => [
                 row.id,
-                new File(row.id, row.hash, row.path, [], Number(row.size), row.type, row.metadata ?? {}),
+                new File(row.id, row.hash, row.path, [], Number(row.size), row.type, row.active, row.metadata ?? {}),
             ])
         );
         const fileIds = rawResults.map((r) => r.id);

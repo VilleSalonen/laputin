@@ -199,7 +199,7 @@ export class FileLibrary extends events.EventEmitter {
                     };
                 }
 
-                const file = new File(NaN, hash, filePath, [], stats.size, type.mime, metadata);
+                const file = new File(NaN, hash, filePath, [], stats.size, type.mime, true, metadata);
                 const fileFromDb = await this.library.addFile(file);
                 this.addFileToBookkeeping(fileFromDb);
 
@@ -216,7 +216,7 @@ export class FileLibrary extends events.EventEmitter {
                 return fileFromDb;
             }
         } catch (err) {
-            // console.log('err', err);
+            console.log('err', err);
         }
 
         return null;
