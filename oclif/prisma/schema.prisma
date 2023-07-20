@@ -10,7 +10,7 @@ datasource db {
 model File {
   id               Int                @id @default(autoincrement())
   hash             String             @unique()
-  path             String             @unique()
+  path             String
   active           Int
   size             BigInt
   metadata         Json
