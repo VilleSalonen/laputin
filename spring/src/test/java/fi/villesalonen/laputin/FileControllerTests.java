@@ -61,6 +61,7 @@ public class FileControllerTests {
         file1.setActive(1);
         file1.setSize(12381231);
         file1.setMetadata(new HashMap<>());
+        file1.setType("image/jpeg");
         fileRepository.save(file1);
 
         FileEntity file2 = new FileEntity();
@@ -69,6 +70,7 @@ public class FileControllerTests {
         file2.setActive(1);
         file2.setSize(431741);
         file2.setMetadata(new HashMap<>());
+        file2.setType("image/jpeg");
         fileRepository.save(file2);
 
         // Act
