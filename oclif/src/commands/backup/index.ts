@@ -165,6 +165,9 @@ export default class BackupFilesCommand extends Command {
             const child = child_process.spawn('rclone.exe', [
                 'copyto',
                 '--progress',
+                '--azureblob-chunk-size=1024M',
+                '--azureblob-disable-checksum',
+                '--size-only',
                 file.path,
                 `${flags.remote}:${file.metadata.hashes.xxhash}`,
             ]);
