@@ -1,6 +1,7 @@
 package fi.villesalonen.laputin;
 
 import fi.villesalonen.laputin.entities.FileEntity;
+import fi.villesalonen.laputin.entities.TagEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,6 +39,8 @@ public class FileControllerTests {
 
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     @SuppressWarnings("resource")
     @Container
@@ -55,6 +59,10 @@ public class FileControllerTests {
     @Test
     public void whenGettingAllFiles_givenFilesExists_thenReturnsFiles() {
         // Arrange
+        TagEntity tag1 = new TagEntity();
+        tag1.setName("First");
+        tagRepository.save(tag1);
+
         FileEntity file1 = new FileEntity();
         file1.setHash("abc");
         file1.setPath("/path/to/file1");
@@ -62,6 +70,7 @@ public class FileControllerTests {
         file1.setSize(12381231);
         file1.setMetadata(new HashMap<>());
         file1.setType("image/jpeg");
+        file1.setTags(Set.of(tag1));
         fileRepository.save(file1);
 
         FileEntity file2 = new FileEntity();
