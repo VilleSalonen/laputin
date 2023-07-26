@@ -2,6 +2,7 @@ package fi.villesalonen.laputin;
 
 import fi.villesalonen.laputin.entities.FileEntity;
 import fi.villesalonen.laputin.entities.TagEntity;
+import fi.villesalonen.laputin.records.FileRecord;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,7 +83,7 @@ public class FileControllerTests {
         fileRepository.save(file2);
 
         // Act
-        ResponseEntity<List<FileEntity>> response = restTemplate.exchange(
+        ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
             "http://localhost:" + randomServerPort + "/files",
             HttpMethod.GET,
             null,
@@ -91,9 +91,9 @@ public class FileControllerTests {
         );
 
         // Assert
-        List<FileEntity> returnedFiles = response.getBody();
+        List<FileRecord> returnedFiles = response.getBody();
         assertThat(returnedFiles)
-            .extracting(FileEntity::getPath)
+            .extracting(FileRecord::path)
             .containsExactlyInAnyOrder("/path/to/file1", "/path/to/file2");
     }
 }
