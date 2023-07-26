@@ -14,6 +14,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
     @Query("""
     select f from FileEntity f
     where (:#{#queryRecord.includeInactive} = true or f.active = 1)
+    and ((:#{#queryRecord.hash} = null) or f.hash in :#{#queryRecord.hash})
     """)
     List<FileEntity> findByQuery(@Param("queryRecord") QueryRecord queryRecord);
 }
