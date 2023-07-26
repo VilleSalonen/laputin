@@ -21,9 +21,7 @@ public class FileService {
     }
 
     public List<FileRecord> getFiles(QueryRecord queryRecord) {
-        var entities = queryRecord.includeInactive()
-            ? fileRepository.findAll()
-            : fileRepository.findByActive(1);
+        var entities = fileRepository.findByQuery(queryRecord);
         return entities.stream().map(entity -> FileRecord.builder()
             .id(entity.getId())
             .hash(entity.getHash())
