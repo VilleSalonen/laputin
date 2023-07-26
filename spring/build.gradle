@@ -28,6 +28,12 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.17.6'
     testImplementation 'org.testcontainers:testcontainers:1.17.6'
     testImplementation 'org.testcontainers:postgresql:1.17.6'
+
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 }
 
 tasks.named('test') {
