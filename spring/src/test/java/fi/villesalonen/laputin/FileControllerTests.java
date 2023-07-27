@@ -1,6 +1,6 @@
 package fi.villesalonen.laputin;
 
-import fi.villesalonen.laputin.builders.FileEntityBuilder;
+import fi.villesalonen.laputin.builders.FileRecordBuilder;
 import fi.villesalonen.laputin.entities.FileEntity;
 import fi.villesalonen.laputin.records.FileRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,23 +64,23 @@ public class FileControllerTests {
 
     @Nested
     class QueryByHash {
-        FileEntity file1 = new FileEntityBuilder().build();
-        FileEntity file2 = new FileEntityBuilder().build();
-        FileEntity file3 = new FileEntityBuilder().build();
+        FileRecord file1 = new FileRecordBuilder().build();
+        FileRecord file2 = new FileRecordBuilder().build();
+        FileRecord file3 = new FileRecordBuilder().build();
 
         @BeforeEach
         public void beforeEach() {
             // Arrange
-            fileRepository.save(file1);
-            fileRepository.save(file2);
-            fileRepository.save(file3);
+            fileRepository.save(FileEntity.fromRecord(file1));
+            fileRepository.save(FileEntity.fromRecord(file2));
+            fileRepository.save(FileEntity.fromRecord(file3));
         }
 
         @Test
         public void whenQueryingByHash_givenFilesExist_thenReturnsOnlyMatchingFiles() {
             // Act
             ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files?hash=" + file1.getHash() + "&hash=" + file3.getHash(),
+                "http://localhost:" + randomServerPort + "/files?hash=" + file1.hash() + "&hash=" + file3.hash(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -90,26 +90,22 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.getPath(), file3.getPath());
+                .containsExactlyInAnyOrder(file1.path(), file3.path());
         }
     }
 
     @Nested
     class QueryByActive {
-        FileEntity file1 = new FileEntityBuilder().build();
-
-        FileEntity file2 = new FileEntityBuilder().build();
-
-        FileEntity file3 = new FileEntityBuilder()
-            .withActive(0)
-            .build();
+        FileRecord file1 = new FileRecordBuilder().build();
+        FileRecord file2 = new FileRecordBuilder().build();
+        FileRecord file3 = new FileRecordBuilder().withActive(false).build();
 
         @BeforeEach
         public void beforeEach() {
             // Arrange
-            fileRepository.save(file1);
-            fileRepository.save(file2);
-            fileRepository.save(file3);
+            fileRepository.save(FileEntity.fromRecord(file1));
+            fileRepository.save(FileEntity.fromRecord(file2));
+            fileRepository.save(FileEntity.fromRecord(file3));
         }
 
         @Test
@@ -126,7 +122,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath());
+                .containsExactlyInAnyOrder(file1.path(), file2.path());
         }
 
         @Test
@@ -143,7 +139,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath());
+                .containsExactlyInAnyOrder(file1.path(), file2.path());
         }
 
         @Test
@@ -160,7 +156,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath());
+                .containsExactlyInAnyOrder(file1.path(), file2.path());
         }
 
         @Test
@@ -177,7 +173,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath(), file3.getPath());
+                .containsExactlyInAnyOrder(file1.path(), file2.path(), file3.path());
         }
     }
 }

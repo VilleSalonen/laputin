@@ -1,5 +1,6 @@
 package fi.villesalonen.laputin.entities;
 
+import fi.villesalonen.laputin.records.TagRecord;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -42,5 +43,19 @@ public class TagEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    public static TagRecord toRecord(TagEntity tagEntity) {
+        return TagRecord.builder()
+                .id(tagEntity.id)
+                .name(tagEntity.name)
+                .build();
+    }
+
+    public static TagEntity fromRecord(TagRecord tagRecord) {
+        TagEntity tagEntity = new TagEntity();
+        tagEntity.setId(tagRecord.id());
+        tagEntity.setName(tagRecord.name());
+        return tagEntity;
     }
 }

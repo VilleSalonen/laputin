@@ -1,5 +1,6 @@
 package fi.villesalonen.laputin.entities;
 
+import fi.villesalonen.laputin.records.FileRecord;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.Type;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "file", schema = "public", catalog = "laputin_db")
@@ -124,5 +126,31 @@ public class FileEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, hash, path, active, size, metadata, type);
+    }
+
+    public static FileRecord toRecord(FileEntity fileEntity) {
+        return FileRecord.builder()
+            .id(fileEntity.id)
+            .hash(fileEntity.hash)
+            .path(fileEntity.path)
+            .active(fileEntity.active == 1)
+            .size(fileEntity.size)
+            .metadata(fileEntity.metadata)
+            .type(fileEntity.type)
+            .tags(fileEntity.tags.stream().map(TagEntity::toRecord).collect(Collectors.toSet()))
+            .build();
+    }
+
+    public static FileEntity fromRecord(FileRecord record) {
+        var entity = new FileEntity();
+        entity.setId(record.id());
+        entity.setHash(record.hash());
+        entity.setPath(record.path());
+        entity.setActive(record.active() ? 1 : 0);
+        entity.setSize(record.size());
+        entity.setMetadata(record.metadata());
+        entity.setType(record.type());
+        entity.setTags(record.tags().stream().map(TagEntity::fromRecord).collect(Collectors.toSet()));
+        return entity;
     }
 }
