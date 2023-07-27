@@ -4,9 +4,12 @@ import fi.villesalonen.laputin.builders.FileRecordBuilder;
 import fi.villesalonen.laputin.builders.FilesQueryBuilder;
 import fi.villesalonen.laputin.entities.FileEntity;
 import fi.villesalonen.laputin.records.FileRecord;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +27,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,132 +61,155 @@ public class FileControllerTests {
         registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
     }
 
-    @BeforeEach
-    public void before() {
-        fileRepository.deleteAll();
-        tagRepository.deleteAll();
-    }
-
     @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class QueryByHashAndActive {
         FileRecord activeFile1;
         FileRecord activeFile2;
         FileRecord inactiveFile1;
 
-        @BeforeEach
-        public void beforeEach() {
+        @BeforeAll
+        public void beforeAll() {
             // Arrange
+            fileRepository.deleteAll();
+            tagRepository.deleteAll();
+
             activeFile1 = saveFile(new FileRecordBuilder().build());
             activeFile2 = saveFile(new FileRecordBuilder().build());
             inactiveFile1 = saveFile(new FileRecordBuilder().withActive(false).build());
         }
 
-        @Test
-        public void whenQueryingByHashAndActive1_givenFilesExist_thenReturnsOnlyMatchingFiles() {
+        @ParameterizedTest
+        @MethodSource("queryByHashAndActiveSource")
+        public void queryByHashAndActive(String url, List<FileRecord> expected) {
             // Act
-            var url = new FilesQueryBuilder()
-                .queryByHash(activeFile1, inactiveFile1)
-                .build();
-            var files = getFiles(url);
+            var actual = getFiles(url);
 
             // Assert
-            assertThat(files).containsExactlyInAnyOrderElementsOf(
-                List.of(activeFile1)
-            );
+            assertThat(actual)
+                .containsExactlyInAnyOrderElementsOf(expected);
         }
 
-        @Test
-        public void whenQueryingByHashAndActive2_givenFilesExist_thenReturnsOnlyMatchingFiles() {
-            // Act
-            var url = new FilesQueryBuilder()
-                .includeInactive()
-                .queryByHash(activeFile1, inactiveFile1)
-                .build();
-            var files = getFiles(url);
+        Stream<Arguments> queryByHashAndActiveSource() {
+            return Stream.of(
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .queryByHash(activeFile1, inactiveFile1)
+                        .build(),
+                    List.of(activeFile1)
+                ),
 
-            // Assert
-            assertThat(files).containsExactlyInAnyOrderElementsOf(
-                List.of(activeFile1, inactiveFile1)
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .includeInactive()
+                        .queryByHash(activeFile1, inactiveFile1)
+                        .build(),
+                    List.of(activeFile1, inactiveFile1)
+                )
             );
         }
     }
 
     @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class QueryByHash {
         FileRecord file1;
         FileRecord file2;
         FileRecord file3;
 
-        @BeforeEach
-        public void beforeEach() {
+        @BeforeAll
+        public void beforeAll() {
             // Arrange
+            fileRepository.deleteAll();
+            tagRepository.deleteAll();
+
             file1 = saveFile(new FileRecordBuilder().build());
             file2 = saveFile(new FileRecordBuilder().build());
             file3 = saveFile(new FileRecordBuilder().build());
         }
 
-        @Test
-        public void whenQueryingByHash_givenFilesExist_thenReturnsOnlyMatchingFiles() {
+        @ParameterizedTest
+        @MethodSource("queryByHashSource")
+        public void queryByHash(String url, List<FileRecord> expected) {
             // Act
-            var url = new FilesQueryBuilder()
-                .queryByHash(file1, file3)
-                .build();
-            var files = getFiles(url);
+            var actual = getFiles(url);
 
             // Assert
-            assertThat(files).containsExactlyInAnyOrderElementsOf(
-                List.of(file1, file3)
+            assertThat(actual)
+                .containsExactlyInAnyOrderElementsOf(expected);
+        }
+
+        Stream<Arguments> queryByHashSource() {
+            return Stream.of(
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .queryByHash(file1)
+                        .build(),
+                    List.of(file1)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .queryByHash(file1, file3)
+                        .build(),
+                    List.of(file1, file3)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .queryByHash(file1, file2, file3)
+                        .build(),
+                    List.of(file1, file2, file3)
+                )
             );
         }
     }
 
     @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class QueryByActive {
         FileRecord activeFile1;
         FileRecord activeFile2;
         FileRecord inactiveFile1;
 
-        @BeforeEach
-        public void beforeEach() {
+        @BeforeAll
+        public void beforeAll() {
             // Arrange
+            fileRepository.deleteAll();
+            tagRepository.deleteAll();
+
             activeFile1 = saveFile(new FileRecordBuilder().build());
             activeFile2 = saveFile(new FileRecordBuilder().build());
             inactiveFile1 = saveFile(new FileRecordBuilder().withActive(false).build());
         }
 
-        @Test
-        public void whenIncludeInactiveIsMissing_givenFilesExist_thenReturnsOnlyActiveFiles() {
+        @ParameterizedTest
+        @MethodSource("queryByActiveSource")
+        public void queryByActive(String url, List<FileRecord> expected) {
             // Act
-            var url = new FilesQueryBuilder().build();
-            var files = getFiles(url);
+            var actual = getFiles(url);
 
             // Assert
-            assertThat(files).containsExactlyInAnyOrderElementsOf(
-                List.of(activeFile1, activeFile2)
-            );
+            assertThat(actual)
+                .containsExactlyInAnyOrderElementsOf(expected);
         }
 
-        @Test
-        public void whenIncludeInactiveFalse_givenFilesExist_thenReturnsOnlyActiveFiles() {
-            // Act
-            var url = new FilesQueryBuilder().includeInactive(false).build();
-            var files = getFiles(url);
+        Stream<Arguments> queryByActiveSource() {
+            return Stream.of(
+                Arguments.of(
+                    new FilesQueryBuilder().build(),
+                    List.of(activeFile1, activeFile2)
+                ),
 
-            // Assert
-            assertThat(files).containsExactlyInAnyOrderElementsOf(
-                List.of(activeFile1, activeFile2)
-            );
-        }
+                Arguments.of(
+                    new FilesQueryBuilder().includeInactive(false).build(),
+                    List.of(activeFile1, activeFile2)
+                ),
 
-        @Test
-        public void whenIncludeInactiveTrue_givenFilesExist_thenReturnsAllFiles() {
-            // Act
-            var url = new FilesQueryBuilder().includeInactive(true).build();
-            var files = getFiles(url);
-
-            // Assert
-            assertThat(files).containsExactlyInAnyOrderElementsOf(
-                List.of(activeFile1, activeFile2, inactiveFile1)
+                Arguments.of(
+                    new FilesQueryBuilder().includeInactive(true).build(),
+                    List.of(activeFile1, activeFile2, inactiveFile1)
+                )
             );
         }
     }
