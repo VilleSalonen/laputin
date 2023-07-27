@@ -1,6 +1,7 @@
 package fi.villesalonen.laputin;
 
 import fi.villesalonen.laputin.builders.FileRecordBuilder;
+import fi.villesalonen.laputin.builders.FilesQueryBuilder;
 import fi.villesalonen.laputin.entities.FileEntity;
 import fi.villesalonen.laputin.records.FileRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,10 +64,54 @@ public class FileControllerTests {
     }
 
     @Nested
+    class QueryByHashAndActive {
+        FileRecord activeFile1;
+        FileRecord activeFile2;
+        FileRecord inactiveFile1;
+
+        @BeforeEach
+        public void beforeEach() {
+            // Arrange
+            activeFile1 = saveFile(new FileRecordBuilder().build());
+            activeFile2 = saveFile(new FileRecordBuilder().build());
+            inactiveFile1 = saveFile(new FileRecordBuilder().withActive(false).build());
+        }
+
+        @Test
+        public void whenQueryingByHashAndActive1_givenFilesExist_thenReturnsOnlyMatchingFiles() {
+            // Act
+            var url = new FilesQueryBuilder()
+                .queryByHash(activeFile1, inactiveFile1)
+                .build();
+            var files = getFiles(url);
+
+            // Assert
+            assertThat(files).containsExactlyInAnyOrderElementsOf(
+                List.of(activeFile1)
+            );
+        }
+
+        @Test
+        public void whenQueryingByHashAndActive2_givenFilesExist_thenReturnsOnlyMatchingFiles() {
+            // Act
+            var url = new FilesQueryBuilder()
+                .includeInactive()
+                .queryByHash(activeFile1, inactiveFile1)
+                .build();
+            var files = getFiles(url);
+
+            // Assert
+            assertThat(files).containsExactlyInAnyOrderElementsOf(
+                List.of(activeFile1, inactiveFile1)
+            );
+        }
+    }
+
+    @Nested
     class QueryByHash {
-        FileRecord file1 = new FileRecordBuilder().build();
-        FileRecord file2 = new FileRecordBuilder().build();
-        FileRecord file3 = new FileRecordBuilder().build();
+        FileRecord file1;
+        FileRecord file2;
+        FileRecord file3;
 
         @BeforeEach
         public void beforeEach() {
@@ -79,7 +124,9 @@ public class FileControllerTests {
         @Test
         public void whenQueryingByHash_givenFilesExist_thenReturnsOnlyMatchingFiles() {
             // Act
-            var url = "/files?hash=" + file1.hash() + "&hash=" + file3.hash();
+            var url = new FilesQueryBuilder()
+                .queryByHash(file1, file3)
+                .build();
             var files = getFiles(url);
 
             // Assert
@@ -106,7 +153,7 @@ public class FileControllerTests {
         @Test
         public void whenIncludeInactiveIsMissing_givenFilesExist_thenReturnsOnlyActiveFiles() {
             // Act
-            var url = "/files";
+            var url = new FilesQueryBuilder().build();
             var files = getFiles(url);
 
             // Assert
@@ -118,7 +165,7 @@ public class FileControllerTests {
         @Test
         public void whenIncludeInactiveFalse_givenFilesExist_thenReturnsOnlyActiveFiles() {
             // Act
-            var url = "/files?includeInactive=false";
+            var url = new FilesQueryBuilder().includeInactive(false).build();
             var files = getFiles(url);
 
             // Assert
@@ -130,7 +177,7 @@ public class FileControllerTests {
         @Test
         public void whenIncludeInactiveTrue_givenFilesExist_thenReturnsAllFiles() {
             // Act
-            var url = "/files?includeInactive=true";
+            var url = new FilesQueryBuilder().includeInactive(true).build();
             var files = getFiles(url);
 
             // Assert
