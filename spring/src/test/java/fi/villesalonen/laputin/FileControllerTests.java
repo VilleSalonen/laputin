@@ -167,6 +167,68 @@ public class FileControllerTests {
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class QueryByPath {
+        FileRecord holidayFile1;
+        FileRecord holidayFile2;
+        FileRecord renovationFile;
+
+        @BeforeAll
+        public void beforeAll() {
+            // Arrange
+            fileRepository.deleteAll();
+            tagRepository.deleteAll();
+
+            holidayFile1 = saveFile(new FileRecordBuilder().withPath("/pictures/Holiday 2023/IMG_0001.jpg").build());
+            holidayFile2 = saveFile(new FileRecordBuilder().withPath("/pictures/Holiday 2023/IMG_0002.jpg").build());
+            renovationFile = saveFile(new FileRecordBuilder().withPath("/pictures/Renovation 2023/IMG_1384.jpg").build());
+        }
+
+        @ParameterizedTest
+        @MethodSource("queryByPathSource")
+        public void queryByPath(String url, List<FileRecord> expected) {
+            // Act
+            var actual = getFiles(url);
+
+            // Assert
+            assertThat(actual)
+                .containsExactlyInAnyOrderElementsOf(expected);
+        }
+
+        Stream<Arguments> queryByPathSource() {
+            return Stream.of(
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .withFilename("pictures Holiday 2023")
+                        .build(),
+                    List.of(holidayFile1, holidayFile2)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .withFilename("pictures holiday 2023")
+                        .build(),
+                    List.of(holidayFile1, holidayFile2)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .withFilename("PICTURES HOLIDAY 2023")
+                        .build(),
+                    List.of(holidayFile1, holidayFile2)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .withFilename("pictures 2023")
+                        .build(),
+                    List.of(holidayFile1, holidayFile2, renovationFile)
+                )
+            );
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class QueryByActive {
         FileRecord activeFile1;
         FileRecord activeFile2;

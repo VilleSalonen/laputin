@@ -70,6 +70,13 @@ public class FilesQueryBuilder {
         return this;
     }
 
+    public FilesQueryBuilder queryByPath(FileRecord... files) {
+        for (FileRecord file : files) {
+            hashList.add(file.path());
+        }
+        return this;
+    }
+
     public String build() {
         if (filename != null) {
             urlBuilder.append("filename=").append(filename).append("&");
