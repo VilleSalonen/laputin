@@ -1,7 +1,7 @@
 package fi.villesalonen.laputin;
 
+import fi.villesalonen.laputin.builders.FileEntityBuilder;
 import fi.villesalonen.laputin.entities.FileEntity;
-import fi.villesalonen.laputin.entities.TagEntity;
 import fi.villesalonen.laputin.records.FileRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,9 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,39 +64,15 @@ public class FileControllerTests {
 
     @Nested
     class QueryByHash {
+        FileEntity file1 = new FileEntityBuilder().build();
+        FileEntity file2 = new FileEntityBuilder().build();
+        FileEntity file3 = new FileEntityBuilder().build();
+
         @BeforeEach
         public void beforeEach() {
             // Arrange
-            TagEntity tag1 = new TagEntity();
-            tag1.setName("First");
-            tagRepository.save(tag1);
-
-            FileEntity file1 = new FileEntity();
-            file1.setHash("abc");
-            file1.setPath("/path/to/file1");
-            file1.setActive(1);
-            file1.setSize(12381231);
-            file1.setMetadata(new HashMap<>());
-            file1.setType("image/jpeg");
-            file1.setTags(Set.of(tag1));
             fileRepository.save(file1);
-
-            FileEntity file2 = new FileEntity();
-            file2.setHash("def");
-            file2.setPath("/path/to/file2");
-            file2.setActive(1);
-            file2.setSize(431741);
-            file2.setMetadata(new HashMap<>());
-            file2.setType("image/jpeg");
             fileRepository.save(file2);
-
-            FileEntity file3 = new FileEntity();
-            file3.setHash("ghi");
-            file3.setPath("/path/to/file3");
-            file3.setActive(1);
-            file3.setSize(7571);
-            file3.setMetadata(new HashMap<>());
-            file3.setType("image/jpeg");
             fileRepository.save(file3);
         }
 
@@ -106,7 +80,7 @@ public class FileControllerTests {
         public void whenQueryingByHash_givenFilesExist_thenReturnsOnlyMatchingFiles() {
             // Act
             ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files?hash=abc&hash=ghi",
+                "http://localhost:" + randomServerPort + "/files?hash=" + file1.getHash() + "&hash=" + file3.getHash(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}
@@ -116,45 +90,25 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder("/path/to/file1", "/path/to/file3");
+                .containsExactlyInAnyOrder(file1.getPath(), file3.getPath());
         }
     }
 
     @Nested
     class QueryByActive {
+        FileEntity file1 = new FileEntityBuilder().build();
+
+        FileEntity file2 = new FileEntityBuilder().build();
+
+        FileEntity file3 = new FileEntityBuilder()
+            .withActive(0)
+            .build();
+
         @BeforeEach
         public void beforeEach() {
             // Arrange
-            TagEntity tag1 = new TagEntity();
-            tag1.setName("First");
-            tagRepository.save(tag1);
-
-            FileEntity file1 = new FileEntity();
-            file1.setHash("abc");
-            file1.setPath("/path/to/file1");
-            file1.setActive(1);
-            file1.setSize(12381231);
-            file1.setMetadata(new HashMap<>());
-            file1.setType("image/jpeg");
-            file1.setTags(Set.of(tag1));
             fileRepository.save(file1);
-
-            FileEntity file2 = new FileEntity();
-            file2.setHash("def");
-            file2.setPath("/path/to/file2");
-            file2.setActive(1);
-            file2.setSize(431741);
-            file2.setMetadata(new HashMap<>());
-            file2.setType("image/jpeg");
             fileRepository.save(file2);
-
-            FileEntity file3 = new FileEntity();
-            file3.setHash("ghi");
-            file3.setPath("/path/to/file3");
-            file3.setActive(0);
-            file3.setSize(7571);
-            file3.setMetadata(new HashMap<>());
-            file3.setType("image/jpeg");
             fileRepository.save(file3);
         }
 
@@ -172,7 +126,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder("/path/to/file1", "/path/to/file2");
+                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath());
         }
 
         @Test
@@ -189,7 +143,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder("/path/to/file1", "/path/to/file2");
+                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath());
         }
 
         @Test
@@ -206,7 +160,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder("/path/to/file1", "/path/to/file2");
+                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath());
         }
 
         @Test
@@ -223,7 +177,7 @@ public class FileControllerTests {
             List<FileRecord> returnedFiles = response.getBody();
             assertThat(returnedFiles)
                 .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder("/path/to/file1", "/path/to/file2", "/path/to/file3");
+                .containsExactlyInAnyOrder(file1.getPath(), file2.getPath(), file3.getPath());
         }
     }
 }
