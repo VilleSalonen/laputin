@@ -71,9 +71,9 @@ public class FileControllerTests {
         @BeforeEach
         public void beforeEach() {
             // Arrange
-            fileRepository.save(FileEntity.fromRecord(file1));
-            fileRepository.save(FileEntity.fromRecord(file2));
-            fileRepository.save(FileEntity.fromRecord(file3));
+            file1 = saveFile(new FileRecordBuilder().build());
+            file2 = saveFile(new FileRecordBuilder().build());
+            file3 = saveFile(new FileRecordBuilder().build());
         }
 
         @Test
@@ -88,24 +88,24 @@ public class FileControllerTests {
 
             // Assert
             List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles)
-                .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.path(), file3.path());
+            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+                List.of(file1, file3)
+            );
         }
     }
 
     @Nested
     class QueryByActive {
-        FileRecord file1 = new FileRecordBuilder().build();
-        FileRecord file2 = new FileRecordBuilder().build();
-        FileRecord file3 = new FileRecordBuilder().withActive(false).build();
+        FileRecord activeFile1;
+        FileRecord activeFile2;
+        FileRecord inactiveFile1;
 
         @BeforeEach
         public void beforeEach() {
             // Arrange
-            fileRepository.save(FileEntity.fromRecord(file1));
-            fileRepository.save(FileEntity.fromRecord(file2));
-            fileRepository.save(FileEntity.fromRecord(file3));
+            activeFile1 = saveFile(new FileRecordBuilder().build());
+            activeFile2 = saveFile(new FileRecordBuilder().build());
+            inactiveFile1 = saveFile(new FileRecordBuilder().withActive(false).build());
         }
 
         @Test
@@ -120,9 +120,9 @@ public class FileControllerTests {
 
             // Assert
             List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles)
-                .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.path(), file2.path());
+            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+                List.of(activeFile1, activeFile2)
+            );
         }
 
         @Test
@@ -137,9 +137,9 @@ public class FileControllerTests {
 
             // Assert
             List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles)
-                .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.path(), file2.path());
+            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+                List.of(activeFile1, activeFile2)
+            );
         }
 
         @Test
@@ -154,9 +154,9 @@ public class FileControllerTests {
 
             // Assert
             List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles)
-                .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.path(), file2.path());
+            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+                List.of(activeFile1, activeFile2)
+            );
         }
 
         @Test
@@ -171,9 +171,13 @@ public class FileControllerTests {
 
             // Assert
             List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles)
-                .extracting(FileRecord::path)
-                .containsExactlyInAnyOrder(file1.path(), file2.path(), file3.path());
+            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+                List.of(activeFile1, activeFile2, inactiveFile1)
+            );
         }
+    }
+
+    private FileRecord saveFile(FileRecord file) {
+        return FileEntity.toRecord(fileRepository.save(FileEntity.fromRecord(file)));
     }
 }
