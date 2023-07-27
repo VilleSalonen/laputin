@@ -79,16 +79,11 @@ public class FileControllerTests {
         @Test
         public void whenQueryingByHash_givenFilesExist_thenReturnsOnlyMatchingFiles() {
             // Act
-            ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files?hash=" + file1.hash() + "&hash=" + file3.hash(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
-            );
+            var url = "/files?hash=" + file1.hash() + "&hash=" + file3.hash();
+            var files = getFiles(url);
 
             // Assert
-            List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+            assertThat(files).containsExactlyInAnyOrderElementsOf(
                 List.of(file1, file3)
             );
         }
@@ -109,35 +104,13 @@ public class FileControllerTests {
         }
 
         @Test
-        public void whenQueryingByHash_givenFilesExist_thenReturnsOnlyMatchingFiles() {
-            // Act
-            ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
-            );
-
-            // Assert
-            List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
-                List.of(activeFile1, activeFile2)
-            );
-        }
-
-        @Test
         public void whenIncludeInactiveIsMissing_givenFilesExist_thenReturnsOnlyActiveFiles() {
             // Act
-            ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
-            );
+            var url = "/files";
+            var files = getFiles(url);
 
             // Assert
-            List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+            assertThat(files).containsExactlyInAnyOrderElementsOf(
                 List.of(activeFile1, activeFile2)
             );
         }
@@ -145,16 +118,11 @@ public class FileControllerTests {
         @Test
         public void whenIncludeInactiveFalse_givenFilesExist_thenReturnsOnlyActiveFiles() {
             // Act
-            ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files?includeInactive=false",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
-            );
+            var url = "/files?includeInactive=false";
+            var files = getFiles(url);
 
             // Assert
-            List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+            assertThat(files).containsExactlyInAnyOrderElementsOf(
                 List.of(activeFile1, activeFile2)
             );
         }
@@ -162,16 +130,11 @@ public class FileControllerTests {
         @Test
         public void whenIncludeInactiveTrue_givenFilesExist_thenReturnsAllFiles() {
             // Act
-            ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
-                "http://localhost:" + randomServerPort + "/files?includeInactive=true",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
-            );
+            var url = "/files?includeInactive=true";
+            var files = getFiles(url);
 
             // Assert
-            List<FileRecord> returnedFiles = response.getBody();
-            assertThat(returnedFiles).containsExactlyInAnyOrderElementsOf(
+            assertThat(files).containsExactlyInAnyOrderElementsOf(
                 List.of(activeFile1, activeFile2, inactiveFile1)
             );
         }
@@ -179,5 +142,15 @@ public class FileControllerTests {
 
     private FileRecord saveFile(FileRecord file) {
         return FileEntity.toRecord(fileRepository.save(FileEntity.fromRecord(file)));
+    }
+
+    private List<FileRecord> getFiles(String url) {
+        ResponseEntity<List<FileRecord>> response = restTemplate.exchange(
+            "http://localhost:" + randomServerPort + url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<>() {}
+        );
+        return response.getBody();
     }
 }
