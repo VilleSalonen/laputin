@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class FileRepositoryCustomImpl implements FileRepositoryCustom {
-
     private static final String ACTIVE_FIELD = "active";
     private static final String HASH_FIELD = "hash";
     private static final String PATH_FIELD = "path";
