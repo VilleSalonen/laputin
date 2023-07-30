@@ -4,6 +4,7 @@ import fi.villesalonen.laputin.records.TagRecord;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tag", schema = "public", catalog = "laputin_db")
@@ -15,6 +16,8 @@ public class TagEntity {
     @Basic
     @Column(name = "name")
     private String name;
+    @ManyToMany(mappedBy = "tags")
+    private Set<FileEntity> files;
 
     public int getId() {
         return id;
@@ -30,6 +33,14 @@ public class TagEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<FileEntity> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<FileEntity> files) {
+        this.files = files;
     }
 
     @Override

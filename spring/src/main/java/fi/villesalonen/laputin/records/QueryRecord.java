@@ -5,8 +5,8 @@ public record QueryRecord(
     String[] paths,
     String status,
     String[] hash,
-    String and,
-    String or,
-    String not,
+    Integer[] and,
+    Integer[] or,
+    Integer[] not,
     Boolean includeInactive
 ) {}

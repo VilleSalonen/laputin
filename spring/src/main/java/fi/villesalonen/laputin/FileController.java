@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -31,8 +32,11 @@ public class FileController {
     ) {
         String[] pathsArray = (paths != null) ? paths.toArray(new String[0]) : null;
         String[] hashArray = (hash != null) ? hash.toArray(new String[0]) : null;
+        Integer[] andArray = (and != null) ? Arrays.stream(and.split(",")).map(Integer::parseInt).toArray(Integer[]::new) : null;
+        Integer[] orArray = (or != null) ? Arrays.stream(or.split(",")).map(Integer::parseInt).toArray(Integer[]::new) : null;
+        Integer[] notArray = (not != null) ? Arrays.stream(not.split(",")).map(Integer::parseInt).toArray(Integer[]::new) : null;
 
-        QueryRecord query = new QueryRecord(filename, pathsArray, status, hashArray, and, or, not, includeInactive);
+        QueryRecord query = new QueryRecord(filename, pathsArray, status, hashArray, andArray, orArray, notArray, includeInactive);
         return fileService.getFiles(query);
     }
 }

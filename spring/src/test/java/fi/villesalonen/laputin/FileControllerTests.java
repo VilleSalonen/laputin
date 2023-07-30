@@ -2,8 +2,11 @@ package fi.villesalonen.laputin;
 
 import fi.villesalonen.laputin.builders.FileRecordBuilder;
 import fi.villesalonen.laputin.builders.FilesQueryBuilder;
+import fi.villesalonen.laputin.builders.TagRecordBuilder;
 import fi.villesalonen.laputin.entities.FileEntity;
+import fi.villesalonen.laputin.entities.TagEntity;
 import fi.villesalonen.laputin.records.FileRecord;
+import fi.villesalonen.laputin.records.TagRecord;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.TestInstance;
@@ -27,6 +30,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,6 +63,75 @@ public class FileControllerTests {
         registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
         registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class QueryByTags {
+        FileRecord file1;
+        FileRecord file2;
+        FileRecord file3;
+        FileRecord file4;
+
+        TagRecord tag1;
+        TagRecord tag2;
+        TagRecord tag3;
+
+        @BeforeAll
+        public void beforeAll() {
+            // Arrange
+            fileRepository.deleteAll();
+            tagRepository.deleteAll();
+
+            tag1 = saveTag(new TagRecordBuilder().build());
+            tag2 = saveTag(new TagRecordBuilder().build());
+            tag3 = saveTag(new TagRecordBuilder().build());
+
+            file1 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1)).build());
+            file2 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1, tag2)).build());
+            file3 = saveFile(new FileRecordBuilder().withTags(Set.of(tag2)).build());
+            file4 = saveFile(new FileRecordBuilder().withTags(Set.of(tag3)).build());
+        }
+
+        @ParameterizedTest
+        @MethodSource("queryByTagsSource")
+        public void queryByTags(String url, List<FileRecord> expected) {
+            // Act
+            var actual = getFiles(url);
+
+            // Assert
+            assertThat(actual)
+                .containsExactlyInAnyOrderElementsOf(expected);
+        }
+
+        Stream<Arguments> queryByTagsSource() {
+            return Stream.of(
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd("" + tag1.id()).build(),
+                    List.of(file1, file2)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd("" + tag2.id()).build(),
+                    List.of(file2, file3)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd(tag1.id() + "," + tag2.id()).build(),
+                    List.of(file2)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder().withOr(tag1.id() + "," + tag2.id()).build(),
+                    List.of(file1, file2, file3)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder().withNot(tag1.id() + "," + tag2.id()).build(),
+                    List.of(file4)
+                )
+            );
+        }
     }
 
     @Nested
@@ -278,6 +351,10 @@ public class FileControllerTests {
 
     private FileRecord saveFile(FileRecord file) {
         return FileEntity.toRecord(fileRepository.save(FileEntity.fromRecord(file)));
+    }
+
+    private TagRecord saveTag(TagRecord build) {
+        return TagEntity.toRecord(tagRepository.save(TagEntity.fromRecord(build)));
     }
 
     private List<FileRecord> getFiles(String url) {
