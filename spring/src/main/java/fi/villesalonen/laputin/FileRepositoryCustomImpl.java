@@ -65,6 +65,16 @@ public class FileRepositoryCustomImpl implements FileRepositoryCustom {
             predicates.add(cb.not(file.get("id").in(tagSubquery)));
         }
 
+        if (queryRecord.status() != null) {
+            switch (queryRecord.status()) {
+                // Files must have at least one tag
+                case Tagged -> predicates.add(cb.isNotEmpty(file.get("tags")));
+                // Files must not have any tags
+                case Untagged -> predicates.add(cb.isEmpty(file.get("tags")));
+                case Both -> {}
+                default -> throw new IllegalStateException("Unexpected status: " + queryRecord.status());
+            }
+        }
 
         query.where(predicates.toArray(new Predicate[0]));
 

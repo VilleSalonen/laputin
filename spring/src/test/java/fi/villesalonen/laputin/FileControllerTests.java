@@ -7,6 +7,7 @@ import fi.villesalonen.laputin.entities.FileEntity;
 import fi.villesalonen.laputin.entities.TagEntity;
 import fi.villesalonen.laputin.records.FileRecord;
 import fi.villesalonen.laputin.records.TagRecord;
+import fi.villesalonen.laputin.records.TaggingStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.TestInstance;
@@ -377,6 +378,57 @@ public class FileControllerTests {
                 Arguments.of(
                     new FilesQueryBuilder().includeInactive(true).build(),
                     List.of(activeFile1, activeFile2, inactiveFile1)
+                )
+            );
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class QueryByStatus {
+        FileRecord file1, file2;
+        TagRecord tag1;
+
+        @BeforeAll
+        public void beforeAll() {
+            // Arrange
+            fileRepository.deleteAll();
+            tagRepository.deleteAll();
+
+            tag1 = saveTag(new TagRecordBuilder().build());
+
+            file1 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1)).build());
+            file2 = saveFile(new FileRecordBuilder().build());
+        }
+
+        @ParameterizedTest
+        @MethodSource("queryByStatusSource")
+        public void queryByStatus(String url, List<FileRecord> expected) {
+            // Act
+            var actual = getFiles(url);
+
+            // Assert
+            assertThat(actual)
+                .containsExactlyInAnyOrderElementsOf(expected);
+        }
+
+        Stream<Arguments> queryByStatusSource() {
+            return Stream.of(
+                Arguments.of(
+                    new FilesQueryBuilder().withStatus(TaggingStatus.Tagged).build(),
+                    List.of(file1)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withStatus(TaggingStatus.Untagged).build(),
+                    List.of(file2)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withStatus(TaggingStatus.Both).build(),
+                    List.of(file1, file2)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().build(),
+                    List.of(file1, file2)
                 )
             );
         }

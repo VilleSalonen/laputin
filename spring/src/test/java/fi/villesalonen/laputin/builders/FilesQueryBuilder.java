@@ -1,6 +1,7 @@
 package fi.villesalonen.laputin.builders;
 
 import fi.villesalonen.laputin.records.FileRecord;
+import fi.villesalonen.laputin.records.TaggingStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,12 @@ public class FilesQueryBuilder {
         return this;
     }
 
-    public FilesQueryBuilder withStatus(String status) {
-        this.status = status;
+    public FilesQueryBuilder withStatus(TaggingStatus status) {
+        this.status = switch (status) {
+            case Tagged -> "tagged";
+            case Untagged -> "untagged";
+            default -> "both";
+        };
         return this;
     }
 

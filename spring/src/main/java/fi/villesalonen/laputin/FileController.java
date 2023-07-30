@@ -2,6 +2,7 @@ package fi.villesalonen.laputin;
 
 import fi.villesalonen.laputin.records.FileRecord;
 import fi.villesalonen.laputin.records.QueryRecord;
+import fi.villesalonen.laputin.records.TaggingStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,8 +36,21 @@ public class FileController {
         Integer[] andArray = (and != null) ? Arrays.stream(and.split(",")).map(Integer::parseInt).toArray(Integer[]::new) : null;
         Integer[] orArray = (or != null) ? Arrays.stream(or.split(",")).map(Integer::parseInt).toArray(Integer[]::new) : null;
         Integer[] notArray = (not != null) ? Arrays.stream(not.split(",")).map(Integer::parseInt).toArray(Integer[]::new) : null;
+        TaggingStatus taggingStatus = this.convertTaggingStatus(status);
 
-        QueryRecord query = new QueryRecord(filename, pathsArray, status, hashArray, andArray, orArray, notArray, includeInactive);
+        QueryRecord query = new QueryRecord(filename, pathsArray, taggingStatus, hashArray, andArray, orArray, notArray, includeInactive);
         return fileService.getFiles(query);
+    }
+
+    private TaggingStatus convertTaggingStatus(String status) {
+        if (status == null) {
+            return TaggingStatus.Both;
+        }
+
+        return switch (status) {
+            case "tagged" -> TaggingStatus.Tagged;
+            case "untagged" -> TaggingStatus.Untagged;
+            default -> TaggingStatus.Both;
+        };
     }
 }
