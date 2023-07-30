@@ -68,14 +68,8 @@ public class FileControllerTests {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class QueryByTags {
-        FileRecord file1;
-        FileRecord file2;
-        FileRecord file3;
-        FileRecord file4;
-
-        TagRecord tag1;
-        TagRecord tag2;
-        TagRecord tag3;
+        FileRecord file1, file2, file3, file4, file5, file6;
+        TagRecord tag1, tag2, tag3, tag4;
 
         @BeforeAll
         public void beforeAll() {
@@ -86,11 +80,14 @@ public class FileControllerTests {
             tag1 = saveTag(new TagRecordBuilder().build());
             tag2 = saveTag(new TagRecordBuilder().build());
             tag3 = saveTag(new TagRecordBuilder().build());
+            tag4 = saveTag(new TagRecordBuilder().build());
 
             file1 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1)).build());
             file2 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1, tag2)).build());
             file3 = saveFile(new FileRecordBuilder().withTags(Set.of(tag2)).build());
             file4 = saveFile(new FileRecordBuilder().withTags(Set.of(tag3)).build());
+            file5 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1, tag3)).build());
+            file6 = saveFile(new FileRecordBuilder().withTags(Set.of(tag4)).build());
         }
 
         @ParameterizedTest
@@ -108,27 +105,63 @@ public class FileControllerTests {
             return Stream.of(
                 Arguments.of(
                     new FilesQueryBuilder().withAnd("" + tag1.id()).build(),
-                    List.of(file1, file2)
+                    List.of(file1, file2, file5)
                 ),
-
                 Arguments.of(
                     new FilesQueryBuilder().withAnd("" + tag2.id()).build(),
                     List.of(file2, file3)
                 ),
-
                 Arguments.of(
                     new FilesQueryBuilder().withAnd(tag1.id() + "," + tag2.id()).build(),
                     List.of(file2)
                 ),
-
                 Arguments.of(
                     new FilesQueryBuilder().withOr(tag1.id() + "," + tag2.id()).build(),
-                    List.of(file1, file2, file3)
+                    List.of(file1, file2, file3, file5)
                 ),
-
                 Arguments.of(
                     new FilesQueryBuilder().withNot(tag1.id() + "," + tag2.id()).build(),
-                    List.of(file4)
+                    List.of(file4, file6)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd("" + tag1.id()).withOr("" + tag2.id()).build(),
+                    List.of(file2)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd("" + tag1.id()).withNot("" + tag2.id()).build(),
+                    List.of(file1, file5)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withOr("" + tag1.id()).withNot("" + tag2.id()).build(),
+                    List.of(file1, file5)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd(tag1.id() + "," + tag2.id()).withNot("" + tag3.id()).build(),
+                    List.of(file2)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd("" + tag4.id()).build(),
+                    List.of(file6)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withNot("" + tag4.id()).build(),
+                    List.of(file1, file2, file3, file4, file5)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().build(),
+                    List.of(file1, file2, file3, file4, file5, file6)
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withAnd("999").build(),
+                    List.of()
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withOr("999").build(),
+                    List.of()
+                ),
+                Arguments.of(
+                    new FilesQueryBuilder().withNot("999").build(),
+                    List.of(file1, file2, file3, file4, file5, file6)
                 )
             );
         }
