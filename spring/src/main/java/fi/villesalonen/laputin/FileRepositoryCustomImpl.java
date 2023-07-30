@@ -35,6 +35,14 @@ public class FileRepositoryCustomImpl implements FileRepositoryCustom {
             predicates.add(file.get("hash").in(Arrays.asList(queryRecord.hash())));
         }
 
+        if (queryRecord.paths() != null) {
+            List<Predicate> pathPredicates = new ArrayList<>();
+            for (String path : queryRecord.paths()) {
+                pathPredicates.add(cb.like(cb.upper(file.get("path")), path.toUpperCase() + "%"));
+            }
+            predicates.add(cb.or(pathPredicates.toArray(new Predicate[0])));
+        }
+
         if (queryRecord.filename() != null) {
             for (String filename : queryRecord.filename().split(" ")) {
                 predicates.add(cb.like(cb.upper(file.get("path")), "%" + filename.toUpperCase() + "%"));

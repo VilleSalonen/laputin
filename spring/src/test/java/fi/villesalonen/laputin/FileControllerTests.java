@@ -329,6 +329,20 @@ public class FileControllerTests {
                         .withFilename("pictures 2023")
                         .build(),
                     List.of(holidayFile1, holidayFile2, renovationFile)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .withPaths("/pictures/Holiday 2023/")
+                        .build(),
+                    List.of(holidayFile1, holidayFile2)
+                ),
+
+                Arguments.of(
+                    new FilesQueryBuilder()
+                        .withPaths("/pictures/Holiday 2023/", "/pictures/Renovation 2023/")
+                        .build(),
+                    List.of(holidayFile1, holidayFile2, renovationFile)
                 )
             );
         }
