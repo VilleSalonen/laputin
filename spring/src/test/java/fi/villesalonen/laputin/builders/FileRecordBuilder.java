@@ -11,7 +11,7 @@ public class FileRecordBuilder {
     private String path;
     private Boolean active;
     private Long size;
-    private Map<String, String> metadata;
+    private Map<String, Object> metadata;
     private String type;
     private Set<TagRecord> tags;
     private final Random random = new Random();
@@ -41,7 +41,7 @@ public class FileRecordBuilder {
         return this;
     }
 
-    public FileRecordBuilder withMetadata(Map<String, String> metadata) {
+    public FileRecordBuilder withMetadata(Map<String, Object> metadata) {
         this.metadata = metadata != null ? metadata : new HashMap<>();
         return this;
     }

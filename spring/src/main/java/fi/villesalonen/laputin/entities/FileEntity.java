@@ -40,7 +40,7 @@ public class FileEntity {
     private long size;
     @Type(JsonType.class)
     @Column(name = "metadata", columnDefinition = "jsonb")
-    private Map<String, String> metadata;
+    private Map<String, Object> metadata;
     @Basic
     @Column(name = "type")
     private String type;
@@ -99,11 +99,11 @@ public class FileEntity {
         this.size = size;
     }
 
-    public Map<String, String> getMetadata() {
+    public Map<String, Object> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Map<String, String> metadata) {
+    public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
     }
 
