@@ -6,7 +6,10 @@ plugins {
 
 group = 'fi.villesalonen'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '20'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_20
+}
 
 repositories {
 	mavenCentral()
