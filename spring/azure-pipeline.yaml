@@ -7,7 +7,8 @@ pool:
 steps:
     - task: Gradle@2
       inputs:
-          gradleWrapperFile: "gradlew"
+          gradleWrapperFile: "spring/gradlew"
+          workingDirectory: "spring" # set the working directory to the spring folder
           tasks: "clean build test"
           publishJUnitResults: true
           testResultsFiles: "**/test-results/**/*.xml"
