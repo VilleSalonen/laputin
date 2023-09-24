@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -99,6 +100,7 @@ public class FileControllerTests {
 
             // Assert
             assertThat(actual)
+                .isSortedAccordingTo(comparing(FileRecord::path))
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
 
@@ -194,6 +196,7 @@ public class FileControllerTests {
 
             // Assert
             assertThat(actual)
+                .isSortedAccordingTo(comparing(FileRecord::path))
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
 
@@ -243,6 +246,7 @@ public class FileControllerTests {
 
             // Assert
             assertThat(actual)
+                .isSortedAccordingTo(comparing(FileRecord::path))
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
 
@@ -298,6 +302,7 @@ public class FileControllerTests {
 
             // Assert
             assertThat(actual)
+                .isSortedAccordingTo(comparing(FileRecord::path))
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
 
@@ -374,6 +379,7 @@ public class FileControllerTests {
 
             // Assert
             assertThat(actual)
+                .isSortedAccordingTo(comparing(FileRecord::path))
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
 
@@ -423,6 +429,7 @@ public class FileControllerTests {
 
             // Assert
             assertThat(actual)
+                .isSortedAccordingTo(comparing(FileRecord::path))
                 .containsExactlyInAnyOrderElementsOf(expected);
         }
 

@@ -40,6 +40,7 @@ public class FileRepositoryCustomImpl implements FileRepositoryCustom {
         List<Predicate> predicates = createPredicatesFromQuery(cb, query, file, queryRecord);
 
         query.where(predicates.toArray(new Predicate[0]));
+        query.orderBy(cb.asc(file.get(PATH_FIELD)));
 
         return entityManager.createQuery(query).getResultList();
     }
