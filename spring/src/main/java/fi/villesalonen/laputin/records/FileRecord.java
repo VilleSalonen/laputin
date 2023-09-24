@@ -1,5 +1,6 @@
 package fi.villesalonen.laputin.records;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Set;
 
 @Builder
 public record FileRecord(
+    @JsonProperty("fileId")
     int id,
     String hash,
     String path,
