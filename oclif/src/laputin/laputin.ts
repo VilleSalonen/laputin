@@ -6,6 +6,7 @@ import fs = require('fs/promises');
 import { param } from 'express-validator';
 import cors = require('cors');
 import http = require('http');
+import { diffString } from 'json-diff';
 
 import { Library } from './library';
 import { FileLibrary } from './filelibrary';
@@ -19,6 +20,9 @@ import { FileDataMigrator } from './filedatamigrator';
 import { SceneDetector } from './scenedetector';
 import { TagQuery } from './tagquery.model';
 import { LaputinConfiguration } from './laputinconfiguration';
+
+const SPRING_BOOT_APP_HOST = 'localhost';
+const SPRING_BOOT_APP_PORT = 8080;  // Port where your Spring Boot app is running
 
 export class Laputin {
     public app: express.Express | undefined = undefined;
@@ -117,12 +121,51 @@ export class Laputin {
         return file;
     }
 
+    private proxyRequest(req: express.Request, res: express.Response, originalResult: any): void {
+        const options = {
+            hostname: SPRING_BOOT_APP_HOST,
+            port: SPRING_BOOT_APP_PORT,
+            path: req.originalUrl.replace('/api', ''),
+            method: req.method,
+            headers: req.headers
+        };
+    
+        const proxy = http.request(options, (targetRes) => {
+            let responseData = '';
+            targetRes.on('data', chunk => {
+                responseData += chunk;
+            });
+    
+            targetRes.on('end', () => {
+                if (typeof targetRes.statusCode === 'number') {
+                    res.writeHead(targetRes.statusCode, targetRes.headers);
+                    res.end(responseData);
+    
+                    // Compare originalResult with responseData
+                    console.log(diffString(originalResult, JSON.parse(responseData)));
+                } else {
+                    res.status(500).json({ error: 'Unexpected response from Spring Boot server' });
+                }
+            });
+        });
+    
+        req.pipe(proxy, {
+            end: true
+        });
+    
+        proxy.on('error', (err) => {
+            console.error(err);
+            res.status(500).json({ error: 'Proxy error' });
+        });
+    }
+
     private _createApiRoutes(): express.Express {
         const api = express();
 
         api.route('/files').get(async (req, res) => {
             const files = await this.library.getFiles(<any>req.query);
-            res.send(files);
+
+            this.proxyRequest(req, res, files);
         });
 
         api.get(

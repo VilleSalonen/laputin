@@ -173,7 +173,7 @@ export class Library {
         const files: Map<number, File> = new Map<number, File>(
             rawResults.map((row) => [
                 row.id,
-                new File(row.id, row.hash, row.path, [], Number(row.size), row.type, row.active, row.metadata ?? {}),
+                new File(row.id, row.hash, row.path, [], Number(row.size), row.type, !!row.active, row.metadata ?? {}),
             ])
         );
         const fileIds = rawResults.map((r) => r.id);
