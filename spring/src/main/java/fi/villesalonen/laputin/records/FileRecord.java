@@ -16,5 +16,10 @@ public record FileRecord(
     long size,
     Map<String, Object> metadata,
     String type,
-    Set<TagRecord> tags) {
+    Set<TagRecord> tags)
+{
+    @JsonProperty("name")
+    public String name() {
+        return java.nio.file.Paths.get(path).getFileName().toString();
+    }
 }

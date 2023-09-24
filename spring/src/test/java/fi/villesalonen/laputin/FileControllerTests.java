@@ -446,7 +446,13 @@ public class FileControllerTests {
     private static void assertFiles(List<FileRecord> expected, List<FileRecord> actual) {
         assertThat(actual)
             .isSortedAccordingTo(comparing(FileRecord::path))
-            .containsExactlyInAnyOrderElementsOf(expected);
+            .containsExactlyInAnyOrderElementsOf(expected)
+            .allSatisfy(file -> {
+                assertThat(file.name())
+                    .isNotNull()
+                    .isNotEqualTo(file.path());
+                assertThat(file.path()).endsWith(file.name());
+            });
     }
 
     private FileRecord saveFile(FileRecord file) {
