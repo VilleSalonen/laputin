@@ -99,9 +99,7 @@ public class FileControllerTests {
             var actual = getFiles(url);
 
             // Assert
-            assertThat(actual)
-                .isSortedAccordingTo(comparing(FileRecord::path))
-                .containsExactlyInAnyOrderElementsOf(expected);
+            assertFiles(expected, actual);
         }
 
         Stream<Arguments> queryByTagsSource() {
@@ -195,9 +193,7 @@ public class FileControllerTests {
             var actual = getFiles(url);
 
             // Assert
-            assertThat(actual)
-                .isSortedAccordingTo(comparing(FileRecord::path))
-                .containsExactlyInAnyOrderElementsOf(expected);
+            assertFiles(expected, actual);
         }
 
         Stream<Arguments> queryByHashAndActiveSource() {
@@ -245,9 +241,7 @@ public class FileControllerTests {
             var actual = getFiles(url);
 
             // Assert
-            assertThat(actual)
-                .isSortedAccordingTo(comparing(FileRecord::path))
-                .containsExactlyInAnyOrderElementsOf(expected);
+            assertFiles(expected, actual);
         }
 
         Stream<Arguments> queryByHashSource() {
@@ -301,9 +295,7 @@ public class FileControllerTests {
             var actual = getFiles(url);
 
             // Assert
-            assertThat(actual)
-                .isSortedAccordingTo(comparing(FileRecord::path))
-                .containsExactlyInAnyOrderElementsOf(expected);
+            assertFiles(expected, actual);
         }
 
         Stream<Arguments> queryByPathSource() {
@@ -378,9 +370,7 @@ public class FileControllerTests {
             var actual = getFiles(url);
 
             // Assert
-            assertThat(actual)
-                .isSortedAccordingTo(comparing(FileRecord::path))
-                .containsExactlyInAnyOrderElementsOf(expected);
+            assertFiles(expected, actual);
         }
 
         Stream<Arguments> queryByActiveSource() {
@@ -428,9 +418,7 @@ public class FileControllerTests {
             var actual = getFiles(url);
 
             // Assert
-            assertThat(actual)
-                .isSortedAccordingTo(comparing(FileRecord::path))
-                .containsExactlyInAnyOrderElementsOf(expected);
+            assertFiles(expected, actual);
         }
 
         Stream<Arguments> queryByStatusSource() {
@@ -453,6 +441,12 @@ public class FileControllerTests {
                 )
             );
         }
+    }
+
+    private static void assertFiles(List<FileRecord> expected, List<FileRecord> actual) {
+        assertThat(actual)
+            .isSortedAccordingTo(comparing(FileRecord::path))
+            .containsExactlyInAnyOrderElementsOf(expected);
     }
 
     private FileRecord saveFile(FileRecord file) {
