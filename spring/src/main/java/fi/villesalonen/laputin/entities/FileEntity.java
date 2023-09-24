@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Type;
 
@@ -49,6 +50,7 @@ public class FileEntity {
         name = "tags_on_files",
         joinColumns = @JoinColumn(name = "file_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @OrderBy("name ASC")
     private Set<TagEntity> tags;
 
     public Set<TagEntity> getTags() {
@@ -137,7 +139,7 @@ public class FileEntity {
             .size(fileEntity.size)
             .metadata(fileEntity.metadata)
             .type(fileEntity.type)
-            .tags(fileEntity.tags.stream().map(TagEntity::toRecord).collect(Collectors.toSet()))
+            .tags(fileEntity.tags.stream().map(TagEntity::toRecord).collect(Collectors.toList()))
             .build();
     }
 

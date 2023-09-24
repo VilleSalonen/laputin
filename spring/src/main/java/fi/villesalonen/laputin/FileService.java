@@ -31,8 +31,10 @@ public class FileService {
             .metadata(entity.getMetadata())
             .type(entity.getType())
             .tags(entity.getTags().stream().map(tag -> TagRecord.builder()
-                .id(tag.getId())
-                .name(tag.getName()).build()).collect(Collectors.toSet()))
+                    .id(tag.getId())
+                    .name(tag.getName())
+                    .build())
+                .collect(Collectors.toList()))
             .build()).collect(Collectors.toList());
     }
 
@@ -46,6 +48,6 @@ public class FileService {
             entity.getSize(),
             entity.getMetadata(),
             entity.getType(),
-            entity.getTags().stream().map(tag -> new TagRecord(tag.getId(), tag.getName())).collect(Collectors.toSet()));
+            entity.getTags().stream().map(tag -> new TagRecord(tag.getId(), tag.getName())).collect(Collectors.toList()));
     }
 }

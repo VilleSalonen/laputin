@@ -13,7 +13,7 @@ public class FileRecordBuilder {
     private Long size;
     private Map<String, Object> metadata;
     private String type;
-    private Set<TagRecord> tags;
+    private List<TagRecord> tags;
     private final Random random = new Random();
 
     public FileRecordBuilder withId(int id) {
@@ -51,8 +51,8 @@ public class FileRecordBuilder {
         return this;
     }
 
-    public FileRecordBuilder withTags(Set<TagRecord> tags) {
-        this.tags = tags != null ? tags : new HashSet<>();
+    public FileRecordBuilder withTags(List<TagRecord> tags) {
+        this.tags = tags != null ? tags : new ArrayList<>();
         return this;
     }
 

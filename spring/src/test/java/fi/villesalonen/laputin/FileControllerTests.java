@@ -31,7 +31,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -84,12 +83,12 @@ public class FileControllerTests {
             tag3 = saveTag(new TagRecordBuilder().build());
             tag4 = saveTag(new TagRecordBuilder().build());
 
-            file1 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1)).build());
-            file2 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1, tag2)).build());
-            file3 = saveFile(new FileRecordBuilder().withTags(Set.of(tag2)).build());
-            file4 = saveFile(new FileRecordBuilder().withTags(Set.of(tag3)).build());
-            file5 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1, tag3)).build());
-            file6 = saveFile(new FileRecordBuilder().withTags(Set.of(tag4)).build());
+            file1 = saveFile(new FileRecordBuilder().withTags(List.of(tag1)).build());
+            file2 = saveFile(new FileRecordBuilder().withTags(List.of(tag1, tag2)).build());
+            file3 = saveFile(new FileRecordBuilder().withTags(List.of(tag2)).build());
+            file4 = saveFile(new FileRecordBuilder().withTags(List.of(tag3)).build());
+            file5 = saveFile(new FileRecordBuilder().withTags(List.of(tag1, tag3)).build());
+            file6 = saveFile(new FileRecordBuilder().withTags(List.of(tag4)).build());
         }
 
         @ParameterizedTest
@@ -407,7 +406,7 @@ public class FileControllerTests {
 
             tag1 = saveTag(new TagRecordBuilder().build());
 
-            file1 = saveFile(new FileRecordBuilder().withTags(Set.of(tag1)).build());
+            file1 = saveFile(new FileRecordBuilder().withTags(List.of(tag1)).build());
             file2 = saveFile(new FileRecordBuilder().build());
         }
 
@@ -452,6 +451,9 @@ public class FileControllerTests {
                     .isNotNull()
                     .isNotEqualTo(file.path());
                 assertThat(file.path()).endsWith(file.name());
+
+                assertThat(file.tags())
+                    .isSortedAccordingTo(comparing(TagRecord::name));
             });
     }
 

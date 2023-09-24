@@ -3,8 +3,8 @@ package fi.villesalonen.laputin.records;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Builder
 public record FileRecord(
@@ -16,7 +16,7 @@ public record FileRecord(
     long size,
     Map<String, Object> metadata,
     String type,
-    Set<TagRecord> tags)
+    List<TagRecord> tags)
 {
     @JsonProperty("name")
     public String name() {
