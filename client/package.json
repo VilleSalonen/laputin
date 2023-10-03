@@ -47,7 +47,7 @@
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.0.0",
     "npm-check-updates": "^16.3.15",
-    "postcss": "^8.4.12",
+    "postcss": "^8.4.31",
     "postcss-cli": "^9.1.0",
     "postcss-sorting": "^7.0.1",
     "posthtml": "^0.12.0",
